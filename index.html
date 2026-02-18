@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delícias da Vovó | Gestão Financeira Premium</title>
+    <title>DelÃƒÂ­cias da VovÃƒÂ³ | GestÃƒÂ£o Financeira Premium</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -197,24 +197,24 @@
                     <i data-lucide="cake" class="w-5 h-5"></i>
                 </div>
                 <div class="sidebar-header-text">
-                    <h1 class="font-black text-xl tracking-tighter leading-none">Delícias</h1>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Gestão Financeira</p>
+                    <h1 class="font-black text-xl tracking-tighter leading-none">DelÃƒÂ­cias</h1>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">GestÃƒÂ£o Financeira</p>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 px-4 space-y-2">
             <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
+                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">LanÃƒÂ§amentos</span>
             </button>
             <button onclick="switchTab('monthly')" id="nav-monthly" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Mensal</span>
+                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃƒÂ³rio Mensal</span>
             </button>
             <button onclick="switchTab('annual')" id="nav-annual" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Anual</span>
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃƒÂ³rio Anual</span>
             </button>
             <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
+                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">ConciliaÃƒÂ§ÃƒÂ£o</span>
             </button>
             <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
@@ -226,7 +226,7 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         <header class="h-24 bg-white border-b px-10 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-6">
-                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Lançamentos</h2>
+                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">LanÃƒÂ§amentos</h2>
                 <div id="sync-status" class="sync-indicator">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
@@ -239,13 +239,13 @@
 
         <div class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10">
             
-            <!-- LANÇAMENTOS -->
+            <!-- LANÃƒâ€¡AMENTOS -->
             <div id="entries" class="tab-content active space-y-6">
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end">
-                    <div class="flex-1 min-w-[200px]"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
+                    <div class="flex-1 min-w-[200px]"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descriÃƒÂ§ÃƒÂ£o..." oninput="renderEntries()"></div>
+                    <div class="w-32"><label class="label-mini">InÃƒÂ­cio</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
                     <div class="w-32"><label class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
+                    <div class="w-32"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÃƒÂDA">SaÃƒÂ­das</option></select></div>
                     <div class="w-32"><label class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
                     <button onclick="openEntryModal()" class="bg-orange-500 text-white px-8 h-[44px] rounded-xl font-black text-sm hover:bg-orange-600 shadow-lg">
                         + Novo
@@ -260,7 +260,7 @@
                                 <th class="px-6 py-4">Tipo</th>
                                 <th class="px-6 py-4">Destino / Detalhes</th>
                                 <th onclick="setSort('amount')" class="px-6 py-4 text-right cursor-pointer hover:text-orange-500">Valor</th>
-                                <th class="px-6 py-4 text-center">Status / Ação</th>
+                                <th class="px-6 py-4 text-center">Status / AÃƒÂ§ÃƒÂ£o</th>
                             </tr>
                         </thead>
                         <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
@@ -268,20 +268,20 @@
                 </div>
             </div>
 
-            <!-- RELATÓRIO MENSAL -->
+            <!-- RELATÃƒâ€œRIO MENSAL -->
             <div id="monthly" class="tab-content space-y-8">
-                <div class="w-full lg:w-64"><label class="label-mini">Mês de Referência</label><input type="month" id="monthly-filter" onchange="renderMonthly()"></div>
+                <div class="w-full lg:w-64"><label class="label-mini">MÃƒÂªs de ReferÃƒÂªncia</label><input type="month" id="monthly-filter" onchange="renderMonthly()"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="card-premium p-6 border-l-4 border-l-green-500">
-                        <p class="text-[9px] font-black text-green-600 uppercase mb-4 tracking-widest">Entradas do Mês</p>
+                        <p class="text-[9px] font-black text-green-600 uppercase mb-4 tracking-widest">Entradas do MÃƒÂªs</p>
                         <div class="space-y-4">
                             <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-inc-real" class="text-xl font-black text-green-600">R$ 0,00</p></div>
                             <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-inc-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
                         </div>
                     </div>
                     <div class="card-premium p-6 border-l-4 border-l-red-500">
-                        <p class="text-[9px] font-black text-red-600 uppercase mb-4 tracking-widest">Saídas do Mês</p>
+                        <p class="text-[9px] font-black text-red-600 uppercase mb-4 tracking-widest">SaÃƒÂ­das do MÃƒÂªs</p>
                         <div class="space-y-4">
                             <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-exp-real" class="text-xl font-black text-red-600">R$ 0,00</p></div>
                             <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-exp-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
@@ -300,44 +300,44 @@
                         <div class="h-full"><canvas id="monthChartPieInc"></canvas></div>
                     </div>
                     <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black uppercase text-orange-600 mb-6 tracking-widest">Saídas Por Categoria</h4>
+                        <h4 class="text-xs font-black uppercase text-orange-600 mb-6 tracking-widest">SaÃƒÂ­das Por Categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieExp"></canvas></div>
                     </div>
                 </div>
 
                 <div class="card-premium p-8 h-[600px]">
-                    <h4 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">Fluxo Diário: Entradas vs Saídas</h4>
+                    <h4 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">Fluxo DiÃƒÂ¡rio: Entradas vs SaÃƒÂ­das</h4>
                     <div class="h-full"><canvas id="monthChartBar"></canvas></div>
                 </div>
 
                 <div class="card-premium overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
-                            <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
+                            <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">SaÃƒÂ­das</th><th class="px-8 py-4 text-right">LÃƒÂ­quido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
                         </thead>
                         <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- RELATÓRIO ANUAL -->
+            <!-- RELATÃƒâ€œRIO ANUAL -->
             <div id="annual" class="tab-content space-y-12">
                 <div class="card-premium p-10 h-[450px]"><h4 class="text-xs font-black uppercase text-slate-400 mb-10 tracking-widest">Performance Anual</h4><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
                 <div class="card-premium overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
-                            <tr><th class="px-12 py-6">Mês</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">Saídas</th><th class="px-12 py-6 text-right">Saldo Líquido</th></tr>
+                            <tr><th class="px-12 py-6">MÃƒÂªs</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">SaÃƒÂ­das</th><th class="px-12 py-6 text-right">Saldo LÃƒÂ­quido</th></tr>
                         </thead>
                         <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- CONCILIAÇÃO -->
+            <!-- CONCILIAÃƒâ€¡ÃƒÆ’O -->
             <div id="reconciliation" class="tab-content space-y-8">
                 <div class="card-premium p-8 space-y-6">
                     <div class="flex flex-wrap gap-8 items-end">
-                        <div class="flex-1 min-w-[400px]"><label class="label-mini">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
+                        <div class="flex-1 min-w-[400px]"><label class="label-mini">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para anÃƒÂ¡lise inteligente..."></textarea></div>
                         <div class="w-72"><label class="label-mini">Conta de Destino</label><select id="recon-account-select"></select></div>
                         <button onclick="processPaste()" class="bg-slate-900 text-white px-10 h-[50px] rounded-xl font-black text-xs uppercase shadow-xl hover:bg-black transition-all">Analisar</button>
                     </div>
@@ -351,7 +351,7 @@
                     <div class="card-premium overflow-hidden">
                         <table class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
-                                <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">Descrição</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4 text-right">Valor</th></tr>
+                                <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">DescriÃƒÂ§ÃƒÂ£o</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4">AÃƒÂ§ÃƒÂ£o</th><th class="px-8 py-4 text-right">Valor</th></tr>
                             </thead>
                             <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
                         </table>
@@ -373,11 +373,11 @@
         </div>
     </main>
 
-    <!-- MODAL LANÇAMENTO -->
+    <!-- MODAL LANÃƒâ€¡AMENTO -->
     <div id="entry-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xl z-50 flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-slide-up">
             <div class="p-8 border-b flex justify-between bg-slate-50/50">
-                <h3 class="font-black text-slate-900 uppercase text-xs">Editor de Lançamento</h3>
+                <h3 class="font-black text-slate-900 uppercase text-xs">Editor de LanÃƒÂ§amento</h3>
                 <button onclick="closeModal('entry-modal')" class="text-slate-300 hover:text-red-500"><i data-lucide="x"></i></button>
             </div>
             <form id="entry-form" class="p-8 space-y-6">
@@ -388,7 +388,7 @@
                 </div>
                 <div><label class="label-mini">Destino</label><select id="form-dst" required></select></div>
                 <div><label class="label-mini">Conta</label><select id="form-acc" required></select></div>
-                <div><label class="label-mini">Observação</label><input type="text" id="form-desc"></div>
+                <div><label class="label-mini">ObservaÃƒÂ§ÃƒÂ£o</label><input type="text" id="form-desc"></div>
                 <div>
                     <label class="label-mini">Status</label>
                     <div class="status-toggle">
@@ -408,7 +408,7 @@
     <!-- MODAL DB -->
     <div id="db-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xl z-50 flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-sm rounded-[24px] shadow-2xl overflow-hidden">
-            <div class="p-6 border-b flex justify-between"><h3 class="font-black text-slate-900 text-xs uppercase">Configuração</h3><button onclick="closeModal('db-modal')" class="text-slate-300"><i data-lucide="x"></i></button></div>
+            <div class="p-6 border-b flex justify-between"><h3 class="font-black text-slate-900 text-xs uppercase">ConfiguraÃƒÂ§ÃƒÂ£o</h3><button onclick="closeModal('db-modal')" class="text-slate-300"><i data-lucide="x"></i></button></div>
             <form id="db-form" class="p-8 space-y-6">
                 <input type="hidden" id="db-type"><input type="hidden" id="db-parent">
                 <div><label class="label-mini">Nome</label><input type="text" id="db-name" required></div>
@@ -419,11 +419,11 @@
     </div>
 
     <script>
-        // Configurações Supabase
+        // ConfiguraÃƒÂ§ÃƒÂµes Supabase
         const SUPABASE_URL = 'https://uvmidrjjbnfsxofhthfq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_JZ56monDH_4qIB9zwkYEFQ_KyrX4xCc';
         
-        // CORREÇÃO: Usando a referência global correta do Supabase SDK e evitando conflito de nomes
+        // CORREÃƒâ€¡ÃƒÆ’O: Usando a referÃƒÂªncia global correta do Supabase SDK e evitando conflito de nomes
         let sbClient;
         try {
             sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -466,7 +466,7 @@
 
         async function initCloud() {
             if (!sbClient) {
-                console.error("Supabase client não disponível.");
+                console.error("Supabase client nÃƒÂ£o disponÃƒÂ­vel.");
                 document.getElementById('loading-overlay').style.display = 'none';
                 return;
             }
@@ -481,7 +481,7 @@
                     state[t] = data || [];
                 }
 
-                // Se não houver dados no Supabase, tenta migrar do LocalStorage (v20)
+                // Se nÃƒÂ£o houver dados no Supabase, tenta migrar do LocalStorage (v20)
                 if (state.categories.length === 0) {
                     const localData = JSON.parse(localStorage.getItem('vovo_v20'));
                     if (localData) {
@@ -491,7 +491,7 @@
                                 await sbClient.from(t).upsert(localData[t]);
                             }
                         }
-                        // Recarrega após migração
+                        // Recarrega apÃƒÂ³s migraÃƒÂ§ÃƒÂ£o
                         return initCloud();
                     }
                 }
@@ -500,7 +500,7 @@
                 document.getElementById('loading-overlay').style.display = 'none';
                 render();
             } catch (err) {
-                console.error("Erro na sincronização:", err);
+                console.error("Erro na sincronizaÃƒÂ§ÃƒÂ£o:", err);
                 setSyncStatus('offline');
                 document.getElementById('loading-overlay').style.display = 'none';
                 // Tentativa de renderizar com dados locais se falhar o cloud
@@ -537,7 +537,7 @@
         }
 
         window.deleteEntry = async function(id) {
-            if(confirm("Deseja realmente excluir este lançamento?")) {
+            if(confirm("Deseja realmente excluir este lanÃƒÂ§amento?")) {
                 await cloudDelete('entries', id);
                 state.entries = state.entries.filter(e => e.id !== id);
                 render();
@@ -574,7 +574,7 @@
         function updateBalance() {
             const init = state.accounts.reduce((acc, account) => acc + (Number(account.initialBalance) || 0), 0);
             const inc = state.entries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-            const exp = state.entries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const exp = state.entries.filter(e => e.type === 'SAÃƒÂDA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const total = init + inc - exp;
             const el = document.getElementById('global-balance');
             if(el) el.innerText = `Saldo: ${formatBRL(total)}`;
@@ -651,8 +651,8 @@
             const entries = state.entries.filter(e => e.date && e.date.startsWith(filter));
             const incR = entries.filter(e=>e.type==='ENTRADA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const incP = entries.filter(e=>e.type==='ENTRADA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expR = entries.filter(e=>e.type==='SAÍDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expP = entries.filter(e=>e.type==='SAÍDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const expR = entries.filter(e=>e.type==='SAÃƒÂDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const expP = entries.filter(e=>e.type==='SAÃƒÂDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
 
             document.getElementById('sum-inc-real').innerText = formatBRL(incR);
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
@@ -674,7 +674,7 @@
                 const dayStr = `${filter}-${d.toString().padStart(2, '0')}`;
                 const dEntries = entries.filter(e => e.date === dayStr && e.status === 'REALIZADO');
                 const dInc = dEntries.filter(e => e.type === 'ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExp = dEntries.filter(e => e.type === 'SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dExp = dEntries.filter(e => e.type === 'SAÃƒÂDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const dBal = dInc - dExp;
                 cumulative += dBal;
                 if (d <= daysInMonth) {
@@ -696,7 +696,7 @@
 
         function renderChartsGrouped(entries, dailyIn, dailyOut, labelsBar) {
             const expByCat = {};
-            entries.filter(e => e.type==='SAÍDA' && e.status==='REALIZADO').forEach(e => {
+            entries.filter(e => e.type==='SAÃƒÂDA' && e.status==='REALIZADO').forEach(e => {
                 const c = state.categories.find(x=>x.id===e.categoryId)?.name || 'Outros';
                 expByCat[c] = (expByCat[c] || 0) + Number(e.amount);
             });
@@ -749,7 +749,7 @@
                         labels: labelsBar, 
                         datasets: [
                             { label: 'Entradas', data: dailyIn, backgroundColor: '#2563eb', borderRadius: 6 }, 
-                            { label: 'Saídas', data: dailyOut, backgroundColor: '#f97316', borderRadius: 6 }
+                            { label: 'SaÃƒÂ­das', data: dailyOut, backgroundColor: '#f97316', borderRadius: 6 }
                         ] 
                     }, 
                     options: { 
@@ -774,7 +774,7 @@
                 const prefix = `${year}-${(m+1).toString().padStart(2,'0')}`;
                 const mEntries = state.entries.filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                 const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const exp = mEntries.filter(e=>e.type==='SAÃƒÂDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 data.push({m, inc, exp, bal: inc-exp});
             }
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -794,7 +794,7 @@
                         labels: monthNames, 
                         datasets: [
                             { label: 'Entradas', data: data.map(x=>x.inc), backgroundColor: '#2563eb', borderRadius: 8 }, 
-                            { label: 'Saídas', data: data.map(x=>x.exp), backgroundColor: '#f97316', borderRadius: 8 }
+                            { label: 'SaÃƒÂ­das', data: data.map(x=>x.exp), backgroundColor: '#f97316', borderRadius: 8 }
                         ] 
                     }, 
                     options: {
@@ -829,42 +829,101 @@
             const lines = area.value.split(/\r?\n/).filter(l => l.trim().length > 0);
             tempRecon = [];
             lines.forEach(l => {
-                const segments = l.split(/\t|\s{2,}/).map(s => s.trim()).filter(s => s.length > 0);
-                const dateRegex = /(\d{1,2}[\/|-]\d{1,2}([\/|-]\d{2,4})?)/;
+                const raw = l.trim();
+                let segments = [];
+                if (raw.includes('\t')) {
+                    segments = raw.split(/\t/);
+                } else if (raw.includes(';')) {
+                    segments = raw.split(';');
+                } else if ((raw.match(/,/g) || []).length >= 3) {
+                    segments = raw.split(',');
+                } else {
+                    segments = raw.split(/\s+/);
+                }
+                segments = segments.map(s => s.trim()).filter(s => s.length > 0);
+
+                const dateRegex = /(\d{1,2}[\/|-]\d{1,2}([\/|-]\d{2,4})?)|(\d{4}[\/|-]\d{1,2}[\/|-]\d{1,2})/;
                 let dateIdx = segments.findIndex(s => dateRegex.test(s));
                 let amountIdx = -1;
                 for(let i = segments.length - 1; i >= 0; i--) {
                     if(i === dateIdx) continue;
                     const v = parseValueRobust(segments[i]);
-                    if(!isNaN(v) && v !== 0 && (segments[i].includes(',') || segments[i].includes('.') || segments[i].includes('$'))) {
+                    if(!isNaN(v) && v !== 0 && /\d/.test(segments[i])) {
                         amountIdx = i; break;
                     }
                 }
                 if(dateIdx !== -1 && amountIdx !== -1) {
                     let rawDate = segments[dateIdx].match(dateRegex)[0];
-                    if(rawDate.includes('/')) {
-                        let [d,m,y] = rawDate.split('/');
-                        if(!y) y = new Date().getFullYear().toString();
-                        if(y.length === 2) y = "20" + y;
-                        rawDate = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+                    const normalized = rawDate.replace(/\//g, '-');
+                    let y, m, d;
+                    if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(normalized)) {
+                        [y, m, d] = normalized.split('-');
+                    } else {
+                        [d, m, y] = normalized.split('-');
                     }
+                    if(!y) y = new Date().getFullYear().toString();
+                    if(y.length === 2) y = "20" + y;
+                    rawDate = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
                     const val = parseValueRobust(segments[amountIdx]);
                     const desc = segments.filter((_, idx) => idx !== dateIdx && idx !== amountIdx).join(' ');
-                    tempRecon.push({ id: generateId(), date: rawDate, amount: Math.abs(val), type: val >= 0 ? 'ENTRADA' : 'SAÍDA', description: desc || "Transação", destinationId: (state.destinations[0] || {}).id });
+                    const defaultDst = state.destinations[0];
+                    tempRecon.push({ 
+                        id: generateId(), 
+                        date: rawDate, 
+                        amount: Math.abs(val), 
+                        type: val >= 0 ? 'ENTRADA' : 'SAÃƒÂDA', 
+                        status: 'REALIZADO',
+                        description: desc || "TransaÃƒÂ§ÃƒÂ£o", 
+                        destinationId: (defaultDst || {}).id,
+                    });
                 }
             });
+            renderReconPreview();
+            if(tempRecon.length > 0) {
+                area.value = '';
+            } else {
+                alert("Nenhum dado detectado.");
+            }
+        }
+
+        function renderReconPreview() {
             const preview = document.getElementById('recon-preview');
             const summary = document.getElementById('recon-summary-count');
             const body = document.getElementById('recon-preview-body');
             if(tempRecon.length > 0) {
                 if(summary) summary.innerText = `${tempRecon.length} registros extraídos`;
                 if(preview) preview.classList.remove('hidden');
-                if(body) body.innerHTML = tempRecon.map((e,i) => `<tr class="table-row"><td class="px-8 py-4 text-xs font-bold text-slate-400">${(e.date || '').split('-').reverse().join('/')}</td><td class="px-8 py-4 text-[10px] font-black uppercase text-slate-700">${e.description}</td><td class="px-8 py-4"><select onchange="tempRecon[${i}].destinationId = this.value" class="text-[10px] font-bold py-1">${state.destinations.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}</select></td><td class="px-8 py-4 text-right font-black ${e.type==='ENTRADA'?'text-blue-600':'text-orange-600'}">${formatBRL(e.amount)}</td></tr>`).join('');
-                area.value = '';
-            } else alert("Nenhum dado detectado.");
+                if(body) body.innerHTML = tempRecon.map((e,i) => {
+                    return `<tr class="table-row">
+                        <td class="px-8 py-4 text-xs font-bold text-slate-400">${(e.date || '').split('-').reverse().join('/')}</td>
+                        <td class="px-8 py-4 text-[10px] font-black uppercase text-slate-700">${e.description}</td>
+                        <td class="px-8 py-4">
+                            <select onchange="tempRecon[${i}].destinationId = this.value" class="text-[10px] font-bold py-1">
+                                ${state.destinations.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td class="px-8 py-4">
+                            <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                        <td class="px-8 py-4 text-right font-black ${e.type==='ENTRADA'?'text-blue-600':'text-orange-600'}">${formatBRL(e.amount)}</td>
+                    </tr>`;
+                }).join('');
+                lucide.createIcons();
+            } else {
+                if(preview) preview.classList.add('hidden');
+                if(summary) summary.innerText = 'Processando...';
+                if(body) body.innerHTML = '';
+            }
         }
 
-        async function finalizeRecon() {
+        function removeRecon(index) {
+            tempRecon.splice(index, 1);
+            renderReconPreview();
+        }
+        }\r\n\r\n
+                async function finalizeRecon() {
             const accId = document.getElementById('recon-account-select')?.value || '';
             const newEntries = [];
             tempRecon.forEach(temp => {
@@ -963,7 +1022,7 @@
             const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
             const val = Number(document.getElementById('form-value').value);
-            if(isNaN(val)) return alert("Valor inválido");
+            if(isNaN(val)) return alert("Valor invÃƒÂ¡lido");
             const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: document.getElementById('form-acc').value, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value };
             
             await cloudSave('entries', data);
@@ -982,7 +1041,7 @@
             document.getElementById('db-name').value = '';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
+                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini">Tipo</label><select id="db-cat-type"><option value="SAÃƒÂDA">SaÃƒÂ­da</option><option value="ENTRADA">Entrada</option></select>`;
                 else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="0">`;
                 else exEl.innerHTML = '';
             }
@@ -1032,5 +1091,7 @@
     </script>
 </body>
 </html>
+
+
 
 
