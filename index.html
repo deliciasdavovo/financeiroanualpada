@@ -347,6 +347,82 @@
         .divide-slate-50 > :not([hidden]) ~ :not([hidden]) { border-color: var(--divider) !important; }
         .border-slate-50, .border-slate-100, .border-b { border-color: var(--divider) !important; }
 
+        .hm-breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .hm-breadcrumb button {
+            color: var(--primary-blue);
+            font-weight: 600;
+            transition: opacity 0.2s ease;
+        }
+        .hm-breadcrumb button:hover { opacity: 0.8; }
+        .hm-sep { color: #9CA3AF; }
+        .hm-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .hm-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .hm-item-card {
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #ECEFF3;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            background: #FFFFFF;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+        .hm-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.06);
+        }
+        .hm-progress-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: #EEF2F7;
+            overflow: hidden;
+        }
+        .hm-progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.25s ease;
+        }
+        .hm-flow-entrada { color: #1F7A5C; }
+        .hm-flow-saida { color: #B23A3A; }
+        .hm-flow-entrada-bg { background: #1F7A5C; }
+        .hm-flow-saida-bg { background: #B23A3A; }
+        .hm-empty {
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px dashed #D9DEE7;
+            color: #6B7280;
+            text-align: center;
+            background: #FFFFFF;
+        }
+        .hm-launch-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        .hm-launch-item {
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #ECEFF3;
+            background: #FFFFFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+
         @media (max-width: 1023px) {
             #sidebar .nav-text {
                 display: none !important;
@@ -519,6 +595,8 @@
                     </div>
                 </div>
 
+                <section id="analise-hierarquica-mensal"></section>
+
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="card-premium p-8 h-[400px]">
                         <h4 class="text-xs font-black flow-income-text mb-6 tracking-widest">Entradas por categoria</h4>
@@ -687,6 +765,12 @@
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
+        let nivelAtual = 'categoria';
+        let categoriaSelecionada = '';
+        let subcategoriaSelecionada = '';
+        let destinoSelecionado = '';
+        let fluxoSelecionado = 'TODOS';
+        let categoriaFiltroSelecionada = '';
 
         function setSyncStatus(status) {
             const el = document.getElementById('sync-status');
@@ -794,6 +878,258 @@
             maximumFractionDigits: 0
         });
         const generateId = () => Math.random().toString(36).substr(2, 9);
+        const formatPercentual = (v) => `${(Number(v) || 0).toFixed(1).replace('.', ',')}%`;
+        const encodeSafe = (v) => encodeURIComponent(String(v || ''));
+
+        function agruparPor(dados, campo) {
+            return dados.reduce((acc, item) => {
+                acc[item[campo]] = (acc[item[campo]] || 0) + item.valor;
+                return acc;
+            }, {});
+        }
+
+        function getMonthlySelectedEntries() {
+            const filter = document.getElementById('monthly-filter')?.value || '';
+            if(!filter) return [];
+            return state.entries.filter(e => e.date && e.date.startsWith(filter));
+        }
+
+        function getMonthlyHierarchyData(entries) {
+            return entries.map(e => {
+                const dst = state.destinations.find(d => d.id === e.destinationId);
+                const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+                const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+                return {
+                    tipo: e.type === 'ENTRADA' ? 'entrada' : 'saida',
+                    categoria: (cat || {}).name || 'Sem categoria',
+                    subcategoria: (sub || {}).name || 'Sem subcategoria',
+                    destino: (dst || {}).name || 'Sem destino',
+                    valor: Number(e.amount) || 0,
+                    data: e.date || '',
+                    status: e.status || 'REALIZADO',
+                    descricao: e.description || ''
+                };
+            });
+        }
+
+        function aplicarFiltrosBaseHierarquia(dados) {
+            let filtrado = [...dados];
+            if(fluxoSelecionado === 'ENTRADAS') filtrado = filtrado.filter(d => d.tipo === 'entrada');
+            if(fluxoSelecionado === 'SAIDAS') filtrado = filtrado.filter(d => d.tipo === 'saida');
+            if(categoriaFiltroSelecionada) filtrado = filtrado.filter(d => d.categoria === categoriaFiltroSelecionada);
+            return filtrado;
+        }
+
+        function hmBreadcrumbTo(level) {
+            if(level === 'categoria') {
+                nivelAtual = 'categoria';
+                categoriaSelecionada = '';
+                subcategoriaSelecionada = '';
+                destinoSelecionado = '';
+            } else if(level === 'subcategoria') {
+                nivelAtual = 'subcategoria';
+                subcategoriaSelecionada = '';
+                destinoSelecionado = '';
+            } else if(level === 'destino') {
+                nivelAtual = 'destino';
+                destinoSelecionado = '';
+            }
+            renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+        }
+
+        function hmSelectCategoria(nome) {
+            categoriaSelecionada = nome;
+            subcategoriaSelecionada = '';
+            destinoSelecionado = '';
+            nivelAtual = 'subcategoria';
+            renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+        }
+
+        function hmSelectSubcategoria(nome) {
+            subcategoriaSelecionada = nome;
+            destinoSelecionado = '';
+            nivelAtual = 'destino';
+            renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+        }
+
+        function hmSelectDestino(nome) {
+            destinoSelecionado = nome;
+            nivelAtual = 'lancamentos';
+            renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+        }
+
+        function renderResumoCardsAgrupados(grupos, totalMes, classeCor, onClickFn) {
+            const entries = Object.entries(grupos).sort((a, b) => b[1] - a[1]);
+            if(entries.length === 0) return `<div class="hm-empty">Nenhum dado encontrado para os filtros selecionados.</div>`;
+            return `<div class="hm-items-grid">
+                ${entries.map(([nome, valor]) => {
+                    const percentual = totalMes > 0 ? (valor / totalMes) * 100 : 0;
+                    const nomeSafe = encodeSafe(nome);
+                    return `
+                        <button class="hm-item-card" onclick="${onClickFn}(decodeURIComponent('${nomeSafe}'))">
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <p class="text-sm font-black text-slate-900 uppercase">${nome}</p>
+                                <p class="text-xs font-black ${classeCor}">${formatBRL(valor)}</p>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] mb-2">
+                                <span class="text-slate-500">Participação no mês</span>
+                                <span class="font-bold text-slate-700">${formatPercentual(percentual)}</span>
+                            </div>
+                            <div class="hm-progress-track">
+                                <div class="hm-progress-fill ${classeCor.includes('saida') ? 'hm-flow-saida-bg' : 'hm-flow-entrada-bg'}" style="width:${Math.min(percentual, 100)}%"></div>
+                            </div>
+                        </button>
+                    `;
+                }).join('')}
+            </div>`;
+        }
+
+        function renderCategorias(dados) {
+            const content = document.getElementById('hm-content');
+            if(!content) return;
+            const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
+            const grupos = agruparPor(dados, 'categoria');
+            const cor = fluxoSelecionado === 'SAIDAS' ? 'hm-flow-saida' : 'hm-flow-entrada';
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, cor, 'hmSelectCategoria');
+        }
+
+        function renderSubcategorias(dados) {
+            const content = document.getElementById('hm-content');
+            if(!content) return;
+            const filtrado = dados.filter(d => d.categoria === categoriaSelecionada);
+            const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
+            const grupos = agruparPor(filtrado, 'subcategoria');
+            const cor = fluxoSelecionado === 'SAIDAS' ? 'hm-flow-saida' : 'hm-flow-entrada';
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, cor, 'hmSelectSubcategoria');
+        }
+
+        function renderDestinos(dados) {
+            const content = document.getElementById('hm-content');
+            if(!content) return;
+            const filtrado = dados.filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada);
+            const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
+            const grupos = agruparPor(filtrado, 'destino');
+            const cor = fluxoSelecionado === 'SAIDAS' ? 'hm-flow-saida' : 'hm-flow-entrada';
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, cor, 'hmSelectDestino');
+        }
+
+        function renderLancamentos(dados) {
+            const content = document.getElementById('hm-content');
+            if(!content) return;
+            const filtrado = dados
+                .filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada && d.destino === destinoSelecionado)
+                .sort((a, b) => (b.data || '').localeCompare(a.data || '') || b.valor - a.valor);
+            const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
+            if(filtrado.length === 0) {
+                content.innerHTML = `<div class="hm-empty">Nenhum lançamento encontrado para este destino.</div>`;
+                return;
+            }
+            content.innerHTML = `<div class="hm-launch-list">
+                ${filtrado.map(item => {
+                    const percentual = totalMes > 0 ? (item.valor / totalMes) * 100 : 0;
+                    const cor = item.tipo === 'saida' ? 'hm-flow-saida' : 'hm-flow-entrada';
+                    const corBg = item.tipo === 'saida' ? 'hm-flow-saida-bg' : 'hm-flow-entrada-bg';
+                    return `
+                        <div class="hm-launch-item">
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div>
+                                    <p class="text-[11px] font-black text-slate-900 uppercase">${item.destino}</p>
+                                    <p class="text-[11px] text-slate-500">${(item.data || '').split('-').reverse().join('/')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[11px] font-black ${cor}">${formatBRL(item.valor)}</p>
+                                    <p class="text-[10px] text-slate-500">${item.tipo === 'entrada' ? 'Entrada' : 'Saída'} • ${item.status}</p>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-600 mb-2">${item.descricao || '-'}</p>
+                            <div class="flex items-center justify-between text-[11px] mb-2">
+                                <span class="text-slate-500">Participação no mês</span>
+                                <span class="font-bold text-slate-700">${formatPercentual(percentual)}</span>
+                            </div>
+                            <div class="hm-progress-track">
+                                <div class="hm-progress-fill ${corBg}" style="width:${Math.min(percentual, 100)}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>`;
+        }
+
+        function renderAnaliseHierarquicaMensal(entries) {
+            const section = document.getElementById('analise-hierarquica-mensal');
+            if(!section) return;
+            const dados = getMonthlyHierarchyData(entries);
+            const categoriasDisponiveis = Array.from(new Set(dados.map(d => d.categoria))).sort((a, b) => a.localeCompare(b));
+            if(categoriaFiltroSelecionada && !categoriasDisponiveis.includes(categoriaFiltroSelecionada)) categoriaFiltroSelecionada = '';
+
+            section.className = 'card-premium p-8 space-y-6';
+            section.innerHTML = `
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <h4 class="text-sm font-black text-slate-900">Análise hierárquica mensal</h4>
+                    <div class="hm-breadcrumb">
+                        <button onclick="hmBreadcrumbTo('categoria')">Relatório Mensal</button>
+                        ${categoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('subcategoria')">${categoriaSelecionada}</button>` : ''}
+                        ${subcategoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('destino')">${subcategoriaSelecionada}</button>` : ''}
+                        ${destinoSelecionado ? `<span class="hm-sep">></span><span class="text-slate-700 font-semibold">${destinoSelecionado}</span>` : ''}
+                    </div>
+                </div>
+                <div class="hm-filters">
+                    <div>
+                        <label class="label-mini">Fluxo</label>
+                        <select id="hm-flow-filter">
+                            <option value="TODOS">Todos</option>
+                            <option value="ENTRADAS">Entradas</option>
+                            <option value="SAIDAS">Saídas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-mini">Categoria (opcional)</label>
+                        <select id="hm-category-filter">
+                            <option value="">Todas</option>
+                            ${categoriasDisponiveis.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                <div id="hm-content"></div>
+            `;
+
+            const flowFilterEl = document.getElementById('hm-flow-filter');
+            const catFilterEl = document.getElementById('hm-category-filter');
+            if(flowFilterEl) {
+                flowFilterEl.value = fluxoSelecionado;
+                flowFilterEl.onchange = () => {
+                    fluxoSelecionado = flowFilterEl.value;
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+                };
+            }
+            if(catFilterEl) {
+                catFilterEl.value = categoriaFiltroSelecionada;
+                catFilterEl.onchange = () => {
+                    categoriaFiltroSelecionada = catFilterEl.value;
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+                };
+            }
+
+            const dadosBase = aplicarFiltrosBaseHierarquia(dados);
+            if(dadosBase.length === 0) {
+                const content = document.getElementById('hm-content');
+                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponível para o mês e filtros selecionados.</div>`;
+                return;
+            }
+
+            if(nivelAtual === 'categoria') return renderCategorias(dadosBase);
+            if(nivelAtual === 'subcategoria') return renderSubcategorias(dadosBase);
+            if(nivelAtual === 'destino') return renderDestinos(dadosBase);
+            return renderLancamentos(dadosBase);
+        }
 
         function toggleSidebar() {
             sidebarCollapsed = !sidebarCollapsed;
@@ -917,6 +1253,7 @@
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRL(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
+            renderAnaliseHierarquicaMensal(entries);
 
             const balR = incR - expR;
             const balEl = document.getElementById('month-bal-r');
