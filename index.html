@@ -30,6 +30,66 @@
             --text-muted: #9CA3AF;
         }
 
+        .flow-income-text { color: var(--primary-green) !important; }
+        .flow-expense-text { color: var(--soft-red) !important; }
+        .flow-balance-text { color: var(--primary-blue) !important; }
+        .flow-income-bg { background: var(--primary-green) !important; }
+        .flow-expense-bg { background: var(--soft-red) !important; }
+        .flow-balance-bg { background: var(--primary-blue) !important; }
+
+        .kpi-card {
+            border-radius: 18px;
+            border: 1px solid var(--divider);
+            box-shadow: 0 16px 34px rgba(17, 24, 39, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(160deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 60%);
+        }
+        .kpi-card-income {
+            border-top: 3px solid var(--primary-green);
+            background: linear-gradient(180deg, #FFFFFF 0%, #F6FCF9 100%);
+        }
+        .kpi-card-expense {
+            border-top: 3px solid var(--soft-red);
+            background: linear-gradient(180deg, #FFFFFF 0%, #FEF7F7 100%);
+        }
+        .kpi-card-balance {
+            border-top: 3px solid var(--primary-blue);
+            background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FF 100%);
+        }
+        .kpi-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .kpi-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kpi-card-income .kpi-icon {
+            background: var(--bg-green-soft);
+            color: var(--primary-green);
+        }
+        .kpi-card-expense .kpi-icon {
+            background: var(--bg-red-soft);
+            color: var(--soft-red);
+        }
+        .kpi-card-balance .kpi-icon {
+            background: var(--bg-blue-soft);
+            color: var(--primary-blue);
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 14px;
@@ -192,6 +252,18 @@
             font-weight: 600;
             text-transform: uppercase;
         }
+        .badge-realizado {
+            background: var(--bg-blue-soft);
+            color: var(--primary-blue);
+        }
+        .badge-income {
+            background: var(--bg-green-soft);
+            color: var(--primary-green);
+        }
+        .badge-expense {
+            background: var(--bg-red-soft);
+            color: var(--soft-red);
+        }
 
         .status-toggle {
             display: flex;
@@ -275,270 +347,18 @@
         .divide-slate-50 > :not([hidden]) ~ :not([hidden]) { border-color: var(--divider) !important; }
         .border-slate-50, .border-slate-100, .border-b { border-color: var(--divider) !important; }
 
-        /* Modulo Analise Hierarquica Mensal */
-        #analise-hierarquica-mensal {
-            margin-top: 40px;
-        }
-        .mh-card {
-            background: #FFFFFF;
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid #ECEFF3;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-            transition: all 0.2s ease;
-        }
-        .mh-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 40px rgba(0,0,0,0.06);
-        }
-        .mh-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #111827;
-            letter-spacing: -0.01em;
-        }
-        .mh-sub {
-            font-size: 14px;
-            color: #6B7280;
-            font-weight: 400;
-        }
-        .mh-filters {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 16px;
-            margin-top: 16px;
-        }
-        @media (min-width: 1024px) {
-            .mh-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        }
-        .mh-breadcrumb {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 18px;
-            font-size: 13px;
-            color: #6B7280;
-        }
-        .mh-crumb-btn {
-            background: transparent;
-            border: none;
-            color: #2F4F9D;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 0;
-        }
-        .mh-grid {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 16px;
-        }
-        @media (min-width: 768px) {
-            .mh-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        }
-        .mh-item {
-            background: #FFFFFF;
-            border: 1px solid #ECEFF3;
-            border-radius: 16px;
-            padding: 18px;
-            text-align: left;
-            width: 100%;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .mh-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 40px rgba(0,0,0,0.06);
-        }
-        .mh-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            align-items: baseline;
-        }
-        .mh-name {
-            color: #111827;
-            font-size: 14px;
-            font-weight: 600;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .mh-value {
-            color: #111827;
-            font-size: 16px;
-            font-weight: 700;
-        }
-        .mh-meta {
-            margin-top: 8px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #6B7280;
-        }
-        .mh-progress {
-            margin-top: 10px;
-            width: 100%;
-            height: 8px;
-            background: #ECEFF3;
-            border-radius: 999px;
-            overflow: hidden;
-        }
-        .mh-progress-bar {
-            height: 100%;
-            border-radius: 999px;
-        }
-        .mh-empty {
-            margin-top: 14px;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px dashed #E6E8EC;
-            color: #6B7280;
-            font-size: 14px;
-            background: #FFFFFF;
-        }
-        .mh-list {
-            margin-top: 16px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-        .mh-entry {
-            border: 1px solid #ECEFF3;
-            border-radius: 14px;
-            background: #FFFFFF;
-            padding: 14px 16px;
-            transition: all 0.2s ease;
-        }
-        .mh-entry:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 40px rgba(0,0,0,0.06);
-        }
-        .mh-entry-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-        .mh-tag-in {
-            color: #1F7A5C;
-            background: #E8F3EF;
-            border-radius: 999px;
-            padding: 3px 9px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .mh-tag-out {
-            color: #B23A3A;
-            background: #F8EAEA;
-            border-radius: 999px;
-            padding: 3px 9px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        /* Mobile visibility/navigation + table/chart formatting */
         @media (max-width: 1023px) {
-            body {
-                overflow: auto;
-                padding-bottom: 82px;
-            }
-            #sidebar {
-                display: flex !important;
-                position: fixed;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                top: auto;
-                width: 100% !important;
-                height: 72px;
-                z-index: 80;
-                border-right: none !important;
-                border-top: 1px solid rgba(255, 255, 255, 0.12);
-                background: #111827 !important;
-            }
-            #sidebar .sidebar-toggle,
-            #sidebar .p-8 {
+            #sidebar .nav-text {
                 display: none !important;
             }
-            #sidebar nav {
-                width: 100%;
-                padding: 8px 10px !important;
-                display: grid !important;
-                grid-template-columns: repeat(5, minmax(0, 1fr));
-                gap: 8px !important;
-            }
             #sidebar .sidebar-btn {
-                display: flex !important;
-                flex-direction: column;
-                gap: 4px;
-                justify-content: center;
-                align-items: center;
-                padding: 8px 4px !important;
-                border-radius: 10px !important;
-                min-height: 54px;
-            }
-            #sidebar .sidebar-btn .nav-text {
-                display: block !important;
-                font-size: 10px !important;
-                line-height: 1.1;
-                text-align: center;
-                white-space: nowrap;
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                gap: 0 !important;
             }
             #sidebar .sidebar-btn i {
-                width: 16px !important;
-                height: 16px !important;
                 margin-right: 0 !important;
-            }
-            main {
-                width: 100%;
-            }
-            header {
-                height: auto !important;
-                min-height: 88px;
-                padding: 14px 16px !important;
-            }
-            #tab-title {
-                font-size: 22px !important;
-                line-height: 1.2;
-            }
-            #global-balance {
-                font-size: 12px !important;
-            }
-            .card-premium:not(.overflow-hidden) {
-                padding: 16px !important;
-            }
-            .card-premium.overflow-hidden {
-                overflow-x: auto !important;
-            }
-            .card-premium.overflow-hidden table {
-                min-width: 700px;
-            }
-            .h-\[400px\] { height: 300px !important; }
-            .h-\[450px\] { height: 320px !important; }
-            .h-\[600px\] { height: 360px !important; }
-        }
-
-        @media (max-width: 767px) {
-            .px-12 { padding-left: 16px !important; padding-right: 16px !important; }
-            .px-8 { padding-left: 12px !important; padding-right: 12px !important; }
-            .py-6 { padding-top: 10px !important; padding-bottom: 10px !important; }
-            .py-5, .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
-            table thead {
-                font-size: 10px !important;
-            }
-            table tbody {
-                font-size: 12px !important;
-            }
-            #monthly .grid.gap-8,
-            #monthly .grid.gap-6 {
-                gap: 14px !important;
-            }
-            #monthly .w-full.lg\:w-64 {
-                width: 100% !important;
             }
         }
     </style>
@@ -569,14 +389,14 @@
         </div>
 
         <nav class="flex-1 px-4 space-y-2">
-            <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
-            </button>
             <button onclick="switchTab('monthly')" id="nav-monthly" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Mensal</span>
             </button>
             <button onclick="switchTab('annual')" id="nav-annual" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Anual</span>
+            </button>
+            <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
             </button>
             <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
@@ -638,41 +458,50 @@
                 <div class="w-full lg:w-64"><label class="label-mini">Mês de Referência</label><input type="month" id="monthly-filter" onchange="renderMonthly()"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="card-premium p-6 border-l-4 border-l-green-500">
-                        <p class="text-[9px] font-black text-green-600 uppercase mb-4 tracking-widest">Entradas do Mês</p>
+                    <div class="card-premium kpi-card kpi-card-income p-6">
+                        <div class="kpi-card-header">
+                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Entradas do Mês</p>
+                            <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
+                        </div>
                         <div class="space-y-4">
-                            <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-inc-real" class="text-xl font-black text-green-600">R$ 0,00</p></div>
+                            <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-inc-real" class="text-xl font-black flow-income-text">R$ 0,00</p></div>
                             <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-inc-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
                         </div>
                     </div>
-                    <div class="card-premium p-6 border-l-4 border-l-red-500">
-                        <p class="text-[9px] font-black text-red-600 uppercase mb-4 tracking-widest">Saídas do Mês</p>
+                    <div class="card-premium kpi-card kpi-card-expense p-6">
+                        <div class="kpi-card-header">
+                            <p class="text-[9px] font-black flow-expense-text uppercase tracking-widest">Saídas do Mês</p>
+                            <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
+                        </div>
                         <div class="space-y-4">
-                            <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-exp-real" class="text-xl font-black text-red-600">R$ 0,00</p></div>
+                            <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-exp-real" class="text-xl font-black flow-expense-text">R$ 0,00</p></div>
                             <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-exp-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
                         </div>
                     </div>
-                    <div class="card-premium p-6 border-l-4 border-l-blue-700 bg-blue-50/20">
-                        <p class="text-[9px] font-black text-blue-700 uppercase mb-4 tracking-widest">Saldo Realizado (Caixa)</p>
-                        <p id="month-bal-r" class="text-2xl font-black text-blue-600">R$ 0,00</p>
-                        <p class="text-[8px] font-bold text-blue-400 mt-4 uppercase">Dinheiro no bolso</p>
+                    <div class="card-premium kpi-card kpi-card-balance p-6">
+                        <div class="kpi-card-header">
+                            <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Saldo Realizado (Caixa)</p>
+                            <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
+                        </div>
+                        <p id="month-bal-r" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
+                        <p class="text-[8px] font-bold flow-balance-text mt-4 uppercase opacity-80">Dinheiro no bolso</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black uppercase text-blue-600 mb-6 tracking-widest">Entradas Por Categoria</h4>
+                        <h4 class="text-xs font-black flow-income-text mb-6 tracking-widest">Entradas por categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieInc"></canvas></div>
                     </div>
                     <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black uppercase text-orange-600 mb-6 tracking-widest">Saídas Por Categoria</h4>
+                        <h4 class="text-xs font-black flow-expense-text mb-6 tracking-widest">Saídas por categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieExp"></canvas></div>
                     </div>
                 </div>
 
-                <div class="card-premium p-8 h-[600px]">
-                    <h4 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">Fluxo Diário: Entradas vs Saídas</h4>
-                    <div class="h-full"><canvas id="monthChartBar"></canvas></div>
+                <div class="card-premium p-8 h-[720px] flex flex-col">
+                    <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
+                    <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
                 </div>
 
                 <div class="card-premium overflow-hidden">
@@ -809,13 +638,6 @@
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
-        let nivelAtual = 'categoria';
-        let categoriaSelecionada = '';
-        let subcategoriaSelecionada = '';
-        let destinoSelecionado = '';
-        let fluxoSelecionadoMensal = 'TODOS';
-        let categoriaFiltroMensal = '';
-        let dadosMensaisAnalise = [];
 
         function setSyncStatus(status) {
             const el = document.getElementById('sync-status');
@@ -917,6 +739,11 @@
         };
 
         const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const formatChartBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            maximumFractionDigits: 0
+        });
         const generateId = () => Math.random().toString(36).substr(2, 9);
 
         function toggleSidebar() {
@@ -997,12 +824,12 @@
                 const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
-                const valueClass = isRealizado ? (isEntrada ? 'text-blue-600 font-black' : 'text-orange-600 font-black') : 'text-slate-400 font-bold';
+                const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
                 const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
                 
                 return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''}" onclick="openEntryModal('${e.id}')">
                     <td class="px-6 py-4 text-[11px] font-bold text-slate-400">${(e.date || '').split('-').reverse().join('/')}</td>
-                    <td class="px-6 py-4"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full ${isRealizado ? (isEntrada ? 'bg-blue-500' : 'bg-orange-500') : 'bg-slate-300'}"></div><span class="text-[10px] font-black uppercase ${isEntrada ? 'text-blue-600' : 'text-orange-600'}">${e.type}</span></div></td>
+                    <td class="px-6 py-4"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full ${isRealizado ? (isEntrada ? 'flow-income-bg' : 'flow-expense-bg') : 'bg-slate-300'}"></div><span class="text-[10px] font-black uppercase ${isEntrada ? 'flow-income-text' : 'flow-expense-text'}">${e.type}</span></div></td>
                     <td class="px-6 py-4"><p class="text-[12px] font-black uppercase text-slate-700">${dst}</p><p class="text-[10px] text-slate-400 font-medium">${e.description || ''}</p></td>
                     <td class="px-6 py-4 text-right ${valueClass}">${formatBRL(e.amount)}</td>
                     <td class="px-6 py-4 text-center">
@@ -1036,398 +863,43 @@
             const balEl = document.getElementById('month-bal-r');
             if(balEl) { 
                 balEl.innerText = formatBRL(balR); 
-                balEl.className = 'text-2xl font-black text-blue-600'; 
+                balEl.className = 'text-2xl font-black flow-balance-text'; 
             }
 
             const daysInMonth = new Date(...filter.split('-').map((v,i)=>i===0?v:v-1), 0).getDate();
             let html = '', cumulative = 0;
-            const dailyIn = []; const dailyOut = [];
+            const dailyInReal = []; const dailyInPend = [];
+            const dailyOutReal = []; const dailyOutPend = [];
             const labelsBar = [];
             for(let d = 1; d <= 31; d++) {
                 const dayStr = `${filter}-${d.toString().padStart(2, '0')}`;
-                const dEntries = entries.filter(e => e.date === dayStr && e.status === 'REALIZADO');
-                const dInc = dEntries.filter(e => e.type === 'ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExp = dEntries.filter(e => e.type === 'SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dEntries = entries.filter(e => e.date === dayStr);
+                const dInc = dEntries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dExp = dEntries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dIncPend = dEntries.filter(e => e.type === 'ENTRADA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dExpPend = dEntries.filter(e => e.type === 'SAÍDA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const dBal = dInc - dExp;
                 cumulative += dBal;
                 if (d <= daysInMonth) {
-                    dailyIn.push(dInc); 
-                    dailyOut.push(dExp);
+                    dailyInReal.push(dInc);
+                    dailyInPend.push(dIncPend);
+                    dailyOutReal.push(dExp);
+                    dailyOutPend.push(dExpPend);
                     labelsBar.push(`Dia ${d}`);
                     html += `<tr class="text-[11px] font-bold">
                         <td class="px-8 py-4 text-slate-400">${d}</td>
-                        <td class="px-8 py-4 text-blue-600">${formatBRL(dInc)}</td>
-                        <td class="px-8 py-4 text-orange-600">${formatBRL(dExp)}</td>
-                        <td class="px-8 py-4 text-right ${dBal>=0?'text-blue-500':'text-orange-500'} font-black">${formatBRL(dBal)}</td>
+                        <td class="px-8 py-4 flow-income-text">${formatBRL(dInc)}</td>
+                        <td class="px-8 py-4 flow-expense-text">${formatBRL(dExp)}</td>
+                        <td class="px-8 py-4 text-right ${dBal>=0?'flow-balance-text':'flow-expense-text'} font-black">${formatBRL(dBal)}</td>
                         <td class="px-8 py-4 text-right text-slate-900 font-black">${formatBRL(cumulative)}</td>
                     </tr>`;
                 }
             }
             document.getElementById('monthly-daily-table').innerHTML = html;
-            renderChartsGrouped(entries, dailyIn, dailyOut, labelsBar);
-            dadosMensaisAnalise = entries.slice();
-            renderAnaliseHierarquicaMensal();
+            renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar);
         }
 
-        function agruparPor(dados, campo) {
-            return dados.reduce((acc, item) => {
-                acc[item[campo]] = (acc[item[campo]] || 0) + item.valor;
-                return acc;
-            }, {});
-        }
-
-        function ensureAnaliseHierarquicaMensalSection() {
-            const monthlyTab = document.getElementById('monthly');
-            if(!monthlyTab) return null;
-            let section = document.getElementById('analise-hierarquica-mensal');
-            if(!section) {
-                section = document.createElement('section');
-                section.id = 'analise-hierarquica-mensal';
-            }
-            const summaryGrid = monthlyTab.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
-            if(summaryGrid) summaryGrid.insertAdjacentElement('afterend', section);
-            else monthlyTab.appendChild(section);
-            return section;
-        }
-
-        function escapeHtml(str) {
-            return (str || '').toString().replace(/[&<>"']/g, ch => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-            }[ch]));
-        }
-
-        function formatDateBR(dateStr) {
-            if(!dateStr) return '-';
-            const parts = dateStr.split('-');
-            if(parts.length !== 3) return dateStr;
-            return `${parts[2]}/${parts[1]}/${parts[0]}`;
-        }
-
-        function getTipoDoItem(item) {
-            return item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
-        }
-
-        function getBarColorByTipo(tipo) {
-            if(tipo === 'entrada') return '#1F7A5C';
-            if(tipo === 'saida') return '#B23A3A';
-            return '#2F4F9D';
-        }
-
-        function getDadosAnaliseTransformados() {
-            return dadosMensaisAnalise.map(e => {
-                const dst = state.destinations.find(d => d.id === e.destinationId);
-                const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-                const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                return {
-                    tipo: e.type === 'ENTRADA' ? 'entrada' : 'saida',
-                    categoria: (cat && cat.name) || 'Sem categoria',
-                    subcategoria: (sub && sub.name) || 'Sem subcategoria',
-                    destino: (dst && dst.name) || 'Sem destino',
-                    valor: Number(e.amount) || 0,
-                    data: e.date || '',
-                    descricao: e.description || ''
-                };
-            });
-        }
-
-        function getDadosFiltradosAnalise(dados) {
-            return dados.filter(item => {
-                const fluxoOk = fluxoSelecionadoMensal === 'TODOS' ||
-                    (fluxoSelecionadoMensal === 'ENTRADAS' && item.tipo === 'entrada') ||
-                    (fluxoSelecionadoMensal === 'SAIDAS' && item.tipo === 'saida');
-                const categoriaOk = !categoriaFiltroMensal || item.categoria === categoriaFiltroMensal;
-                return fluxoOk && categoriaOk;
-            });
-        }
-
-        function renderAnaliseHierarquicaMensal() {
-            const section = ensureAnaliseHierarquicaMensalSection();
-            if(!section) return;
-
-            const dadosBase = getDadosAnaliseTransformados();
-            const categoriasDisponiveis = [...new Set(dadosBase.map(d => d.categoria))].sort((a,b) => a.localeCompare(b));
-            const dadosFiltrados = getDadosFiltradosAnalise(dadosBase);
-
-            section.innerHTML = `
-                <div class="mh-card">
-                    <div class="mh-title">Análise Hierárquica Mensal</div>
-                    <div class="mh-sub">Navegação por Categoria, Subcategoria, Destino e lançamentos.</div>
-
-                    <div class="mh-filters">
-                        <div>
-                            <label class="label-mini">Mês</label>
-                            <input type="text" value="${escapeHtml(document.getElementById('monthly-filter')?.value || '')}" disabled>
-                        </div>
-                        <div>
-                            <label class="label-mini">Fluxo</label>
-                            <select id="mh-fluxo">
-                                <option value="TODOS">Todos</option>
-                                <option value="ENTRADAS">Entradas</option>
-                                <option value="SAIDAS">Saídas</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="label-mini">Categoria (Opcional)</label>
-                            <select id="mh-categoria-filtro">
-                                <option value="">Todas</option>
-                                ${categoriasDisponiveis.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="mh-breadcrumb" class="mh-breadcrumb"></div>
-                    <div id="mh-content"></div>
-                </div>
-            `;
-
-            const fluxoEl = section.querySelector('#mh-fluxo');
-            const catFiltroEl = section.querySelector('#mh-categoria-filtro');
-            if(fluxoEl) fluxoEl.value = fluxoSelecionadoMensal;
-            if(catFiltroEl) catFiltroEl.value = categoriaFiltroMensal;
-
-            fluxoEl?.addEventListener('change', (e) => {
-                fluxoSelecionadoMensal = e.target.value;
-                nivelAtual = 'categoria';
-                categoriaSelecionada = '';
-                subcategoriaSelecionada = '';
-                destinoSelecionado = '';
-                renderAnaliseHierarquicaMensal();
-            });
-
-            catFiltroEl?.addEventListener('change', (e) => {
-                categoriaFiltroMensal = e.target.value;
-                nivelAtual = 'categoria';
-                categoriaSelecionada = '';
-                subcategoriaSelecionada = '';
-                destinoSelecionado = '';
-                renderAnaliseHierarquicaMensal();
-            });
-
-            renderBreadcrumb(dadosFiltrados);
-            renderNivelAtual(dadosFiltrados);
-        }
-
-        function renderBreadcrumb() {
-            const el = document.getElementById('mh-breadcrumb');
-            if(!el) return;
-            const crumbs = [
-                { label: 'Relatório Mensal', nivel: 'categoria' }
-            ];
-            if(categoriaSelecionada) crumbs.push({ label: categoriaSelecionada, nivel: 'subcategoria' });
-            if(subcategoriaSelecionada) crumbs.push({ label: subcategoriaSelecionada, nivel: 'destino' });
-            if(destinoSelecionado) crumbs.push({ label: destinoSelecionado, nivel: 'lancamentos' });
-
-            el.innerHTML = crumbs.map((c, idx) => {
-                const isLast = idx === crumbs.length - 1;
-                return `
-                    ${isLast ? `<span>${escapeHtml(c.label)}</span>` : `<button class="mh-crumb-btn" onclick="navigateHierarchyTo('${c.nivel}')">${escapeHtml(c.label)}</button>`}
-                    ${isLast ? '' : '<span>&gt;</span>'}
-                `;
-            }).join('');
-        }
-
-        window.navigateHierarchyTo = function(nivel) {
-            if(nivel === 'categoria') {
-                nivelAtual = 'categoria';
-                categoriaSelecionada = '';
-                subcategoriaSelecionada = '';
-                destinoSelecionado = '';
-            } else if(nivel === 'subcategoria') {
-                nivelAtual = 'subcategoria';
-                subcategoriaSelecionada = '';
-                destinoSelecionado = '';
-            } else if(nivel === 'destino') {
-                nivelAtual = 'destino';
-                destinoSelecionado = '';
-            } else {
-                nivelAtual = 'lancamentos';
-            }
-            renderAnaliseHierarquicaMensal();
-        };
-
-        function renderNivelAtual(dados) {
-            if(nivelAtual === 'categoria') return renderCategorias(dados);
-            if(nivelAtual === 'subcategoria') return renderSubcategorias(dados);
-            if(nivelAtual === 'destino') return renderDestinos(dados);
-            return renderLancamentos(dados);
-        }
-
-        function renderCategorias(dados) {
-            const content = document.getElementById('mh-content');
-            if(!content) return;
-            if(!dados.length) {
-                content.innerHTML = '<div class="mh-empty">Sem dados para os filtros selecionados.</div>';
-                return;
-            }
-            const progressColor = getBarColorByTipo(
-                fluxoSelecionadoMensal === 'ENTRADAS' ? 'entrada' :
-                (fluxoSelecionadoMensal === 'SAIDAS' ? 'saida' : 'misto')
-            );
-
-            const totalMes = dados.reduce((acc, i) => acc + i.valor, 0) || 1;
-            const agrupado = agruparPor(dados, 'categoria');
-            const itens = Object.keys(agrupado).map(nome => {
-                const valor = agrupado[nome];
-                const percent = (valor / totalMes) * 100;
-                return { nome, valor, percent };
-            }).sort((a,b) => b.valor - a.valor);
-
-            content.innerHTML = `<div class="mh-grid">
-                ${itens.map(item => `
-                    <button class="mh-item mh-drill" data-level="categoria" data-name="${encodeURIComponent(item.nome)}">
-                        <div class="mh-row">
-                            <div class="mh-name">${escapeHtml(item.nome)}</div>
-                            <div class="mh-value">${formatBRL(item.valor)}</div>
-                        </div>
-                        <div class="mh-meta">
-                            <span>Participação no mês</span>
-                            <span>${item.percent.toFixed(1)}%</span>
-                        </div>
-                        <div class="mh-progress"><div class="mh-progress-bar" style="width:${Math.min(100, item.percent).toFixed(1)}%;background:${progressColor};"></div></div>
-                    </button>
-                `).join('')}
-            </div>`;
-            content.querySelectorAll('.mh-drill').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    selectCategoriaHierarchy(decodeURIComponent(btn.dataset.name || ''));
-                });
-            });
-        }
-
-        function renderSubcategorias(dados) {
-            const content = document.getElementById('mh-content');
-            if(!content) return;
-            const filtrados = dados.filter(d => d.categoria === categoriaSelecionada);
-            if(!filtrados.length) {
-                content.innerHTML = '<div class="mh-empty">Sem subcategorias para esta categoria.</div>';
-                return;
-            }
-            const progressColor = getBarColorByTipo(
-                fluxoSelecionadoMensal === 'ENTRADAS' ? 'entrada' :
-                (fluxoSelecionadoMensal === 'SAIDAS' ? 'saida' : 'misto')
-            );
-            const total = filtrados.reduce((acc, i) => acc + i.valor, 0) || 1;
-            const agrupado = agruparPor(filtrados, 'subcategoria');
-            const itens = Object.keys(agrupado).map(nome => {
-                const valor = agrupado[nome];
-                const percent = (valor / total) * 100;
-                return { nome, valor, percent };
-            }).sort((a,b) => b.valor - a.valor);
-
-            content.innerHTML = `<div class="mh-grid">
-                ${itens.map(item => `
-                    <button class="mh-item mh-drill" data-level="subcategoria" data-name="${encodeURIComponent(item.nome)}">
-                        <div class="mh-row">
-                            <div class="mh-name">${escapeHtml(item.nome)}</div>
-                            <div class="mh-value">${formatBRL(item.valor)}</div>
-                        </div>
-                        <div class="mh-meta">
-                            <span>Participação na categoria</span>
-                            <span>${item.percent.toFixed(1)}%</span>
-                        </div>
-                        <div class="mh-progress"><div class="mh-progress-bar" style="width:${Math.min(100, item.percent).toFixed(1)}%;background:${progressColor};"></div></div>
-                    </button>
-                `).join('')}
-            </div>`;
-            content.querySelectorAll('.mh-drill').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    selectSubcategoriaHierarchy(decodeURIComponent(btn.dataset.name || ''));
-                });
-            });
-        }
-
-        function renderDestinos(dados) {
-            const content = document.getElementById('mh-content');
-            if(!content) return;
-            const filtrados = dados.filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada);
-            if(!filtrados.length) {
-                content.innerHTML = '<div class="mh-empty">Sem destinos para esta subcategoria.</div>';
-                return;
-            }
-            const progressColor = getBarColorByTipo(
-                fluxoSelecionadoMensal === 'ENTRADAS' ? 'entrada' :
-                (fluxoSelecionadoMensal === 'SAIDAS' ? 'saida' : 'misto')
-            );
-            const total = filtrados.reduce((acc, i) => acc + i.valor, 0) || 1;
-            const agrupado = agruparPor(filtrados, 'destino');
-            const itens = Object.keys(agrupado).map(nome => {
-                const valor = agrupado[nome];
-                const percent = (valor / total) * 100;
-                return { nome, valor, percent };
-            }).sort((a,b) => b.valor - a.valor);
-
-            content.innerHTML = `<div class="mh-grid">
-                ${itens.map(item => `
-                    <button class="mh-item mh-drill" data-level="destino" data-name="${encodeURIComponent(item.nome)}">
-                        <div class="mh-row">
-                            <div class="mh-name">${escapeHtml(item.nome)}</div>
-                            <div class="mh-value">${formatBRL(item.valor)}</div>
-                        </div>
-                        <div class="mh-meta">
-                            <span>Participação na subcategoria</span>
-                            <span>${item.percent.toFixed(1)}%</span>
-                        </div>
-                        <div class="mh-progress"><div class="mh-progress-bar" style="width:${Math.min(100, item.percent).toFixed(1)}%;background:${progressColor};"></div></div>
-                    </button>
-                `).join('')}
-            </div>`;
-            content.querySelectorAll('.mh-drill').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    selectDestinoHierarchy(decodeURIComponent(btn.dataset.name || ''));
-                });
-            });
-        }
-
-        function renderLancamentos(dados) {
-            const content = document.getElementById('mh-content');
-            if(!content) return;
-            const filtrados = dados
-                .filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada && d.destino === destinoSelecionado)
-                .sort((a,b) => b.valor - a.valor);
-            if(!filtrados.length) {
-                content.innerHTML = '<div class="mh-empty">Sem lançamentos para este destino.</div>';
-                return;
-            }
-
-            content.innerHTML = `<div class="mh-list">
-                ${filtrados.map(item => `
-                    <div class="mh-entry">
-                        <div class="mh-entry-top">
-                            <span class="${item.tipo === 'entrada' ? 'mh-tag-in' : 'mh-tag-out'}">${getTipoDoItem(item)}</span>
-                            <strong>${formatBRL(item.valor)}</strong>
-                        </div>
-                        <div class="mh-meta" style="margin-top:8px;">
-                            <span>${escapeHtml(item.descricao || '-')}</span>
-                            <span>${formatDateBR(item.data)}</span>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>`;
-        }
-
-        window.selectCategoriaHierarchy = function(nome) {
-            categoriaSelecionada = nome;
-            subcategoriaSelecionada = '';
-            destinoSelecionado = '';
-            nivelAtual = 'subcategoria';
-            renderAnaliseHierarquicaMensal();
-        };
-
-        window.selectSubcategoriaHierarchy = function(nome) {
-            subcategoriaSelecionada = nome;
-            destinoSelecionado = '';
-            nivelAtual = 'destino';
-            renderAnaliseHierarquicaMensal();
-        };
-
-        window.selectDestinoHierarchy = function(nome) {
-            destinoSelecionado = nome;
-            nivelAtual = 'lancamentos';
-            renderAnaliseHierarquicaMensal();
-        };
-
-        function renderChartsGrouped(entries, dailyIn, dailyOut, labelsBar) {
-            const isMobile = window.innerWidth < 768;
+        function renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar) {
             const expByCat = {};
             entries.filter(e => e.type==='SAÍDA' && e.status==='REALIZADO').forEach(e => {
                 const c = state.categories.find(x=>x.id===e.categoryId)?.name || 'Outros';
@@ -1448,16 +920,11 @@
                         labels: Object.keys(incByCat), 
                         datasets: [{ 
                             data: Object.values(incByCat), 
-                            backgroundColor: ['#2563eb','#3b82f6','#60a5fa','#93c5fd','#bfdbfe','#eff6ff'], 
+                            backgroundColor: ['#1F7A5C','#2E8B6C','#4BA786','#73C2A4','#A5DAC5','#DFF1E9'], 
                             borderWidth: 0 
                         }] 
                     }, 
-                    options: {
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: isMobile ? 10 : 11 } } }
-                        }
-                    } 
+                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } 
                 });
             }
 
@@ -1470,54 +937,56 @@
                         labels: Object.keys(expByCat), 
                         datasets: [{ 
                             data: Object.values(expByCat), 
-                            backgroundColor: ['#f97316','#fb923c','#fdba74','#fed7aa','#ffedd5','#fff7ed'], 
+                            backgroundColor: ['#B23A3A','#C55252','#D97575','#E59A9A','#F2C6C6','#F9E7E7'], 
                             borderWidth: 0 
                         }] 
                     }, 
-                    options: {
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: isMobile ? 10 : 11 } } }
-                        }
-                    } 
+                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } 
                 });
             }
 
             const barCtxEl = document.getElementById('monthChartBar');
             if(barCtxEl) {
                 if(window.mBar) window.mBar.destroy();
+                const monthMax = Math.max(...dailyInReal, ...dailyInPend, ...dailyOutReal, ...dailyOutPend, 0);
+                const monthAxisMax = monthMax > 0 ? Math.ceil(monthMax * 1.15) : 100;
+                const monthStep = Math.max(1, Math.ceil(monthAxisMax / 5));
                 window.mBar = new Chart(barCtxEl.getContext('2d'), { 
                     type: 'bar', 
                     data: { 
                         labels: labelsBar, 
                         datasets: [
-                            { label: 'Entradas', data: dailyIn, backgroundColor: '#2563eb', borderRadius: 6 }, 
-                            { label: 'Saídas', data: dailyOut, backgroundColor: '#f97316', borderRadius: 6 }
+                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 6 },
+                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#73C2A4', borderRadius: 6 },
+                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 6 },
+                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#E59A9A', borderRadius: 6 }
                         ] 
                     }, 
                     options: { 
                         indexAxis: 'y', 
                         maintainAspectRatio: false, 
-                        barPercentage: 0.7,
-                        categoryPercentage: 0.8,
+                        barPercentage: 0.62,
+                        categoryPercentage: 0.9,
                         scales: { 
                             x: {
+                                min: 0,
+                                max: monthAxisMax,
                                 grid: { borderDash: [4,4] },
-                                ticks: { font: { size: isMobile ? 10 : 11 } }
-                            },
-                            y: {
-                                grid: { display: false },
-                                ticks: { font: { size: isMobile ? 10 : 11 } }
-                            } 
+                                ticks: {
+                                    stepSize: monthStep,
+                                    maxTicksLimit: 6,
+                                    callback: (value) => formatChartBRL(value)
+                                }
+                            }, 
+                            y: { grid: { display: false } } 
                         }, 
-                        plugins: { legend: { position: isMobile ? 'bottom' : 'top' } } 
+                        plugins: { legend: { position: 'top' } } 
                     } 
                 });
             }
         }
 
         function renderAnnual() {
-            const isMobile = window.innerWidth < 768;
             const year = new Date().getFullYear();
             const data = [];
             for(let m=0; m<12; m++) {
@@ -1530,30 +999,44 @@
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             document.getElementById('annual-table-body').innerHTML = data.map((d,i) => `<tr class="table-row">
                 <td class="px-12 py-5 uppercase text-slate-600 font-bold">${monthNames[i]}</td>
-                <td class="px-12 py-5 text-right text-blue-600 font-bold">${formatBRL(d.inc)}</td>
-                <td class="px-12 py-5 text-right text-orange-600 font-bold">${formatBRL(d.exp)}</td>
-                <td class="px-12 py-5 text-right font-black ${d.bal>=0?'text-blue-600':'text-orange-600'}">${formatBRL(d.bal)}</td>
+                <td class="px-12 py-5 text-right flow-income-text font-bold">${formatBRL(d.inc)}</td>
+                <td class="px-12 py-5 text-right flow-expense-text font-bold">${formatBRL(d.exp)}</td>
+                <td class="px-12 py-5 text-right font-black ${d.bal>=0?'flow-balance-text':'flow-expense-text'}">${formatBRL(d.bal)}</td>
             </tr>`).join('');
             
             const ctxEl = document.getElementById('chartAnnual');
             if(ctxEl) {
                 if(window.aChart) window.aChart.destroy();
+                const annualInc = data.map(x => x.inc);
+                const annualExp = data.map(x => x.exp);
+                const annualMax = Math.max(...annualInc, ...annualExp, 0);
+                const annualAxisMax = annualMax > 0 ? Math.ceil(annualMax * 1.15) : 100;
+                const annualStep = Math.max(1, Math.ceil(annualAxisMax / 5));
                 window.aChart = new Chart(ctxEl.getContext('2d'), { 
                     type: 'bar', 
                     data: { 
                         labels: monthNames, 
                         datasets: [
-                            { label: 'Entradas', data: data.map(x=>x.inc), backgroundColor: '#2563eb', borderRadius: 8 }, 
-                            { label: 'Saídas', data: data.map(x=>x.exp), backgroundColor: '#f97316', borderRadius: 8 }
+                            { label: 'Entradas', data: data.map(x=>x.inc), backgroundColor: '#1F7A5C', borderRadius: 8 }, 
+                            { label: 'Saídas', data: data.map(x=>x.exp), backgroundColor: '#B23A3A', borderRadius: 8 }
                         ] 
                     }, 
                     options: {
                         maintainAspectRatio: false, 
                         scales: { 
-                            x: { grid: { display: false }, ticks: { font: { size: isMobile ? 10 : 11 } } }, 
-                            y: { grid: { borderDash: [5,5] }, ticks: { font: { size: isMobile ? 10 : 11 } } } 
+                            x: { grid: { display: false } }, 
+                            y: {
+                                min: 0,
+                                max: annualAxisMax,
+                                grid: { borderDash: [5,5] },
+                                ticks: {
+                                    stepSize: annualStep,
+                                    maxTicksLimit: 6,
+                                    callback: (value) => formatChartBRL(value)
+                                }
+                            } 
                         },
-                        plugins: { legend: { position: isMobile ? 'bottom' : 'top' } }
+                        plugins: { legend: { position: 'top' } }
                     } 
                 });
             }
@@ -1682,7 +1165,7 @@
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </td>
-                        <td class="px-8 py-4 text-right font-black ${e.type==='ENTRADA'?'text-blue-600':'text-orange-600'}">${formatBRL(e.amount)}</td>
+                        <td class="px-8 py-4 text-right font-black ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
                     </tr>`;
                 }).join('');
                 lucide.createIcons();
@@ -1732,7 +1215,7 @@
             list.innerHTML = state.categories.map(c => `
                 <div class="card-premium p-6 group">
                     <div class="flex justify-between items-center mb-6">
-                        <span class="badge ${c.type==='ENTRADA'?'bg-blue-100 text-blue-700':'bg-orange-100 text-orange-700'}">${c.type}</span>
+                        <span class="badge ${c.type==='ENTRADA'?'badge-income':'badge-expense'}">${c.type}</span>
                         <button onclick="deleteDb('CATEGORY', '${c.id}')" class="text-slate-300 hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                     <h5 class="font-black text-slate-900 uppercase text-xs mb-4">${c.name}</h5>
