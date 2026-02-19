@@ -439,6 +439,108 @@
             font-weight: 600;
             text-transform: uppercase;
         }
+
+        /* Mobile visibility/navigation + table/chart formatting */
+        @media (max-width: 1023px) {
+            body {
+                overflow: auto;
+                padding-bottom: 82px;
+            }
+            #sidebar {
+                display: flex !important;
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                top: auto;
+                width: 100% !important;
+                height: 72px;
+                z-index: 80;
+                border-right: none !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                background: #111827 !important;
+            }
+            #sidebar .sidebar-toggle,
+            #sidebar .p-8 {
+                display: none !important;
+            }
+            #sidebar nav {
+                width: 100%;
+                padding: 8px 10px !important;
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(0, 1fr));
+                gap: 8px !important;
+            }
+            #sidebar .sidebar-btn {
+                display: flex !important;
+                flex-direction: column;
+                gap: 4px;
+                justify-content: center;
+                align-items: center;
+                padding: 8px 4px !important;
+                border-radius: 10px !important;
+                min-height: 54px;
+            }
+            #sidebar .sidebar-btn .nav-text {
+                display: block !important;
+                font-size: 10px !important;
+                line-height: 1.1;
+                text-align: center;
+                white-space: nowrap;
+            }
+            #sidebar .sidebar-btn i {
+                width: 16px !important;
+                height: 16px !important;
+                margin-right: 0 !important;
+            }
+            main {
+                width: 100%;
+            }
+            header {
+                height: auto !important;
+                min-height: 88px;
+                padding: 14px 16px !important;
+            }
+            #tab-title {
+                font-size: 22px !important;
+                line-height: 1.2;
+            }
+            #global-balance {
+                font-size: 12px !important;
+            }
+            .card-premium:not(.overflow-hidden) {
+                padding: 16px !important;
+            }
+            .card-premium.overflow-hidden {
+                overflow-x: auto !important;
+            }
+            .card-premium.overflow-hidden table {
+                min-width: 700px;
+            }
+            .h-\[400px\] { height: 300px !important; }
+            .h-\[450px\] { height: 320px !important; }
+            .h-\[600px\] { height: 360px !important; }
+        }
+
+        @media (max-width: 767px) {
+            .px-12 { padding-left: 16px !important; padding-right: 16px !important; }
+            .px-8 { padding-left: 12px !important; padding-right: 12px !important; }
+            .py-6 { padding-top: 10px !important; padding-bottom: 10px !important; }
+            .py-5, .py-4 { padding-top: 8px !important; padding-bottom: 8px !important; }
+            table thead {
+                font-size: 10px !important;
+            }
+            table tbody {
+                font-size: 12px !important;
+            }
+            #monthly .grid.gap-8,
+            #monthly .grid.gap-6 {
+                gap: 14px !important;
+            }
+            #monthly .w-full.lg\:w-64 {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -1325,6 +1427,7 @@
         };
 
         function renderChartsGrouped(entries, dailyIn, dailyOut, labelsBar) {
+            const isMobile = window.innerWidth < 768;
             const expByCat = {};
             entries.filter(e => e.type==='SAÍDA' && e.status==='REALIZADO').forEach(e => {
                 const c = state.categories.find(x=>x.id===e.categoryId)?.name || 'Outros';
@@ -1349,7 +1452,12 @@
                             borderWidth: 0 
                         }] 
                     }, 
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } 
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: isMobile ? 10 : 11 } } }
+                        }
+                    } 
                 });
             }
 
@@ -1366,7 +1474,12 @@
                             borderWidth: 0 
                         }] 
                     }, 
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } 
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, font: { size: isMobile ? 10 : 11 } } }
+                        }
+                    } 
                 });
             }
 
@@ -1388,16 +1501,23 @@
                         barPercentage: 0.7,
                         categoryPercentage: 0.8,
                         scales: { 
-                            x: { grid: { borderDash: [4,4] } }, 
-                            y: { grid: { display: false } } 
+                            x: {
+                                grid: { borderDash: [4,4] },
+                                ticks: { font: { size: isMobile ? 10 : 11 } }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: { font: { size: isMobile ? 10 : 11 } }
+                            } 
                         }, 
-                        plugins: { legend: { position: 'top' } } 
+                        plugins: { legend: { position: isMobile ? 'bottom' : 'top' } } 
                     } 
                 });
             }
         }
 
         function renderAnnual() {
+            const isMobile = window.innerWidth < 768;
             const year = new Date().getFullYear();
             const data = [];
             for(let m=0; m<12; m++) {
@@ -1430,10 +1550,10 @@
                     options: {
                         maintainAspectRatio: false, 
                         scales: { 
-                            x: { grid: { display: false } }, 
-                            y: { grid: { borderDash: [5,5] } } 
+                            x: { grid: { display: false }, ticks: { font: { size: isMobile ? 10 : 11 } } }, 
+                            y: { grid: { borderDash: [5,5] }, ticks: { font: { size: isMobile ? 10 : 11 } } } 
                         },
-                        plugins: { legend: { position: 'top' } }
+                        plugins: { legend: { position: isMobile ? 'bottom' : 'top' } }
                     } 
                 });
             }
@@ -1757,8 +1877,5 @@
     </script>
 </body>
 </html>
-
-
-
 
 
