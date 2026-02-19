@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DelÃƒÂ­cias da VovÃƒÂ³ | GestÃƒÂ£o Financeira Premium</title>
+    <title>Delícias da Vovó | Gestão Financeira Premium</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,37 +12,56 @@
 
     <style>
         :root {
-            --primary: #f97316;
-            --primary-hover: #ea580c;
-            --bg: #f8fafc;
-            --text-main: #1e293b;
-            --positive: #2563eb; 
-            --negative: #f97316; 
-            --success: #16a34a;  
-            --danger: #dc2626;   
-            --dark-gray: #334155; 
+            --primary-green: #1F7A5C;
+            --primary-blue: #2F4F9D;
+            --soft-red: #B23A3A;
+
+            --bg-green-soft: #E8F3EF;
+            --bg-blue-soft: #E9EDFA;
+            --bg-red-soft: #F8EAEA;
+
+            --bg-main: #F8F9FB;
+            --bg-card: #FFFFFF;
+            --border: #E6E8EC;
+            --divider: #ECEFF3;
+
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --text-muted: #9CA3AF;
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main); 
-            overflow: hidden; 
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            overflow: hidden;
             -webkit-font-smoothing: antialiased;
         }
-        
-        #sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+
+        main { background: var(--bg-main) !important; }
+
+        #sidebar {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: #111827 !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
         #sidebar.collapsed { width: 88px; }
         #sidebar.collapsed .nav-text, #sidebar.collapsed .sidebar-header-text { display: none; }
         #sidebar.collapsed .sidebar-btn { padding-left: 0; justify-content: center; }
         #sidebar.collapsed .sidebar-btn i { margin-right: 0; }
-        
+        #sidebar .sidebar-header-text h1 { color: #E5E7EB !important; }
+        #sidebar .sidebar-header-text p { color: #9CA3AF !important; }
+        #sidebar nav.space-y-2 > * + * { margin-top: 16px !important; }
+
         .sidebar-toggle {
             position: absolute;
             right: -14px;
             top: 44px;
-            background: white;
-            border: 1px solid #e2e8f0;
+            background: #FFFFFF;
+            border: 1px solid var(--border);
             border-radius: 50%;
             width: 28px;
             height: 28px;
@@ -52,101 +70,149 @@
             justify-content: center;
             cursor: pointer;
             z-index: 50;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
         }
 
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        
-        .card-premium { 
-            background: white; 
-            border-radius: 28px; 
-            border: 1px solid #f1f5f9; 
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04); 
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+
+        .card-premium {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--divider);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            transition: all 0.2s ease;
         }
+        .card-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.06);
+        }
+        .card-premium:not(.overflow-hidden) { padding: 28px !important; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
+        .tab-content.space-y-6 > * + *,
+        .tab-content.space-y-8 > * + *,
+        .tab-content.space-y-12 > * + * { margin-top: 40px !important; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .sidebar-btn { transition: all 0.2s ease; position: relative; }
-        .sidebar-btn.active { 
-            background: var(--primary); 
-            color: white; 
-            font-weight: 800; 
-            box-shadow: 0 12px 24px -8px rgba(249, 115, 22, 0.4); 
+        .sidebar-btn {
+            transition: all 0.2s ease;
+            position: relative;
+            color: #E5E7EB !important;
+            font-size: 14px !important;
+            border-radius: 8px !important;
+        }
+        .sidebar-btn:hover {
+            background: rgba(255,255,255,0.05) !important;
+            color: #FFFFFF !important;
+        }
+        .sidebar-btn.active {
+            background: rgba(255,255,255,0.08) !important;
+            color: #FFFFFF !important;
+            font-weight: 600 !important;
+            box-shadow: none !important;
         }
 
-        input, select, textarea { 
-            border: 1.5px solid #e2e8f0; 
-            border-radius: 16px; 
-            padding: 10px 16px; 
-            outline: none; 
-            transition: all 0.2s ease; 
-            font-size: 13px; 
-            background: #ffffff; 
-            width: 100%; 
+        #tab-title {
+            font-size: 30px !important;
+            font-weight: 600 !important;
+            color: var(--text-primary) !important;
+            letter-spacing: -0.01em;
+        }
+        .tab-content h4 {
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0 !important;
+        }
+
+        #sum-inc-real, #sum-exp-real, #month-bal-r {
+            font-size: 30px !important;
+            font-weight: 700 !important;
+            line-height: 1.1;
+        }
+
+        input, select, textarea {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            outline: none;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 400;
+            background: #FFFFFF;
+            width: 100%;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 600;
+            color: var(--text-primary);
         }
-
+        input, select { height: 44px; }
+        input::placeholder, textarea::placeholder { color: var(--text-muted); }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(47,79,157,0.12);
+        }
         textarea#recon-paste-area {
             font-family: 'JetBrains Mono', monospace !important;
             font-size: 13px !important;
-            letter-spacing: -0.02em;
             line-height: 1.6;
-            background: #fdfdfd;
-            color: #1e293b;
-            padding: 24px;
-            border: 2px solid #f1f5f9;
+            background: #FFFFFF;
+            color: var(--text-primary);
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
         }
-        
+
         .label-mini {
             display: block;
             text-transform: uppercase;
             font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.1em;
-            color: #94a3b8;
-            margin-bottom: 6px;
-            margin-left: 4px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-left: 2px;
         }
 
-        .table-row { cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f8fafc; }
-        .table-row:hover { background-color: #f8fafc; }
-        
-        .badge { 
-            padding: 4px 10px; 
-            border-radius: 8px; 
-            font-size: 10px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
+        .table-row {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--divider);
+        }
+        .table-row:hover { background-color: #FBFCFD; }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         .status-toggle {
             display: flex;
-            background: #f1f5f9;
+            background: #F3F4F6;
             padding: 4px;
-            border-radius: 14px;
+            border-radius: 10px;
             gap: 4px;
         }
         .status-toggle button {
             flex: 1;
             padding: 10px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 800;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
+            transition: all 0.2s ease;
         }
         .status-toggle button.active {
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            color: var(--primary);
+            background: #FFFFFF;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            color: var(--primary-blue);
         }
 
         .sync-indicator {
@@ -154,21 +220,29 @@
             align-items: center;
             gap: 6px;
             padding: 4px 12px;
-            background: #f8fafc;
-            border-radius: 100px;
+            background: #FFFFFF;
+            border-radius: 999px;
             font-size: 10px;
-            font-weight: 800;
+            font-weight: 600;
             text-transform: uppercase;
-            color: #94a3b8;
-            border: 1px solid #e2e8f0;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
         }
-        .sync-indicator.synced { color: #16a34a; border-color: #bcf0da; background: #f0fdf4; }
-        .sync-indicator.syncing { color: #2563eb; border-color: #bfdbfe; background: #eff6ff; }
-        
+        .sync-indicator.synced {
+            color: var(--primary-green);
+            border-color: #CFE5DD;
+            background: var(--bg-green-soft);
+        }
+        .sync-indicator.syncing {
+            color: var(--primary-blue);
+            border-color: #D7DEF3;
+            background: var(--bg-blue-soft);
+        }
+
         #loading-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(255,255,255,0.9);
+            background: rgba(248,249,251,0.92);
             backdrop-filter: blur(8px);
             z-index: 9999;
             display: flex;
@@ -176,6 +250,30 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Palette alignment for existing utility classes */
+        .text-slate-900 { color: var(--text-primary) !important; }
+        .text-slate-700, .text-slate-600, .text-slate-500, .text-slate-400 { color: var(--text-secondary) !important; }
+        .text-slate-300 { color: var(--text-muted) !important; }
+
+        .text-blue-800, .text-blue-700, .text-blue-600, .text-blue-500 { color: var(--primary-blue) !important; }
+        .text-green-600, .text-green-500 { color: var(--primary-green) !important; }
+        .text-red-600, .text-red-500, .text-orange-600, .text-orange-500 { color: var(--soft-red) !important; }
+
+        .bg-blue-900, .bg-slate-900, .bg-orange-500 { background-color: var(--primary-blue) !important; color: #FFFFFF !important; }
+        .hover\:bg-blue-800:hover, .hover\:bg-black:hover, .hover\:bg-orange-600:hover { background-color: #274388 !important; color: #FFFFFF !important; }
+
+        .bg-blue-50\/20, .bg-blue-50 { background-color: var(--bg-blue-soft) !important; }
+        .bg-red-50, .bg-orange-50 { background-color: var(--bg-red-soft) !important; }
+        .bg-green-50 { background-color: var(--bg-green-soft) !important; }
+
+        .border-l-4 { border-left-width: 0 !important; }
+        .border-l-green-500 { border-top: 3px solid var(--primary-green) !important; }
+        .border-l-red-500 { border-top: 3px solid var(--soft-red) !important; }
+        .border-l-blue-700 { border-top: 3px solid var(--primary-blue) !important; }
+
+        .divide-slate-50 > :not([hidden]) ~ :not([hidden]) { border-color: var(--divider) !important; }
+        .border-slate-50, .border-slate-100, .border-b { border-color: var(--divider) !important; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -193,28 +291,28 @@
         
         <div class="p-8">
             <div class="flex items-center gap-4 mb-2">
-                <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-xl shrink-0">
-                    <i data-lucide="cake" class="w-5 h-5"></i>
+                <div class="w-10 h-10 bg-[#E09132] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0">
+                    <i data-lucide="piggy-bank" class="w-5 h-5"></i>
                 </div>
                 <div class="sidebar-header-text">
-                    <h1 class="font-black text-xl tracking-tighter leading-none">DelÃƒÂ­cias</h1>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">GestÃƒÂ£o Financeira</p>
+                    <h1 class="font-black text-xl tracking-tighter leading-none">Delícias</h1>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Gestão Financeira</p>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 px-4 space-y-2">
             <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">LanÃƒÂ§amentos</span>
+                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
             </button>
             <button onclick="switchTab('monthly')" id="nav-monthly" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃƒÂ³rio Mensal</span>
+                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Mensal</span>
             </button>
             <button onclick="switchTab('annual')" id="nav-annual" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃƒÂ³rio Anual</span>
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Anual</span>
             </button>
             <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">ConciliaÃƒÂ§ÃƒÂ£o</span>
+                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
             <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
@@ -226,28 +324,28 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         <header class="h-24 bg-white border-b px-10 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-6">
-                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">LanÃƒÂ§amentos</h2>
+                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Lançamentos</h2>
                 <div id="sync-status" class="sync-indicator">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
                 </div>
             </div>
             <div class="px-8 py-3 bg-slate-900 rounded-xl text-sm font-black shadow-lg">
-                <span id="global-balance" class="text-white">Saldo: R$ 0,00</span>
+                <span id="global-balance" class="text-white">Resultado do mês: R$ 0,00</span>
             </div>
         </header>
 
         <div class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10">
             
-            <!-- LANÃƒâ€¡AMENTOS -->
+            <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content active space-y-6">
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end">
-                    <div class="flex-1 min-w-[200px]"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descriÃƒÂ§ÃƒÂ£o..." oninput="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">InÃƒÂ­cio</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
+                    <div class="flex-1 min-w-[200px]"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="renderEntries()"></div>
+                    <div class="w-32"><label class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
                     <div class="w-32"><label class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÃƒÂDA">SaÃƒÂ­das</option></select></div>
+                    <div class="w-32"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
                     <div class="w-32"><label class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
-                    <button onclick="openEntryModal()" class="bg-orange-500 text-white px-8 h-[44px] rounded-xl font-black text-sm hover:bg-orange-600 shadow-lg">
+                    <button onclick="openEntryModal()" class="bg-[#E09132] text-white px-8 h-[44px] rounded-xl font-black text-sm hover:bg-[#C57A22] shadow-lg">
                         + Novo
                     </button>
                 </div>
@@ -256,11 +354,11 @@
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                             <tr>
-                                <th onclick="setSort('date')" class="px-6 py-4 cursor-pointer hover:text-orange-500">Data</th>
+                                <th onclick="setSort('date')" class="px-6 py-4 cursor-pointer hover:text-[#E09132]">Data</th>
                                 <th class="px-6 py-4">Tipo</th>
                                 <th class="px-6 py-4">Destino / Detalhes</th>
-                                <th onclick="setSort('amount')" class="px-6 py-4 text-right cursor-pointer hover:text-orange-500">Valor</th>
-                                <th class="px-6 py-4 text-center">Status / AÃƒÂ§ÃƒÂ£o</th>
+                                <th onclick="setSort('amount')" class="px-6 py-4 text-right cursor-pointer hover:text-[#E09132]">Valor</th>
+                                <th class="px-6 py-4 text-center">Status / Ação</th>
                             </tr>
                         </thead>
                         <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
@@ -268,20 +366,20 @@
                 </div>
             </div>
 
-            <!-- RELATÃƒâ€œRIO MENSAL -->
+            <!-- RELATÓRIO MENSAL -->
             <div id="monthly" class="tab-content space-y-8">
-                <div class="w-full lg:w-64"><label class="label-mini">MÃƒÂªs de ReferÃƒÂªncia</label><input type="month" id="monthly-filter" onchange="renderMonthly()"></div>
+                <div class="w-full lg:w-64"><label class="label-mini">Mês de Referência</label><input type="month" id="monthly-filter" onchange="renderMonthly()"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="card-premium p-6 border-l-4 border-l-green-500">
-                        <p class="text-[9px] font-black text-green-600 uppercase mb-4 tracking-widest">Entradas do MÃƒÂªs</p>
+                        <p class="text-[9px] font-black text-green-600 uppercase mb-4 tracking-widest">Entradas do Mês</p>
                         <div class="space-y-4">
                             <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-inc-real" class="text-xl font-black text-green-600">R$ 0,00</p></div>
                             <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-inc-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
                         </div>
                     </div>
                     <div class="card-premium p-6 border-l-4 border-l-red-500">
-                        <p class="text-[9px] font-black text-red-600 uppercase mb-4 tracking-widest">SaÃƒÂ­das do MÃƒÂªs</p>
+                        <p class="text-[9px] font-black text-red-600 uppercase mb-4 tracking-widest">Saídas do Mês</p>
                         <div class="space-y-4">
                             <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-exp-real" class="text-xl font-black text-red-600">R$ 0,00</p></div>
                             <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-exp-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
@@ -300,44 +398,44 @@
                         <div class="h-full"><canvas id="monthChartPieInc"></canvas></div>
                     </div>
                     <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black uppercase text-orange-600 mb-6 tracking-widest">SaÃƒÂ­das Por Categoria</h4>
+                        <h4 class="text-xs font-black uppercase text-orange-600 mb-6 tracking-widest">Saídas Por Categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieExp"></canvas></div>
                     </div>
                 </div>
 
                 <div class="card-premium p-8 h-[600px]">
-                    <h4 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">Fluxo DiÃƒÂ¡rio: Entradas vs SaÃƒÂ­das</h4>
+                    <h4 class="text-xs font-black uppercase text-slate-400 mb-6 tracking-widest">Fluxo Diário: Entradas vs Saídas</h4>
                     <div class="h-full"><canvas id="monthChartBar"></canvas></div>
                 </div>
 
                 <div class="card-premium overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
-                            <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">SaÃƒÂ­das</th><th class="px-8 py-4 text-right">LÃƒÂ­quido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
+                            <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
                         </thead>
                         <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- RELATÃƒâ€œRIO ANUAL -->
+            <!-- RELATÓRIO ANUAL -->
             <div id="annual" class="tab-content space-y-12">
                 <div class="card-premium p-10 h-[450px]"><h4 class="text-xs font-black uppercase text-slate-400 mb-10 tracking-widest">Performance Anual</h4><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
                 <div class="card-premium overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
-                            <tr><th class="px-12 py-6">MÃƒÂªs</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">SaÃƒÂ­das</th><th class="px-12 py-6 text-right">Saldo LÃƒÂ­quido</th></tr>
+                            <tr><th class="px-12 py-6">Mês</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">Saídas</th><th class="px-12 py-6 text-right">Saldo Líquido</th></tr>
                         </thead>
                         <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- CONCILIAÃƒâ€¡ÃƒÆ’O -->
+            <!-- CONCILIAÇÃO -->
             <div id="reconciliation" class="tab-content space-y-8">
                 <div class="card-premium p-8 space-y-6">
                     <div class="flex flex-wrap gap-8 items-end">
-                        <div class="flex-1 min-w-[400px]"><label class="label-mini">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para anÃƒÂ¡lise inteligente..."></textarea></div>
+                        <div class="flex-1 min-w-[400px]"><label class="label-mini">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
                         <div class="w-72"><label class="label-mini">Conta de Destino</label><select id="recon-account-select"></select></div>
                         <button onclick="processPaste()" class="bg-slate-900 text-white px-10 h-[50px] rounded-xl font-black text-xs uppercase shadow-xl hover:bg-black transition-all">Analisar</button>
                     </div>
@@ -346,12 +444,12 @@
                 <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl border border-blue-100 shadow-xl">
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
-                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button onclick="finalizeRecon()" class="bg-orange-500 text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl">Importar</button></div>
+                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
                     <div class="card-premium overflow-hidden">
                         <table class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
-                                <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">DescriÃƒÂ§ÃƒÂ£o</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4">AÃƒÂ§ÃƒÂ£o</th><th class="px-8 py-4 text-right">Valor</th></tr>
+                                <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">Descrição</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4">Ação</th><th class="px-8 py-4 text-right">Valor</th></tr>
                             </thead>
                             <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
                         </table>
@@ -373,11 +471,11 @@
         </div>
     </main>
 
-    <!-- MODAL LANÃƒâ€¡AMENTO -->
+    <!-- MODAL LANÇAMENTO -->
     <div id="entry-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xl z-50 flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-slide-up">
             <div class="p-8 border-b flex justify-between bg-slate-50/50">
-                <h3 class="font-black text-slate-900 uppercase text-xs">Editor de LanÃƒÂ§amento</h3>
+                <h3 class="font-black text-slate-900 uppercase text-xs">Editor de Lançamento</h3>
                 <button onclick="closeModal('entry-modal')" class="text-slate-300 hover:text-red-500"><i data-lucide="x"></i></button>
             </div>
             <form id="entry-form" class="p-8 space-y-6">
@@ -388,7 +486,7 @@
                 </div>
                 <div><label class="label-mini">Destino</label><select id="form-dst" required></select></div>
                 <div><label class="label-mini">Conta</label><select id="form-acc" required></select></div>
-                <div><label class="label-mini">ObservaÃƒÂ§ÃƒÂ£o</label><input type="text" id="form-desc"></div>
+                <div><label class="label-mini">Observação</label><input type="text" id="form-desc"></div>
                 <div>
                     <label class="label-mini">Status</label>
                     <div class="status-toggle">
@@ -408,7 +506,7 @@
     <!-- MODAL DB -->
     <div id="db-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xl z-50 flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-sm rounded-[24px] shadow-2xl overflow-hidden">
-            <div class="p-6 border-b flex justify-between"><h3 class="font-black text-slate-900 text-xs uppercase">ConfiguraÃƒÂ§ÃƒÂ£o</h3><button onclick="closeModal('db-modal')" class="text-slate-300"><i data-lucide="x"></i></button></div>
+            <div class="p-6 border-b flex justify-between"><h3 class="font-black text-slate-900 text-xs uppercase">Configuração</h3><button onclick="closeModal('db-modal')" class="text-slate-300"><i data-lucide="x"></i></button></div>
             <form id="db-form" class="p-8 space-y-6">
                 <input type="hidden" id="db-type"><input type="hidden" id="db-parent">
                 <div><label class="label-mini">Nome</label><input type="text" id="db-name" required></div>
@@ -419,11 +517,11 @@
     </div>
 
     <script>
-        // ConfiguraÃƒÂ§ÃƒÂµes Supabase
+        // Configurações Supabase
         const SUPABASE_URL = 'https://uvmidrjjbnfsxofhthfq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_JZ56monDH_4qIB9zwkYEFQ_KyrX4xCc';
         
-        // CORREÃƒâ€¡ÃƒÆ’O: Usando a referÃƒÂªncia global correta do Supabase SDK e evitando conflito de nomes
+        // CORREÇÃO: Usando a referência global correta do Supabase SDK e evitando conflito de nomes
         let sbClient;
         try {
             sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -466,7 +564,7 @@
 
         async function initCloud() {
             if (!sbClient) {
-                console.error("Supabase client nÃƒÂ£o disponÃƒÂ­vel.");
+                console.error("Supabase client não disponível.");
                 document.getElementById('loading-overlay').style.display = 'none';
                 return;
             }
@@ -481,7 +579,7 @@
                     state[t] = data || [];
                 }
 
-                // Se nÃƒÂ£o houver dados no Supabase, tenta migrar do LocalStorage (v20)
+                // Se não houver dados no Supabase, tenta migrar do LocalStorage (v20)
                 if (state.categories.length === 0) {
                     const localData = JSON.parse(localStorage.getItem('vovo_v20'));
                     if (localData) {
@@ -491,7 +589,7 @@
                                 await sbClient.from(t).upsert(localData[t]);
                             }
                         }
-                        // Recarrega apÃƒÂ³s migraÃƒÂ§ÃƒÂ£o
+                        // Recarrega após migração
                         return initCloud();
                     }
                 }
@@ -500,7 +598,7 @@
                 document.getElementById('loading-overlay').style.display = 'none';
                 render();
             } catch (err) {
-                console.error("Erro na sincronizaÃƒÂ§ÃƒÂ£o:", err);
+                console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
                 document.getElementById('loading-overlay').style.display = 'none';
                 // Tentativa de renderizar com dados locais se falhar o cloud
@@ -537,7 +635,7 @@
         }
 
         window.deleteEntry = async function(id) {
-            if(confirm("Deseja realmente excluir este lanÃƒÂ§amento?")) {
+            if(confirm("Deseja realmente excluir este lançamento?")) {
                 await cloudDelete('entries', id);
                 state.entries = state.entries.filter(e => e.id !== id);
                 render();
@@ -572,12 +670,13 @@
         }
 
         function updateBalance() {
-            const init = state.accounts.reduce((acc, account) => acc + (Number(account.initialBalance) || 0), 0);
-            const inc = state.entries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-            const exp = state.entries.filter(e => e.type === 'SAÃƒÂDA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-            const total = init + inc - exp;
+            const monthPrefix = new Date().toISOString().slice(0, 7);
+            const monthEntries = state.entries.filter(e => e.status === 'REALIZADO' && (e.date || '').startsWith(monthPrefix));
+            const inc = monthEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const exp = monthEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const total = inc - exp;
             const el = document.getElementById('global-balance');
-            if(el) el.innerText = `Saldo: ${formatBRL(total)}`;
+            if(el) el.innerText = `Resultado do mês: ${formatBRL(total)}`;
         }
 
         function setSort(field) {
@@ -651,8 +750,8 @@
             const entries = state.entries.filter(e => e.date && e.date.startsWith(filter));
             const incR = entries.filter(e=>e.type==='ENTRADA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const incP = entries.filter(e=>e.type==='ENTRADA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expR = entries.filter(e=>e.type==='SAÃƒÂDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expP = entries.filter(e=>e.type==='SAÃƒÂDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const expR = entries.filter(e=>e.type==='SAÍDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const expP = entries.filter(e=>e.type==='SAÍDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
 
             document.getElementById('sum-inc-real').innerText = formatBRL(incR);
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
@@ -674,7 +773,7 @@
                 const dayStr = `${filter}-${d.toString().padStart(2, '0')}`;
                 const dEntries = entries.filter(e => e.date === dayStr && e.status === 'REALIZADO');
                 const dInc = dEntries.filter(e => e.type === 'ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExp = dEntries.filter(e => e.type === 'SAÃƒÂDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dExp = dEntries.filter(e => e.type === 'SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const dBal = dInc - dExp;
                 cumulative += dBal;
                 if (d <= daysInMonth) {
@@ -696,7 +795,7 @@
 
         function renderChartsGrouped(entries, dailyIn, dailyOut, labelsBar) {
             const expByCat = {};
-            entries.filter(e => e.type==='SAÃƒÂDA' && e.status==='REALIZADO').forEach(e => {
+            entries.filter(e => e.type==='SAÍDA' && e.status==='REALIZADO').forEach(e => {
                 const c = state.categories.find(x=>x.id===e.categoryId)?.name || 'Outros';
                 expByCat[c] = (expByCat[c] || 0) + Number(e.amount);
             });
@@ -749,7 +848,7 @@
                         labels: labelsBar, 
                         datasets: [
                             { label: 'Entradas', data: dailyIn, backgroundColor: '#2563eb', borderRadius: 6 }, 
-                            { label: 'SaÃƒÂ­das', data: dailyOut, backgroundColor: '#f97316', borderRadius: 6 }
+                            { label: 'Saídas', data: dailyOut, backgroundColor: '#f97316', borderRadius: 6 }
                         ] 
                     }, 
                     options: { 
@@ -774,7 +873,7 @@
                 const prefix = `${year}-${(m+1).toString().padStart(2,'0')}`;
                 const mEntries = state.entries.filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                 const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const exp = mEntries.filter(e=>e.type==='SAÃƒÂDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 data.push({m, inc, exp, bal: inc-exp});
             }
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -794,7 +893,7 @@
                         labels: monthNames, 
                         datasets: [
                             { label: 'Entradas', data: data.map(x=>x.inc), backgroundColor: '#2563eb', borderRadius: 8 }, 
-                            { label: 'SaÃƒÂ­das', data: data.map(x=>x.exp), backgroundColor: '#f97316', borderRadius: 8 }
+                            { label: 'Saídas', data: data.map(x=>x.exp), backgroundColor: '#f97316', borderRadius: 8 }
                         ] 
                     }, 
                     options: {
@@ -823,9 +922,23 @@
             return isNegative ? -Math.abs(val) : Math.abs(val);
         }
 
+        function getValidDestinations() {
+            return state.destinations.filter(d => {
+                const sub = state.subCategories.find(s => s.id === d.subCategoryId);
+                if(!sub) return false;
+                const cat = state.categories.find(c => c.id === sub.categoryId);
+                return !!cat;
+            });
+        }
+
         function processPaste() {
             const area = document.getElementById('recon-paste-area');
             if(!area) return;
+            const validDestinations = getValidDestinations();
+            if(validDestinations.length === 0) {
+                alert("Cadastre pelo menos 1 destino valido no Banco de Dados antes de analisar.");
+                return;
+            }
             const lines = area.value.split(/\r?\n/).filter(l => l.trim().length > 0);
             tempRecon = [];
             lines.forEach(l => {
@@ -866,14 +979,14 @@
                     rawDate = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
                     const val = parseValueRobust(segments[amountIdx]);
                     const desc = segments.filter((_, idx) => idx !== dateIdx && idx !== amountIdx).join(' ');
-                    const defaultDst = state.destinations[0];
+                    const defaultDst = validDestinations[0];
                     tempRecon.push({ 
                         id: generateId(), 
                         date: rawDate, 
                         amount: Math.abs(val), 
-                        type: val >= 0 ? 'ENTRADA' : 'SAÃƒÂDA', 
+                        type: val >= 0 ? 'ENTRADA' : 'SAÍDA', 
                         status: 'REALIZADO',
-                        description: desc || "TransaÃƒÂ§ÃƒÂ£o", 
+                        description: desc || "Transação", 
                         destinationId: (defaultDst || {}).id,
                     });
                 }
@@ -890,7 +1003,18 @@
             const preview = document.getElementById('recon-preview');
             const summary = document.getElementById('recon-summary-count');
             const body = document.getElementById('recon-preview-body');
+            const validDestinations = getValidDestinations();
+            const validDestinationIds = new Set(validDestinations.map(d => d.id));
             if(tempRecon.length > 0) {
+                if(validDestinations.length === 0) {
+                    if(summary) summary.innerText = 'Nenhum destino valido no Banco de Dados';
+                    if(preview) preview.classList.add('hidden');
+                    return;
+                }
+                tempRecon = tempRecon.map(item => ({
+                    ...item,
+                    destinationId: validDestinationIds.has(item.destinationId) ? item.destinationId : validDestinations[0].id
+                }));
                 if(summary) summary.innerText = `${tempRecon.length} registros extraídos`;
                 if(preview) preview.classList.remove('hidden');
                 if(body) body.innerHTML = tempRecon.map((e,i) => {
@@ -899,7 +1023,7 @@
                         <td class="px-8 py-4 text-[10px] font-black uppercase text-slate-700">${e.description}</td>
                         <td class="px-8 py-4">
                             <select onchange="tempRecon[${i}].destinationId = this.value" class="text-[10px] font-bold py-1">
-                                ${state.destinations.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
+                                ${validDestinations.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
                             </select>
                         </td>
                         <td class="px-8 py-4">
@@ -922,9 +1046,20 @@
             tempRecon.splice(index, 1);
             renderReconPreview();
         }
-        }\r\n\r\n
-                async function finalizeRecon() {
+
+        async function finalizeRecon() {
             const accId = document.getElementById('recon-account-select')?.value || '';
+            const accountExists = state.accounts.some(a => a.id === accId);
+            if(!accountExists) {
+                alert("Selecione uma conta valida cadastrada no Banco de Dados.");
+                return;
+            }
+            const validDestinationIds = new Set(getValidDestinations().map(d => d.id));
+            const hasInvalidDestination = tempRecon.some(t => !validDestinationIds.has(t.destinationId));
+            if(hasInvalidDestination) {
+                alert("Existem registros com destino sem vinculo valido no Banco de Dados.");
+                return;
+            }
             const newEntries = [];
             tempRecon.forEach(temp => {
                 const dst = state.destinations.find(d => d.id === temp.destinationId);
@@ -1022,7 +1157,7 @@
             const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
             const val = Number(document.getElementById('form-value').value);
-            if(isNaN(val)) return alert("Valor invÃƒÂ¡lido");
+            if(isNaN(val)) return alert("Valor inválido");
             const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: document.getElementById('form-acc').value, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value };
             
             await cloudSave('entries', data);
@@ -1041,7 +1176,7 @@
             document.getElementById('db-name').value = '';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini">Tipo</label><select id="db-cat-type"><option value="SAÃƒÂDA">SaÃƒÂ­da</option><option value="ENTRADA">Entrada</option></select>`;
+                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
                 else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="0">`;
                 else exEl.innerHTML = '';
             }
@@ -1091,7 +1226,5 @@
     </script>
 </body>
 </html>
-
-
 
 
