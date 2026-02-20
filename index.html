@@ -210,6 +210,15 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--text-primary);
         }
+        /* Mantem campos de calendario com a mesma fonte do layout (evita Arial). */
+        input[type="date"],
+        input[type="month"] {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+        input[type="date"]::-webkit-datetime-edit,
+        input[type="month"]::-webkit-datetime-edit {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
         input, select { height: 44px; }
         input::placeholder, textarea::placeholder { color: var(--text-muted); }
         input:focus, select:focus, textarea:focus {
@@ -263,6 +272,21 @@
         .badge-expense {
             background: var(--bg-red-soft);
             color: var(--soft-red);
+        }
+        .day-net-pill {
+            display: inline-block;
+            min-width: 120px;
+            text-align: right;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+        .day-net-positive {
+            background: var(--bg-blue-soft);
+        }
+        .day-net-negative {
+            background: #FFF3BF;
         }
 
         .status-toggle {
@@ -644,18 +668,20 @@
                     </div>
                 </div>
 
-                <div class="card-premium p-8 h-[720px] flex flex-col">
+                <div class="card-premium p-8 h-[980px] lg:h-[1320px] flex flex-col">
                     <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
                     <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
                 </div>
 
-                <div class="card-premium overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
-                            <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
-                        </thead>
-                        <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
-                    </table>
+                <div class="card-premium overflow-hidden h-[520px] lg:h-[700px] flex flex-col">
+                    <div class="flex-1 overflow-auto custom-scrollbar">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400 sticky top-0 z-10">
+                                <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
+                            </thead>
+                            <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -1323,7 +1349,9 @@
                         <td class="px-8 py-4 text-slate-400">${d}</td>
                         <td class="px-8 py-4 flow-income-text">${formatBRL(dInc)}</td>
                         <td class="px-8 py-4 flow-expense-text">${formatBRL(dExp)}</td>
-                        <td class="px-8 py-4 text-right ${dBal>=0?'flow-balance-text':'flow-expense-text'} font-black">${formatBRL(dBal)}</td>
+                        <td class="px-8 py-4 text-right font-black">
+                            <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
+                        </td>
                         <td class="px-8 py-4 text-right text-slate-900 font-black">${formatBRL(cumulative)}</td>
                     </tr>`;
                 }
@@ -1333,16 +1361,52 @@
         }
 
         function renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar) {
+            function buildCategoryChartData(baseMap, palette) {
+                const sorted = Object.entries(baseMap)
+                    .filter(([, v]) => Number(v) > 0)
+                    .sort((a, b) => b[1] - a[1]);
+
+                const TOP_LIMIT = 6;
+                const top = sorted.slice(0, TOP_LIMIT);
+                const others = sorted.slice(TOP_LIMIT).reduce((acc, [, v]) => acc + v, 0);
+                const rows = others > 0 ? [...top, ['Outros', others]] : top;
+
+                if (rows.length === 0) {
+                    return { labels: ['Sem dados'], values: [1], colors: ['#E5E7EB'], hasData: false };
+                }
+
+                const labels = rows.map(([name]) => name);
+                const values = rows.map(([, value]) => value);
+                const colors = labels.map((_, i) => palette[i % palette.length]);
+                return { labels, values, colors, hasData: true };
+            }
+
+            function getLegendLabelWithPercent(chart, item) {
+                const value = Number(chart.data.datasets[0].data[item.index] || 0);
+                const total = chart.data.datasets[0].data.reduce((acc, cur) => acc + Number(cur || 0), 0);
+                const pct = total > 0 ? (value / total) * 100 : 0;
+                return `${item.text} (${formatPercentual(pct)})`;
+            }
+
             const expByCat = {};
-            entries.filter(e => e.type==='SAÍDA' && e.status==='REALIZADO').forEach(e => {
-                const c = state.categories.find(x=>x.id===e.categoryId)?.name || 'Outros';
-                expByCat[c] = (expByCat[c] || 0) + Number(e.amount);
+            entries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').forEach(e => {
+                const c = state.categories.find(x => x.id === e.categoryId)?.name || 'Outros';
+                expByCat[c] = (expByCat[c] || 0) + Number(e.amount || 0);
             });
             const incByCat = {};
-            entries.filter(e => e.type==='ENTRADA' && e.status==='REALIZADO').forEach(e => {
-                const c = state.categories.find(x=>x.id===e.categoryId)?.name || 'Outros';
-                incByCat[c] = (incByCat[c] || 0) + Number(e.amount);
+            entries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').forEach(e => {
+                const c = state.categories.find(x => x.id === e.categoryId)?.name || 'Outros';
+                incByCat[c] = (incByCat[c] || 0) + Number(e.amount || 0);
             });
+
+            const incChartData = buildCategoryChartData(
+                incByCat,
+                ['#1F7A5C', '#2E8B6C', '#4BA786', '#73C2A4', '#9ED7BE', '#C7EBDC', '#DFF1E9']
+            );
+            const expChartData = buildCategoryChartData(
+                expByCat,
+                ['#B23A3A', '#C55252', '#D97575', '#E59A9A', '#EDB7B7', '#F4D5D5', '#F9E7E7']
+            );
 
             const pieIncEl = document.getElementById('monthChartPieInc');
             if(pieIncEl) {
@@ -1350,14 +1414,42 @@
                 window.mPieInc = new Chart(pieIncEl.getContext('2d'), { 
                     type: 'doughnut', 
                     data: { 
-                        labels: Object.keys(incByCat), 
+                        labels: incChartData.labels, 
                         datasets: [{ 
-                            data: Object.values(incByCat), 
-                            backgroundColor: ['#1F7A5C','#2E8B6C','#4BA786','#73C2A4','#A5DAC5','#DFF1E9'], 
-                            borderWidth: 0 
+                            data: incChartData.values,
+                            backgroundColor: incChartData.colors,
+                            borderWidth: 0,
+                            spacing: 2
                         }] 
                     }, 
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } 
+                    options: {
+                        maintainAspectRatio: false,
+                        cutout: '62%',
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    usePointStyle: true,
+                                    boxWidth: 8,
+                                    generateLabels: (chart) => {
+                                        const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
+                                        return original.map(item => ({ ...item, text: getLegendLabelWithPercent(chart, item) }));
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        if (!incChartData.hasData) return 'Sem dados';
+                                        const value = Number(ctx.raw || 0);
+                                        const total = ctx.dataset.data.reduce((acc, cur) => acc + Number(cur || 0), 0);
+                                        const pct = total > 0 ? (value / total) * 100 : 0;
+                                        return `${ctx.label}: ${formatBRL(value)} (${formatPercentual(pct)})`;
+                                    }
+                                }
+                            }
+                        }
+                    } 
                 });
             }
 
@@ -1367,14 +1459,42 @@
                 window.mPieExp = new Chart(pieExpEl.getContext('2d'), { 
                     type: 'doughnut', 
                     data: { 
-                        labels: Object.keys(expByCat), 
+                        labels: expChartData.labels, 
                         datasets: [{ 
-                            data: Object.values(expByCat), 
-                            backgroundColor: ['#B23A3A','#C55252','#D97575','#E59A9A','#F2C6C6','#F9E7E7'], 
-                            borderWidth: 0 
+                            data: expChartData.values,
+                            backgroundColor: expChartData.colors,
+                            borderWidth: 0,
+                            spacing: 2
                         }] 
                     }, 
-                    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } 
+                    options: {
+                        maintainAspectRatio: false,
+                        cutout: '62%',
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    usePointStyle: true,
+                                    boxWidth: 8,
+                                    generateLabels: (chart) => {
+                                        const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
+                                        return original.map(item => ({ ...item, text: getLegendLabelWithPercent(chart, item) }));
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        if (!expChartData.hasData) return 'Sem dados';
+                                        const value = Number(ctx.raw || 0);
+                                        const total = ctx.dataset.data.reduce((acc, cur) => acc + Number(cur || 0), 0);
+                                        const pct = total > 0 ? (value / total) * 100 : 0;
+                                        return `${ctx.label}: ${formatBRL(value)} (${formatPercentual(pct)})`;
+                                    }
+                                }
+                            }
+                        }
+                    } 
                 });
             }
 
@@ -1389,17 +1509,17 @@
                     data: { 
                         labels: labelsBar, 
                         datasets: [
-                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 6 },
-                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#73C2A4', borderRadius: 6 },
-                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 6 },
-                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#E59A9A', borderRadius: 6 }
+                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 8, maxBarThickness: 96 },
+                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#86EFAC', borderRadius: 8, maxBarThickness: 96 },
+                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 8, maxBarThickness: 96 },
+                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#F59E0B', borderRadius: 8, maxBarThickness: 96 }
                         ] 
                     }, 
                     options: { 
                         indexAxis: 'y', 
                         maintainAspectRatio: false, 
-                        barPercentage: 0.62,
-                        categoryPercentage: 0.9,
+                        barPercentage: 1,
+                        categoryPercentage: 1,
                         scales: { 
                             x: {
                                 min: 0,
