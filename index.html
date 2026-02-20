@@ -171,6 +171,78 @@
             z-index: 50;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
         }
+        .logo-pig-wrap {
+            position: relative;
+            transform-origin: 50% 60%;
+            animation: piggy-idle 3.8s ease-in-out infinite;
+            cursor: pointer;
+            overflow: visible;
+        }
+        .logo-pig-wrap::before {
+            content: "";
+            position: absolute;
+            inset: -6px;
+            border-radius: 14px;
+            background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.28), rgba(255,255,255,0));
+            pointer-events: none;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        .logo-pig-wrap::after {
+            content: "";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 9px;
+            height: 9px;
+            border-radius: 999px;
+            background: #FFE08A;
+            box-shadow: 0 0 0 0 rgba(255, 208, 92, 0.55);
+            opacity: 0;
+            transform: scale(0.7);
+            pointer-events: none;
+        }
+        .logo-pig-wrap:hover {
+            animation: piggy-hover 0.52s ease-in-out infinite alternate;
+        }
+        .logo-pig-wrap:hover::before {
+            opacity: 1;
+        }
+        .logo-pig-wrap.is-pop {
+            animation: piggy-pop 0.42s cubic-bezier(0.2, 0.9, 0.2, 1);
+        }
+        .logo-pig-wrap.is-pop::after {
+            opacity: 1;
+            animation: piggy-coin 0.52s ease-out forwards;
+        }
+        .logo-pig-wrap i,
+        .logo-pig-wrap svg {
+            transition: transform 0.2s ease;
+        }
+        .logo-pig-wrap.is-pop i,
+        .logo-pig-wrap.is-pop svg {
+            transform: rotate(-8deg) scale(1.06);
+        }
+        @keyframes piggy-idle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-1px) rotate(-2deg); }
+            50% { transform: translateY(0px) rotate(1deg); }
+            75% { transform: translateY(-1px) rotate(-1deg); }
+        }
+        @keyframes piggy-hover {
+            from { transform: rotate(-4deg) translateY(-1px) scale(1.02); }
+            to { transform: rotate(4deg) translateY(-2px) scale(1.03); }
+        }
+        @keyframes piggy-pop {
+            0% { transform: scale(1) rotate(0deg); }
+            45% { transform: scale(1.11) rotate(-7deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        @keyframes piggy-coin {
+            0% { transform: translateY(0) scale(0.7); box-shadow: 0 0 0 0 rgba(255, 208, 92, 0.55); }
+            60% { transform: translateY(-14px) scale(1); box-shadow: 0 0 0 10px rgba(255, 208, 92, 0); }
+            100% { transform: translateY(-20px) scale(0.88); opacity: 0; box-shadow: 0 0 0 12px rgba(255, 208, 92, 0); }
+        }
 
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -310,7 +382,11 @@
             transition: all 0.2s ease;
             border-bottom: 1px solid var(--divider);
         }
-        .table-row:hover { background-color: #FBFCFD; }
+        .table-row:hover { background-color: #F8FAFF; }
+        tbody .table-row:nth-child(odd) { background-color: #FFFFFF; }
+        tbody .table-row:nth-child(even) { background-color: #FAFAFA; }
+        tbody .table-row:nth-child(odd):hover,
+        tbody .table-row:nth-child(even):hover { background-color: #F8FAFF; }
 
         .badge {
             padding: 4px 10px;
@@ -668,7 +744,7 @@
         
         <div class="p-8">
             <div class="flex items-center gap-4 mb-2">
-                <div class="w-10 h-10 bg-[#E09132] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0">
+                <div id="logo-pig" class="logo-pig-wrap w-10 h-10 bg-[#E09132] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0" title="Delícias da Vovó">
                     <i data-lucide="piggy-bank" class="w-5 h-5"></i>
                 </div>
                 <div class="sidebar-header-text">
@@ -719,6 +795,7 @@
                     <div class="w-32"><label class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
                     <div class="w-32"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
                     <div class="w-32"><label class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
+                    <div class="w-32"><label class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
                     <button onclick="openEntryModal()" class="bg-[#E09132] text-white px-8 h-[44px] rounded-xl font-black text-sm hover:bg-[#C57A22] shadow-lg">
                         + Novo
                     </button>
@@ -1006,7 +1083,7 @@
             console.error("Erro ao inicializar Supabase SDK:", e);
         }
 
-        Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 10, weight: '700' };
+        Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '700' };
         Chart.defaults.color = '#64748b';
 
         let state = {
@@ -1138,6 +1215,39 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
+        function getReadableTooltipConfig(labelCb) {
+            return {
+                backgroundColor: 'rgba(15, 23, 42, 0.94)',
+                borderColor: 'rgba(148, 163, 184, 0.35)',
+                borderWidth: 1,
+                titleColor: '#F8FAFC',
+                bodyColor: '#F8FAFC',
+                titleFont: { size: 13, weight: '800' },
+                bodyFont: { size: 13, weight: '700' },
+                padding: 14,
+                cornerRadius: 12,
+                displayColors: false,
+                caretSize: 7,
+                callbacks: {
+                    label: labelCb || ((ctx) => formatBRL(ctx.raw || 0))
+                }
+            };
+        }
+        function pinChartTooltip(chart, elements) {
+            if(!chart || !chart.tooltip) return;
+            if(!elements || elements.length === 0) {
+                chart.setActiveElements([]);
+                chart.tooltip.setActiveElements([], { x: 0, y: 0 });
+                chart.update();
+                return;
+            }
+            const active = elements.map(el => ({ datasetIndex: el.datasetIndex, index: el.index }));
+            const point = chart.getDatasetMeta(elements[0].datasetIndex)?.data?.[elements[0].index];
+            const center = point && typeof point.getCenterPoint === 'function' ? point.getCenterPoint() : { x: 0, y: 0 };
+            chart.setActiveElements(active);
+            chart.tooltip.setActiveElements(active, center);
+            chart.update();
+        }
         const MONTH_NAMES_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         const generateId = () => Math.random().toString(36).substr(2, 9);
         const formatPercentual = (v) => `${(Number(v) || 0).toFixed(1).replace('.', ',')}%`;
@@ -1417,6 +1527,30 @@
             if(icon) icon.style.transform = sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
         }
 
+        function initPiggyMicroInteractions() {
+            const pig = document.getElementById('logo-pig');
+            if(!pig || pig.dataset.microBound) return;
+            pig.dataset.microBound = '1';
+            pig.setAttribute('tabindex', '0');
+            pig.setAttribute('role', 'button');
+            pig.setAttribute('aria-label', 'Logo Delícias da Vovó');
+
+            const triggerPop = () => {
+                pig.classList.remove('is-pop');
+                void pig.offsetWidth;
+                pig.classList.add('is-pop');
+                window.setTimeout(() => pig.classList.remove('is-pop'), 520);
+            };
+
+            pig.addEventListener('click', triggerPop);
+            pig.addEventListener('keydown', (event) => {
+                if(event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    triggerPop();
+                }
+            });
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
@@ -1440,7 +1574,18 @@
         }
 
         function render() {
-            updateBalance(); renderEntries(); populateMonthlyFilterSelectors(); renderMonthly(); renderAnnual(); renderDatabase(); populateDropdown('recon-account-select', state.accounts); lucide.createIcons();
+            updateBalance(); populateEntryAccountFilter(); renderEntries(); populateMonthlyFilterSelectors(); renderMonthly(); renderAnnual(); renderDatabase(); populateDropdown('recon-account-select', state.accounts); lucide.createIcons(); initPiggyMicroInteractions();
+        }
+
+        function populateEntryAccountFilter() {
+            const accountEl = document.getElementById('filter-account');
+            if(!accountEl) return;
+            const previous = accountEl.value;
+            const options = state.accounts
+                .map(a => `<option value="${a.id}">${a.name}</option>`)
+                .join('');
+            accountEl.innerHTML = `<option value="">Todos</option>${options}`;
+            accountEl.value = state.accounts.some(a => a.id === previous) ? previous : '';
         }
 
         function populateMonthlyFilterSelectors() {
@@ -1517,6 +1662,7 @@
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             const typeFilter = document.getElementById('filter-type')?.value || '';
             const statusFilter = document.getElementById('filter-status')?.value || '';
+            const accountFilter = document.getElementById('filter-account')?.value || '';
 
             let filtered = state.entries.filter(e => {
                 const dst = state.destinations.find(d => d.id === e.destinationId)?.name || "";
@@ -1525,7 +1671,8 @@
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || e.type === typeFilter;
                 const matchesStatus = !statusFilter || e.status === statusFilter;
-                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus;
+                const matchesAccount = !accountFilter || e.accountId === accountFilter;
+                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
 
             filtered.sort((a,b) => {
@@ -1657,11 +1804,11 @@
 
             const incChartData = buildCategoryChartData(
                 incByCat,
-                ['#1F7A5C', '#2E8B6C', '#4BA786', '#73C2A4', '#9ED7BE', '#C7EBDC', '#DFF1E9']
+                ['#0F8A67', '#35A77A', '#79BE4D', '#A6CD39', '#1F4AA8', '#2E63C7', '#A9D7FF']
             );
             const expChartData = buildCategoryChartData(
                 expByCat,
-                ['#B23A3A', '#C55252', '#D97575', '#E59A9A', '#EDB7B7', '#F4D5D5', '#F9E7E7']
+                ['#B23A3A', '#C94A34', '#DE6432', '#EE8833', '#F6AA2F', '#F8C24A', '#F9DA78']
             );
 
             const pieIncEl = document.getElementById('monthChartPieInc');
@@ -1681,6 +1828,8 @@
                     options: {
                         maintainAspectRatio: false,
                         cutout: '62%',
+                        interaction: { mode: 'nearest', intersect: false },
+                        onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                         plugins: {
                             legend: {
                                 position: 'right',
@@ -1693,17 +1842,13 @@
                                     }
                                 }
                             },
-                            tooltip: {
-                                callbacks: {
-                                    label: (ctx) => {
-                                        if (!incChartData.hasData) return 'Sem dados';
-                                        const value = Number(ctx.raw || 0);
-                                        const total = ctx.dataset.data.reduce((acc, cur) => acc + Number(cur || 0), 0);
-                                        const pct = total > 0 ? (value / total) * 100 : 0;
-                                        return `${ctx.label}: ${formatBRL(value)} (${formatPercentual(pct)})`;
-                                    }
-                                }
-                            }
+                            tooltip: getReadableTooltipConfig((ctx) => {
+                                if (!incChartData.hasData) return 'Sem dados';
+                                const value = Number(ctx.raw || 0);
+                                const total = ctx.dataset.data.reduce((acc, cur) => acc + Number(cur || 0), 0);
+                                const pct = total > 0 ? (value / total) * 100 : 0;
+                                return `${ctx.label}: ${formatBRL(value)} (${formatPercentual(pct)})`;
+                            })
                         }
                     } 
                 });
@@ -1726,6 +1871,8 @@
                     options: {
                         maintainAspectRatio: false,
                         cutout: '62%',
+                        interaction: { mode: 'nearest', intersect: false },
+                        onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                         plugins: {
                             legend: {
                                 position: 'right',
@@ -1738,17 +1885,13 @@
                                     }
                                 }
                             },
-                            tooltip: {
-                                callbacks: {
-                                    label: (ctx) => {
-                                        if (!expChartData.hasData) return 'Sem dados';
-                                        const value = Number(ctx.raw || 0);
-                                        const total = ctx.dataset.data.reduce((acc, cur) => acc + Number(cur || 0), 0);
-                                        const pct = total > 0 ? (value / total) * 100 : 0;
-                                        return `${ctx.label}: ${formatBRL(value)} (${formatPercentual(pct)})`;
-                                    }
-                                }
-                            }
+                            tooltip: getReadableTooltipConfig((ctx) => {
+                                if (!expChartData.hasData) return 'Sem dados';
+                                const value = Number(ctx.raw || 0);
+                                const total = ctx.dataset.data.reduce((acc, cur) => acc + Number(cur || 0), 0);
+                                const pct = total > 0 ? (value / total) * 100 : 0;
+                                return `${ctx.label}: ${formatBRL(value)} (${formatPercentual(pct)})`;
+                            })
                         }
                     } 
                 });
@@ -1765,10 +1908,10 @@
                     data: { 
                         labels: labelsBar, 
                         datasets: [
-                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 8, maxBarThickness: 96 },
-                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#86EFAC', borderRadius: 8, maxBarThickness: 96 },
-                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 8, maxBarThickness: 96 },
-                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#F59E0B', borderRadius: 8, maxBarThickness: 96 }
+                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#0F8A67', borderRadius: 8, maxBarThickness: 96 },
+                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#A6CD39', borderRadius: 8, maxBarThickness: 96 },
+                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#C94A34', borderRadius: 8, maxBarThickness: 96 },
+                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#F6AA2F', borderRadius: 8, maxBarThickness: 96 }
                         ] 
                     }, 
                     options: { 
@@ -1776,6 +1919,8 @@
                         maintainAspectRatio: false, 
                         barPercentage: 1,
                         categoryPercentage: 1,
+                        interaction: { mode: 'nearest', intersect: false },
+                        onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                         scales: { 
                             x: {
                                 min: 0,
@@ -1789,7 +1934,10 @@
                             }, 
                             y: { grid: { display: false } } 
                         }, 
-                        plugins: { legend: { position: 'top' } } 
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: getReadableTooltipConfig((ctx) => `${ctx.dataset.label}: ${formatBRL(ctx.raw || 0)}`)
+                        } 
                     } 
                 });
             }
@@ -1826,12 +1974,14 @@
                     data: { 
                         labels: monthNames, 
                         datasets: [
-                            { label: 'Entradas', data: data.map(x=>x.inc), backgroundColor: '#1F7A5C', borderRadius: 8 }, 
-                            { label: 'Saídas', data: data.map(x=>x.exp), backgroundColor: '#B23A3A', borderRadius: 8 }
+                            { label: 'Entradas', data: data.map(x=>x.inc), backgroundColor: '#0F8A67', borderRadius: 8 }, 
+                            { label: 'Saídas', data: data.map(x=>x.exp), backgroundColor: '#C94A34', borderRadius: 8 }
                         ] 
                     }, 
                     options: {
                         maintainAspectRatio: false, 
+                        interaction: { mode: 'nearest', intersect: false },
+                        onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                         scales: { 
                             x: { grid: { display: false } }, 
                             y: {
@@ -1845,7 +1995,10 @@
                                 }
                             } 
                         },
-                        plugins: { legend: { position: 'top' } }
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: getReadableTooltipConfig((ctx) => `${ctx.dataset.label}: ${formatBRL(ctx.raw || 0)}`)
+                        }
                     } 
                 });
             }
@@ -1987,7 +2140,7 @@
                 </tr>`;
             }).join('');
 
-            const chartColor = annualTemporalFlow === 'ENTRADA' ? '#1F7A5C' : '#B23A3A';
+            const chartColor = annualTemporalFlow === 'ENTRADA' ? '#0F8A67' : '#C94A34';
             if(window.aTemporalChart) window.aTemporalChart.destroy();
             window.aTemporalChart = new Chart(chartEl.getContext('2d'), {
                 type: 'bar',
@@ -2003,6 +2156,8 @@
                 },
                 options: {
                     maintainAspectRatio: false,
+                    interaction: { mode: 'nearest', intersect: false },
+                    onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                     scales: {
                         y: {
                             beginAtZero: true,
@@ -2013,11 +2168,7 @@
                     },
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (ctx) => formatBRL(ctx.raw || 0)
-                            }
-                        }
+                        tooltip: getReadableTooltipConfig((ctx) => formatBRL(ctx.raw || 0))
                     }
                 }
             });
@@ -2404,9 +2555,8 @@
         if(mf) mf.value = new Date().toISOString().slice(0, 7);
         window.addEventListener('mouseup', stopReconFill);
         window.addEventListener('blur', stopReconFill);
+        window.addEventListener('load', initPiggyMicroInteractions);
         window.onload = initCloud;
     </script>
 </body>
 </html>
-
-
