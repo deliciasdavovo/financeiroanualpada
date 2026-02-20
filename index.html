@@ -40,11 +40,11 @@
         .kpi-card {
             border-radius: 18px;
             border: 1px solid #DCE3EC;
-            box-shadow: 0 22px 42px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
+            box-shadow: none;
             position: relative;
             overflow: hidden;
             isolation: isolate;
-            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+            transition: border-color 0.22s ease;
         }
         .kpi-card::before {
             content: "";
@@ -61,15 +61,14 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: linear-gradient(160deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0) 62%);
+            background: none;
         }
         .kpi-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(var(--kpi-glow), 0.42);
-            box-shadow: 0 26px 52px rgba(15, 23, 42, 0.16), 0 10px 22px rgba(var(--kpi-glow), 0.22);
+            border-color: #DCE3EC;
+            box-shadow: none;
         }
         .kpi-card:hover::before {
-            opacity: 1;
+            opacity: 0;
         }
         .kpi-card > * {
             position: relative;
@@ -103,7 +102,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 10px 20px rgba(15, 23, 42, 0.08);
+            box-shadow: none;
         }
         .kpi-card-income .kpi-icon {
             background: var(--bg-green-soft);
@@ -127,7 +126,7 @@
         .kpi-card #sum-inc-real,
         .kpi-card #sum-exp-real,
         .kpi-card #month-bal-r {
-            text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+            text-shadow: none;
         }
 
         body {
@@ -176,6 +175,20 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+        .table-mobile-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-mobile-scroll table {
+            min-width: 100%;
+        }
+        #entries-table { min-width: 780px; }
+        #monthly-daily-view { min-width: 900px; }
+        #annual-main-table { min-width: 640px; }
+        #annual-temporal-table { min-width: 420px; }
+        #recon-preview-table { min-width: 760px; }
 
         .card-premium {
             background: var(--bg-card);
@@ -187,6 +200,11 @@
         .card-premium:hover {
             transform: translateY(-2px);
             box-shadow: 0 14px 40px rgba(0,0,0,0.06);
+        }
+        .card-premium.kpi-card,
+        .card-premium.kpi-card:hover {
+            transform: none !important;
+            box-shadow: none !important;
         }
         .card-premium:not(.overflow-hidden) { padding: 28px !important; }
 
@@ -567,7 +585,7 @@
                 background: rgba(255,255,255,0.12);
             }
             .mobile-main-scroll {
-                padding-bottom: 90px !important;
+                padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
             }
             #tab-title {
                 font-size: 24px !important;
@@ -578,6 +596,44 @@
             }
             header .px-8.py-3 {
                 display: none !important;
+            }
+            #mobile-nav {
+                padding-bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+            }
+        }
+        @media (max-width: 767px) {
+            header {
+                height: 72px !important;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+            #tab-title {
+                font-size: 20px !important;
+                line-height: 1.15;
+            }
+            #sync-status {
+                display: none !important;
+            }
+            .card-premium:not(.overflow-hidden) {
+                padding: 16px !important;
+            }
+            .table-mobile-scroll th,
+            .table-mobile-scroll td {
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+                font-size: 11px !important;
+            }
+            .table-mobile-scroll thead th {
+                font-size: 9px !important;
+            }
+            #mobile-nav {
+                gap: 4px !important;
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+            .mobile-nav-btn {
+                height: 52px !important;
+                border-radius: 10px !important;
             }
         }
         @media (min-width: 768px) {
@@ -643,16 +699,13 @@
 
     <!-- MAIN -->
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
-        <header class="h-24 bg-white border-b px-10 flex items-center justify-between shrink-0">
+        <header class="h-24 bg-white border-b px-10 flex items-center shrink-0">
             <div class="flex items-center gap-6">
                 <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Lançamentos</h2>
                 <div id="sync-status" class="sync-indicator">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
                 </div>
-            </div>
-            <div class="px-8 py-3 bg-slate-900 rounded-xl text-sm font-black shadow-lg">
-                <span id="global-balance" class="text-white">Resultado do mês: R$ 0,00</span>
             </div>
         </header>
 
@@ -672,24 +725,33 @@
                 </div>
 
                 <div class="card-premium overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
-                            <tr>
-                                <th onclick="setSort('date')" class="px-6 py-4 cursor-pointer hover:text-[#E09132]">Data</th>
-                                <th class="px-6 py-4">Tipo</th>
-                                <th class="px-6 py-4">Destino / Detalhes</th>
-                                <th onclick="setSort('amount')" class="px-6 py-4 text-right cursor-pointer hover:text-[#E09132]">Valor</th>
-                                <th class="px-6 py-4 text-center">Status / Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
-                    </table>
+                    <div class="table-mobile-scroll custom-scrollbar">
+                        <table id="entries-table" class="w-full text-left">
+                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
+                                <tr>
+                                    <th onclick="setSort('date')" class="px-6 py-4 cursor-pointer hover:text-[#E09132]">Data</th>
+                                    <th class="px-6 py-4">Tipo</th>
+                                    <th class="px-6 py-4">Destino / Detalhes</th>
+                                    <th onclick="setSort('amount')" class="px-6 py-4 text-right cursor-pointer hover:text-[#E09132]">Valor</th>
+                                    <th class="px-6 py-4 text-center">Status / Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <!-- RELATÓRIO MENSAL -->
             <div id="monthly" class="tab-content space-y-8">
-                <div class="w-full lg:w-64"><label class="label-mini">Mês de Referência</label><input type="month" id="monthly-filter" onchange="renderMonthly()"></div>
+                <div class="w-full lg:w-[420px]">
+                    <label class="label-mini">Mês de Referência</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()"></select>
+                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()"></select>
+                    </div>
+                    <input type="hidden" id="monthly-filter">
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="card-premium kpi-card kpi-card-income p-6">
@@ -741,8 +803,8 @@
                 </div>
 
                 <div class="card-premium overflow-hidden h-[520px] lg:h-[700px] flex flex-col">
-                    <div class="flex-1 overflow-auto custom-scrollbar">
-                        <table class="w-full text-left">
+                    <div class="flex-1 overflow-auto table-mobile-scroll custom-scrollbar">
+                        <table id="monthly-daily-view" class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400 sticky top-0 z-10">
                                 <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
                             </thead>
@@ -756,12 +818,14 @@
             <div id="annual" class="tab-content space-y-12">
                 <div class="card-premium p-10 h-[450px]"><h4 class="text-xs font-black uppercase text-slate-400 mb-10 tracking-widest">Performance Anual</h4><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
                 <div class="card-premium overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
-                            <tr><th class="px-12 py-6">Mês</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">Saídas</th><th class="px-12 py-6 text-right">Saldo Líquido</th></tr>
-                        </thead>
-                        <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                    </table>
+                    <div class="table-mobile-scroll custom-scrollbar">
+                        <table id="annual-main-table" class="w-full text-left">
+                            <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
+                                <tr><th class="px-12 py-6">Mês</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">Saídas</th><th class="px-12 py-6 text-right">Saldo Líquido</th></tr>
+                            </thead>
+                            <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="card-premium p-8 space-y-6">
                     <div class="flex flex-wrap items-end justify-between gap-4">
@@ -807,16 +871,18 @@
                             <canvas id="chartAnnualTemporal"></canvas>
                         </div>
                         <div class="xl:col-span-2 border border-slate-100 rounded-2xl overflow-hidden">
-                            <table class="w-full text-left">
-                                <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Período</th>
-                                        <th class="px-4 py-3 text-right">Total</th>
-                                        <th class="px-4 py-3 text-right">Variação</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                            </table>
+                            <div class="table-mobile-scroll custom-scrollbar">
+                                <table id="annual-temporal-table" class="w-full text-left">
+                                    <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
+                                        <tr>
+                                            <th class="px-4 py-3">Período</th>
+                                            <th class="px-4 py-3 text-right">Total</th>
+                                            <th class="px-4 py-3 text-right">Variação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -838,12 +904,14 @@
                         <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
                     <div class="card-premium overflow-hidden">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
-                                <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">Descrição</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4">Ação</th><th class="px-8 py-4 text-right">Valor</th></tr>
-                            </thead>
-                            <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                        </table>
+                        <div class="table-mobile-scroll custom-scrollbar">
+                            <table id="recon-preview-table" class="w-full text-left">
+                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
+                                    <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">Descrição</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4">Ação</th><th class="px-8 py-4 text-right">Valor</th></tr>
+                                </thead>
+                                <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1070,6 +1138,7 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
+        const MONTH_NAMES_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         const generateId = () => Math.random().toString(36).substr(2, 9);
         const formatPercentual = (v) => `${(Number(v) || 0).toFixed(1).replace('.', ',')}%`;
         const encodeSafe = (v) => encodeURIComponent(String(v || ''));
@@ -1077,6 +1146,17 @@
         function agruparPor(dados, campo) {
             return dados.reduce((acc, item) => {
                 acc[item[campo]] = (acc[item[campo]] || 0) + item.valor;
+                return acc;
+            }, {});
+        }
+        function agruparPorFluxo(dados, campo) {
+            return dados.reduce((acc, item) => {
+                const key = item[campo];
+                if (!acc[key]) acc[key] = { total: 0, entrada: 0, saida: 0 };
+                const valor = Number(item.valor) || 0;
+                acc[key].total += valor;
+                if (item.tipo === 'saida') acc[key].saida += valor;
+                else acc[key].entrada += valor;
                 return acc;
             }, {});
         }
@@ -1151,13 +1231,21 @@
             renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
         }
 
-        function renderResumoCardsAgrupados(grupos, totalMes, classeCor, onClickFn) {
-            const entries = Object.entries(grupos).sort((a, b) => b[1] - a[1]);
+        function renderResumoCardsAgrupados(grupos, totalMes, onClickFn) {
+            const entries = Object.entries(grupos).sort((a, b) => b[1].total - a[1].total);
             if(entries.length === 0) return `<div class="hm-empty">Nenhum dado encontrado para os filtros selecionados.</div>`;
             return `<div class="hm-items-grid">
-                ${entries.map(([nome, valor]) => {
+                ${entries.map(([nome, info]) => {
+                    const valor = info.total;
                     const percentual = totalMes > 0 ? (valor / totalMes) * 100 : 0;
                     const nomeSafe = encodeSafe(nome);
+                    const corFluxo = fluxoSelecionado === 'SAIDAS'
+                        ? 'saida'
+                        : fluxoSelecionado === 'ENTRADAS'
+                            ? 'entrada'
+                            : (info.saida > info.entrada ? 'saida' : 'entrada');
+                    const classeCor = corFluxo === 'saida' ? 'hm-flow-saida' : 'hm-flow-entrada';
+                    const classeCorBg = corFluxo === 'saida' ? 'hm-flow-saida-bg' : 'hm-flow-entrada-bg';
                     return `
                         <button class="hm-item-card" onclick="${onClickFn}(decodeURIComponent('${nomeSafe}'))">
                             <div class="flex items-start justify-between gap-3 mb-3">
@@ -1169,7 +1257,7 @@
                                 <span class="font-bold text-slate-700">${formatPercentual(percentual)}</span>
                             </div>
                             <div class="hm-progress-track">
-                                <div class="hm-progress-fill ${classeCor.includes('saida') ? 'hm-flow-saida-bg' : 'hm-flow-entrada-bg'}" style="width:${Math.min(percentual, 100)}%"></div>
+                                <div class="hm-progress-fill ${classeCorBg}" style="width:${Math.min(percentual, 100)}%"></div>
                             </div>
                         </button>
                     `;
@@ -1181,9 +1269,8 @@
             const content = document.getElementById('hm-content');
             if(!content) return;
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
-            const grupos = agruparPor(dados, 'categoria');
-            const cor = fluxoSelecionado === 'SAIDAS' ? 'hm-flow-saida' : 'hm-flow-entrada';
-            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, cor, 'hmSelectCategoria');
+            const grupos = agruparPorFluxo(dados, 'categoria');
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectCategoria');
         }
 
         function renderSubcategorias(dados) {
@@ -1191,9 +1278,8 @@
             if(!content) return;
             const filtrado = dados.filter(d => d.categoria === categoriaSelecionada);
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
-            const grupos = agruparPor(filtrado, 'subcategoria');
-            const cor = fluxoSelecionado === 'SAIDAS' ? 'hm-flow-saida' : 'hm-flow-entrada';
-            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, cor, 'hmSelectSubcategoria');
+            const grupos = agruparPorFluxo(filtrado, 'subcategoria');
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectSubcategoria');
         }
 
         function renderDestinos(dados) {
@@ -1201,9 +1287,8 @@
             if(!content) return;
             const filtrado = dados.filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada);
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
-            const grupos = agruparPor(filtrado, 'destino');
-            const cor = fluxoSelecionado === 'SAIDAS' ? 'hm-flow-saida' : 'hm-flow-entrada';
-            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, cor, 'hmSelectDestino');
+            const grupos = agruparPorFluxo(filtrado, 'destino');
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectDestino');
         }
 
         function renderLancamentos(dados) {
@@ -1355,7 +1440,48 @@
         }
 
         function render() {
-            updateBalance(); renderEntries(); renderMonthly(); renderAnnual(); renderDatabase(); populateDropdown('recon-account-select', state.accounts); lucide.createIcons();
+            updateBalance(); renderEntries(); populateMonthlyFilterSelectors(); renderMonthly(); renderAnnual(); renderDatabase(); populateDropdown('recon-account-select', state.accounts); lucide.createIcons();
+        }
+
+        function populateMonthlyFilterSelectors() {
+            const monthEl = document.getElementById('monthly-filter-month');
+            const yearEl = document.getElementById('monthly-filter-year');
+            const hiddenEl = document.getElementById('monthly-filter');
+            if(!monthEl || !yearEl || !hiddenEl) return;
+
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const selected = hiddenEl.value || currentMonth;
+            const [selectedYearRaw, selectedMonthRaw] = selected.split('-');
+            const selectedYear = Number(selectedYearRaw) || new Date().getFullYear();
+            const selectedMonth = Number(selectedMonthRaw) || (new Date().getMonth() + 1);
+
+            monthEl.innerHTML = MONTH_NAMES_PT
+                .map((name, idx) => `<option value="${String(idx + 1).padStart(2, '0')}">${name}</option>`)
+                .join('');
+
+            const entryYears = state.entries
+                .map(e => Number((e.date || '').slice(0, 4)))
+                .filter(y => !isNaN(y));
+            const currentYear = new Date().getFullYear();
+            const yearsSet = new Set(entryYears);
+            for(let y = currentYear - 2; y <= currentYear + 2; y++) yearsSet.add(y);
+            yearsSet.add(selectedYear);
+            const years = Array.from(yearsSet).sort((a, b) => a - b);
+
+            yearEl.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+
+            monthEl.value = String(selectedMonth).padStart(2, '0');
+            yearEl.value = String(selectedYear);
+            hiddenEl.value = `${yearEl.value}-${monthEl.value}`;
+        }
+
+        function syncMonthlyFilterFromSelects() {
+            const monthEl = document.getElementById('monthly-filter-month');
+            const yearEl = document.getElementById('monthly-filter-year');
+            const hiddenEl = document.getElementById('monthly-filter');
+            if(!monthEl || !yearEl || !hiddenEl) return;
+            hiddenEl.value = `${yearEl.value}-${monthEl.value}`;
+            renderMonthly();
         }
 
         function updateBalance() {
