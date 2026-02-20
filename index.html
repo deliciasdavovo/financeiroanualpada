@@ -39,29 +39,56 @@
 
         .kpi-card {
             border-radius: 18px;
-            border: 1px solid var(--divider);
-            box-shadow: 0 16px 34px rgba(17, 24, 39, 0.08);
+            border: 1px solid #DCE3EC;
+            box-shadow: 0 22px 42px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
             position: relative;
             overflow: hidden;
+            isolation: isolate;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            inset: -30%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.22s ease;
+            background: radial-gradient(circle at 80% 15%, rgba(var(--kpi-glow), 0.24) 0%, rgba(var(--kpi-glow), 0.08) 28%, rgba(255,255,255,0) 62%);
         }
         .kpi-card::after {
             content: "";
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: linear-gradient(160deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 60%);
+            background: linear-gradient(160deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0) 62%);
+        }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(var(--kpi-glow), 0.42);
+            box-shadow: 0 26px 52px rgba(15, 23, 42, 0.16), 0 10px 22px rgba(var(--kpi-glow), 0.22);
+        }
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+        .kpi-card > * {
+            position: relative;
+            z-index: 1;
         }
         .kpi-card-income {
-            border-top: 3px solid var(--primary-green);
-            background: linear-gradient(180deg, #FFFFFF 0%, #F6FCF9 100%);
+            --kpi-glow: 31, 122, 92;
+            border-top: 4px solid var(--primary-green);
+            background: linear-gradient(180deg, #FFFFFF 0%, #EEF9F3 100%);
         }
         .kpi-card-expense {
-            border-top: 3px solid var(--soft-red);
-            background: linear-gradient(180deg, #FFFFFF 0%, #FEF7F7 100%);
+            --kpi-glow: 178, 58, 58;
+            border-top: 4px solid var(--soft-red);
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF0F0 100%);
         }
         .kpi-card-balance {
-            border-top: 3px solid var(--primary-blue);
-            background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FF 100%);
+            --kpi-glow: 47, 79, 157;
+            border-top: 4px solid var(--primary-blue);
+            background: linear-gradient(180deg, #FFFFFF 0%, #EDF3FF 100%);
         }
         .kpi-card-header {
             display: flex;
@@ -70,12 +97,13 @@
             margin-bottom: 12px;
         }
         .kpi-icon {
-            width: 34px;
-            height: 34px;
+            width: 38px;
+            height: 38px;
             border-radius: 10px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 10px 20px rgba(15, 23, 42, 0.08);
         }
         .kpi-card-income .kpi-icon {
             background: var(--bg-green-soft);
@@ -88,6 +116,18 @@
         .kpi-card-balance .kpi-icon {
             background: var(--bg-blue-soft);
             color: var(--primary-blue);
+        }
+        .kpi-card .text-\[9px\].font-black {
+            color: #4B5563 !important;
+            letter-spacing: 0.08em;
+        }
+        .kpi-card .text-\[9px\].font-bold.text-slate-400 {
+            color: #6B7280 !important;
+        }
+        .kpi-card #sum-inc-real,
+        .kpi-card #sum-exp-real,
+        .kpi-card #month-bal-r {
+            text-shadow: 0 1px 0 rgba(255,255,255,0.55);
         }
 
         body {
@@ -446,6 +486,18 @@
             background: #FFFFFF;
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
         }
+        .annual-filters-grid {
+            display: grid;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
+        .annual-filter-item {
+            min-width: 0;
+        }
+        .annual-filter-item select {
+            height: 42px;
+        }
 
         .recon-destination-cell {
             display: flex;
@@ -526,6 +578,21 @@
             }
             header .px-8.py-3 {
                 display: none !important;
+            }
+        }
+        @media (min-width: 768px) {
+            .annual-filters-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (min-width: 1200px) {
+            .annual-filters-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (min-width: 1536px) {
+            .annual-filters-grid {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
             }
         }
     </style>
@@ -651,7 +718,7 @@
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
-                        <p class="text-[8px] font-bold flow-balance-text mt-4 uppercase opacity-80">Dinheiro no bolso</p>
+                        <p class="text-[8px] font-bold flow-balance-text mt-4 uppercase">Dinheiro no bolso</p>
                     </div>
                 </div>
 
@@ -695,6 +762,63 @@
                         </thead>
                         <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
                     </table>
+                </div>
+                <div class="card-premium p-8 space-y-6">
+                    <div class="flex flex-wrap items-end justify-between gap-4">
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900">Comparativo temporal</h4>
+                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Comparando períodos...</p>
+                        </div>
+                        <div class="annual-filters-grid">
+                            <div class="annual-filter-item">
+                                <label class="label-mini">Fluxo</label>
+                                <select id="annual-temporal-flow">
+                                    <option value="SAÍDA">Saídas</option>
+                                    <option value="ENTRADA">Entradas</option>
+                                </select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini">Modo</label>
+                                <select id="annual-temporal-mode">
+                                    <option value="MESES">Entre os meses do ano</option>
+                                    <option value="ANOS">Entre os anos</option>
+                                </select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini">Ano Base</label>
+                                <select id="annual-temporal-year"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini">Categoria</label>
+                                <select id="annual-nav-category"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini">Subcategoria</label>
+                                <select id="annual-nav-subcategory"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini">Destino</label>
+                                <select id="annual-nav-destination"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                        <div class="xl:col-span-3 h-[520px]">
+                            <canvas id="chartAnnualTemporal"></canvas>
+                        </div>
+                        <div class="xl:col-span-2 border border-slate-100 rounded-2xl overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Período</th>
+                                        <th class="px-4 py-3 text-right">Total</th>
+                                        <th class="px-4 py-3 text-right">Variação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -833,6 +957,12 @@
         let destinoSelecionado = '';
         let fluxoSelecionado = 'TODOS';
         let categoriaFiltroSelecionada = '';
+        let annualTemporalFlow = 'SAÍDA';
+        let annualTemporalMode = 'MESES';
+        let annualTemporalYear = new Date().getFullYear();
+        let annualNavCategoryId = '';
+        let annualNavSubCategoryId = '';
+        let annualNavDestinationId = '';
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
 
         function setSyncStatus(status) {
@@ -1593,6 +1723,178 @@
                     } 
                 });
             }
+            renderAnnualTemporalComparison(year);
+        }
+        function formatVariation(current, prev) {
+            if (!prev) return '-';
+            const pct = ((current - prev) / prev) * 100;
+            const sign = pct > 0 ? '+' : '';
+            return `${sign}${pct.toFixed(1).replace('.', ',')}%`;
+        }
+
+        function renderAnnualTemporalComparison(year) {
+            const flowEl = document.getElementById('annual-temporal-flow');
+            const modeEl = document.getElementById('annual-temporal-mode');
+            const yearEl = document.getElementById('annual-temporal-year');
+            const catEl = document.getElementById('annual-nav-category');
+            const subEl = document.getElementById('annual-nav-subcategory');
+            const dstEl = document.getElementById('annual-nav-destination');
+            const tableBody = document.getElementById('annual-temporal-table-body');
+            const summaryEl = document.getElementById('annual-temporal-summary');
+            const chartEl = document.getElementById('chartAnnualTemporal');
+            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !tableBody || !summaryEl || !chartEl) return;
+
+            const validYears = Array.from(new Set(
+                state.entries
+                    .filter(e => e.date && e.status === 'REALIZADO')
+                    .map(e => Number((e.date || '').slice(0, 4)))
+                    .filter(v => !isNaN(v))
+            )).sort((a, b) => a - b);
+            const fallbackYear = validYears[validYears.length - 1] || year;
+            if(!validYears.includes(annualTemporalYear)) annualTemporalYear = fallbackYear;
+
+            yearEl.innerHTML = validYears.map(y => `<option value="${y}">${y}</option>`).join('');
+            flowEl.value = annualTemporalFlow;
+            modeEl.value = annualTemporalMode;
+            yearEl.value = String(annualTemporalYear);
+            yearEl.disabled = annualTemporalMode === 'ANOS';
+
+            flowEl.onchange = () => { annualTemporalFlow = flowEl.value; renderAnnualTemporalComparison(year); };
+            modeEl.onchange = () => { annualTemporalMode = modeEl.value; renderAnnualTemporalComparison(year); };
+            yearEl.onchange = () => { annualTemporalYear = Number(yearEl.value) || fallbackYear; renderAnnualTemporalComparison(year); };
+
+            const baseFlowEntries = state.entries.filter(e => e.status === 'REALIZADO' && e.type === annualTemporalFlow);
+
+            const validCatIds = new Set(baseFlowEntries.map(e => e.categoryId).filter(Boolean));
+            const catOptions = state.categories
+                .filter(c => validCatIds.has(c.id))
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            if(annualNavCategoryId && !catOptions.some(c => c.id === annualNavCategoryId)) annualNavCategoryId = '';
+
+            const subBase = baseFlowEntries.filter(e => !annualNavCategoryId || e.categoryId === annualNavCategoryId);
+            const validSubIds = new Set(subBase.map(e => e.subCategoryId).filter(Boolean));
+            const subOptions = state.subCategories
+                .filter(s => validSubIds.has(s.id))
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            if(annualNavSubCategoryId && !subOptions.some(s => s.id === annualNavSubCategoryId)) annualNavSubCategoryId = '';
+
+            const dstBase = subBase.filter(e => !annualNavSubCategoryId || e.subCategoryId === annualNavSubCategoryId);
+            const validDstIds = new Set(dstBase.map(e => e.destinationId).filter(Boolean));
+            const dstOptions = state.destinations
+                .filter(d => validDstIds.has(d.id))
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+            if(annualNavDestinationId && !dstOptions.some(d => d.id === annualNavDestinationId)) annualNavDestinationId = '';
+
+            catEl.innerHTML = `<option value="">Todas</option>${catOptions.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}`;
+            subEl.innerHTML = `<option value="">Todas</option>${subOptions.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}`;
+            dstEl.innerHTML = `<option value="">Todos</option>${dstOptions.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}`;
+            catEl.value = annualNavCategoryId;
+            subEl.value = annualNavSubCategoryId;
+            dstEl.value = annualNavDestinationId;
+
+            catEl.onchange = () => {
+                annualNavCategoryId = catEl.value;
+                annualNavSubCategoryId = '';
+                annualNavDestinationId = '';
+                renderAnnualTemporalComparison(year);
+            };
+            subEl.onchange = () => {
+                annualNavSubCategoryId = subEl.value;
+                annualNavDestinationId = '';
+                renderAnnualTemporalComparison(year);
+            };
+            dstEl.onchange = () => {
+                annualNavDestinationId = dstEl.value;
+                renderAnnualTemporalComparison(year);
+            };
+
+            const filtered = baseFlowEntries.filter(e =>
+                (!annualNavCategoryId || e.categoryId === annualNavCategoryId) &&
+                (!annualNavSubCategoryId || e.subCategoryId === annualNavSubCategoryId) &&
+                (!annualNavDestinationId || e.destinationId === annualNavDestinationId)
+            );
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            let labels = [];
+            let values = [];
+
+            if(annualTemporalMode === 'MESES') {
+                labels = monthNames;
+                values = monthNames.map((_, m) => {
+                    const prefix = `${annualTemporalYear}-${String(m + 1).padStart(2, '0')}`;
+                    return filtered
+                        .filter(e => (e.date || '').startsWith(prefix))
+                        .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                });
+                summaryEl.innerText = `Comparativo mensal de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} em ${annualTemporalYear}.`;
+            } else {
+                const years = validYears;
+                labels = years.map(String);
+                values = years.map(y => {
+                    const prefix = `${y}-`;
+                    return filtered
+                        .filter(e => (e.date || '').startsWith(prefix))
+                        .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                });
+                summaryEl.innerText = `Comparativo anual de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} entre anos.`;
+            }
+
+            const navParts = [];
+            if(annualNavCategoryId) navParts.push(catOptions.find(c => c.id === annualNavCategoryId)?.name || '');
+            if(annualNavSubCategoryId) navParts.push(subOptions.find(s => s.id === annualNavSubCategoryId)?.name || '');
+            if(annualNavDestinationId) navParts.push(dstOptions.find(d => d.id === annualNavDestinationId)?.name || '');
+            if(navParts.length) summaryEl.innerText += ` Filtro: ${navParts.filter(Boolean).join(' > ')}.`;
+
+            if(values.every(v => v === 0)) {
+                tableBody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
+                if(window.aTemporalChart) window.aTemporalChart.destroy();
+                return;
+            }
+
+            tableBody.innerHTML = labels.map((label, idx) => {
+                const current = values[idx] || 0;
+                const prev = idx > 0 ? (values[idx - 1] || 0) : 0;
+                const varText = formatVariation(current, prev);
+                return `<tr class="table-row">
+                    <td class="px-4 py-3 text-[11px] font-black text-slate-700 uppercase">${label}</td>
+                    <td class="px-4 py-3 text-right text-[11px] font-black ${annualTemporalFlow === 'ENTRADA' ? 'flow-income-text' : 'flow-expense-text'}">${formatBRL(current)}</td>
+                    <td class="px-4 py-3 text-right text-[11px] font-bold text-slate-500">${varText}</td>
+                </tr>`;
+            }).join('');
+
+            const chartColor = annualTemporalFlow === 'ENTRADA' ? '#1F7A5C' : '#B23A3A';
+            if(window.aTemporalChart) window.aTemporalChart.destroy();
+            window.aTemporalChart = new Chart(chartEl.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: annualTemporalFlow === 'ENTRADA' ? 'Entradas' : 'Saídas',
+                        data: values,
+                        backgroundColor: chartColor,
+                        borderRadius: 8,
+                        maxBarThickness: 42
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { borderDash: [4,4] },
+                            ticks: { callback: (value) => formatChartBRL(value) }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => formatBRL(ctx.raw || 0)
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function parseValueRobust(raw) {
@@ -1980,3 +2282,5 @@
     </script>
 </body>
 </html>
+
+
