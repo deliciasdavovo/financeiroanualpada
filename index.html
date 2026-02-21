@@ -256,6 +256,10 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+        :focus-visible {
+            outline: 2px solid rgba(47,79,157,0.45);
+            outline-offset: 2px;
+        }
         .table-mobile-scroll {
             width: 100%;
             overflow-x: auto;
@@ -265,11 +269,18 @@
         .table-mobile-scroll table {
             min-width: 100%;
         }
-        #entries-table { min-width: 780px; }
+        #entries-table {
+            min-width: 0;
+            width: 100%;
+            table-layout: fixed;
+        }
         #monthly-daily-view { min-width: 900px; }
         #annual-main-table { min-width: 640px; }
         #annual-temporal-table { min-width: 420px; }
-        #recon-preview-table { min-width: 760px; }
+        #recon-preview-table {
+            min-width: 100%;
+            table-layout: fixed;
+        }
 
         .card-premium {
             background: var(--bg-card);
@@ -288,13 +299,13 @@
             transform: none !important;
             box-shadow: none !important;
         }
-        .card-premium:not(.overflow-hidden) { padding: 28px !important; }
+        .card-premium:not(.overflow-hidden) { padding: 24px !important; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: slideUp var(--dur-slow) var(--ease-premium); }
         .tab-content.space-y-6 > * + *,
         .tab-content.space-y-8 > * + *,
-        .tab-content.space-y-12 > * + * { margin-top: 40px !important; }
+        .tab-content.space-y-12 > * + * { margin-top: 28px !important; }
 
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(12px); }
@@ -403,7 +414,7 @@
         .badge {
             padding: 4px 10px;
             border-radius: 8px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -418,6 +429,28 @@
         .badge-expense {
             background: var(--bg-red-soft);
             color: var(--soft-red);
+        }
+        .badge-internal {
+            background: #EEF2F7;
+            color: #475569;
+        }
+        .dup-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            border: 1px solid #F7D9A8;
+            background: #FFF7E8;
+            color: #B7791F;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+        .entry-badges {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 20px;
         }
         .day-net-pill {
             display: inline-block;
@@ -456,6 +489,114 @@
             box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
             color: var(--primary-blue);
         }
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.48);
+            backdrop-filter: blur(10px);
+        }
+        .modal-shell {
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 24px;
+            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.28);
+            overflow: hidden;
+            animation: modalIn 220ms var(--ease-premium);
+        }
+        .modal-shell-entry { max-width: 640px; }
+        .modal-shell-db { max-width: 460px; }
+        .modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 24px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #F8FAFC;
+        }
+        .modal-head-title {
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #0F172A;
+        }
+        .modal-head-sub {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #475569;
+        }
+        .modal-close-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid #D9E1EC;
+            background: #F1F5F9;
+            color: #64748B;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .modal-close-btn:hover {
+            color: #0F172A;
+            border-color: #CBD5E1;
+            background: #E2E8F0;
+        }
+        .modal-body {
+            padding: 22px 24px 24px;
+        }
+        .modal-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            padding-top: 14px;
+            border-top: 1px solid #EEF2F7;
+        }
+        .modal-btn-primary {
+            flex: 1;
+            height: 46px;
+            border-radius: 12px;
+            background: #0F172A;
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .modal-btn-danger {
+            height: 46px;
+            border-radius: 12px;
+            padding: 0 18px;
+            background: #FFF1F1;
+            color: #B23A3A;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border: 1px solid #F5D6D6;
+        }
+        .modal-btn-neutral {
+            width: 100%;
+            height: 44px;
+            border-radius: 12px;
+            background: #0F172A;
+            color: #FFFFFF;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
         .sync-indicator {
             display: flex;
@@ -479,6 +620,39 @@
             color: var(--primary-blue);
             border-color: #D7DEF3;
             background: var(--bg-blue-soft);
+        }
+        .backup-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #FFFFFF;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .export-pdf-btn {
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 10px;
+            border: 1px solid #D7DFEA;
+            background: #FFFFFF;
+            color: #334155;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .export-pdf-btn:hover {
+            background: #F8FAFC;
+            border-color: #C8D3E2;
         }
 
         #loading-overlay {
@@ -596,6 +770,84 @@
             text-align: center;
             background: #FFFFFF;
         }
+        .mdetails-wrap {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .mdetails-level {
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .mdetails-level:last-child {
+            border-bottom: 0;
+        }
+        .mdetails-level summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 14px;
+        }
+        .mdetails-level summary::-webkit-details-marker {
+            display: none;
+        }
+        .mdetails-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        .mdetails-meta {
+            font-size: 10px;
+            color: #64748B;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+        .mdetails-inner {
+            border-top: 1px solid #EEF2F7;
+            background: #FAFCFF;
+        }
+        .mdetails-l2 summary {
+            padding-left: 28px;
+        }
+        .mdetails-l3 summary {
+            padding-left: 42px;
+        }
+        .mdetails-launches {
+            padding: 8px 14px 14px 54px;
+            display: grid;
+            gap: 6px;
+        }
+        .mdetails-launch-item {
+            display: grid;
+            grid-template-columns: 96px 1fr auto;
+            gap: 10px;
+            align-items: center;
+            border: 1px solid #E9EEF5;
+            border-radius: 10px;
+            background: #FFFFFF;
+            padding: 8px 10px;
+            font-size: 11px;
+        }
+        .mdetails-launch-date {
+            font-weight: 700;
+            color: #64748B;
+        }
+        .mdetails-launch-desc {
+            color: #334155;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mdetails-launch-value {
+            font-weight: 800;
+            white-space: nowrap;
+        }
         .hm-launch-list {
             display: grid;
             grid-template-columns: 1fr;
@@ -620,21 +872,285 @@
         .annual-filter-item select {
             height: 42px;
         }
+        .db-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+        }
+        .db-search-wrap {
+            flex: 1;
+            min-width: 240px;
+        }
+        .db-category-card {
+            border: 1px solid #E7EDF5;
+            border-radius: 16px;
+            background: #FFFFFF;
+            padding: 18px;
+        }
+        .db-sub-block {
+            border: 1px solid #EEF2F7;
+            border-radius: 12px;
+            padding: 10px 12px;
+            background: #FAFCFF;
+        }
+        .db-destination-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 7px 8px;
+            border-radius: 8px;
+            background: #FFFFFF;
+            border: 1px solid #F1F5F9;
+        }
+        .db-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748B;
+            background: #FFFFFF;
+        }
+        .db-action-btn:hover {
+            color: #0F172A;
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+        }
+        .db-action-btn.danger:hover {
+            color: #B23A3A;
+            border-color: #F1C8C8;
+            background: #FFF5F5;
+        }
+        .db-empty {
+            border: 1px dashed #D8E2EE;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            color: #64748B;
+            font-size: 12px;
+            font-weight: 700;
+            background: #FFFFFF;
+        }
+        .db-tree {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .db-tree-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .db-tree-row:last-child {
+            border-bottom: 0;
+        }
+        .db-tree-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .db-tree-toggle {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .db-tree-toggle:hover {
+            border-color: #CBD5E1;
+            background: #F1F5F9;
+            color: #0F172A;
+        }
+        .db-tree-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0F172A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .db-tree-meta {
+            font-size: 10px;
+            color: #64748B;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .db-tree-actions {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+        .db-inline-btn {
+            height: 30px;
+            padding: 0 10px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .db-inline-btn:hover {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+            color: #0F172A;
+        }
+        .db-inline-btn.danger:hover {
+            border-color: #F2C8C8;
+            background: #FFF5F5;
+            color: #B23A3A;
+        }
+        .db-level-1 {
+            padding-left: 46px;
+            background: #FCFDFF;
+        }
+        .db-level-2 {
+            padding-left: 78px;
+            background: #FFFFFF;
+        }
+        .db-account-list {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .db-account-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .db-account-row:last-child {
+            border-bottom: 0;
+        }
+        .db-explorer {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .db-col {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            background: #FFFFFF;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .db-col-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 14px;
+            border-bottom: 1px solid #EEF2F7;
+            background: #F8FAFC;
+        }
+        .db-col-title {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #334155;
+        }
+        .db-col-count {
+            font-size: 10px;
+            color: #64748B;
+            font-weight: 800;
+        }
+        .db-list-scroll {
+            padding: 8px;
+            overflow: auto;
+            max-height: 520px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        .db-item-row {
+            border: 1px solid #E9EEF5;
+            border-radius: 10px;
+            padding: 10px 10px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            align-items: center;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+        .db-item-row:hover {
+            border-color: #CBD5E1;
+            background: #FAFCFF;
+        }
+        .db-item-row.active {
+            border-color: #BFCEF0;
+            background: #EFF5FF;
+        }
+        .db-item-name {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0F172A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .db-item-meta {
+            margin-top: 2px;
+            font-size: 10px;
+            color: #64748B;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .db-item-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        @media (max-width: 1200px) {
+            .db-explorer {
+                grid-template-columns: 1fr;
+            }
+            .db-col {
+                min-height: 240px;
+            }
+        }
 
         .recon-destination-cell {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            width: 100%;
         }
         .recon-destination-select {
-            min-width: 230px;
-            height: 40px;
+            flex: 1;
+            width: 100%;
+            min-width: 0;
+            height: 34px;
             padding: 0 12px;
-            font-size: 12px;
-            font-weight: 700;
-            border-radius: 10px;
-            border: 1px solid #D1D5DB;
-            background: #FFFFFF;
+            font-size: 10px;
+            font-weight: 800;
+            border-radius: 9px;
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
         }
         .recon-fill-handle {
             width: 28px;
@@ -656,7 +1172,380 @@
             border-color: #C7D2FE;
             color: #1D4ED8;
         }
-
+        .recon-desc-input {
+            min-width: 0;
+            width: 100%;
+            height: 30px;
+            padding: 0 8px;
+            font-size: 12px;
+            line-height: 1.2;
+            font-weight: 300;
+            letter-spacing: 0;
+            border-radius: 9px;
+            border: 1px solid transparent;
+            background: #F8FAFC;
+            color: #64748B;
+            text-transform: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            resize: none;
+        }
+        .recon-desc-input:hover {
+            border-color: #E2E8F0;
+            background: #FFFFFF;
+        }
+        .recon-desc-input:focus {
+            border-color: #CBD5E1;
+            box-shadow: 0 0 0 2px rgba(148,163,184,0.15);
+            background: #FFFFFF;
+            color: #0F172A;
+        }
+        #recon-preview .table-mobile-scroll {
+            overflow-x: auto;
+        }
+        .entry-destination-panel {
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            padding: 0;
+            transition: none;
+        }
+        .entry-destination-panel:hover {
+            border-color: transparent;
+            box-shadow: none;
+        }
+        .entry-destination-head {
+            display: none;
+        }
+        .entry-destination-flow-tag {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .entry-destination-flow-tag.in {
+            background: #ECFDF3;
+            color: #1F7A5C;
+            border-color: #CFE7DC;
+        }
+        .entry-destination-flow-tag.out {
+            background: #FFF4F1;
+            color: #B23A3A;
+            border-color: #F4D3CC;
+        }
+        .entry-destination-select {
+            width: 100%;
+            min-width: 0;
+            height: 26px;
+            padding: 0;
+            font-size: 12px;
+            font-weight: 800;
+            border-radius: 6px;
+            border: 0;
+            background: transparent;
+            color: #0F172A;
+            text-transform: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+        }
+        .entry-destination-select:hover {
+            color: #1E293B;
+        }
+        .entry-destination-select:focus {
+            border: 0;
+            outline: none;
+            box-shadow: none;
+            background: transparent;
+        }
+        .entry-destination-select::-ms-expand {
+            display: none;
+        }
+        .entry-destination-desc {
+            font-size: 10px;
+            color: #64748B;
+            font-weight: 400;
+            line-height: 1.25;
+            letter-spacing: 0;
+            text-transform: none;
+            white-space: normal;
+            word-break: break-word;
+            margin-top: 6px;
+            padding-left: 2px;
+        }
+        .entry-cell-main {
+            display: flex;
+            align-items: flex-start;
+            min-height: 22px;
+            line-height: 1.2;
+        }
+        .entry-cell-main.right {
+            justify-content: flex-end;
+        }
+        .entry-cell-main.center {
+            justify-content: center;
+        }
+        .entry-cell-sub {
+            display: block;
+            min-height: 16px;
+            line-height: 1.2;
+            margin-top: 6px;
+        }
+        .entry-cell-placeholder {
+            visibility: hidden;
+            user-select: none;
+        }
+        .entry-date-main {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .entry-value-main {
+            display: inline-block;
+            line-height: 1.2;
+            margin-top: 1px;
+        }
+        .entry-actions-wrap {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+            min-height: 22px;
+        }
+        .internal-toggle-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #94A3B8;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .internal-toggle-btn.active {
+            background: #EEF2F7;
+            color: #475569;
+            border-color: #CBD5E1;
+        }
+        #entries .table-mobile-scroll {
+            overflow-x: auto;
+        }
+        .entries-toolbar {
+            position: static;
+            background: #FFFFFF;
+        }
+        .entries-toolbar.collapsed .entries-filters-grid,
+        .entries-toolbar.collapsed #entries-dup-summary {
+            display: none !important;
+        }
+        .entries-toolbar.collapsed {
+            padding-top: 12px !important;
+            padding-bottom: 12px !important;
+        }
+        .entries-toolbar.collapsed .entries-toolbar-title,
+        .entries-toolbar.collapsed .entries-toolbar-sub {
+            display: none;
+        }
+        .entries-toolbar.collapsed .entries-toolbar-top {
+            justify-content: flex-end;
+            border-bottom: 0;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .entries-toolbar.collapsed .entries-quick-btn:not(.toggle) {
+            display: none;
+        }
+        .entries-toolbar-top {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #EEF2F7;
+            margin-bottom: 4px;
+        }
+        .entries-toolbar-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #334155;
+        }
+        .entries-toolbar-sub {
+            font-size: 11px;
+            color: #64748B;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+        .entries-quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .entries-quick-btn {
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 10px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .entries-quick-btn:hover {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+            color: #0F172A;
+        }
+        .entries-quick-btn.active {
+            border-color: #BFD0EF;
+            background: #EEF4FF;
+            color: #274388;
+        }
+        .entries-quick-btn.toggle {
+            min-width: 122px;
+            justify-content: center;
+        }
+        .entries-filters-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(260px, 1.3fr) repeat(6, minmax(120px, 0.75fr)) auto;
+            gap: 12px;
+            align-items: end;
+        }
+        .entries-filter-item {
+            min-width: 0;
+        }
+        .entries-toolbar .label-mini {
+            margin-bottom: 6px;
+        }
+        .entries-toolbar button {
+            white-space: nowrap;
+        }
+        .entries-toolbar input,
+        .entries-toolbar select {
+            font-size: 13px;
+        }
+        .entries-toolbar .btn-new-entry {
+            height: 44px;
+            border-radius: 12px;
+            padding: 0 18px;
+            background: #E09132;
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: 900;
+            letter-spacing: 0.01em;
+            box-shadow: 0 10px 18px rgba(224, 145, 50, 0.24);
+        }
+        .entries-toolbar .btn-new-entry:hover {
+            background: #C57A22;
+        }
+        .entries-dup-summary-line {
+            width: 100%;
+            margin-top: 2px;
+            padding: 8px 10px;
+            border: 1px dashed #D7E2F0;
+            border-radius: 10px;
+            background: #F8FAFF;
+        }
+        @media (max-width: 1400px) {
+            .entries-filters-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+            .entries-filters-grid > :first-child {
+                grid-column: span 2;
+            }
+            .entries-toolbar .btn-new-entry {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        .entry-destination-panel .recon-fill-handle {
+            opacity: 0.35;
+            transition: opacity var(--dur-fast) var(--ease-premium);
+        }
+        .entry-destination-panel:hover .recon-fill-handle {
+            opacity: 1;
+        }
+        #entries-pagination button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        #entries-table th,
+        #entries-table td {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            vertical-align: top;
+        }
+        #entries-table col.col-check { width: 52px; }
+        #entries-table col.col-date { width: 96px; }
+        #entries-table col.col-value { width: 132px; }
+        #entries-table col.col-actions { width: 188px; }
+        #entries-table th:nth-child(1),
+        #entries-table td:nth-child(1) {
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+            text-align: center;
+        }
+        #entries-table th:nth-child(2),
+        #entries-table td:nth-child(2) {
+            padding-left: 6px !important;
+            padding-right: 8px !important;
+        }
+        #entries-table th:nth-child(3),
+        #entries-table td:nth-child(3) {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+        }
+        #entries-table tbody td {
+            font-size: 12px;
+        }
+        .entries-check {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid #B8C2CF;
+            border-radius: 999px;
+            background: #FFFFFF;
+            display: inline-grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .entries-check:hover {
+            border-color: #93A4B8;
+            background: #F8FAFC;
+        }
+        .entries-check:checked {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(47,79,157,0.15);
+        }
+        .entries-check:checked::after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #FFFFFF;
+        }
+        .internal-row {
+            opacity: 0.45 !important;
+        }
         @media (max-width: 1023px) {
             #sidebar .nav-text {
                 display: none !important;
@@ -679,10 +1568,19 @@
                 height: 56px;
                 border-radius: 12px;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                gap: 4px;
                 color: #9CA3AF;
                 transition: all var(--dur-std) var(--ease-premium);
+            }
+            .mobile-nav-label {
+                font-size: 9px;
+                line-height: 1;
+                font-weight: 800;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
             }
             .mobile-nav-btn.active {
                 color: #FFFFFF;
@@ -718,6 +1616,12 @@
             #sync-status {
                 display: none !important;
             }
+            #backup-status {
+                display: none !important;
+            }
+            #export-pdf-btn {
+                display: none !important;
+            }
             .card-premium:not(.overflow-hidden) {
                 padding: 16px !important;
             }
@@ -738,6 +1642,48 @@
             .mobile-nav-btn {
                 height: 52px !important;
                 border-radius: 10px !important;
+            }
+            .mobile-nav-label {
+                font-size: 8px !important;
+            }
+            .entries-toolbar {
+                position: static;
+                backdrop-filter: none;
+            }
+            .entries-toolbar-top {
+                margin-bottom: 8px;
+            }
+            .entries-filters-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .entries-toolbar .btn-new-entry {
+                width: 100%;
+                justify-content: center;
+            }
+            .entry-destination-panel .recon-fill-handle {
+                display: none;
+            }
+            .modal-shell-entry,
+            .modal-shell-db {
+                max-width: 100%;
+                border-radius: 18px;
+            }
+            .modal-head {
+                padding: 18px 16px;
+            }
+            .modal-body {
+                padding: 16px;
+            }
+            .modal-grid-2 {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .modal-actions {
+                flex-direction: column;
+            }
+            .modal-btn-danger {
+                width: 100%;
             }
         }
         @media (min-width: 768px) {
@@ -810,39 +1756,96 @@
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
                 </div>
+                <div id="backup-status" class="backup-indicator">
+                    <i data-lucide="hard-drive-download" class="w-3.5 h-3.5"></i>
+                    <span>Backup local: --</span>
+                </div>
+                <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
+                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                    <span>Exportar PDF</span>
+                </button>
             </div>
         </header>
 
-        <div class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll">
+        <div id="main-scroll" class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll">
             
             <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
-                <div class="card-premium p-6 flex flex-wrap gap-4 items-end">
-                    <div class="flex-1 min-w-[200px]"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
-                    <div class="w-32"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
-                    <div class="w-32"><label class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
-                    <div class="w-32"><label class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
-                    <button onclick="openEntryModal()" class="bg-[#E09132] text-white px-8 h-[44px] rounded-xl font-black text-sm hover:bg-[#C57A22] shadow-lg">
-                        + Novo
-                    </button>
+                <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar">
+                    <div class="entries-toolbar-top">
+                        <div>
+                            <p class="entries-toolbar-title">Central de Lançamentos</p>
+                            <p class="entries-toolbar-sub">Use ações rápidas para filtrar e revisar mais rápido.</p>
+                        </div>
+                        <div class="entries-quick-actions">
+                            <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
+                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
+                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
+                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
+                        </div>
+                    </div>
+                    <div class="entries-filters-grid">
+                        <div class="entries-filter-item"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="queueRenderEntries()"></div>
+                        <div class="entries-filter-item"><label class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
+                        <div class="entries-filter-item"><label class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
+                        <div class="entries-filter-item"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
+                        <div class="entries-filter-item"><label class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
+                        <div class="entries-filter-item"><label class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
+                        <div class="entries-filter-item"><label class="label-mini">Duplicidade</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option></select></div>
+                        <button onclick="openEntryModal()" class="btn-new-entry">
+                            + Novo
+                        </button>
+                    </div>
+                    <div id="entries-dup-summary" class="entries-dup-summary-line text-[11px] font-bold text-slate-500 hidden"></div>
+                    <div id="entries-selection-panel" class="hidden w-full border-t border-slate-100 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
+                            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Entradas: <span id="entries-sum-in">R$ 0,00</span></span>
+                            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Saídas: <span id="entries-sum-out">R$ 0,00</span></span>
+                            <span id="entries-net-pill" class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">Saldo: <span id="entries-sum-net">R$ 0,00</span></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="entries-selected-count" class="text-[11px] font-bold text-slate-500">0 selecionado(s)</span>
+                            <button onclick="clearEntrySelection()" class="h-[34px] px-3.5 rounded-lg border border-slate-200 text-slate-500 text-[10px] font-black uppercase hover:bg-slate-50">
+                                Limpar seleção
+                            </button>
+                            <button onclick="deleteSelectedEntries()" id="delete-selected-btn" class="h-[34px] px-3.5 rounded-lg bg-slate-200 text-slate-700 text-[10px] font-black uppercase hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
+                                Excluir selecionados
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-premium overflow-hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="entries-table" class="w-full text-left">
+                            <colgroup>
+                                <col class="col-check">
+                                <col class="col-date">
+                                <col>
+                                <col class="col-value">
+                                <col class="col-actions">
+                            </colgroup>
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                                 <tr>
-                                    <th onclick="setSort('date')" class="px-6 py-4 cursor-pointer hover:text-[#E09132]">Data</th>
-                                    <th class="px-6 py-4">Tipo</th>
+                                    <th class="px-4 py-4 text-center">
+                                        <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)">
+                                    </th>
+                                    <th onclick="setSort('date')" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
                                     <th class="px-6 py-4">Destino / Detalhes</th>
-                                    <th onclick="setSort('amount')" class="px-6 py-4 text-right cursor-pointer hover:text-[#E09132]">Valor</th>
-                                    <th class="px-6 py-4 text-center">Status / Ação</th>
+                                    <th onclick="setSort('amount')" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
+                                    <th class="px-6 py-4 w-[210px] text-center">Status / Ação</th>
                                 </tr>
                             </thead>
                             <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
                         </table>
+                    </div>
+                    <div id="entries-pagination" class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 py-3 border-t border-slate-100 text-[11px]">
+                        <span id="entries-page-info" class="text-slate-500 font-semibold">Mostrando 0 de 0</span>
+                        <div class="flex items-center gap-2">
+                            <button id="entries-page-prev" class="h-8 px-3 rounded-lg border border-slate-200 text-slate-600 font-bold uppercase text-[10px]">Anterior</button>
+                            <span id="entries-page-number" class="text-slate-500 font-bold">1 / 1</span>
+                            <button id="entries-page-next" class="h-8 px-3 rounded-lg border border-slate-200 text-slate-600 font-bold uppercase text-[10px]">Próxima</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -902,7 +1905,7 @@
                     </div>
                 </div>
 
-                <div class="card-premium p-8 h-[980px] lg:h-[1320px] flex flex-col">
+                <div class="card-premium p-8 h-[620px] lg:h-[760px] flex flex-col">
                     <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
                     <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
                 </div>
@@ -1012,7 +2015,13 @@
                         <div class="table-mobile-scroll custom-scrollbar">
                             <table id="recon-preview-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
-                                    <tr><th class="px-8 py-4">Data</th><th class="px-8 py-4">Descrição</th><th class="px-8 py-4">Destino</th><th class="px-8 py-4">Ação</th><th class="px-8 py-4 text-right">Valor</th></tr>
+                                    <tr>
+                                        <th class="px-4 py-3 w-[90px]">Data</th>
+                                        <th class="px-4 py-3 w-[180px]">Descrição</th>
+                                        <th class="px-4 py-3 w-[320px]">Destino</th>
+                                        <th class="px-4 py-3 w-[70px] text-center">Ação</th>
+                                        <th class="px-4 py-3 w-[130px] text-right">Valor</th>
+                                    </tr>
                                 </thead>
                                 <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
                             </table>
@@ -1024,12 +2033,18 @@
             <!-- BANCO DE DADOS -->
             <div id="database" class="tab-content space-y-12">
                 <section>
-                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Estrutura de Categorias</h4><button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova</button></div>
-                    <div id="db-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                    <div class="db-toolbar mb-6">
+                        <div class="db-search-wrap">
+                            <label class="label-mini">Buscar em categorias, subcategorias e destinos</label>
+                            <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
+                        </div>
+                        <button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova Categoria</button>
+                    </div>
+                    <div id="db-list"></div>
                 </section>
                 <section>
                     <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Contas e Bancos</h4><button onclick="openDbModal('ACCOUNT')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Conta</button></div>
-                    <div id="account-list" class="grid grid-cols-1 sm:grid-cols-4 gap-6"></div>
+                    <div id="account-list"></div>
                 </section>
             </div>
         </div>
@@ -1038,31 +2053,41 @@
     <nav id="mobile-nav" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
         <button onclick="switchTab('monthly')" id="mnav-monthly" class="mobile-nav-btn active" aria-label="Relatório Mensal">
             <i data-lucide="calendar" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Mensal</span>
         </button>
         <button onclick="switchTab('annual')" id="mnav-annual" class="mobile-nav-btn" aria-label="Relatório Anual">
             <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Anual</span>
         </button>
         <button onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
             <i data-lucide="receipt" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Lanç.</span>
         </button>
         <button onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
             <i data-lucide="landmark" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Conc.</span>
         </button>
         <button onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
             <i data-lucide="database" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Banco</span>
         </button>
     </nav>
 
     <!-- MODAL LANÇAMENTO -->
-    <div id="entry-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xl z-50 flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-slide-up">
-            <div class="p-8 border-b flex justify-between bg-slate-50/50">
-                <h3 class="font-black text-slate-900 uppercase text-xs">Editor de Lançamento</h3>
-                <button onclick="closeModal('entry-modal')" class="text-slate-300 hover:text-red-500"><i data-lucide="x"></i></button>
+    <div id="entry-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('entry-modal')">
+        <div class="modal-shell modal-shell-entry">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title">Editor de Lançamento</h3>
+                    <p class="modal-head-sub">Preencha os campos e salve com segurança.</p>
+                </div>
+                <button onclick="closeModal('entry-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
             </div>
-            <form id="entry-form" class="p-8 space-y-6">
+            <form id="entry-form" class="modal-body space-y-5">
                 <input type="hidden" id="entry-id">
-                <div class="flex gap-4">
+                <div class="modal-grid-2">
                     <div class="flex-1"><label class="label-mini">Data</label><input type="date" id="form-date" required></div>
                     <div class="flex-1"><label class="label-mini">Valor (R$)</label><input type="number" step="0.01" id="form-value" required></div>
                 </div>
@@ -1077,23 +2102,31 @@
                     </div>
                     <input type="hidden" id="form-status" value="REALIZADO">
                 </div>
-                <div class="flex gap-3 pt-4">
-                    <button type="submit" class="flex-1 bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-xs">Salvar</button>
-                    <button type="button" id="delete-btn-modal" class="bg-red-50 text-red-500 px-6 rounded-xl font-black text-xs uppercase hidden" onclick="confirmDeleteFromModal()">Excluir</button>
+                <div class="modal-actions">
+                    <button type="submit" class="modal-btn-primary">Salvar</button>
+                    <button type="button" id="delete-btn-modal" class="modal-btn-danger hidden" onclick="confirmDeleteFromModal()">Excluir</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL DB -->
-    <div id="db-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-xl z-50 flex items-center justify-center p-6">
-        <div class="bg-white w-full max-w-sm rounded-[24px] shadow-2xl overflow-hidden">
-            <div class="p-6 border-b flex justify-between"><h3 class="font-black text-slate-900 text-xs uppercase">Configuração</h3><button onclick="closeModal('db-modal')" class="text-slate-300"><i data-lucide="x"></i></button></div>
-            <form id="db-form" class="p-8 space-y-6">
-                <input type="hidden" id="db-type"><input type="hidden" id="db-parent">
+    <div id="db-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('db-modal')">
+        <div class="modal-shell modal-shell-db">
+            <div class="modal-head">
+                <div>
+                    <h3 id="db-modal-title" class="modal-head-title">Configuração</h3>
+                    <p id="db-modal-subtitle" class="modal-head-sub">Cadastre rapidamente um novo item.</p>
+                </div>
+                <button onclick="closeModal('db-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <form id="db-form" class="modal-body space-y-5">
+                <input type="hidden" id="db-type"><input type="hidden" id="db-parent"><input type="hidden" id="db-id"><input type="hidden" id="db-mode" value="CREATE">
                 <div><label class="label-mini">Nome</label><input type="text" id="db-name" required></div>
                 <div id="db-extra"></div>
-                <button type="submit" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black uppercase text-xs">Salvar</button>
+                <button type="submit" class="modal-btn-neutral">Salvar</button>
             </form>
         </div>
     </div>
@@ -1121,6 +2154,10 @@
             accounts: [],
             entries: []
         };
+        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries'];
+        const LOCAL_STORAGE_KEY = 'vovo_v21_backup';
+        const LEGACY_STORAGE_KEY = 'vovo_v20';
+        const ENTRIES_TOOLBAR_COLLAPSED_KEY = 'entries_toolbar_collapsed_v1';
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -1136,7 +2173,225 @@
         let annualNavCategoryId = '';
         let annualNavSubCategoryId = '';
         let annualNavDestinationId = '';
+        let currentTab = 'monthly';
+        let persistLocalTimer = null;
+        let entriesSearchTimer = null;
+        let entriesPage = 1;
+        const entriesPageSize = 80;
+        let lastEntriesQueryKey = '';
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
+        let selectedEntryIds = new Set();
+        let entryDestinationFillState = { active: false, sourceIndex: -1, value: '', type: '', changedIds: new Set() };
+        let entriesToolbarCollapsed = true;
+        let dbSelectedCategoryId = '';
+        let dbSelectedSubCategoryId = '';
+
+        function getStateSnapshot() {
+            return {
+                categories: Array.isArray(state.categories) ? state.categories : [],
+                subCategories: Array.isArray(state.subCategories) ? state.subCategories : [],
+                destinations: Array.isArray(state.destinations) ? state.destinations : [],
+                accounts: Array.isArray(state.accounts) ? state.accounts : [],
+                entries: Array.isArray(state.entries) ? state.entries : []
+            };
+        }
+
+        function normalizeStateIds() {
+            state.accounts = (state.accounts || []).map(a => ({ ...a, id: String(a.id || '') }));
+            state.categories = (state.categories || []).map(c => ({ ...c, id: String(c.id || '') }));
+            state.subCategories = (state.subCategories || []).map(s => ({
+                ...s,
+                id: String(s.id || ''),
+                categoryId: String((s.categoryId ?? s.category_id) || '')
+            }));
+            state.destinations = (state.destinations || []).map(d => ({
+                ...d,
+                id: String(d.id || ''),
+                subCategoryId: String((d.subCategoryId ?? d.sub_category_id) || '')
+            }));
+            state.entries = (state.entries || []).map(e => ({
+                ...e,
+                id: String(e.id || ''),
+                accountId: String((e.accountId ?? e.account_id) || ''),
+                categoryId: String((e.categoryId ?? e.category_id) || ''),
+                subCategoryId: String((e.subCategoryId ?? e.sub_category_id) || ''),
+                destinationId: String((e.destinationId ?? e.destination_id) || ''),
+                isInternalTransfer: isInternalEntry(e)
+            }));
+        }
+
+        function loadLocalSnapshot() {
+            try {
+                const current = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null');
+                if (current && typeof current === 'object') {
+                    return {
+                        categories: current.categories || [],
+                        subCategories: current.subCategories || [],
+                        destinations: current.destinations || [],
+                        accounts: current.accounts || [],
+                        entries: current.entries || []
+                    };
+                }
+            } catch (e) {
+                console.warn('Falha ao ler snapshot local atual:', e);
+            }
+            try {
+                const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
+                if (legacy && typeof legacy === 'object') {
+                    return {
+                        categories: legacy.categories || [],
+                        subCategories: legacy.subCategories || [],
+                        destinations: legacy.destinations || [],
+                        accounts: legacy.accounts || [],
+                        entries: legacy.entries || []
+                    };
+                }
+            } catch (e) {
+                console.warn('Falha ao ler snapshot local legado:', e);
+            }
+            return null;
+        }
+
+        function persistLocalSnapshot() {
+            try {
+                const snapshot = getStateSnapshot();
+                const payload = { savedAt: new Date().toISOString(), ...snapshot };
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
+                // Compatibilidade com versões anteriores
+                localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(snapshot));
+                updateBackupIndicator(payload.savedAt);
+            } catch (e) {
+                console.error('Falha ao persistir snapshot local:', e);
+            }
+        }
+
+        function requestPersistLocalSnapshot(delayMs = 550) {
+            if (persistLocalTimer) clearTimeout(persistLocalTimer);
+            persistLocalTimer = setTimeout(() => {
+                persistLocalTimer = null;
+                persistLocalSnapshot();
+            }, delayMs);
+        }
+
+        function queueRenderEntries() {
+            if (entriesSearchTimer) clearTimeout(entriesSearchTimer);
+            entriesSearchTimer = setTimeout(() => {
+                entriesSearchTimer = null;
+                entriesPage = 1;
+                renderEntries();
+            }, 140);
+        }
+
+        function applyEntriesToolbarState() {
+            const toolbar = document.querySelector('.entries-toolbar');
+            const labelEl = document.getElementById('entries-toggle-label');
+            const iconEl = document.getElementById('entries-toggle-icon');
+            const btnEl = document.getElementById('entries-toggle-btn');
+            if (!toolbar || !labelEl || !iconEl || !btnEl) return;
+            toolbar.classList.toggle('collapsed', entriesToolbarCollapsed);
+            labelEl.innerText = entriesToolbarCollapsed ? 'Expandir' : 'Recolher';
+            iconEl.setAttribute('data-lucide', entriesToolbarCollapsed ? 'chevron-down' : 'chevron-up');
+            btnEl.setAttribute('aria-expanded', entriesToolbarCollapsed ? 'false' : 'true');
+            lucide.createIcons();
+        }
+
+        function toggleEntriesToolbarCollapse() {
+            entriesToolbarCollapsed = !entriesToolbarCollapsed;
+            localStorage.setItem(ENTRIES_TOOLBAR_COLLAPSED_KEY, entriesToolbarCollapsed ? '1' : '0');
+            applyEntriesToolbarState();
+        }
+
+        function resetEntriesFilters() {
+            const map = {
+                'entry-search': '',
+                'filter-date-start': '',
+                'filter-date-end': '',
+                'filter-type': '',
+                'filter-status': '',
+                'filter-account': '',
+                'filter-duplicates': ''
+            };
+            Object.entries(map).forEach(([id, value]) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value;
+            });
+            entriesPage = 1;
+            renderEntries();
+        }
+
+        function setEntriesCurrentMonthFilter() {
+            const now = new Date();
+            const first = new Date(now.getFullYear(), now.getMonth(), 1);
+            const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const startEl = document.getElementById('filter-date-start');
+            const endEl = document.getElementById('filter-date-end');
+            if (startEl) startEl.value = first.toISOString().slice(0, 10);
+            if (endEl) endEl.value = last.toISOString().slice(0, 10);
+            entriesPage = 1;
+            renderEntries();
+        }
+
+        function toggleEntriesDuplicateQuick() {
+            const dupEl = document.getElementById('filter-duplicates');
+            if (!dupEl) return;
+            dupEl.value = dupEl.value === 'ONLY' ? '' : 'ONLY';
+            entriesPage = 1;
+            renderEntries();
+        }
+
+        function updateBackupIndicator(savedAtIso) {
+            const el = document.getElementById('backup-status');
+            if (!el) return;
+            const textEl = el.querySelector('span');
+            if (!textEl) return;
+
+            let iso = savedAtIso;
+            if (!iso) {
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null');
+                    iso = parsed && parsed.savedAt ? parsed.savedAt : '';
+                } catch (e) {
+                    iso = '';
+                }
+            }
+
+            if (!iso) {
+                textEl.innerText = 'Backup local: --';
+                return;
+            }
+
+            const dt = new Date(iso);
+            if (Number.isNaN(dt.getTime())) {
+                textEl.innerText = 'Backup local: --';
+                return;
+            }
+
+            const datePart = dt.toLocaleDateString('pt-BR');
+            const timePart = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            textEl.innerText = `Backup local: ${datePart} ${timePart}`;
+        }
+
+        function mergeById(cloudList, localList) {
+            const map = new Map();
+            (Array.isArray(cloudList) ? cloudList : []).forEach(item => {
+                if (item && item.id) map.set(item.id, item);
+            });
+            (Array.isArray(localList) ? localList : []).forEach(item => {
+                if (!item || !item.id) return;
+                // Preferimos local para não perder alterações recentes ainda não sincronizadas.
+                map.set(item.id, item);
+            });
+            return Array.from(map.values());
+        }
+
+        function mergeCloudAndLocal(cloudState, localState) {
+            if (!localState) return cloudState;
+            const merged = {};
+            STATE_TABLES.forEach(table => {
+                merged[table] = mergeById(cloudState[table], localState[table]);
+            });
+            return merged;
+        }
 
         function setSyncStatus(status) {
             const el = document.getElementById('sync-status');
@@ -1161,25 +2416,44 @@
             if (!sbClient) {
                 console.error("Supabase client não disponível.");
                 document.getElementById('loading-overlay').style.display = 'none';
+                const localOnly = loadLocalSnapshot();
+                if (localOnly) {
+                    state = localOnly;
+                    normalizeStateIds();
+                    render();
+                }
                 return;
             }
 
             try {
                 setSyncStatus('syncing');
                 // Tenta carregar dados do Supabase
-                const tables = ['categories', 'subCategories', 'destinations', 'accounts', 'entries'];
-                for(const t of tables) {
+                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [] };
+                for(const t of STATE_TABLES) {
                     const { data, error } = await sbClient.from(t).select('*');
                     if (error) throw error;
-                    state[t] = data || [];
+                    cloudState[t] = data || [];
+                }
+                const localData = loadLocalSnapshot();
+                state = mergeCloudAndLocal(cloudState, localData);
+                normalizeStateIds();
+                if (localData) {
+                    for (const t of STATE_TABLES) {
+                        const localCount = Array.isArray(localData[t]) ? localData[t].length : 0;
+                        const cloudCount = Array.isArray(cloudState[t]) ? cloudState[t].length : 0;
+                        if (localCount > cloudCount && localCount > 0) {
+                            // Recupera dados potencialmente perdidos na nuvem.
+                            const { error: pushErr } = await sbClient.from(t).upsert(localData[t]);
+                            if (pushErr) console.warn(`Nao foi possivel re-sincronizar ${t}:`, pushErr);
+                        }
+                    }
                 }
 
                 // Se não houver dados no Supabase, tenta migrar do LocalStorage (v20)
-                if (state.categories.length === 0) {
-                    const localData = JSON.parse(localStorage.getItem('vovo_v20'));
+                if (cloudState.categories.length === 0) {
                     if (localData) {
                         console.log("Migrando dados locais para Supabase...");
-                        for(const t of tables) {
+                        for(const t of STATE_TABLES) {
                             if (localData[t] && localData[t].length > 0) {
                                 await sbClient.from(t).upsert(localData[t]);
                             }
@@ -1191,15 +2465,17 @@
                 
                 setSyncStatus('synced');
                 document.getElementById('loading-overlay').style.display = 'none';
+                persistLocalSnapshot();
                 render();
             } catch (err) {
                 console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
                 document.getElementById('loading-overlay').style.display = 'none';
                 // Tentativa de renderizar com dados locais se falhar o cloud
-                const localData = JSON.parse(localStorage.getItem('vovo_v20'));
+                const localData = loadLocalSnapshot();
                 if (localData) {
                     state = localData;
+                    normalizeStateIds();
                     render();
                 }
             }
@@ -1207,14 +2483,26 @@
 
         async function cloudSave(table, data) {
             if (!sbClient) return;
+            const sanitizeEntryForCloud = (entry) => {
+                if (!entry || typeof entry !== 'object') return entry;
+                const clean = { ...entry };
+                delete clean.isInternalTransfer;
+                delete clean.internalTransfer;
+                delete clean.is_internal_transfer;
+                return clean;
+            };
+            const payload = table === 'entries'
+                ? (Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data))
+                : data;
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).upsert(data);
+            const { error } = await sbClient.from(table).upsert(payload);
             if (error) {
                 console.error(`Erro ao salvar em ${table}:`, error);
                 setSyncStatus('offline');
             } else {
                 setSyncStatus('synced');
             }
+            requestPersistLocalSnapshot();
         }
 
         async function cloudDelete(table, id) {
@@ -1227,6 +2515,7 @@
             } else {
                 setSyncStatus('synced');
             }
+            requestPersistLocalSnapshot();
         }
 
         window.deleteEntry = async function(id) {
@@ -1236,6 +2525,15 @@
                 render();
             }
         };
+        async function confirmDeleteFromModal() {
+            const id = String(document.getElementById('entry-id')?.value || '');
+            if (!id) return;
+            if (!confirm("Deseja realmente excluir este lançamento?")) return;
+            await cloudDelete('entries', id);
+            state.entries = state.entries.filter(e => e.id !== id);
+            closeModal('entry-modal');
+            render();
+        }
 
         const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const formatChartBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', {
@@ -1243,6 +2541,213 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
+        function getExportTimestamp() {
+            return new Date().toLocaleString('pt-BR', { hour12: false });
+        }
+        function buildPrintableShell(title, subtitle, tableHtml) {
+            return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+            <style>
+                body{font-family:Arial,sans-serif;color:#0f172a;padding:24px;}
+                h1{margin:0 0 4px;font-size:20px;}
+                p{margin:0 0 14px;color:#475569;font-size:12px;}
+                table{width:100%;border-collapse:collapse;font-size:12px;}
+                th,td{border:1px solid #e2e8f0;padding:8px 10px;text-align:left;vertical-align:top;}
+                th{background:#f8fafc;font-weight:700;text-transform:uppercase;font-size:10px;color:#475569;}
+                .r{text-align:right;}
+                .c{text-align:center;}
+                .print-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px;}
+                .print-kpi-card{border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;}
+                .print-kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;color:#64748b;margin:0 0 4px;}
+                .print-kpi-value{font-size:14px;font-weight:800;margin:0;color:#0f172a;}
+                .mdetails-wrap{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+                .mdetails-level{border-bottom:1px solid #e2e8f0;}
+                .mdetails-level:last-child{border-bottom:0;}
+                .mdetails-level summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;cursor:default;}
+                .mdetails-level summary::-webkit-details-marker{display:none;}
+                .mdetails-inner{border-top:1px solid #e2e8f0;background:#fcfdff;}
+                .mdetails-l2 summary{padding-left:22px;}
+                .mdetails-l3 summary{padding-left:34px;}
+                .mdetails-title{font-size:11px;font-weight:700;color:#0f172a;}
+                .mdetails-meta{font-size:10px;font-weight:700;color:#64748b;white-space:nowrap;}
+                .flow-in{color:#1f7a5c;}
+                .flow-out{color:#b23a3a;}
+                @media print { body{padding:0;} }
+            </style></head><body>
+            <h1>${escapeHtml(title)}</h1>
+            <p>${escapeHtml(subtitle)}</p>
+            ${tableHtml}
+            </body></html>`;
+        }
+        function buildMonthlyHierarchyExportHtml(entries) {
+            const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
+            if (!dadosBase.length) return '<p>Sem dados para exportação no período/filtro selecionado.</p>';
+
+            const totais = dadosBase.reduce((acc, item) => {
+                const valor = Number(item.valor) || 0;
+                if (item.tipo === 'entrada') acc.entrada += valor;
+                else acc.saida += valor;
+                acc.count += 1;
+                return acc;
+            }, { entrada: 0, saida: 0, count: 0 });
+
+            const categorias = new Map();
+            dadosBase.forEach((item) => {
+                const categoria = item.categoria || 'Sem categoria';
+                const subcategoria = item.subcategoria || 'Sem subcategoria';
+                const destino = item.destino || 'Sem destino';
+                const valor = Number(item.valor) || 0;
+
+                if (!categorias.has(categoria)) categorias.set(categoria, { total: 0, count: 0, subs: new Map() });
+                const catRef = categorias.get(categoria);
+                catRef.total += valor;
+                catRef.count += 1;
+
+                if (!catRef.subs.has(subcategoria)) catRef.subs.set(subcategoria, { total: 0, count: 0, destinos: new Map() });
+                const subRef = catRef.subs.get(subcategoria);
+                subRef.total += valor;
+                subRef.count += 1;
+
+                if (!subRef.destinos.has(destino)) subRef.destinos.set(destino, { total: 0, count: 0 });
+                const dstRef = subRef.destinos.get(destino);
+                dstRef.total += valor;
+                dstRef.count += 1;
+            });
+
+            const orderedCategories = Array.from(categorias.entries()).sort((a, b) => b[1].total - a[1].total);
+            const totalSubcategorias = Array.from(categorias.values()).reduce((a, c) => a + c.subs.size, 0);
+            const totalDestinos = Array.from(categorias.values()).reduce((acc, cat) => {
+                return acc + Array.from(cat.subs.values()).reduce((subAcc, sub) => subAcc + sub.destinos.size, 0);
+            }, 0);
+            const detailsHtml = orderedCategories.map(([categoria, catData]) => {
+                const orderedSubs = Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total);
+                const subHtml = orderedSubs.map(([subcategoria, subData]) => {
+                    const orderedDestinos = Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total);
+                    const destinoHtml = orderedDestinos.map(([destino, dstData]) => {
+                        return `<details class="mdetails-level mdetails-l3" open>
+                            <summary>
+                                <span class="mdetails-title">${escapeHtml(destino)}</span>
+                                <span class="mdetails-meta">${formatBRL(dstData.total)} • ${dstData.count} lanç.</span>
+                            </summary>
+                        </details>`;
+                    }).join('');
+                    return `<details class="mdetails-level mdetails-l2" open>
+                        <summary>
+                            <span class="mdetails-title">${escapeHtml(subcategoria)}</span>
+                            <span class="mdetails-meta">${formatBRL(subData.total)} • ${subData.count} lanç.</span>
+                        </summary>
+                        <div class="mdetails-inner">${destinoHtml}</div>
+                    </details>`;
+                }).join('');
+                return `<details class="mdetails-level" open>
+                    <summary>
+                        <span class="mdetails-title">${escapeHtml(categoria)}</span>
+                        <span class="mdetails-meta">${formatBRL(catData.total)} • ${catData.count} lanç.</span>
+                    </summary>
+                    <div class="mdetails-inner">${subHtml}</div>
+                </details>`;
+            }).join('');
+
+            return `<div class="print-kpi">
+                <div class="print-kpi-card">
+                    <p class="print-kpi-label">Entradas</p>
+                    <p class="print-kpi-value flow-in">${formatBRL(totais.entrada)}</p>
+                </div>
+                <div class="print-kpi-card">
+                    <p class="print-kpi-label">Saídas</p>
+                    <p class="print-kpi-value flow-out">${formatBRL(totais.saida)}</p>
+                </div>
+                <div class="print-kpi-card">
+                    <p class="print-kpi-label">Saldo</p>
+                    <p class="print-kpi-value ${totais.entrada - totais.saida >= 0 ? 'flow-in' : 'flow-out'}">${formatBRL(totais.entrada - totais.saida)}</p>
+                </div>
+            </div>
+            <table><thead><tr><th>Nível</th><th>Filtros aplicados</th><th class="r">Quantidade</th></tr></thead><tbody>
+                <tr><td>1. Categoria</td><td>${escapeHtml(categoriaFiltroSelecionada || 'Todas')}</td><td class="r">${orderedCategories.length}</td></tr>
+                <tr><td>2. Subcategoria</td><td>${escapeHtml(fluxoSelecionado || 'TODOS')}</td><td class="r">${totalSubcategorias}</td></tr>
+                <tr><td>3. Destino</td><td>Resumo sem detalhamento de lançamentos</td><td class="r">${totalDestinos}</td></tr>
+            </tbody></table>
+            <div class="mdetails-wrap">${detailsHtml}</div>`;
+        }
+        function getEntriesForExport() {
+            const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
+            const dateStart = document.getElementById('filter-date-start')?.value || '';
+            const dateEnd = document.getElementById('filter-date-end')?.value || '';
+            const typeFilter = document.getElementById('filter-type')?.value || '';
+            const statusFilter = document.getElementById('filter-status')?.value || '';
+            const accountFilter = document.getElementById('filter-account')?.value || '';
+            const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
+
+            const base = state.entries.filter(e => {
+                const dst = state.destinations.find(d => d.id === e.destinationId)?.name || "";
+                const matchesSearch = ((e.description || "") + dst).toLowerCase().includes(search);
+                const matchesStart = !dateStart || e.date >= dateStart;
+                const matchesEnd = !dateEnd || e.date <= dateEnd;
+                const matchesType = !typeFilter || e.type === typeFilter;
+                const matchesStatus = !statusFilter || e.status === statusFilter;
+                const entryAccountId = String((e.accountId ?? e.account_id) || '');
+                const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
+                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+            });
+            const dupMeta = getDuplicateMeta(base);
+            const filtered = duplicateFilter === 'ONLY' ? base.filter(e => dupMeta.duplicateIds.has(e.id)) : base;
+            return filtered.sort((a,b) => (b.date || '').localeCompare(a.date || '') || (Number(b.amount)||0) - (Number(a.amount)||0));
+        }
+        function exportCurrentReportPDF() {
+            let title = '';
+            let subtitle = `Gerado em ${getExportTimestamp()}`;
+            let tableHtml = '<p>Sem dados para exportação.</p>';
+
+            if (currentTab === 'entries') {
+                const rows = getEntriesForExport();
+                title = 'Relatório de Lançamentos';
+                tableHtml = `<table><thead><tr><th>Data</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
+                    ${rows.map(e => {
+                        const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
+                        return `<tr>
+                            <td>${escapeHtml((e.date || '').split('-').reverse().join('/'))}</td>
+                            <td>${escapeHtml(dst)}</td>
+                            <td>${escapeHtml(e.description || '')}</td>
+                            <td class="c">${escapeHtml(e.status || '-')}</td>
+                            <td class="r">${formatBRL(e.amount)}</td>
+                        </tr>`;
+                    }).join('')}
+                </tbody></table>`;
+            } else if (currentTab === 'monthly') {
+                const filter = document.getElementById('monthly-filter')?.value || new Date().toISOString().slice(0,7);
+                const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+                title = `Relatório Mensal (${filter})`;
+                subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
+                tableHtml = buildMonthlyHierarchyExportHtml(entries);
+            } else if (currentTab === 'annual') {
+                const year = new Date().getFullYear();
+                const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                const data = monthNames.map((_, idx) => {
+                    const prefix = `${year}-${String(idx + 1).padStart(2,'0')}`;
+                    const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
+                    const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                    const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                    return { month: monthNames[idx], inc, exp, bal: inc - exp };
+                });
+                title = `Relatório Anual (${year})`;
+                tableHtml = `<table><thead><tr><th>Mês</th><th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th></tr></thead><tbody>
+                    ${data.map(r => `<tr><td>${r.month}</td><td class="r">${formatBRL(r.inc)}</td><td class="r">${formatBRL(r.exp)}</td><td class="r">${formatBRL(r.bal)}</td></tr>`).join('')}
+                </tbody></table>`;
+            } else {
+                title = 'Relatório';
+                tableHtml = `<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>`;
+            }
+
+            const win = window.open('', '_blank');
+            if (!win) {
+                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
+                return;
+            }
+            win.document.open();
+            win.document.write(buildPrintableShell(title, subtitle, tableHtml));
+            win.document.close();
+            win.focus();
+            setTimeout(() => win.print(), 250);
+        }
         function getReadableTooltipConfig(labelCb) {
             return {
                 backgroundColor: 'rgba(15, 23, 42, 0.94)',
@@ -1280,6 +2785,19 @@
         const generateId = () => Math.random().toString(36).substr(2, 9);
         const formatPercentual = (v) => `${(Number(v) || 0).toFixed(1).replace('.', ',')}%`;
         const encodeSafe = (v) => encodeURIComponent(String(v || ''));
+        const escapeHtml = (v) => String(v || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        const isInternalEntry = (entry) => Boolean(
+            entry &&
+            (entry.isInternalTransfer === true ||
+             entry.internalTransfer === true ||
+             entry.is_internal_transfer === true)
+        );
+        const getAnalyticalEntries = (entries) => (Array.isArray(entries) ? entries : []).filter(e => !isInternalEntry(e));
 
         function agruparPor(dados, campo) {
             return dados.reduce((acc, item) => {
@@ -1302,7 +2820,7 @@
         function getMonthlySelectedEntries() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if(!filter) return [];
-            return state.entries.filter(e => e.date && e.date.startsWith(filter));
+            return getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
         }
 
         function getMonthlyHierarchyData(entries) {
@@ -1589,6 +3107,7 @@
             if(target) target.classList.add('active');
             if(nav) nav.classList.add('active');
             if(mnav) mnav.classList.add('active');
+            currentTab = tabId;
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
                 entries: 'Lançamentos',
@@ -1598,22 +3117,47 @@
                 database: 'Banco de Dados'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
+            const mainScroll = document.getElementById('main-scroll');
+            if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
             render();
         }
 
         function render() {
-            updateBalance(); populateEntryAccountFilter(); renderEntries(); populateMonthlyFilterSelectors(); renderMonthly(); renderAnnual(); renderDatabase(); populateDropdown('recon-account-select', state.accounts); lucide.createIcons(); initPiggyMicroInteractions();
+            updateBalance();
+            populateEntryAccountFilter();
+            if (currentTab === 'entries') {
+                try {
+                    const saved = localStorage.getItem(ENTRIES_TOOLBAR_COLLAPSED_KEY);
+                    entriesToolbarCollapsed = saved === null ? true : saved === '1';
+                } catch (e) {
+                    entriesToolbarCollapsed = true;
+                }
+                applyEntriesToolbarState();
+                renderEntries();
+            } else if (currentTab === 'monthly') {
+                populateMonthlyFilterSelectors();
+                renderMonthly();
+            } else if (currentTab === 'annual') {
+                renderAnnual();
+            } else if (currentTab === 'database') {
+                renderDatabase();
+            } else if (currentTab === 'reconciliation') {
+                populateDropdown('recon-account-select', state.accounts);
+            }
+            lucide.createIcons();
+            initPiggyMicroInteractions();
+            requestPersistLocalSnapshot();
         }
 
         function populateEntryAccountFilter() {
             const accountEl = document.getElementById('filter-account');
             if(!accountEl) return;
-            const previous = accountEl.value;
+            const previous = String(accountEl.value || '');
             const options = state.accounts
-                .map(a => `<option value="${a.id}">${a.name}</option>`)
+                .map(a => `<option value="${String(a.id || '')}">${a.name}</option>`)
                 .join('');
             accountEl.innerHTML = `<option value="">Todos</option>${options}`;
-            accountEl.value = state.accounts.some(a => a.id === previous) ? previous : '';
+            accountEl.value = state.accounts.some(a => String(a.id || '') === previous) ? previous : '';
         }
 
         function populateMonthlyFilterSelectors() {
@@ -1659,7 +3203,7 @@
 
         function updateBalance() {
             const monthPrefix = new Date().toISOString().slice(0, 7);
-            const monthEntries = state.entries.filter(e => e.status === 'REALIZADO' && (e.date || '').startsWith(monthPrefix));
+            const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && (e.date || '').startsWith(monthPrefix));
             const inc = monthEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const exp = monthEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const total = inc - exp;
@@ -1670,7 +3214,34 @@
         function setSort(field) {
             currentSort.order = currentSort.field === field ? (currentSort.order === 'asc' ? 'desc' : 'asc') : 'desc';
             currentSort.field = field;
+            entriesPage = 1;
             renderEntries();
+        }
+
+        function changeEntriesPage(delta) {
+            entriesPage = Math.max(1, entriesPage + delta);
+            renderEntries();
+        }
+
+        function renderEntriesPagination(totalRecords, totalPages, pageItemsCount) {
+            const infoEl = document.getElementById('entries-page-info');
+            const numberEl = document.getElementById('entries-page-number');
+            const prevEl = document.getElementById('entries-page-prev');
+            const nextEl = document.getElementById('entries-page-next');
+            if (!infoEl || !numberEl || !prevEl || !nextEl) return;
+
+            const safePages = Math.max(1, totalPages);
+            entriesPage = Math.min(Math.max(1, entriesPage), safePages);
+
+            const start = totalRecords === 0 ? 0 : ((entriesPage - 1) * entriesPageSize) + 1;
+            const end = totalRecords === 0 ? 0 : (start + pageItemsCount - 1);
+            infoEl.innerText = `Mostrando ${start}-${end} de ${totalRecords}`;
+            numberEl.innerText = `${entriesPage} / ${safePages}`;
+
+            prevEl.disabled = entriesPage <= 1;
+            nextEl.disabled = entriesPage >= safePages;
+            prevEl.onclick = () => changeEntriesPage(-1);
+            nextEl.onclick = () => changeEntriesPage(1);
         }
 
         async function toggleQuickStatus(id) {
@@ -1682,6 +3253,190 @@
             }
         }
 
+        async function updateEntryDestinationInline(id, destinationId) {
+            const entry = state.entries.find(e => e.id === id);
+            if (!entry) return;
+            const dst = state.destinations.find(d => d.id === destinationId);
+            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+            entry.destinationId = destinationId;
+            entry.subCategoryId = String((sub || {}).id || '');
+            entry.categoryId = String((cat || {}).id || '');
+            if ((cat || {}).type) entry.type = cat.type;
+            await cloudSave('entries', entry);
+            renderEntries();
+        }
+
+        function startEntryDestinationFill(index, event) {
+            event.preventDefault();
+            const visible = window.currentFilteredEntries || [];
+            const source = visible[index];
+            if (!source) return;
+            entryDestinationFillState.active = true;
+            entryDestinationFillState.sourceIndex = index;
+            entryDestinationFillState.value = source.destinationId;
+            entryDestinationFillState.type = source.type;
+            entryDestinationFillState.changedIds = new Set();
+        }
+
+        function applyEntryDestinationFillTo(index) {
+            if (!entryDestinationFillState.active) return;
+            const visible = window.currentFilteredEntries || [];
+            if (!visible.length) return;
+            const start = Math.min(entryDestinationFillState.sourceIndex, index);
+            const end = Math.max(entryDestinationFillState.sourceIndex, index);
+            for (let i = start; i <= end; i++) {
+                const row = visible[i];
+                if (!row) continue;
+                if (row.type !== entryDestinationFillState.type) continue;
+                if (row.destinationId !== entryDestinationFillState.value) {
+                    const dst = state.destinations.find(d => d.id === entryDestinationFillState.value);
+                    const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+                    const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+                    row.destinationId = entryDestinationFillState.value;
+                    row.subCategoryId = String((sub || {}).id || '');
+                    row.categoryId = String((cat || {}).id || '');
+                    if ((cat || {}).type) row.type = cat.type;
+                    entryDestinationFillState.changedIds.add(row.id);
+                }
+                const el = document.getElementById(`entry-dst-${row.id}`);
+                if (el) el.value = entryDestinationFillState.value;
+            }
+        }
+
+        async function stopEntryDestinationFill() {
+            if (!entryDestinationFillState.active) return;
+            entryDestinationFillState.active = false;
+            const changed = Array.from(entryDestinationFillState.changedIds);
+            entryDestinationFillState.changedIds = new Set();
+            if (changed.length === 0) return;
+            const changedEntries = state.entries.filter(e => changed.includes(e.id));
+            await cloudSave('entries', changedEntries);
+            renderEntries();
+        }
+
+        async function cloudDeleteMany(table, ids) {
+            if (!Array.isArray(ids) || ids.length === 0) return;
+            if (!sbClient) return;
+            setSyncStatus('syncing');
+            const { error } = await sbClient.from(table).delete().in('id', ids);
+            if (error) {
+                console.error(`Erro ao deletar em lote em ${table}:`, error);
+                setSyncStatus('offline');
+            } else {
+                setSyncStatus('synced');
+            }
+            requestPersistLocalSnapshot();
+        }
+
+        function toggleEntrySelection(id, checked) {
+            if (!id) return;
+            if (checked) selectedEntryIds.add(id);
+            else selectedEntryIds.delete(id);
+            renderEntries();
+        }
+
+        function toggleSelectAllVisible(checked) {
+            const visibleIds = window.currentFilteredEntryIds || [];
+            visibleIds.forEach(id => {
+                if (checked) selectedEntryIds.add(id);
+                else selectedEntryIds.delete(id);
+            });
+            renderEntries();
+        }
+
+        function getDuplicateMeta(entries) {
+            const groups = {};
+            entries.forEach(e => {
+                const amountAbs = Math.abs(Number(e.amount) || 0);
+                const key = `${e.date || ''}|${amountAbs}`;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(e.id);
+            });
+            const duplicateIds = new Set();
+            let duplicateGroups = 0;
+            Object.values(groups).forEach(ids => {
+                if (ids.length > 1) {
+                    duplicateGroups += 1;
+                    ids.forEach(id => duplicateIds.add(id));
+                }
+            });
+            return { duplicateIds, duplicateGroups };
+        }
+
+        function clearEntrySelection() {
+            selectedEntryIds.clear();
+            renderEntries();
+        }
+
+        async function deleteSelectedEntries() {
+            const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
+            if (ids.length === 0) return;
+            if (!confirm(`Deseja excluir ${ids.length} lançamento(s) selecionado(s)?`)) return;
+            await cloudDeleteMany('entries', ids);
+            state.entries = state.entries.filter(e => !selectedEntryIds.has(e.id));
+            selectedEntryIds.clear();
+            render();
+        }
+
+        async function setEntryInternal(id, flag) {
+            const entry = state.entries.find(e => e.id === id);
+            if (!entry) return;
+            entry.isInternalTransfer = Boolean(flag);
+            await cloudSave('entries', entry);
+            render();
+        }
+
+        async function markSelectedInternal(flag) {
+            const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
+            if (ids.length === 0) return;
+            const label = flag ? 'marcar como transação interna' : 'remover marcação de transação interna';
+            if (!confirm(`Deseja ${label} em ${ids.length} lançamento(s)?`)) return;
+            const changed = [];
+            state.entries.forEach(entry => {
+                if (!selectedEntryIds.has(entry.id)) return;
+                entry.isInternalTransfer = Boolean(flag);
+                changed.push(entry);
+            });
+            await cloudSave('entries', changed);
+            render();
+        }
+
+        function updateEntriesSummaryAndSelection(filtered) {
+            const panelEl = document.getElementById('entries-selection-panel');
+            const inEl = document.getElementById('entries-sum-in');
+            const outEl = document.getElementById('entries-sum-out');
+            const netEl = document.getElementById('entries-sum-net');
+            const netPillEl = document.getElementById('entries-net-pill');
+            const countEl = document.getElementById('entries-selected-count');
+            const deleteBtnEl = document.getElementById('delete-selected-btn');
+            const selectAllEl = document.getElementById('entries-select-all');
+
+            const selectedEntries = state.entries.filter(e => selectedEntryIds.has(e.id));
+            const selectedAnalytical = selectedEntries.filter(e => !isInternalEntry(e));
+            const inTotal = selectedAnalytical.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const outTotal = selectedAnalytical.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const netTotal = inTotal - outTotal;
+
+            if (inEl) inEl.innerText = formatBRL(inTotal);
+            if (outEl) outEl.innerText = formatBRL(outTotal);
+            if (netEl) netEl.innerText = formatBRL(netTotal);
+            if (netPillEl) netPillEl.className = 'px-2.5 py-1 rounded-full bg-blue-50 text-blue-700';
+
+            const selectedCount = selectedEntries.length;
+            const internalCount = selectedEntries.length - selectedAnalytical.length;
+            if (countEl) countEl.innerText = `${selectedCount} selecionado(s)`;
+            if (countEl && internalCount > 0) countEl.innerText += ` • ${internalCount} interno(s)`;
+            if (deleteBtnEl) deleteBtnEl.disabled = selectedCount === 0;
+            if (panelEl) panelEl.classList.toggle('hidden', selectedCount === 0);
+
+            const visibleIds = filtered.map(e => e.id);
+            window.currentFilteredEntryIds = visibleIds;
+            window.currentFilteredEntries = filtered;
+            const allVisibleSelected = visibleIds.length > 0 && visibleIds.every(id => selectedEntryIds.has(id));
+            if (selectAllEl) selectAllEl.checked = allVisibleSelected;
+        }
+
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
             if(!body) return;
@@ -1691,43 +3446,126 @@
             const typeFilter = document.getElementById('filter-type')?.value || '';
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
+            const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
+            const quickDupEl = document.getElementById('entries-quick-dup');
+            const duplicateSummaryEl = document.getElementById('entries-dup-summary');
+            if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY');
+            const queryKey = [
+                search,
+                dateStart,
+                dateEnd,
+                typeFilter,
+                statusFilter,
+                accountFilter,
+                duplicateFilter,
+                currentSort.field,
+                currentSort.order
+            ].join('|');
+            if (lastEntriesQueryKey !== queryKey) {
+                entriesPage = 1;
+                lastEntriesQueryKey = queryKey;
+            }
 
-            let filtered = state.entries.filter(e => {
+            const baseFiltered = state.entries.filter(e => {
                 const dst = state.destinations.find(d => d.id === e.destinationId)?.name || "";
                 const matchesSearch = ((e.description || "") + dst).toLowerCase().includes(search);
                 const matchesStart = !dateStart || e.date >= dateStart;
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || e.type === typeFilter;
                 const matchesStatus = !statusFilter || e.status === statusFilter;
-                const matchesAccount = !accountFilter || e.accountId === accountFilter;
+                const entryAccountId = String((e.accountId ?? e.account_id) || '');
+                const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
                 return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
+            const duplicateMeta = getDuplicateMeta(baseFiltered);
+
+            let filtered = duplicateFilter === 'ONLY'
+                ? baseFiltered.filter(e => duplicateMeta.duplicateIds.has(e.id))
+                : baseFiltered;
+
+            if (duplicateSummaryEl) {
+                const dupCount = duplicateMeta.duplicateIds.size;
+                if (dupCount > 0) {
+                    duplicateSummaryEl.classList.remove('hidden');
+                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicado(s) por data + valor absoluto (ignora sinal).`;
+                } else {
+                    duplicateSummaryEl.classList.add('hidden');
+                    duplicateSummaryEl.innerText = '';
+                }
+            }
 
             filtered.sort((a,b) => {
                 let vA = a[currentSort.field], vB = b[currentSort.field];
                 if (currentSort.field === 'date') return currentSort.order === 'asc' ? (vA || '').localeCompare(vB || '') : (vB || '').localeCompare(vA || '');
                 return currentSort.order === 'asc' ? (vA || 0) - (vB || 0) : (vB || 0) - (vA || 0);
             });
+            const totalRecords = filtered.length;
+            const totalPages = Math.max(1, Math.ceil(totalRecords / entriesPageSize));
+            if (entriesPage > totalPages) entriesPage = totalPages;
+            const startIdx = (entriesPage - 1) * entriesPageSize;
+            const pageItems = filtered.slice(startIdx, startIdx + entriesPageSize);
 
-            body.innerHTML = filtered.map(e => {
-                const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
+            selectedEntryIds = new Set(Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id)));
+            updateEntriesSummaryAndSelection(pageItems);
+            renderEntriesPagination(totalRecords, totalPages, pageItems.length);
+
+            body.innerHTML = pageItems.map((e, i) => {
+                const dstOptionsByType = getValidDestinationsByFlow(e.type);
+                const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
+                const isInternal = isInternalEntry(e);
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
                 const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const isSelected = selectedEntryIds.has(e.id);
+                const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 
-                return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''}" onclick="openEntryModal('${e.id}')">
-                    <td class="px-6 py-4 text-[11px] font-bold text-slate-400">${(e.date || '').split('-').reverse().join('/')}</td>
-                    <td class="px-6 py-4"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full ${isRealizado ? (isEntrada ? 'flow-income-bg' : 'flow-expense-bg') : 'bg-slate-300'}"></div><span class="text-[10px] font-black uppercase ${isEntrada ? 'flow-income-text' : 'flow-expense-text'}">${e.type}</span></div></td>
-                    <td class="px-6 py-4"><p class="text-[12px] font-black uppercase text-slate-700">${dst}</p><p class="text-[10px] text-slate-400 font-medium">${e.description || ''}</p></td>
-                    <td class="px-6 py-4 text-right ${valueClass}">${formatBRL(e.amount)}</td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="flex items-center justify-center gap-3">
-                            <span onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}">${e.status}</span>
-                            <button onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''} ${isInternal ? 'internal-row' : ''}" onclick="openEntryModal('${e.id}')">
+                    <td class="px-4 py-4 text-center">
+                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-cell-main center">
+                            <span class="entry-date-main">${(e.date || '').split('-').reverse().join('/')}</span>
                         </div>
+                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})">
+                            <div class="recon-destination-cell entry-cell-main">
+                                <select id="entry-dst-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryDestinationInline('${e.id}', this.value)" class="entry-destination-select">
+                                    ${dstOptions.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
+                                </select>
+                                <div class="entry-badges">
+                                    ${isDuplicate ? '<span class="dup-icon" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
+                                    ${isInternal ? '<span class="badge badge-internal">INTERNA</span>' : ''}
+                                </div>
+                                <button type="button" class="recon-fill-handle" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino">
+                                    ⋮
+                                </button>
+                            </div>
+                            <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observação')}</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-cell-main center">
+                            <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
+                        </div>
+                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="entry-cell-main center">
+                            <div class="entry-actions-wrap">
+                                <span onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}">${e.status}</span>
+                                <button type="button" onclick="event.stopPropagation(); setEntryInternal('${e.id}', ${!isInternal})" class="internal-toggle-btn ${isInternal ? 'active' : ''}" title="${isInternal ? 'Transação interna ativa' : 'Marcar como transação interna'}">
+                                    <i data-lucide="repeat-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                 </tr>`;
             }).join('') || '<tr><td colspan="5" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
@@ -1737,7 +3575,7 @@
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
-            const entries = state.entries.filter(e => e.date && e.date.startsWith(filter));
+            const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
             const incR = entries.filter(e=>e.type==='ENTRADA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const incP = entries.filter(e=>e.type==='ENTRADA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const expR = entries.filter(e=>e.type==='SAÍDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
@@ -1983,7 +3821,7 @@
             const data = [];
             for(let m=0; m<12; m++) {
                 const prefix = `${year}-${(m+1).toString().padStart(2,'0')}`;
-                const mEntries = state.entries.filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
+                const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                 const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 data.push({m, inc, exp, bal: inc-exp});
@@ -2059,7 +3897,7 @@
             if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !tableBody || !summaryEl || !chartEl) return;
 
             const validYears = Array.from(new Set(
-                state.entries
+                getAnalyticalEntries(state.entries)
                     .filter(e => e.date && e.status === 'REALIZADO')
                     .map(e => Number((e.date || '').slice(0, 4)))
                     .filter(v => !isNaN(v))
@@ -2077,7 +3915,7 @@
             modeEl.onchange = () => { annualTemporalMode = modeEl.value; renderAnnualTemporalComparison(year); };
             yearEl.onchange = () => { annualTemporalYear = Number(yearEl.value) || fallbackYear; renderAnnualTemporalComparison(year); };
 
-            const baseFlowEntries = state.entries.filter(e => e.status === 'REALIZADO' && e.type === annualTemporalFlow);
+            const baseFlowEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && e.type === annualTemporalFlow);
 
             const validCatIds = new Set(baseFlowEntries.map(e => e.categoryId).filter(Boolean));
             const catOptions = state.categories
@@ -2298,6 +4136,15 @@
                 return !!cat;
             });
         }
+        function getDestinationFlowType(destinationId) {
+            const dst = state.destinations.find(d => d.id === destinationId);
+            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+            return (cat || {}).type || '';
+        }
+        function getValidDestinationsByFlow(flowType) {
+            return getValidDestinations().filter(d => getDestinationFlowType(d.id) === flowType);
+        }
 
         function normalizeReconText(value) {
             return String(value || '')
@@ -2422,7 +4269,8 @@
 
                 const parsedTableRow = parseBankTableRow(raw);
                 if(parsedTableRow) {
-                    const inferredDestinationId = inferDestinationFromDescription(parsedTableRow.description, validDestinations);
+                    const typeDestinations = getValidDestinationsByFlow(parsedTableRow.type);
+                    const inferredDestinationId = inferDestinationFromDescription(parsedTableRow.description, typeDestinations.length ? typeDestinations : validDestinations);
                     tempRecon.push({
                         id: generateId(),
                         date: parsedTableRow.date,
@@ -2485,12 +4333,14 @@
                     // Não importa linhas de saldo (são posição de conta, não lançamento).
                     if (/^\s*saldo\b/i.test(desc)) return;
 
-                    const inferredDestinationId = inferDestinationFromDescription(desc, validDestinations);
+                    const flowType = val >= 0 ? 'ENTRADA' : 'SAÍDA';
+                    const typeDestinations = getValidDestinationsByFlow(flowType);
+                    const inferredDestinationId = inferDestinationFromDescription(desc, typeDestinations.length ? typeDestinations : validDestinations);
                     tempRecon.push({ 
                         id: generateId(), 
                         date: rawDate, 
                         amount: Math.abs(val), 
-                        type: val >= 0 ? 'ENTRADA' : 'SAÍDA', 
+                        type: flowType, 
                         status: 'REALIZADO',
                         description: desc || "Transação", 
                         destinationId: inferredDestinationId,
@@ -2508,6 +4358,10 @@
         function updateReconDestination(index, value) {
             if (!tempRecon[index]) return;
             tempRecon[index].destinationId = value;
+        }
+        function updateReconDescription(index, value) {
+            if (!tempRecon[index]) return;
+            tempRecon[index].description = String(value || '');
         }
 
         function startReconFill(index, event) {
@@ -2544,39 +4398,53 @@
             const summary = document.getElementById('recon-summary-count');
             const body = document.getElementById('recon-preview-body');
             const validDestinations = getValidDestinations();
-            const validDestinationIds = new Set(validDestinations.map(d => d.id));
             if(tempRecon.length > 0) {
                 if(validDestinations.length === 0) {
                     if(summary) summary.innerText = 'Nenhum destino valido no Banco de Dados';
                     if(preview) preview.classList.add('hidden');
                     return;
                 }
-                tempRecon = tempRecon.map(item => ({
-                    ...item,
-                    destinationId: validDestinationIds.has(item.destinationId) ? item.destinationId : validDestinations[0].id
-                }));
+                tempRecon = tempRecon.map(item => {
+                    const allowed = getValidDestinationsByFlow(item.type);
+                    const source = allowed.length ? allowed : validDestinations;
+                    const allowedIds = new Set(source.map(d => d.id));
+                    return {
+                        ...item,
+                        destinationId: allowedIds.has(item.destinationId) ? item.destinationId : source[0].id
+                    };
+                });
                 if(summary) summary.innerText = `${tempRecon.length} registros extraídos`;
                 if(preview) preview.classList.remove('hidden');
                 if(body) body.innerHTML = tempRecon.map((e,i) => {
+                    const typeDestinations = getValidDestinationsByFlow(e.type);
+                    const destinationSource = typeDestinations.length ? typeDestinations : validDestinations;
                     return `<tr class="table-row">
-                        <td class="px-8 py-4 text-xs font-bold text-slate-400">${(e.date || '').split('-').reverse().join('/')}</td>
-                        <td class="px-8 py-4 text-[10px] font-black uppercase text-slate-700">${e.description}</td>
-                        <td class="px-8 py-4">
+                        <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${(e.date || '').split('-').reverse().join('/')}</td>
+                        <td class="px-4 py-3 w-[180px]">
+                            <input
+                                type="text"
+                                class="recon-desc-input custom-scrollbar"
+                                value="${escapeHtml(e.description)}"
+                                oninput="updateReconDescription(${i}, this.value)"
+                                placeholder="Descrição do lançamento"
+                            />
+                        </td>
+                        <td class="px-4 py-3 w-[320px]">
                             <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
                                 <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value)" class="recon-destination-select">
-                                    ${validDestinations.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
+                                    ${destinationSource.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
                                 </select>
                                 <button type="button" class="recon-fill-handle" onmousedown="startReconFill(${i}, event)" title="Arraste para baixo para copiar o destino">
                                     ⋮
                                 </button>
                             </div>
                         </td>
-                        <td class="px-8 py-4">
+                        <td class="px-4 py-3 text-center">
                             <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </td>
-                        <td class="px-8 py-4 text-right font-black ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
+                        <td class="px-4 py-3 text-right text-[11px] font-black whitespace-nowrap ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
                     </tr>`;
                 }).join('');
                 lucide.createIcons();
@@ -2593,14 +4461,18 @@
         }
 
         async function finalizeRecon() {
-            const accId = document.getElementById('recon-account-select')?.value || '';
-            const accountExists = state.accounts.some(a => a.id === accId);
+            const accId = String(document.getElementById('recon-account-select')?.value || '');
+            const accountExists = state.accounts.some(a => String(a.id || '') === accId);
             if(!accountExists) {
                 alert("Selecione uma conta valida cadastrada no Banco de Dados.");
                 return;
             }
-            const validDestinationIds = new Set(getValidDestinations().map(d => d.id));
-            const hasInvalidDestination = tempRecon.some(t => !validDestinationIds.has(t.destinationId));
+            const allValidDestinations = getValidDestinations();
+            const hasInvalidDestination = tempRecon.some(t => {
+                const allowed = getValidDestinationsByFlow(t.type);
+                const source = allowed.length > 0 ? allowed : allValidDestinations;
+                return !source.some(d => d.id === t.destinationId);
+            });
             if(hasInvalidDestination) {
                 alert("Existem registros com destino sem vinculo valido no Banco de Dados.");
                 return;
@@ -2610,7 +4482,7 @@
                 const dst = state.destinations.find(d => d.id === temp.destinationId);
                 const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
                 const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                const entry = { ...temp, accountId: accId, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, status: 'REALIZADO' };
+                const entry = { ...temp, accountId: accId, categoryId: String((cat || {}).id || ''), subCategoryId: String((sub || {}).id || ''), status: 'REALIZADO' };
                 state.entries.push(entry);
                 newEntries.push(entry);
             });
@@ -2623,38 +4495,168 @@
         function renderDatabase() {
             const list = document.getElementById('db-list');
             if(!list) return;
-            list.innerHTML = state.categories.map(c => `
-                <div class="card-premium p-6 group">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="badge ${c.type==='ENTRADA'?'badge-income':'badge-expense'}">${c.type}</span>
-                        <button onclick="deleteDb('CATEGORY', '${c.id}')" class="text-slate-300 hover:text-red-500 transition-all p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                    <h5 class="font-black text-slate-900 uppercase text-xs mb-4">${c.name}</h5>
-                    <div class="space-y-4">
-                        ${state.subCategories.filter(s => s.categoryId === c.id).map(s => `
-                            <div class="db-sub-list border-l-2 border-slate-100 pl-4 py-1">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-[10px] font-black text-slate-400 uppercase">${s.name}</span>
-                                    <button onclick="event.stopPropagation(); deleteDb('SUBCATEGORY', '${s.id}')" class="text-slate-300 hover:text-red-500 transition-all"><i data-lucide="x" class="w-3 h-3"></i></button>
-                                </div>
-                                <div class="space-y-1 ml-1">
-                                    ${state.destinations.filter(d => d.subCategoryId === s.id).map(d => `
-                                        <div class="flex justify-between items-center p-1 hover:bg-slate-50 rounded-lg">
-                                            <span class="text-[10px] font-bold text-slate-600 uppercase tracking-tight">${d.name}</span>
-                                            <button onclick="event.stopPropagation(); deleteDb('DESTINATION', '${d.id}')" class="text-slate-300 hover:text-red-500 transition-all"><i data-lucide="x" class="w-2.5 h-2.5"></i></button>
-                                        </div>
-                                    `).join('')}
-                                    <button onclick="openDbModal('DESTINATION', '${s.id}')" class="text-[9px] text-orange-500 font-extrabold uppercase mt-1 hover:underline tracking-tight">+ Destino</button>
-                                </div>
+            const search = normalizeReconText(document.getElementById('db-search')?.value || '');
+            const matches = (...parts) => !search || normalizeReconText(parts.join(' ')).includes(search);
+
+            const filteredCategories = state.categories.filter(c => {
+                const subs = state.subCategories.filter(s => s.categoryId === c.id);
+                const subMatch = subs.some(s => {
+                    const subDest = state.destinations.filter(d => d.subCategoryId === s.id);
+                    return matches(s.name) || subDest.some(d => matches(d.name));
+                });
+                return matches(c.name, c.type) || subMatch;
+            });
+
+            if (dbSelectedCategoryId && !filteredCategories.some(c => c.id === dbSelectedCategoryId)) dbSelectedCategoryId = '';
+            if (!dbSelectedCategoryId && filteredCategories[0]) dbSelectedCategoryId = filteredCategories[0].id;
+
+            const selectedCategory = filteredCategories.find(c => c.id === dbSelectedCategoryId) || null;
+            const subCandidates = selectedCategory
+                ? state.subCategories.filter(s => s.categoryId === selectedCategory.id)
+                : [];
+            const filteredSubCategories = subCandidates.filter(s => {
+                const subDest = state.destinations.filter(d => d.subCategoryId === s.id);
+                return !search || matches(selectedCategory?.name || '', s.name) || subDest.some(d => matches(d.name));
+            });
+            if (dbSelectedSubCategoryId && !filteredSubCategories.some(s => s.id === dbSelectedSubCategoryId)) dbSelectedSubCategoryId = '';
+            if (!dbSelectedSubCategoryId && filteredSubCategories[0]) dbSelectedSubCategoryId = filteredSubCategories[0].id;
+
+            const selectedSub = filteredSubCategories.find(s => s.id === dbSelectedSubCategoryId) || null;
+            const filteredDestinations = selectedSub
+                ? state.destinations.filter(d => d.subCategoryId === selectedSub.id).filter(d => !search || matches(selectedCategory?.name || '', selectedSub.name, d.name))
+                : [];
+
+            list.innerHTML = `
+                <div class="db-explorer">
+                    <div class="db-col">
+                        <div class="db-col-head">
+                            <div>
+                                <div class="db-col-title">Categorias</div>
+                                <div class="db-col-count">${filteredCategories.length} item(ns)</div>
                             </div>
-                        `).join('')}
-                        <button onclick="openDbModal('SUBCATEGORY', '${c.id}')" class="w-full py-2 bg-slate-50 text-[9px] font-black uppercase rounded-lg hover:bg-orange-50 transition-all">+ Subcategoria</button>
+                        </div>
+                        <div class="db-list-scroll custom-scrollbar">
+                            ${filteredCategories.map(c => `
+                                <div class="db-item-row ${c.id === dbSelectedCategoryId ? 'active' : ''}" onclick="selectDbCategory('${c.id}')">
+                                    <div class="min-w-0">
+                                        <div class="db-item-name">${c.name}</div>
+                                        <div class="db-item-meta">${c.type}</div>
+                                    </div>
+                                    <div class="db-item-actions">
+                                        <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('CATEGORY', '${c.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                        <button class="db-action-btn danger" onclick="event.stopPropagation(); deleteDb('CATEGORY', '${c.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                    </div>
+                                </div>
+                            `).join('') || '<div class="db-empty">Nenhuma categoria encontrada.</div>'}
+                        </div>
+                    </div>
+                    <div class="db-col">
+                        <div class="db-col-head">
+                            <div>
+                                <div class="db-col-title">Subcategorias</div>
+                                <div class="db-col-count">${filteredSubCategories.length} item(ns)</div>
+                            </div>
+                            ${selectedCategory ? `<button class="db-inline-btn" onclick="openDbModal('SUBCATEGORY', '${selectedCategory.id}')">+ Subcategoria</button>` : ''}
+                        </div>
+                        <div class="db-list-scroll custom-scrollbar">
+                            ${selectedCategory ? (filteredSubCategories.map(s => `
+                                <div class="db-item-row ${s.id === dbSelectedSubCategoryId ? 'active' : ''}" onclick="selectDbSubCategory('${s.id}')">
+                                    <div class="min-w-0">
+                                        <div class="db-item-name">${s.name}</div>
+                                        <div class="db-item-meta">${selectedCategory.name}</div>
+                                    </div>
+                                    <div class="db-item-actions">
+                                        <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('SUBCATEGORY', '${s.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                        <button class="db-action-btn danger" onclick="event.stopPropagation(); deleteDb('SUBCATEGORY', '${s.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                    </div>
+                                </div>
+                            `).join('') || '<div class="db-empty">Nenhuma subcategoria para esta categoria.</div>') : '<div class="db-empty">Selecione uma categoria.</div>'}
+                        </div>
+                    </div>
+                    <div class="db-col">
+                        <div class="db-col-head">
+                            <div>
+                                <div class="db-col-title">Destinos</div>
+                                <div class="db-col-count">${filteredDestinations.length} item(ns)</div>
+                            </div>
+                            ${selectedSub ? `<button class="db-inline-btn" onclick="openDbModal('DESTINATION', '${selectedSub.id}')">+ Destino</button>` : ''}
+                        </div>
+                        <div class="db-list-scroll custom-scrollbar">
+                            ${selectedSub ? (filteredDestinations.map(d => `
+                                <div class="db-item-row">
+                                    <div class="min-w-0">
+                                        <div class="db-item-name">${d.name}</div>
+                                        <div class="db-item-meta">${selectedSub.name}</div>
+                                    </div>
+                                    <div class="db-item-actions">
+                                        <button class="db-action-btn" onclick="openDbEdit('DESTINATION', '${d.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                        <button class="db-action-btn danger" onclick="deleteDb('DESTINATION', '${d.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                                    </div>
+                                </div>
+                            `).join('') || '<div class="db-empty">Nenhum destino para esta subcategoria.</div>') : '<div class="db-empty">Selecione uma subcategoria.</div>'}
+                        </div>
                     </div>
                 </div>
-            `).join('');
+            `;
             const accList = document.getElementById('account-list');
-            if(accList) accList.innerHTML = state.accounts.map(a => `<div class="card-premium p-5 flex justify-between items-center group"><div><h4 class="font-black text-slate-900 text-xs uppercase">${a.name}</h4><p class="text-[9px] text-slate-400 font-bold uppercase mt-1">Saldo: ${formatBRL(a.initialBalance)}</p></div><button onclick="deleteDb('ACCOUNT', '${a.id}')" class="text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('');
+            if(accList) {
+                const filteredAccounts = state.accounts.filter(a => !search || matches(a.name));
+                accList.innerHTML = filteredAccounts.length
+                    ? `<div class="db-account-list">${filteredAccounts.map(a => `
+                        <div class="db-account-row">
+                            <div>
+                                <div class="db-tree-title">${a.name}</div>
+                                <div class="db-tree-meta">Saldo inicial: ${formatBRL(a.initialBalance)}</div>
+                            </div>
+                            <div class="db-tree-actions">
+                                <button class="db-inline-btn" onclick="openDbEdit('ACCOUNT', '${a.id}')">Editar</button>
+                                <button class="db-inline-btn danger" onclick="deleteDb('ACCOUNT', '${a.id}')">Excluir</button>
+                            </div>
+                        </div>
+                    `).join('')}</div>`
+                    : '<div class="db-empty">Nenhuma conta encontrada para o filtro aplicado.</div>';
+            }
             lucide.createIcons();
+        }
+
+        function selectDbCategory(id) {
+            if (!id) return;
+            dbSelectedCategoryId = id;
+            dbSelectedSubCategoryId = '';
+            renderDatabase();
+        }
+
+        function selectDbSubCategory(id) {
+            if (!id) return;
+            dbSelectedSubCategoryId = id;
+            renderDatabase();
+        }
+
+        function openDbEdit(type, id) {
+            if (!id) return;
+            if (type === 'CATEGORY') {
+                const item = state.categories.find(c => c.id === id);
+                if (!item) return;
+                openDbModal('CATEGORY', '', item);
+                return;
+            }
+            if (type === 'SUBCATEGORY') {
+                const item = state.subCategories.find(s => s.id === id);
+                if (!item) return;
+                openDbModal('SUBCATEGORY', item.categoryId, item);
+                return;
+            }
+            if (type === 'DESTINATION') {
+                const item = state.destinations.find(d => d.id === id);
+                if (!item) return;
+                openDbModal('DESTINATION', item.subCategoryId, item);
+                return;
+            }
+            if (type === 'ACCOUNT') {
+                const item = state.accounts.find(a => a.id === id);
+                if (!item) return;
+                openDbModal('ACCOUNT', '', item);
+            }
         }
 
         function toggleStatus(val) {
@@ -2681,7 +4683,7 @@
                     document.getElementById('form-value').value = e.amount;
                     document.getElementById('form-desc').value = e.description || "";
                     document.getElementById('form-dst').value = e.destinationId;
-                    document.getElementById('form-acc').value = e.accountId;
+                    document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
                     toggleStatus(e.status);
                 }
             } else { 
@@ -2689,10 +4691,11 @@
                 toggleStatus('REALIZADO');
             }
             document.getElementById('entry-modal')?.classList.remove('hidden');
+            lucide.createIcons();
         }
 
         function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
-        function populateDropdown(id, list) { const el = document.getElementById(id); if(el) el.innerHTML = list.map(item => `<option value="${item.id}">${item.name}</option>`).join(''); }
+        function populateDropdown(id, list) { const el = document.getElementById(id); if(el) el.innerHTML = list.map(item => `<option value="${String(item.id || '')}">${item.name}</option>`).join(''); }
 
         document.getElementById('entry-form').onsubmit = async (event) => {
             event.preventDefault();
@@ -2701,9 +4704,10 @@
             const dst = state.destinations.find(d => d.id === dstId);
             const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+            const existing = id ? state.entries.find(x => x.id === id) : null;
             const val = Number(document.getElementById('form-value').value);
             if(isNaN(val)) return alert("Valor inválido");
-            const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: document.getElementById('form-acc').value, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value };
+            const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: document.getElementById('form-acc').value, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value, isInternalTransfer: existing ? isInternalEntry(existing) : false };
             
             await cloudSave('entries', data);
             
@@ -2715,32 +4719,72 @@
             closeModal('entry-modal'); render();
         };
 
-        function openDbModal(type, parentId = '') {
+        function openDbModal(type, parentId = '', editItem = null) {
             document.getElementById('db-type').value = type;
             document.getElementById('db-parent').value = parentId;
-            document.getElementById('db-name').value = '';
+            document.getElementById('db-id').value = editItem ? String(editItem.id || '') : '';
+            document.getElementById('db-mode').value = editItem ? 'EDIT' : 'CREATE';
+            document.getElementById('db-name').value = editItem ? String(editItem.name || '') : '';
+            const titleEl = document.getElementById('db-modal-title');
+            const subtitleEl = document.getElementById('db-modal-subtitle');
+            const typeLabelMap = {
+                CATEGORY: 'Categoria',
+                SUBCATEGORY: 'Subcategoria',
+                DESTINATION: 'Destino',
+                ACCOUNT: 'Conta'
+            };
+            const typeLabel = typeLabelMap[type] || 'Item';
+            if (titleEl) titleEl.innerText = editItem ? `Editar ${typeLabel}` : `Novo ${typeLabel}`;
+            if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
                 if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
-                else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="0">`;
+                else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
                 else exEl.innerHTML = '';
             }
+            if (type === 'CATEGORY' && editItem) {
+                const catTypeEl = document.getElementById('db-cat-type');
+                if (catTypeEl) catTypeEl.value = editItem.type || 'SAÍDA';
+            }
             document.getElementById('db-modal')?.classList.remove('hidden');
+            lucide.createIcons();
         }
 
         document.getElementById('db-form').onsubmit = async (event) => {
             event.preventDefault();
             const type = document.getElementById('db-type').value;
-            const name = document.getElementById('db-name').value;
+            const mode = document.getElementById('db-mode').value || 'CREATE';
+            const name = document.getElementById('db-name').value.trim();
             const parent = document.getElementById('db-parent').value;
-            const id = generateId();
+            const id = mode === 'EDIT' ? String(document.getElementById('db-id').value || '') : generateId();
+            if(!name) return alert('Informe um nome válido.');
             let data = null;
             let table = '';
 
-            if(type==='CATEGORY') { table = 'categories'; data = {id, name, type: document.getElementById('db-cat-type').value }; state.categories.push(data); }
-            if(type==='SUBCATEGORY') { table = 'subCategories'; data = {id, categoryId: parent, name}; state.subCategories.push(data); }
-            if(type==='DESTINATION') { table = 'destinations'; data = {id, subCategoryId: parent, name}; state.destinations.push(data); }
-            if(type==='ACCOUNT') { table = 'accounts'; data = {id, name, initialBalance: Number(document.getElementById('db-acc-balance').value) || 0}; state.accounts.push(data); }
+            if(type==='CATEGORY') {
+                table = 'categories';
+                data = {id, name, type: document.getElementById('db-cat-type').value };
+                if (mode === 'EDIT') state.categories = state.categories.map(item => item.id === id ? data : item);
+                else state.categories.push(data);
+            }
+            if(type==='SUBCATEGORY') {
+                table = 'subCategories';
+                data = {id, categoryId: parent, name};
+                if (mode === 'EDIT') state.subCategories = state.subCategories.map(item => item.id === id ? data : item);
+                else state.subCategories.push(data);
+            }
+            if(type==='DESTINATION') {
+                table = 'destinations';
+                data = {id, subCategoryId: parent, name};
+                if (mode === 'EDIT') state.destinations = state.destinations.map(item => item.id === id ? data : item);
+                else state.destinations.push(data);
+            }
+            if(type==='ACCOUNT') {
+                table = 'accounts';
+                data = {id, name, initialBalance: Number(document.getElementById('db-acc-balance').value) || 0};
+                if (mode === 'EDIT') state.accounts = state.accounts.map(item => item.id === id ? data : item);
+                else state.accounts.push(data);
+            }
             
             if (data) await cloudSave(table, data);
             closeModal('db-modal'); render();
@@ -2767,10 +4811,22 @@
 
         const mf = document.getElementById('monthly-filter');
         if(mf) mf.value = new Date().toISOString().slice(0, 7);
-        window.addEventListener('mouseup', stopReconFill);
-        window.addEventListener('blur', stopReconFill);
+        window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); });
+        window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); });
+        window.addEventListener('beforeunload', persistLocalSnapshot);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') persistLocalSnapshot();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
+            if (!document.getElementById('db-modal')?.classList.contains('hidden')) closeModal('db-modal');
+        });
         window.addEventListener('load', initPiggyMicroInteractions);
         window.onload = initCloud;
     </script>
 </body>
 </html>
+
+
+
