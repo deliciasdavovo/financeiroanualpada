@@ -1,7 +1,5 @@
 <html lang="pt-BR">
 <head>
-   <html lang="pt-BR">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delícias da Vovó | Gestão Financeira Premium</title>
@@ -15,17 +13,19 @@
     <style>
         :root {
             --primary-green: #1F7A5C;
-            --primary-blue: #2F4F9D;
+            --primary-blue: #820AD1;
             --soft-red: #B23A3A;
+            --primary-gold: #A855F7;
 
             --bg-green-soft: #E8F3EF;
-            --bg-blue-soft: #E9EDFA;
+            --bg-blue-soft: #EFE7FF;
             --bg-red-soft: #F8EAEA;
+            --bg-gold-soft: #F4E8FF;
 
-            --bg-main: #F2F4F7;
+            --bg-main: #F6F3FB;
             --bg-card: #FFFFFF;
-            --border: #E2E8F2;
-            --divider: #E9EEF5;
+            --border: #E7DEF3;
+            --divider: #ECE4F7;
 
             --text-primary: #0F172A;
             --text-secondary: #5F6B7A;
@@ -49,7 +49,7 @@
 
         .kpi-card {
             border-radius: 18px;
-            border: 1px solid #DCE3EC;
+            border: 1px solid #D5DEE9;
             box-shadow: none;
             position: relative;
             overflow: hidden;
@@ -71,7 +71,7 @@
             position: absolute;
             inset: 0;
             pointer-events: none;
-            background: none;
+            background: linear-gradient(180deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0) 38%);
         }
         .kpi-card:hover {
             border-color: #DCE3EC;
@@ -127,11 +127,11 @@
             color: var(--primary-blue);
         }
         .kpi-card .text-\[9px\].font-black {
-            color: #4B5563 !important;
-            letter-spacing: 0.08em;
+            color: #5A6678 !important;
+            letter-spacing: 0.03em;
         }
         .kpi-card .text-\[9px\].font-bold.text-slate-400 {
-            color: #6B7280 !important;
+            color: #6A7688 !important;
         }
         .kpi-card #sum-inc-real,
         .kpi-card #sum-exp-real,
@@ -143,28 +143,39 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 14px;
             font-weight: 400;
-            background: var(--bg-main);
+            background:
+                radial-gradient(1000px 460px at -8% -12%, rgba(31, 122, 92, 0.14), transparent 62%),
+                radial-gradient(920px 420px at 108% -14%, rgba(47, 79, 157, 0.14), transparent 58%),
+                linear-gradient(180deg, #F8FAFC 0%, #EEF2F7 100%);
             color: var(--text-primary);
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
         }
 
-        main { background: linear-gradient(180deg, #F6F7F9 0%, var(--bg-main) 100%) !important; }
+        main { background: transparent !important; }
+        #main-scroll {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.54) 0%, rgba(248, 250, 252, 0.28) 100%),
+                transparent;
+        }
 
         #sidebar {
             transition: width var(--dur-slow) var(--ease-premium);
             position: relative;
-            background: #111827 !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            width: 300px !important;
+            background:
+                linear-gradient(180deg, #2A0E45 0%, #3F1169 50%, #5B1A94 100%) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.14) !important;
+            box-shadow: 12px 0 30px rgba(45, 10, 78, 0.28);
         }
-        #sidebar.collapsed { width: 88px; }
+        #sidebar.collapsed { width: 92px !important; }
         #sidebar.collapsed .nav-text, #sidebar.collapsed .sidebar-header-text { display: none; }
         #sidebar.collapsed .sidebar-btn { padding-left: 0; justify-content: center; }
         #sidebar.collapsed .sidebar-btn i { margin-right: 0; }
         #sidebar .sidebar-header-text h1 { color: #E5E7EB !important; }
         #sidebar .sidebar-header-text p { color: #9CA3AF !important; }
-        #sidebar nav.space-y-2 > * + * { margin-top: 16px !important; }
+        #sidebar nav.space-y-2 > * + * { margin-top: 10px !important; }
 
         .sidebar-toggle {
             position: absolute;
@@ -286,15 +297,15 @@
 
         .card-premium {
             background: var(--bg-card);
-            border-radius: 18px;
-            border: 1px solid var(--divider);
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+            border-radius: 20px;
+            border: 1px solid #E3E9F2;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.065);
             transition: transform var(--dur-std) var(--ease-premium), box-shadow var(--dur-std) var(--ease-premium), border-color var(--dur-std) var(--ease-premium);
         }
         .card-premium:hover {
-            transform: translateY(-2px);
-            border-color: #D8E2EE;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+            transform: translateY(-1px);
+            border-color: #D4DFEE;
+            box-shadow: 0 16px 34px rgba(15, 23, 42, 0.09);
         }
         .card-premium.kpi-card,
         .card-premium.kpi-card:hover {
@@ -304,7 +315,14 @@
         .card-premium:not(.overflow-hidden) { padding: 24px !important; }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideUp var(--dur-slow) var(--ease-premium); }
+        .tab-content.active {
+            display: block;
+            animation: slideUp var(--dur-slow) var(--ease-premium);
+            width: 100%;
+            max-width: 1480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
         .tab-content.space-y-6 > * + *,
         .tab-content.space-y-8 > * + *,
         .tab-content.space-y-12 > * + * { margin-top: 28px !important; }
@@ -319,36 +337,69 @@
             position: relative;
             color: #E5E7EB !important;
             font-size: 14px !important;
-            border-radius: 8px !important;
+            border-radius: 12px !important;
+            border: 1px solid transparent !important;
         }
         .sidebar-btn:hover {
-            background: rgba(255,255,255,0.05) !important;
+            background: rgba(255,255,255,0.06) !important;
+            border-color: rgba(255,255,255,0.08) !important;
             color: #FFFFFF !important;
         }
         .sidebar-btn.active {
-            background: rgba(255,255,255,0.08) !important;
+            background: rgba(255,255,255,0.18) !important;
+            border-color: rgba(255,255,255,0.28) !important;
             color: #FFFFFF !important;
             font-weight: 600 !important;
             box-shadow: none !important;
         }
+        .sidebar-btn.active::before {
+            content: "";
+            position: absolute;
+            left: -9px;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            border-radius: 999px;
+            background: #FFFFFF;
+            opacity: 0.9;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: rgba(255, 255, 255, 0.86) !important;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #E5ECF4 !important;
+        }
+        header > div {
+            width: 100%;
+            max-width: 1480px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
 
         #tab-title {
-            font-size: var(--title-size) !important;
+            font-size: 31px !important;
             font-weight: 800 !important;
             color: var(--text-primary) !important;
-            letter-spacing: -0.02em;
-            line-height: 1.05;
+            letter-spacing: -0.018em;
+            line-height: 1.12;
+            margin-right: auto;
         }
         .tab-content h4 {
             font-size: var(--subtitle-size) !important;
-            font-weight: 700 !important;
+            font-weight: 800 !important;
             letter-spacing: -0.01em !important;
-            color: #1F2937 !important;
+            color: #111827 !important;
         }
 
         #sum-inc-real, #sum-exp-real, #month-bal-r {
-            font-size: 30px !important;
-            font-weight: 700 !important;
+            font-size: 32px !important;
+            font-weight: 800 !important;
             line-height: 1.1;
         }
 
@@ -393,11 +444,11 @@
 
         .label-mini {
             display: block;
-            text-transform: uppercase;
-            font-size: var(--aux-size);
-            font-weight: 500;
-            letter-spacing: 0.07em;
-            color: var(--text-muted);
+            text-transform: none;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            color: #556277;
             margin-bottom: 8px;
             margin-left: 2px;
         }
@@ -414,11 +465,11 @@
         tbody .table-row:nth-child(even):hover { background-color: #F8FAFF; }
 
         .badge {
-            padding: 4px 10px;
+            padding: 4px 9px;
             border-radius: 8px;
-            font-size: 9px;
-            font-weight: 600;
-            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: none;
         }
         .badge-realizado {
             background: var(--bg-blue-soft);
@@ -516,17 +567,17 @@
             background: #F8FAFC;
         }
         .modal-head-title {
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1;
             font-weight: 800;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            letter-spacing: 0.01em;
+            text-transform: none;
             color: #0F172A;
         }
         .modal-head-sub {
             margin-top: 6px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             color: #475569;
         }
         .modal-close-btn {
@@ -565,12 +616,12 @@
             flex: 1;
             height: 46px;
             border-radius: 12px;
-            background: #0F172A;
+            background: var(--primary-blue);
             color: #FFFFFF;
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            text-transform: none;
         }
         .modal-btn-danger {
             height: 46px;
@@ -578,22 +629,22 @@
             padding: 0 18px;
             background: #FFF1F1;
             color: #B23A3A;
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            text-transform: none;
             border: 1px solid #F5D6D6;
         }
         .modal-btn-neutral {
             width: 100%;
             height: 44px;
             border-radius: 12px;
-            background: #0F172A;
+            background: var(--primary-blue);
             color: #FFFFFF;
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            text-transform: none;
         }
         @keyframes modalIn {
             from { opacity: 0; transform: translateY(12px) scale(0.98); }
@@ -605,13 +656,13 @@
             align-items: center;
             gap: 6px;
             padding: 4px 12px;
-            background: #FFFFFF;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 999px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            text-transform: uppercase;
+            text-transform: none;
             color: var(--text-muted);
-            border: 1px solid var(--border);
+            border: 1px solid #D8E2EF;
         }
         .sync-indicator.synced {
             color: var(--primary-green);
@@ -623,38 +674,66 @@
             border-color: #D7DEF3;
             background: var(--bg-blue-soft);
         }
-        .backup-indicator {
+        .sync-toast {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 10050;
+            max-width: min(92vw, 520px);
+            display: none;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid #F5C2C7;
+            background: #FFF1F2;
+            color: #9F1239;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.35;
+        }
+        .sync-toast.show {
             display: flex;
+        }
+        .sync-toast i {
+            flex: 0 0 auto;
+            margin-top: 1px;
+        }
+        .sync-toast button {
+            margin-left: auto;
+            width: 22px;
+            height: 22px;
+            border-radius: 8px;
+            border: 1px solid #F2A7B5;
+            background: #FFE4E6;
+            color: #9F1239;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: #FFFFFF;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            white-space: nowrap;
+            justify-content: center;
+        }
+        .sync-toast button:hover {
+            background: #FFD7DD;
         }
         .export-pdf-btn {
             height: 34px;
             padding: 0 12px;
             border-radius: 10px;
-            border: 1px solid #D7DFEA;
-            background: #FFFFFF;
-            color: #334155;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+            border: 1px solid #D7C2F4;
+            background: var(--bg-gold-soft);
+            color: #5B1A94;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: 0.01em;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
         .export-pdf-btn:hover {
-            background: #F8FAFC;
-            border-color: #C8D3E2;
+            background: #EEDCFF;
+            border-color: #C7A6F3;
+            color: #4B1680;
         }
 
         #loading-overlay {
@@ -695,7 +774,7 @@
         .text-red-600, .text-red-500, .text-orange-600, .text-orange-500 { color: var(--soft-red) !important; }
 
         .bg-blue-900, .bg-slate-900, .bg-orange-500 { background-color: var(--primary-blue) !important; color: #FFFFFF !important; }
-        .hover\:bg-blue-800:hover, .hover\:bg-black:hover, .hover\:bg-orange-600:hover { background-color: #274388 !important; color: #FFFFFF !important; }
+        .hover\:bg-blue-800:hover, .hover\:bg-black:hover, .hover\:bg-orange-600:hover { background-color: #6B0BAA !important; color: #FFFFFF !important; }
 
         .bg-blue-50\/20, .bg-blue-50 { background-color: var(--bg-blue-soft) !important; }
         .bg-red-50, .bg-orange-50 { background-color: var(--bg-red-soft) !important; }
@@ -1341,7 +1420,10 @@
         }
         .entries-toolbar {
             position: static;
-            background: #FFFFFF;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F7FAFF 100%);
+            border: 1px solid #DFE8F5;
+            border-radius: 20px;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
         }
         .entries-toolbar.collapsed .entries-filters-grid,
         .entries-toolbar.collapsed #entries-dup-summary {
@@ -1370,22 +1452,22 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #EEF2F7;
-            margin-bottom: 4px;
+            gap: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #E5ECF5;
+            margin-bottom: 6px;
         }
         .entries-toolbar-title {
-            font-size: 11px;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: #334155;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-transform: none;
+            color: #0F172A;
         }
         .entries-toolbar-sub {
-            font-size: 11px;
-            color: #64748B;
-            font-weight: 600;
+            font-size: 12px;
+            color: #5B697D;
+            font-weight: 700;
             margin-top: 3px;
         }
         .entries-quick-actions {
@@ -1394,29 +1476,29 @@
             gap: 8px;
         }
         .entries-quick-btn {
-            height: 34px;
-            padding: 0 12px;
+            height: 36px;
+            padding: 0 13px;
             border-radius: 10px;
-            border: 1px solid #E2E8F0;
+            border: 1px solid #D8E2EF;
             background: #FFFFFF;
             color: #475569;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            text-transform: none;
             display: inline-flex;
             align-items: center;
             gap: 6px;
         }
         .entries-quick-btn:hover {
-            border-color: #CBD5E1;
+            border-color: #BFCFE5;
             background: #F8FAFC;
             color: #0F172A;
         }
         .entries-quick-btn.active {
-            border-color: #BFD0EF;
-            background: #EEF4FF;
-            color: #274388;
+            border-color: #CDB28D;
+            background: #FFF2DF;
+            color: #8A5416;
         }
         .entries-quick-btn.toggle {
             min-width: 122px;
@@ -1425,7 +1507,7 @@
         .entries-filters-grid {
             width: 100%;
             display: grid;
-            grid-template-columns: minmax(260px, 1.3fr) repeat(6, minmax(120px, 0.75fr)) auto;
+            grid-template-columns: minmax(280px, 1.45fr) repeat(6, minmax(118px, 0.75fr)) auto;
             gap: 12px;
             align-items: end;
         }
@@ -1445,24 +1527,36 @@
         .entries-toolbar .btn-new-entry {
             height: 44px;
             border-radius: 12px;
-            padding: 0 18px;
-            background: #E09132;
+            padding: 0 20px;
+            background: var(--primary-blue);
             color: #FFFFFF;
-            font-size: 15px;
-            font-weight: 900;
+            font-size: 14px;
+            font-weight: 800;
             letter-spacing: 0.01em;
-            box-shadow: 0 10px 18px rgba(224, 145, 50, 0.24);
+            box-shadow: 0 10px 18px rgba(130, 10, 209, 0.28);
         }
         .entries-toolbar .btn-new-entry:hover {
-            background: #C57A22;
+            background: #6B0BAA;
+        }
+        .table-mobile-scroll thead th {
+            text-transform: none !important;
+            letter-spacing: 0.01em !important;
+            color: #5D6B7D !important;
+            font-size: 10px !important;
+        }
+        #monthly .card-premium h4,
+        #annual .card-premium h4 {
+            text-transform: none !important;
+            letter-spacing: 0.01em !important;
+            font-size: 13px !important;
         }
         .entries-dup-summary-line {
             width: 100%;
             margin-top: 2px;
-            padding: 8px 10px;
-            border: 1px dashed #D7E2F0;
-            border-radius: 10px;
-            background: #F8FAFF;
+            padding: 9px 12px;
+            border: 1px dashed #C7D8EE;
+            border-radius: 12px;
+            background: #F3F8FF;
         }
         @media (max-width: 1400px) {
             .entries-filters-grid {
@@ -1486,6 +1580,24 @@
         #entries-pagination button:disabled {
             opacity: 0.45;
             cursor: not-allowed;
+        }
+        #entries-pagination button {
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid #D6E0ED;
+            background: #FFFFFF;
+            color: #334155;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+        }
+        #entries-pagination button:hover:not(:disabled) {
+            background: #F8FAFC;
+            border-color: #C0CCDE;
+        }
+        #entries-selection-panel {
+            border-top-color: #E4EBF3 !important;
+            padding-top: 14px !important;
         }
         #entries-table th,
         #entries-table td {
@@ -1618,9 +1730,6 @@
             #sync-status {
                 display: none !important;
             }
-            #backup-status {
-                display: none !important;
-            }
             #export-pdf-btn {
                 display: none !important;
             }
@@ -1703,13 +1812,356 @@
                 grid-template-columns: repeat(6, minmax(0, 1fr));
             }
         }
+
+        /* Nubank-like UI layer: hierarchy, spacing, readability, interaction */
+        :root {
+            --nu-purple: #820ad1;
+            --nu-purple-700: #6a06ab;
+            --nu-purple-100: #f3e8ff;
+            --nu-ink: #111827;
+            --nu-muted: #667085;
+            --nu-surface: #ffffff;
+            --nu-surface-soft: #faf7ff;
+            --nu-border: #eadcf9;
+            --nu-radius-xl: 20px;
+            --nu-radius-lg: 14px;
+        }
+
+        body {
+            background:
+                radial-gradient(900px 420px at -10% -15%, rgba(130, 10, 209, 0.14), transparent 60%),
+                radial-gradient(700px 360px at 110% -8%, rgba(106, 6, 171, 0.12), transparent 58%),
+                linear-gradient(180deg, #fbf8ff 0%, #f6f2fc 100%);
+            color: var(--nu-ink);
+        }
+
+        #sidebar {
+            width: 296px !important;
+            background: linear-gradient(180deg, #2b0d47 0%, #4a1577 56%, #5e1995 100%) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.16) !important;
+            box-shadow: 10px 0 30px rgba(43, 13, 71, 0.26);
+        }
+        .sidebar-btn {
+            border-radius: 12px !important;
+            border: 1px solid transparent !important;
+        }
+        .sidebar-btn:hover {
+            background: rgba(255, 255, 255, 0.12) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        .sidebar-btn.active {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.28) !important;
+            position: relative;
+        }
+        .sidebar-btn.active::before {
+            content: "";
+            position: absolute;
+            left: -8px;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            border-radius: 999px;
+            background: #ffffff;
+            opacity: 0.95;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 25;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.88) !important;
+            border-bottom: 1px solid #efe4fa !important;
+        }
+
+        #tab-title {
+            font-size: 30px !important;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        .label-mini {
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--nu-muted);
+        }
+
+        .card-premium {
+            border-radius: var(--nu-radius-xl);
+            border: 1px solid var(--nu-border);
+            background: var(--nu-surface);
+            box-shadow: 0 10px 28px rgba(43, 13, 71, 0.08);
+        }
+        .card-premium:hover {
+            transform: translateY(-1px);
+            border-color: #ddc8f4;
+            box-shadow: 0 16px 34px rgba(43, 13, 71, 0.1);
+        }
+
+        .kpi-card {
+            border-radius: 18px;
+            border-color: #e9dcf8;
+        }
+        .kpi-card-income {
+            background: linear-gradient(180deg, #ffffff 0%, #f4fff8 100%);
+        }
+        .kpi-card-expense {
+            background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+        }
+        .kpi-card-balance {
+            border-top-color: var(--nu-purple);
+            background: linear-gradient(180deg, #ffffff 0%, #f7f1ff 100%);
+        }
+        .kpi-card-balance .kpi-icon {
+            background: var(--nu-purple-100);
+            color: var(--nu-purple);
+        }
+        .kpi-card .text-\[9px\].font-black,
+        .kpi-card .text-\[9px\].font-bold.text-slate-400 {
+            letter-spacing: 0;
+            text-transform: none;
+        }
+
+        input, select, textarea {
+            border-radius: 14px;
+            border-color: #e8dff3;
+            background: #fff;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--nu-purple);
+            box-shadow: 0 0 0 4px rgba(130, 10, 209, 0.12);
+        }
+
+        .sync-indicator,
+        .backup-indicator,
+        .export-pdf-btn {
+            border-radius: 999px;
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 700;
+        }
+        .sync-indicator.syncing {
+            color: var(--nu-purple);
+            border-color: #dfcbf6;
+            background: #f7efff;
+        }
+        .export-pdf-btn {
+            border-color: #e1cef7;
+            color: #5e1995;
+            background: #f8f2ff;
+        }
+        .export-pdf-btn:hover {
+            background: #f1e5ff;
+            border-color: #d4b5f6;
+        }
+
+        .entries-toolbar {
+            border: 1px solid var(--nu-border);
+            border-radius: var(--nu-radius-xl);
+            background: linear-gradient(180deg, #ffffff 0%, #fdfbff 100%);
+        }
+        .entries-toolbar-title {
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 13px;
+        }
+        .entries-toolbar-sub {
+            font-size: 12px;
+        }
+        .entries-quick-btn {
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 700;
+            border-color: #e6daF7;
+            border-radius: 12px;
+        }
+        .entries-quick-btn.active {
+            color: #5a1592;
+            border-color: #d7bdf5;
+            background: #f5ecff;
+        }
+        .entries-toolbar .btn-new-entry {
+            background: linear-gradient(135deg, var(--nu-purple) 0%, var(--nu-purple-700) 100%);
+            border-radius: 14px;
+            font-size: 14px;
+            letter-spacing: 0;
+            text-transform: none;
+            box-shadow: 0 10px 24px rgba(130, 10, 209, 0.28);
+        }
+        .entries-toolbar .btn-new-entry:hover {
+            background: linear-gradient(135deg, #7608be 0%, #5f0998 100%);
+        }
+
+        .modal-shell {
+            border-radius: 24px;
+            border-color: #e8dbf8;
+        }
+        .modal-head {
+            background: linear-gradient(180deg, #f8f2ff 0%, #fcf9ff 100%);
+        }
+        .modal-head-title {
+            letter-spacing: 0;
+            text-transform: none;
+            font-size: 14px;
+        }
+        .modal-btn-primary,
+        .modal-btn-neutral {
+            background: var(--nu-purple);
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 800;
+        }
+        .modal-btn-primary:hover,
+        .modal-btn-neutral:hover {
+            background: var(--nu-purple-700);
+        }
+
+        #loading-overlay .border-orange-500 {
+            border-color: var(--nu-purple) !important;
+            border-top-color: transparent !important;
+        }
+        #logo-pig {
+            background: var(--nu-purple) !important;
+        }
+
+        #entries-table thead th,
+        #annual-main-table thead th,
+        #monthly-daily-view thead th,
+        #annual-temporal-table thead th,
+        #recon-preview-table thead th {
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+            font-size: 11px !important;
+        }
+
+        .monthly-hero {
+            padding: 22px !important;
+            border: 1px solid #e6d8f7 !important;
+            background:
+                radial-gradient(700px 220px at 8% -22%, rgba(130, 10, 209, 0.12), transparent 58%),
+                linear-gradient(180deg, #ffffff 0%, #fcf8ff 100%);
+        }
+        .monthly-hero-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 1.1fr) minmax(280px, 1fr);
+            gap: 16px;
+            align-items: end;
+        }
+        .monthly-ref-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #4c1d95;
+            margin-bottom: 8px;
+        }
+        .monthly-ref-sub {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+        .monthly-ref-fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .monthly-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .monthly-quick-btn {
+            height: 46px;
+            border-radius: 12px;
+            border: 1px solid #e4d4f7;
+            background: #ffffff;
+            color: #4c1d95;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .monthly-quick-btn:hover {
+            background: #f8f1ff;
+            border-color: #d8bdf3;
+        }
+        .monthly-quick-btn.primary {
+            background: var(--nu-purple);
+            color: #ffffff;
+            border-color: var(--nu-purple);
+            box-shadow: 0 8px 18px rgba(130, 10, 209, 0.25);
+        }
+        .monthly-quick-btn.primary:hover {
+            background: var(--nu-purple-700);
+            border-color: var(--nu-purple-700);
+        }
+
+        .monthly-analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .monthly-analytics-grid .monthly-wide {
+            grid-column: 1 / -1;
+        }
+        .monthly-table-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0e6fa;
+            background: #fcf8ff;
+        }
+        .monthly-table-head h4 {
+            margin: 0;
+        }
+        .monthly-table-head span {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
+        }
+
+        @media (max-width: 1023px) {
+            #mobile-nav {
+                background: linear-gradient(180deg, #320f52 0%, #4a1577 100%);
+            }
+            .mobile-nav-btn.active {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            .monthly-hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 767px) {
+            .monthly-ref-fields,
+            .monthly-quick-actions {
+                grid-template-columns: 1fr;
+            }
+            .monthly-analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
     <div id="loading-overlay">
-        <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div class="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <p class="font-black text-xs uppercase tracking-widest text-slate-400">Sincronizando com Supabase...</p>
+    </div>
+    <div id="sync-toast" class="sync-toast" role="alert" aria-live="assertive">
+        <i data-lucide="cloud-off" class="w-4 h-4"></i>
+        <span id="sync-toast-text">Falha ao salvar na nuvem.</span>
+        <button type="button" onclick="hideSyncToast()" aria-label="Fechar aviso">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+        </button>
     </div>
 
     <!-- SIDEBAR -->
@@ -1720,7 +2172,7 @@
         
         <div class="p-8">
             <div class="flex items-center gap-4 mb-2">
-                <div id="logo-pig" class="logo-pig-wrap w-10 h-10 bg-[#E09132] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0" title="Delícias da Vovó">
+                <div id="logo-pig" class="logo-pig-wrap w-10 h-10 bg-[#820AD1] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0" title="Delícias da Vovó">
                     <i data-lucide="piggy-bank" class="w-5 h-5"></i>
                 </div>
                 <div class="sidebar-header-text">
@@ -1757,10 +2209,6 @@
                 <div id="sync-status" class="sync-indicator">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
-                </div>
-                <div id="backup-status" class="backup-indicator">
-                    <i data-lucide="hard-drive-download" class="w-3.5 h-3.5"></i>
-                    <span>Backup local: --</span>
                 </div>
                 <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
                     <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
@@ -1832,9 +2280,9 @@
                                     <th class="px-4 py-4 text-center">
                                         <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)">
                                     </th>
-                                    <th onclick="setSort('date')" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
+                                    <th onclick="setSort('date')" class="px-6 py-4 text-center cursor-pointer hover:text-[#820AD1]">Data</th>
                                     <th class="px-6 py-4">Destino / Detalhes</th>
-                                    <th onclick="setSort('amount')" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
+                                    <th onclick="setSort('amount')" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#820AD1]">Valor</th>
                                     <th class="px-6 py-4 w-[210px] text-center">Status / Ação</th>
                                 </tr>
                             </thead>
@@ -1854,11 +2302,30 @@
 
             <!-- RELATÓRIO MENSAL -->
             <div id="monthly" class="tab-content active space-y-8">
-                <div class="w-full lg:w-[420px]">
-                    <label class="label-mini">Mês de Referência</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()"></select>
-                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()"></select>
+                <div class="card-premium monthly-hero">
+                    <div class="monthly-hero-grid">
+                        <div>
+                            <p class="monthly-ref-title">Período de análise</p>
+                            <div class="monthly-ref-fields">
+                                <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()"></select>
+                                <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()"></select>
+                            </div>
+                            <p class="monthly-ref-sub">Selecione o mês para atualizar KPIs, gráficos e tabela diária.</p>
+                        </div>
+                        <div class="monthly-quick-actions">
+                            <button type="button" class="monthly-quick-btn" onclick="switchTab('entries')">
+                                <i data-lucide="receipt" class="w-4 h-4"></i>
+                                <span>Ver Lançamentos</span>
+                            </button>
+                            <button type="button" class="monthly-quick-btn" onclick="setEntriesCurrentMonthFilter(); switchTab('entries');">
+                                <i data-lucide="calendar-range" class="w-4 h-4"></i>
+                                <span>Filtrar Mês Atual</span>
+                            </button>
+                            <button type="button" class="monthly-quick-btn primary" onclick="exportCurrentReportPDF()">
+                                <i data-lucide="file-down" class="w-4 h-4"></i>
+                                <span>Exportar Mensal</span>
+                            </button>
+                        </div>
                     </div>
                     <input type="hidden" id="monthly-filter">
                 </div>
@@ -1896,7 +2363,7 @@
 
                 <section id="analise-hierarquica-mensal"></section>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="monthly-analytics-grid">
                     <div class="card-premium p-8 h-[400px]">
                         <h4 class="text-xs font-black flow-income-text mb-6 tracking-widest">Entradas por categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieInc"></canvas></div>
@@ -1905,14 +2372,17 @@
                         <h4 class="text-xs font-black flow-expense-text mb-6 tracking-widest">Saídas por categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieExp"></canvas></div>
                     </div>
-                </div>
-
-                <div class="card-premium p-8 h-[620px] lg:h-[760px] flex flex-col">
-                    <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
-                    <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
+                    <div class="card-premium monthly-wide p-8 h-[620px] lg:h-[760px] flex flex-col">
+                        <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
+                        <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
+                    </div>
                 </div>
 
                 <div class="card-premium overflow-hidden h-[520px] lg:h-[700px] flex flex-col">
+                    <div class="monthly-table-head">
+                        <h4 class="text-xs font-black text-slate-500 tracking-widest">Evolução Diária</h4>
+                        <span>Resumo de caixa por dia do mês selecionado</span>
+                    </div>
                     <div class="flex-1 overflow-auto table-mobile-scroll custom-scrollbar">
                         <table id="monthly-daily-view" class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400 sticky top-0 z-10">
@@ -2011,7 +2481,7 @@
                 <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl border border-blue-100 shadow-xl">
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
-                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
+                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button onclick="finalizeRecon()" class="bg-[#820AD1] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#6B0BAA]">Importar</button></div>
                     </div>
                     <div class="card-premium overflow-hidden">
                         <div class="table-mobile-scroll custom-scrollbar">
@@ -2157,8 +2627,6 @@
             entries: []
         };
         const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries'];
-        const LOCAL_STORAGE_KEY = 'vovo_v21_backup';
-        const LEGACY_STORAGE_KEY = 'vovo_v20';
         const ENTRIES_TOOLBAR_COLLAPSED_KEY = 'entries_toolbar_collapsed_v1';
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
@@ -2176,7 +2644,6 @@
         let annualNavSubCategoryId = '';
         let annualNavDestinationId = '';
         let currentTab = 'monthly';
-        let persistLocalTimer = null;
         let entriesSearchTimer = null;
         let entriesPage = 1;
         const entriesPageSize = 80;
@@ -2187,16 +2654,7 @@
         let entriesToolbarCollapsed = true;
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
-
-        function getStateSnapshot() {
-            return {
-                categories: Array.isArray(state.categories) ? state.categories : [],
-                subCategories: Array.isArray(state.subCategories) ? state.subCategories : [],
-                destinations: Array.isArray(state.destinations) ? state.destinations : [],
-                accounts: Array.isArray(state.accounts) ? state.accounts : [],
-                entries: Array.isArray(state.entries) ? state.entries : []
-            };
-        }
+        let syncToastTimer = null;
 
         function normalizeStateIds() {
             state.accounts = (state.accounts || []).map(a => ({ ...a, id: String(a.id || '') }));
@@ -2220,59 +2678,6 @@
                 destinationId: String((e.destinationId ?? e.destination_id) || ''),
                 isInternalTransfer: isInternalEntry(e)
             }));
-        }
-
-        function loadLocalSnapshot() {
-            try {
-                const current = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null');
-                if (current && typeof current === 'object') {
-                    return {
-                        categories: current.categories || [],
-                        subCategories: current.subCategories || [],
-                        destinations: current.destinations || [],
-                        accounts: current.accounts || [],
-                        entries: current.entries || []
-                    };
-                }
-            } catch (e) {
-                console.warn('Falha ao ler snapshot local atual:', e);
-            }
-            try {
-                const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
-                if (legacy && typeof legacy === 'object') {
-                    return {
-                        categories: legacy.categories || [],
-                        subCategories: legacy.subCategories || [],
-                        destinations: legacy.destinations || [],
-                        accounts: legacy.accounts || [],
-                        entries: legacy.entries || []
-                    };
-                }
-            } catch (e) {
-                console.warn('Falha ao ler snapshot local legado:', e);
-            }
-            return null;
-        }
-
-        function persistLocalSnapshot() {
-            try {
-                const snapshot = getStateSnapshot();
-                const payload = { savedAt: new Date().toISOString(), ...snapshot };
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
-                // Compatibilidade com versões anteriores
-                localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(snapshot));
-                updateBackupIndicator(payload.savedAt);
-            } catch (e) {
-                console.error('Falha ao persistir snapshot local:', e);
-            }
-        }
-
-        function requestPersistLocalSnapshot(delayMs = 550) {
-            if (persistLocalTimer) clearTimeout(persistLocalTimer);
-            persistLocalTimer = setTimeout(() => {
-                persistLocalTimer = null;
-                persistLocalSnapshot();
-            }, delayMs);
         }
 
         function queueRenderEntries() {
@@ -2327,8 +2732,8 @@
             const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
             const startEl = document.getElementById('filter-date-start');
             const endEl = document.getElementById('filter-date-end');
-            if (startEl) startEl.value = first.toISOString().slice(0, 10);
-            if (endEl) endEl.value = last.toISOString().slice(0, 10);
+            if (startEl) startEl.value = toISODateLocal(first);
+            if (endEl) endEl.value = toISODateLocal(last);
             entriesPage = 1;
             renderEntries();
         }
@@ -2341,38 +2746,6 @@
             renderEntries();
         }
 
-        function updateBackupIndicator(savedAtIso) {
-            const el = document.getElementById('backup-status');
-            if (!el) return;
-            const textEl = el.querySelector('span');
-            if (!textEl) return;
-
-            let iso = savedAtIso;
-            if (!iso) {
-                try {
-                    const parsed = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null');
-                    iso = parsed && parsed.savedAt ? parsed.savedAt : '';
-                } catch (e) {
-                    iso = '';
-                }
-            }
-
-            if (!iso) {
-                textEl.innerText = 'Backup local: --';
-                return;
-            }
-
-            const dt = new Date(iso);
-            if (Number.isNaN(dt.getTime())) {
-                textEl.innerText = 'Backup local: --';
-                return;
-            }
-
-            const datePart = dt.toLocaleDateString('pt-BR');
-            const timePart = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            textEl.innerText = `Backup local: ${datePart} ${timePart}`;
-        }
-
         function mergeById(cloudList, localList) {
             const map = new Map();
             (Array.isArray(cloudList) ? cloudList : []).forEach(item => {
@@ -2380,8 +2753,8 @@
             });
             (Array.isArray(localList) ? localList : []).forEach(item => {
                 if (!item || !item.id) return;
-                // Preferimos local para não perder alterações recentes ainda não sincronizadas.
-                map.set(item.id, item);
+                // Nuvem e a fonte da verdade: so aproveitamos itens locais ausentes na nuvem.
+                if (!map.has(item.id)) map.set(item.id, item);
             });
             return Array.from(map.values());
         }
@@ -2413,17 +2786,35 @@
                 text.innerText = 'Offline';
             }
         }
+        function hideSyncToast() {
+            const el = document.getElementById('sync-toast');
+            if (!el) return;
+            el.classList.remove('show');
+            if (syncToastTimer) {
+                clearTimeout(syncToastTimer);
+                syncToastTimer = null;
+            }
+        }
+        function showSyncToast(message) {
+            const el = document.getElementById('sync-toast');
+            const textEl = document.getElementById('sync-toast-text');
+            if (!el || !textEl) return;
+            textEl.innerText = message || 'Falha ao salvar na nuvem.';
+            el.classList.add('show');
+            if (syncToastTimer) clearTimeout(syncToastTimer);
+            syncToastTimer = setTimeout(() => {
+                el.classList.remove('show');
+                syncToastTimer = null;
+            }, 7000);
+            lucide.createIcons();
+        }
 
         async function initCloud() {
             if (!sbClient) {
                 console.error("Supabase client não disponível.");
+                showSyncToast('Supabase indisponível neste navegador.');
                 document.getElementById('loading-overlay').style.display = 'none';
-                const localOnly = loadLocalSnapshot();
-                if (localOnly) {
-                    state = localOnly;
-                    normalizeStateIds();
-                    render();
-                }
+                render();
                 return;
             }
 
@@ -2436,55 +2827,26 @@
                     if (error) throw error;
                     cloudState[t] = data || [];
                 }
-                const localData = loadLocalSnapshot();
-                state = mergeCloudAndLocal(cloudState, localData);
+                state = cloudState;
                 normalizeStateIds();
-                if (localData) {
-                    for (const t of STATE_TABLES) {
-                        const localCount = Array.isArray(localData[t]) ? localData[t].length : 0;
-                        const cloudCount = Array.isArray(cloudState[t]) ? cloudState[t].length : 0;
-                        if (localCount > cloudCount && localCount > 0) {
-                            // Recupera dados potencialmente perdidos na nuvem.
-                            const { error: pushErr } = await sbClient.from(t).upsert(localData[t]);
-                            if (pushErr) console.warn(`Nao foi possivel re-sincronizar ${t}:`, pushErr);
-                        }
-                    }
-                }
-
-                // Se não houver dados no Supabase, tenta migrar do LocalStorage (v20)
-                if (cloudState.categories.length === 0) {
-                    if (localData) {
-                        console.log("Migrando dados locais para Supabase...");
-                        for(const t of STATE_TABLES) {
-                            if (localData[t] && localData[t].length > 0) {
-                                await sbClient.from(t).upsert(localData[t]);
-                            }
-                        }
-                        // Recarrega após migração
-                        return initCloud();
-                    }
-                }
                 
                 setSyncStatus('synced');
                 document.getElementById('loading-overlay').style.display = 'none';
-                persistLocalSnapshot();
                 render();
             } catch (err) {
                 console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
+                showSyncToast('Falha ao sincronizar com a nuvem.');
                 document.getElementById('loading-overlay').style.display = 'none';
-                // Tentativa de renderizar com dados locais se falhar o cloud
-                const localData = loadLocalSnapshot();
-                if (localData) {
-                    state = localData;
-                    normalizeStateIds();
-                    render();
-                }
+                render();
             }
         }
 
         async function cloudSave(table, data) {
-            if (!sbClient) return;
+            if (!sbClient) {
+                showSyncToast(`Supabase offline. "${table}" não foi salvo na nuvem.`);
+                return false;
+            }
             const sanitizeEntryForCloud = (entry) => {
                 if (!entry || typeof entry !== 'object') return entry;
                 const clean = { ...entry };
@@ -2497,44 +2859,71 @@
                 ? (Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data))
                 : data;
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).upsert(payload);
+            let error = null;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                const res = await sbClient.from(table).upsert(payload);
+                error = res.error || null;
+                if (!error) break;
+                if (attempt < 3) {
+                    await new Promise(resolve => setTimeout(resolve, attempt * 400));
+                }
+            }
             if (error) {
                 console.error(`Erro ao salvar em ${table}:`, error);
                 setSyncStatus('offline');
+                showSyncToast(`Nao foi possivel salvar "${table}" na nuvem.`);
+                return false;
             } else {
                 setSyncStatus('synced');
+                hideSyncToast();
             }
-            requestPersistLocalSnapshot();
+            return true;
         }
 
         async function cloudDelete(table, id) {
-            if (!sbClient) return;
+            if (!sbClient) {
+                showSyncToast(`Supabase offline. Nao foi possivel excluir em "${table}" na nuvem.`);
+                return false;
+            }
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).delete().eq('id', id);
+            let error = null;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                const res = await sbClient.from(table).delete().eq('id', id);
+                error = res.error || null;
+                if (!error) break;
+                if (attempt < 3) {
+                    await new Promise(resolve => setTimeout(resolve, attempt * 400));
+                }
+            }
             if (error) {
                 console.error(`Erro ao deletar em ${table}:`, error);
                 setSyncStatus('offline');
+                showSyncToast(`Nao foi possivel excluir em "${table}" na nuvem.`);
+                return false;
             } else {
                 setSyncStatus('synced');
+                hideSyncToast();
             }
-            requestPersistLocalSnapshot();
+            return true;
         }
 
         window.deleteEntry = async function(id) {
             if(confirm("Deseja realmente excluir este lançamento?")) {
-                await cloudDelete('entries', id);
                 state.entries = state.entries.filter(e => e.id !== id);
+                selectedEntryIds.delete(id);
                 render();
+                await cloudDelete('entries', id);
             }
         };
         async function confirmDeleteFromModal() {
             const id = String(document.getElementById('entry-id')?.value || '');
             if (!id) return;
             if (!confirm("Deseja realmente excluir este lançamento?")) return;
-            await cloudDelete('entries', id);
             state.entries = state.entries.filter(e => e.id !== id);
+            selectedEntryIds.delete(id);
             closeModal('entry-modal');
             render();
+            await cloudDelete('entries', id);
         }
 
         const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -2543,6 +2932,13 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
+        function toISODateLocal(date = new Date()) {
+            const tzAdjusted = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+            return tzAdjusted.toISOString().slice(0, 10);
+        }
+        function getCurrentYearMonthLocal() {
+            return toISODateLocal(new Date()).slice(0, 7);
+        }
         function getExportTimestamp() {
             return new Date().toLocaleString('pt-BR', { hour12: false });
         }
@@ -2715,7 +3111,7 @@
                     }).join('')}
                 </tbody></table>`;
             } else if (currentTab === 'monthly') {
-                const filter = document.getElementById('monthly-filter')?.value || new Date().toISOString().slice(0,7);
+                const filter = document.getElementById('monthly-filter')?.value || getCurrentYearMonthLocal();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
                 title = `Relatório Mensal (${filter})`;
                 subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
@@ -3148,7 +3544,6 @@
             }
             lucide.createIcons();
             initPiggyMicroInteractions();
-            requestPersistLocalSnapshot();
         }
 
         function populateEntryAccountFilter() {
@@ -3168,7 +3563,7 @@
             const hiddenEl = document.getElementById('monthly-filter');
             if(!monthEl || !yearEl || !hiddenEl) return;
 
-            const currentMonth = new Date().toISOString().slice(0, 7);
+            const currentMonth = getCurrentYearMonthLocal();
             const selected = hiddenEl.value || currentMonth;
             const [selectedYearRaw, selectedMonthRaw] = selected.split('-');
             const selectedYear = Number(selectedYearRaw) || new Date().getFullYear();
@@ -3204,7 +3599,7 @@
         }
 
         function updateBalance() {
-            const monthPrefix = new Date().toISOString().slice(0, 7);
+            const monthPrefix = getCurrentYearMonthLocal();
             const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && (e.date || '').startsWith(monthPrefix));
             const inc = monthEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const exp = monthEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
@@ -3319,16 +3714,30 @@
 
         async function cloudDeleteMany(table, ids) {
             if (!Array.isArray(ids) || ids.length === 0) return;
-            if (!sbClient) return;
+            if (!sbClient) {
+                showSyncToast(`Supabase offline. Nao foi possivel excluir itens em "${table}" na nuvem.`);
+                return false;
+            }
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).delete().in('id', ids);
+            let error = null;
+            for (let attempt = 1; attempt <= 3; attempt++) {
+                const res = await sbClient.from(table).delete().in('id', ids);
+                error = res.error || null;
+                if (!error) break;
+                if (attempt < 3) {
+                    await new Promise(resolve => setTimeout(resolve, attempt * 400));
+                }
+            }
             if (error) {
                 console.error(`Erro ao deletar em lote em ${table}:`, error);
                 setSyncStatus('offline');
+                showSyncToast(`Nao foi possivel excluir itens em "${table}" na nuvem.`);
+                return false;
             } else {
                 setSyncStatus('synced');
+                hideSyncToast();
             }
-            requestPersistLocalSnapshot();
+            return true;
         }
 
         function toggleEntrySelection(id, checked) {
@@ -3375,10 +3784,10 @@
             const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
             if (ids.length === 0) return;
             if (!confirm(`Deseja excluir ${ids.length} lançamento(s) selecionado(s)?`)) return;
-            await cloudDeleteMany('entries', ids);
             state.entries = state.entries.filter(e => !selectedEntryIds.has(e.id));
             selectedEntryIds.clear();
             render();
+            await cloudDeleteMany('entries', ids);
         }
 
         async function setEntryInternal(id, flag) {
@@ -3596,7 +4005,8 @@
                 balEl.className = 'text-2xl font-black flow-balance-text'; 
             }
 
-            const daysInMonth = new Date(...filter.split('-').map((v,i)=>i===0?v:v-1), 0).getDate();
+            const [filterYear, filterMonth] = filter.split('-').map(Number);
+            const daysInMonth = (filterYear && filterMonth) ? new Date(filterYear, filterMonth, 0).getDate() : 31;
             let html = '', cumulative = 0;
             const dailyInReal = []; const dailyInPend = [];
             const dailyOutReal = []; const dailyOutPend = [];
@@ -4812,13 +5222,9 @@
         }
 
         const mf = document.getElementById('monthly-filter');
-        if(mf) mf.value = new Date().toISOString().slice(0, 7);
+        if(mf) mf.value = getCurrentYearMonthLocal();
         window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); });
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); });
-        window.addEventListener('beforeunload', persistLocalSnapshot);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') persistLocalSnapshot();
-        });
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
             if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
@@ -4829,3 +5235,6 @@
     </script>
 </body>
 </html>
+
+
+
