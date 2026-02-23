@@ -1,7 +1,5 @@
 <html lang="pt-BR">
 <head>
-   <html lang="pt-BR">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delícias da Vovó | Gestão Financeira Premium</title>
@@ -2187,6 +2185,7 @@
         let entriesToolbarCollapsed = true;
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
+        let cloudSupportsUpdatedAt = true;
 
         function getStateSnapshot() {
             return {
@@ -2424,6 +2423,47 @@
             return merged;
         }
 
+        function stripUpdatedAtField(value) {
+            if (Array.isArray(value)) return value.map(stripUpdatedAtField);
+            if (!value || typeof value !== 'object') return value;
+            const clean = { ...value };
+            delete clean.updatedAt;
+            return clean;
+        }
+
+        function sanitizePayloadForCloud(table, data, includeUpdatedAt = true) {
+            const sanitizeEntryForCloud = (entry) => {
+                if (!entry || typeof entry !== 'object') return entry;
+                const clean = { ...entry };
+                delete clean.isInternalTransfer;
+                delete clean.internalTransfer;
+                delete clean.is_internal_transfer;
+                return clean;
+            };
+            let payload = table === 'entries'
+                ? (Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data))
+                : data;
+            if (!includeUpdatedAt) payload = stripUpdatedAtField(payload);
+            return payload;
+        }
+
+        function isUpdatedAtColumnError(error) {
+            const message = String((error || {}).message || error || '').toLowerCase();
+            return message.includes('updatedat') || message.includes('updated_at');
+        }
+
+        async function upsertWithUpdatedAtFallback(table, data) {
+            let payload = sanitizePayloadForCloud(table, data, cloudSupportsUpdatedAt);
+            let { error } = await sbClient.from(table).upsert(payload);
+            if (error && cloudSupportsUpdatedAt && isUpdatedAtColumnError(error)) {
+                cloudSupportsUpdatedAt = false;
+                payload = sanitizePayloadForCloud(table, data, false);
+                const retry = await sbClient.from(table).upsert(payload);
+                error = retry.error;
+            }
+            return { error };
+        }
+
         function setSyncStatus(status) {
             const el = document.getElementById('sync-status');
             const dot = el.querySelector('div');
@@ -2473,7 +2513,7 @@
                         const mergedList = Array.isArray(state[t]) ? state[t] : [];
                         if (mergedList.length === 0) continue;
                         // Converge nuvem para o estado mais recente por registro.
-                        const { error: pushErr } = await sbClient.from(t).upsert(mergedList);
+                        const { error: pushErr } = await upsertWithUpdatedAtFallback(t, mergedList);
                         if (pushErr) console.warn(`Nao foi possivel re-sincronizar ${t}:`, pushErr);
                     }
                 }
@@ -2484,7 +2524,7 @@
                         console.log("Migrando dados locais para Supabase...");
                         for(const t of STATE_TABLES) {
                             if (localData[t] && localData[t].length > 0) {
-                                await sbClient.from(t).upsert(localData[t]);
+                                await upsertWithUpdatedAtFallback(t, localData[t]);
                             }
                         }
                         // Recarrega após migração
@@ -2526,21 +2566,10 @@
                 value.updatedAt = isoNow;
                 return value;
             };
-            const sanitizeEntryForCloud = (entry) => {
-                if (!entry || typeof entry !== 'object') return entry;
-                const clean = { ...entry };
-                delete clean.isInternalTransfer;
-                delete clean.internalTransfer;
-                delete clean.is_internal_transfer;
-                return clean;
-            };
             const nowIso = new Date().toISOString();
             const touched = touchUpdatedAt(data, nowIso);
-            const payload = table === 'entries'
-                ? (Array.isArray(touched) ? touched.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(touched))
-                : touched;
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).upsert(payload);
+            const { error } = await upsertWithUpdatedAtFallback(table, touched);
             if (error) {
                 console.error(`Erro ao salvar em ${table}:`, error);
                 setSyncStatus('offline');
