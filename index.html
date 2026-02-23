@@ -2199,17 +2199,27 @@
         }
 
         function normalizeStateIds() {
-            state.accounts = (state.accounts || []).map(a => ({ ...a, id: String(a.id || '') }));
-            state.categories = (state.categories || []).map(c => ({ ...c, id: String(c.id || '') }));
+            state.accounts = (state.accounts || []).map(a => ({
+                ...a,
+                id: String(a.id || ''),
+                updatedAt: String((a.updatedAt ?? a.updated_at) || '')
+            }));
+            state.categories = (state.categories || []).map(c => ({
+                ...c,
+                id: String(c.id || ''),
+                updatedAt: String((c.updatedAt ?? c.updated_at) || '')
+            }));
             state.subCategories = (state.subCategories || []).map(s => ({
                 ...s,
                 id: String(s.id || ''),
-                categoryId: String((s.categoryId ?? s.category_id) || '')
+                categoryId: String((s.categoryId ?? s.category_id) || ''),
+                updatedAt: String((s.updatedAt ?? s.updated_at) || '')
             }));
             state.destinations = (state.destinations || []).map(d => ({
                 ...d,
                 id: String(d.id || ''),
-                subCategoryId: String((d.subCategoryId ?? d.sub_category_id) || '')
+                subCategoryId: String((d.subCategoryId ?? d.sub_category_id) || ''),
+                updatedAt: String((d.updatedAt ?? d.updated_at) || '')
             }));
             state.entries = (state.entries || []).map(e => ({
                 ...e,
@@ -2218,6 +2228,7 @@
                 categoryId: String((e.categoryId ?? e.category_id) || ''),
                 subCategoryId: String((e.subCategoryId ?? e.sub_category_id) || ''),
                 destinationId: String((e.destinationId ?? e.destination_id) || ''),
+                updatedAt: String((e.updatedAt ?? e.updated_at) || ''),
                 isInternalTransfer: isInternalEntry(e)
             }));
         }
@@ -2373,6 +2384,24 @@
             textEl.innerText = `Backup local: ${datePart} ${timePart}`;
         }
 
+        function parseUpdatedAt(value) {
+            if (!value) return 0;
+            const t = new Date(value).getTime();
+            return Number.isFinite(t) ? t : 0;
+        }
+
+        function resolveNewestVersion(cloudItem, localItem) {
+            if (!cloudItem) return localItem;
+            if (!localItem) return cloudItem;
+            const cloudTs = parseUpdatedAt(cloudItem.updatedAt ?? cloudItem.updated_at);
+            const localTs = parseUpdatedAt(localItem.updatedAt ?? localItem.updated_at);
+            if (cloudTs && localTs) return localTs >= cloudTs ? localItem : cloudItem;
+            if (localTs && !cloudTs) return localItem;
+            if (cloudTs && !localTs) return cloudItem;
+            // Sem timestamp confiável, preferimos nuvem para manter consistência entre dispositivos.
+            return cloudItem;
+        }
+
         function mergeById(cloudList, localList) {
             const map = new Map();
             (Array.isArray(cloudList) ? cloudList : []).forEach(item => {
@@ -2380,8 +2409,8 @@
             });
             (Array.isArray(localList) ? localList : []).forEach(item => {
                 if (!item || !item.id) return;
-                // Preferimos local para não perder alterações recentes ainda não sincronizadas.
-                map.set(item.id, item);
+                const existing = map.get(item.id);
+                map.set(item.id, resolveNewestVersion(existing, item));
             });
             return Array.from(map.values());
         }
@@ -2441,13 +2470,11 @@
                 normalizeStateIds();
                 if (localData) {
                     for (const t of STATE_TABLES) {
-                        const localCount = Array.isArray(localData[t]) ? localData[t].length : 0;
-                        const cloudCount = Array.isArray(cloudState[t]) ? cloudState[t].length : 0;
-                        if (localCount > cloudCount && localCount > 0) {
-                            // Recupera dados potencialmente perdidos na nuvem.
-                            const { error: pushErr } = await sbClient.from(t).upsert(localData[t]);
-                            if (pushErr) console.warn(`Nao foi possivel re-sincronizar ${t}:`, pushErr);
-                        }
+                        const mergedList = Array.isArray(state[t]) ? state[t] : [];
+                        if (mergedList.length === 0) continue;
+                        // Converge nuvem para o estado mais recente por registro.
+                        const { error: pushErr } = await sbClient.from(t).upsert(mergedList);
+                        if (pushErr) console.warn(`Nao foi possivel re-sincronizar ${t}:`, pushErr);
                     }
                 }
 
@@ -2484,7 +2511,21 @@
         }
 
         async function cloudSave(table, data) {
-            if (!sbClient) return;
+            if (!sbClient) {
+                requestPersistLocalSnapshot();
+                return;
+            }
+            const touchUpdatedAt = (value, isoNow) => {
+                if (!value || typeof value !== 'object') return value;
+                if (Array.isArray(value)) {
+                    value.forEach(item => {
+                        if (item && typeof item === 'object') item.updatedAt = isoNow;
+                    });
+                    return value;
+                }
+                value.updatedAt = isoNow;
+                return value;
+            };
             const sanitizeEntryForCloud = (entry) => {
                 if (!entry || typeof entry !== 'object') return entry;
                 const clean = { ...entry };
@@ -2493,9 +2534,11 @@
                 delete clean.is_internal_transfer;
                 return clean;
             };
+            const nowIso = new Date().toISOString();
+            const touched = touchUpdatedAt(data, nowIso);
             const payload = table === 'entries'
-                ? (Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data))
-                : data;
+                ? (Array.isArray(touched) ? touched.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(touched))
+                : touched;
             setSyncStatus('syncing');
             const { error } = await sbClient.from(table).upsert(payload);
             if (error) {
