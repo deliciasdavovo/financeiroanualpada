@@ -2155,9 +2155,6 @@
             entries: []
         };
         const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries'];
-        const LOCAL_STORAGE_KEY = 'vovo_v21_backup';
-        const LEGACY_STORAGE_KEY = 'vovo_v20';
-        const ENTRIES_TOOLBAR_COLLAPSED_KEY = 'entries_toolbar_collapsed_v1';
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -2174,7 +2171,6 @@
         let annualNavSubCategoryId = '';
         let annualNavDestinationId = '';
         let currentTab = 'monthly';
-        let persistLocalTimer = null;
         let entriesSearchTimer = null;
         let entriesPage = 1;
         const entriesPageSize = 80;
@@ -2232,59 +2228,6 @@
             }));
         }
 
-        function loadLocalSnapshot() {
-            try {
-                const current = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null');
-                if (current && typeof current === 'object') {
-                    return {
-                        categories: current.categories || [],
-                        subCategories: current.subCategories || [],
-                        destinations: current.destinations || [],
-                        accounts: current.accounts || [],
-                        entries: current.entries || []
-                    };
-                }
-            } catch (e) {
-                console.warn('Falha ao ler snapshot local atual:', e);
-            }
-            try {
-                const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
-                if (legacy && typeof legacy === 'object') {
-                    return {
-                        categories: legacy.categories || [],
-                        subCategories: legacy.subCategories || [],
-                        destinations: legacy.destinations || [],
-                        accounts: legacy.accounts || [],
-                        entries: legacy.entries || []
-                    };
-                }
-            } catch (e) {
-                console.warn('Falha ao ler snapshot local legado:', e);
-            }
-            return null;
-        }
-
-        function persistLocalSnapshot() {
-            try {
-                const snapshot = getStateSnapshot();
-                const payload = { savedAt: new Date().toISOString(), ...snapshot };
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
-                // Compatibilidade com versões anteriores
-                localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(snapshot));
-                updateBackupIndicator(payload.savedAt);
-            } catch (e) {
-                console.error('Falha ao persistir snapshot local:', e);
-            }
-        }
-
-        function requestPersistLocalSnapshot(delayMs = 550) {
-            if (persistLocalTimer) clearTimeout(persistLocalTimer);
-            persistLocalTimer = setTimeout(() => {
-                persistLocalTimer = null;
-                persistLocalSnapshot();
-            }, delayMs);
-        }
-
         function queueRenderEntries() {
             if (entriesSearchTimer) clearTimeout(entriesSearchTimer);
             entriesSearchTimer = setTimeout(() => {
@@ -2309,7 +2252,6 @@
 
         function toggleEntriesToolbarCollapse() {
             entriesToolbarCollapsed = !entriesToolbarCollapsed;
-            localStorage.setItem(ENTRIES_TOOLBAR_COLLAPSED_KEY, entriesToolbarCollapsed ? '1' : '0');
             applyEntriesToolbarState();
         }
 
@@ -2356,71 +2298,7 @@
             if (!el) return;
             const textEl = el.querySelector('span');
             if (!textEl) return;
-
-            let iso = savedAtIso;
-            if (!iso) {
-                try {
-                    const parsed = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || 'null');
-                    iso = parsed && parsed.savedAt ? parsed.savedAt : '';
-                } catch (e) {
-                    iso = '';
-                }
-            }
-
-            if (!iso) {
-                textEl.innerText = 'Backup local: --';
-                return;
-            }
-
-            const dt = new Date(iso);
-            if (Number.isNaN(dt.getTime())) {
-                textEl.innerText = 'Backup local: --';
-                return;
-            }
-
-            const datePart = dt.toLocaleDateString('pt-BR');
-            const timePart = dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-            textEl.innerText = `Backup local: ${datePart} ${timePart}`;
-        }
-
-        function parseUpdatedAt(value) {
-            if (!value) return 0;
-            const t = new Date(value).getTime();
-            return Number.isFinite(t) ? t : 0;
-        }
-
-        function resolveNewestVersion(cloudItem, localItem) {
-            if (!cloudItem) return localItem;
-            if (!localItem) return cloudItem;
-            const cloudTs = parseUpdatedAt(cloudItem.updatedAt ?? cloudItem.updated_at);
-            const localTs = parseUpdatedAt(localItem.updatedAt ?? localItem.updated_at);
-            if (cloudTs && localTs) return localTs >= cloudTs ? localItem : cloudItem;
-            if (localTs && !cloudTs) return localItem;
-            if (cloudTs && !localTs) return cloudItem;
-            // Sem timestamp confiável, preferimos nuvem para manter consistência entre dispositivos.
-            return cloudItem;
-        }
-
-        function mergeById(cloudList, localList) {
-            const map = new Map();
-            (Array.isArray(cloudList) ? cloudList : []).forEach(item => {
-                if (item && item.id) map.set(item.id, item);
-            });
-            (Array.isArray(localList) ? localList : []).forEach(item => {
-                if (!item || !item.id) return;
-                const existing = map.get(item.id);
-                map.set(item.id, resolveNewestVersion(existing, item));
-            });
-            return Array.from(map.values());
-        }
-
-        function mergeCloudAndLocal(cloudState, localState) {
-            if (!localState) return cloudState;
-            const merged = {};
-            STATE_TABLES.forEach(table => {
-                merged[table] = mergeById(cloudState[table], localState[table]);
-            });
-            return merged;
+            textEl.innerText = 'Backup local: desativado';
         }
 
         function stripUpdatedAtField(value) {
@@ -2487,12 +2365,7 @@
             if (!sbClient) {
                 console.error("Supabase client não disponível.");
                 document.getElementById('loading-overlay').style.display = 'none';
-                const localOnly = loadLocalSnapshot();
-                if (localOnly) {
-                    state = localOnly;
-                    normalizeStateIds();
-                    render();
-                }
+                setSyncStatus('offline');
                 return;
             }
 
@@ -2505,54 +2378,23 @@
                     if (error) throw error;
                     cloudState[t] = data || [];
                 }
-                const localData = loadLocalSnapshot();
-                state = mergeCloudAndLocal(cloudState, localData);
+                state = cloudState;
                 normalizeStateIds();
-                if (localData) {
-                    for (const t of STATE_TABLES) {
-                        const mergedList = Array.isArray(state[t]) ? state[t] : [];
-                        if (mergedList.length === 0) continue;
-                        // Converge nuvem para o estado mais recente por registro.
-                        const { error: pushErr } = await upsertWithUpdatedAtFallback(t, mergedList);
-                        if (pushErr) console.warn(`Nao foi possivel re-sincronizar ${t}:`, pushErr);
-                    }
-                }
-
-                // Se não houver dados no Supabase, tenta migrar do LocalStorage (v20)
-                if (cloudState.categories.length === 0) {
-                    if (localData) {
-                        console.log("Migrando dados locais para Supabase...");
-                        for(const t of STATE_TABLES) {
-                            if (localData[t] && localData[t].length > 0) {
-                                await upsertWithUpdatedAtFallback(t, localData[t]);
-                            }
-                        }
-                        // Recarrega após migração
-                        return initCloud();
-                    }
-                }
-                
                 setSyncStatus('synced');
                 document.getElementById('loading-overlay').style.display = 'none';
-                persistLocalSnapshot();
+                updateBackupIndicator();
                 render();
             } catch (err) {
                 console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
                 document.getElementById('loading-overlay').style.display = 'none';
-                // Tentativa de renderizar com dados locais se falhar o cloud
-                const localData = loadLocalSnapshot();
-                if (localData) {
-                    state = localData;
-                    normalizeStateIds();
-                    render();
-                }
+                render();
             }
         }
 
         async function cloudSave(table, data) {
             if (!sbClient) {
-                requestPersistLocalSnapshot();
+                setSyncStatus('offline');
                 return;
             }
             const touchUpdatedAt = (value, isoNow) => {
@@ -2576,7 +2418,6 @@
             } else {
                 setSyncStatus('synced');
             }
-            requestPersistLocalSnapshot();
         }
 
         async function cloudDelete(table, id) {
@@ -2589,7 +2430,6 @@
             } else {
                 setSyncStatus('synced');
             }
-            requestPersistLocalSnapshot();
         }
 
         window.deleteEntry = async function(id) {
@@ -3200,12 +3040,6 @@
             updateBalance();
             populateEntryAccountFilter();
             if (currentTab === 'entries') {
-                try {
-                    const saved = localStorage.getItem(ENTRIES_TOOLBAR_COLLAPSED_KEY);
-                    entriesToolbarCollapsed = saved === null ? true : saved === '1';
-                } catch (e) {
-                    entriesToolbarCollapsed = true;
-                }
                 applyEntriesToolbarState();
                 renderEntries();
             } else if (currentTab === 'monthly') {
@@ -3220,7 +3054,6 @@
             }
             lucide.createIcons();
             initPiggyMicroInteractions();
-            requestPersistLocalSnapshot();
         }
 
         function populateEntryAccountFilter() {
@@ -3400,7 +3233,6 @@
             } else {
                 setSyncStatus('synced');
             }
-            requestPersistLocalSnapshot();
         }
 
         function toggleEntrySelection(id, checked) {
@@ -4887,10 +4719,6 @@
         if(mf) mf.value = new Date().toISOString().slice(0, 7);
         window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); });
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); });
-        window.addEventListener('beforeunload', persistLocalSnapshot);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') persistLocalSnapshot();
-        });
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
             if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
