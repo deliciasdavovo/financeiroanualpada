@@ -1561,7 +1561,7 @@
             }
             #mobile-nav {
                 display: grid !important;
-                grid-template-columns: repeat(5, minmax(0, 1fr));
+                grid-template-columns: repeat(6, minmax(0, 1fr));
                 gap: 6px;
             }
             .mobile-nav-btn {
@@ -1781,6 +1781,9 @@
             </button>
             <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
+            </button>
+            <button onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="wallet-cards" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Tesouraria</span>
             </button>
             <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
@@ -2037,6 +2040,162 @@
                 </div>
             </div>
 
+            <!-- TESOURARIA -->
+            <div id="treasury" class="tab-content space-y-8">
+                <div class="card-premium p-6 lg:p-8 space-y-6">
+                    <div class="flex flex-wrap items-end justify-between gap-4">
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide">Posição Financeira Diária</h4>
+                            <p class="text-[11px] text-slate-500 mt-1">Controle operacional sem gerar lançamentos financeiros automáticos.</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto lg:min-w-[430px]">
+                            <div>
+                                <label class="label-mini">Dia do resumo</label>
+                                <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition()">
+                            </div>
+                            <div class="flex items-end">
+                                <button type="button" onclick="sendTreasuryDailySummaryWhatsApp()" class="h-[44px] px-4 rounded-xl bg-[#16a34a] text-white text-[11px] font-black uppercase tracking-wide hover:bg-[#15803d] transition-all w-full">
+                                    Enviar resumo no WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="kpi-card p-5">
+                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Movimento do dia</p>
+                            <p id="treasury-movement-day" class="text-2xl font-black flow-income-text mt-2">R$ 0,00</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Soma de entradas das unidades</p>
+                        </div>
+                        <div class="kpi-card p-5">
+                            <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Saldo bancário atual</p>
+                            <p id="treasury-bank-current" class="text-2xl font-black flow-balance-text mt-2">R$ 0,00</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Último saldo registrado por conta</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <section class="card-premium p-6 lg:p-8 space-y-6">
+                        <div class="flex items-center justify-between gap-4">
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Movimento das Lojas</h4>
+                        </div>
+                        <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label-mini">Data</label>
+                                <input id="treasury-mv-date" type="date" required>
+                            </div>
+                            <div>
+                                <label class="label-mini">Unidade</label>
+                                <select id="treasury-mv-unit" required>
+                                    <option value="MATRIZ">MATRIZ</option>
+                                    <option value="VILA_NOVA">VILA_NOVA</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="label-mini">Entrada dinheiro</label>
+                                <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
+                            </div>
+                            <div>
+                                <label class="label-mini">Entrada cartão</label>
+                                <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
+                            </div>
+                            <div>
+                                <label class="label-mini">Entrada PIX</label>
+                                <input id="treasury-mv-pix" type="number" step="0.01" min="0" value="0">
+                            </div>
+                            <div>
+                                <label class="label-mini">Pagamentos do dia</label>
+                                <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="label-mini">Observações</label>
+                                <input id="treasury-mv-notes" type="text" placeholder="Opcional">
+                            </div>
+                            <div class="md:col-span-2">
+                                <button type="submit" class="modal-btn-primary w-full sm:w-auto">Salvar movimento</button>
+                            </div>
+                        </form>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="label-mini">Filtrar por mês</label>
+                                <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
+                            </div>
+                            <div>
+                                <label class="label-mini">Filtrar por unidade</label>
+                                <select id="treasury-mv-filter-unit" onchange="renderTreasuryMovements()">
+                                    <option value="">Todas</option>
+                                    <option value="MATRIZ">MATRIZ</option>
+                                    <option value="VILA_NOVA">VILA_NOVA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-mobile-scroll custom-scrollbar border border-slate-100 rounded-2xl">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Data</th>
+                                        <th class="px-4 py-3">Unidade</th>
+                                        <th class="px-4 py-3 text-right">Entradas</th>
+                                        <th class="px-4 py-3 text-right">Pagamentos</th>
+                                        <th class="px-4 py-3 text-right">Resultado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="treasury-mv-history-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="card-premium p-6 lg:p-8 space-y-6">
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Saldos Bancários</h4>
+                        <form id="treasury-balance-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label-mini">Data</label>
+                                <input id="treasury-bal-date" type="date" required>
+                            </div>
+                            <div>
+                                <label class="label-mini">Conta</label>
+                                <select id="treasury-bal-account" required></select>
+                            </div>
+                            <div>
+                                <label class="label-mini">Saldo (R$)</label>
+                                <input id="treasury-bal-value" type="number" step="0.01" required>
+                            </div>
+                            <div>
+                                <label class="label-mini">Observações</label>
+                                <input id="treasury-bal-notes" type="text" placeholder="Opcional">
+                            </div>
+                            <div class="md:col-span-2">
+                                <button type="submit" class="modal-btn-primary w-full sm:w-auto">Salvar saldo</button>
+                            </div>
+                        </form>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="label-mini">Filtrar por mês</label>
+                                <input id="treasury-bal-filter-month" type="month" onchange="renderTreasuryBalances()">
+                            </div>
+                            <div>
+                                <label class="label-mini">Filtrar banco/conta</label>
+                                <select id="treasury-bal-filter-account" onchange="renderTreasuryBalances()"></select>
+                            </div>
+                        </div>
+                        <div class="h-[280px]"><canvas id="treasury-balance-chart"></canvas></div>
+                        <div class="table-mobile-scroll custom-scrollbar border border-slate-100 rounded-2xl">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
+                                    <tr>
+                                        <th class="px-4 py-3">Data</th>
+                                        <th class="px-4 py-3">Conta</th>
+                                        <th class="px-4 py-3 text-right">Saldo</th>
+                                        <th class="px-4 py-3 text-right">Variação dia anterior</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="treasury-bal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
             <!-- CONCILIAÇÃO -->
             <div id="reconciliation" class="tab-content space-y-8">
                 <div class="card-premium p-8 space-y-6">
@@ -2107,6 +2266,10 @@
         <button onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
             <i data-lucide="landmark" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Conc.</span>
+        </button>
+        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Tesouraria">
+            <i data-lucide="wallet-cards" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Tes.</span>
         </button>
         <button onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
             <i data-lucide="database" class="w-5 h-5"></i>
@@ -2193,9 +2356,11 @@
             subCategories: [],
             destinations: [],
             accounts: [],
-            entries: []
+            entries: [],
+            storeDailyMovements: [],
+            dailyBalances: []
         };
-        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries'];
+        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances'];
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -2223,6 +2388,7 @@
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
         let cloudSupportsUpdatedAt = true;
+        let treasuryBalanceChart = null;
 
         function getStateSnapshot() {
             return {
@@ -2230,7 +2396,9 @@
                 subCategories: Array.isArray(state.subCategories) ? state.subCategories : [],
                 destinations: Array.isArray(state.destinations) ? state.destinations : [],
                 accounts: Array.isArray(state.accounts) ? state.accounts : [],
-                entries: Array.isArray(state.entries) ? state.entries : []
+                entries: Array.isArray(state.entries) ? state.entries : [],
+                storeDailyMovements: Array.isArray(state.storeDailyMovements) ? state.storeDailyMovements : [],
+                dailyBalances: Array.isArray(state.dailyBalances) ? state.dailyBalances : []
             };
         }
 
@@ -2266,6 +2434,27 @@
                 destinationId: String((e.destinationId ?? e.destination_id) || ''),
                 updatedAt: String((e.updatedAt ?? e.updated_at) || ''),
                 isInternalTransfer: isInternalEntry(e)
+            }));
+            state.storeDailyMovements = (state.storeDailyMovements || []).map(m => ({
+                ...m,
+                id: String(m.id || ''),
+                date: String(m.date || ''),
+                unit: String(m.unit || ''),
+                cashIn: Number(m.cashIn ?? m.cash_in ?? 0) || 0,
+                cardIn: Number(m.cardIn ?? m.card_in ?? 0) || 0,
+                pixIn: Number(m.pixIn ?? m.pix_in ?? 0) || 0,
+                paymentsOut: Number(m.paymentsOut ?? m.payments_out ?? 0) || 0,
+                notes: String(m.notes || ''),
+                updatedAt: String((m.updatedAt ?? m.updated_at) || '')
+            }));
+            state.dailyBalances = (state.dailyBalances || []).map(b => ({
+                ...b,
+                id: String(b.id || ''),
+                date: String(b.date || ''),
+                accountId: String((b.accountId ?? b.account_id) || ''),
+                balance: Number(b.balance ?? 0) || 0,
+                notes: String(b.notes || ''),
+                updatedAt: String((b.updatedAt ?? b.updated_at) || '')
             }));
         }
 
@@ -2370,6 +2559,12 @@
             const message = String((error || {}).message || error || '').toLowerCase();
             return message.includes('updatedat') || message.includes('updated_at');
         }
+        function isMissingTableError(error) {
+            if (!error) return false;
+            const code = String(error.code || '').toUpperCase();
+            const message = String(error.message || '').toLowerCase();
+            return code === 'PGRST205' || message.includes('does not exist') || message.includes('relation') || message.includes('could not find the table');
+        }
 
         async function upsertWithUpdatedAtFallback(table, data) {
             let payload = sanitizePayloadForCloud(table, data, cloudSupportsUpdatedAt);
@@ -2413,10 +2608,16 @@
             try {
                 setSyncStatus('syncing');
                 // Tenta carregar dados do Supabase
-                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [] };
+                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
                 for(const t of STATE_TABLES) {
                     const { data, error } = await sbClient.from(t).select('*');
-                    if (error) throw error;
+                    if (error) {
+                        if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
+                            cloudState[t] = [];
+                            continue;
+                        }
+                        throw error;
+                    }
                     cloudState[t] = data || [];
                 }
                 state = cloudState;
@@ -3069,6 +3270,7 @@
                 monthly: 'Relatório Mensal',
                 annual: 'Relatório Anual',
                 reconciliation: 'Conciliação',
+                treasury: 'Tesouraria',
                 database: 'Banco de Dados'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
@@ -3088,6 +3290,8 @@
                 renderMonthly();
             } else if (currentTab === 'annual') {
                 renderAnnual();
+            } else if (currentTab === 'treasury') {
+                renderTreasury();
             } else if (currentTab === 'database') {
                 renderDatabase();
             } else if (currentTab === 'reconciliation') {
@@ -3157,6 +3361,277 @@
             const total = inc - exp;
             const el = document.getElementById('global-balance');
             if(el) el.innerText = `Resultado do mês: ${formatBRL(total)}`;
+        }
+        function getTodayIsoDate() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        function toMoneyNumber(value) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+        function getMovementTotals(movement) {
+            const cashIn = toMoneyNumber(movement?.cashIn);
+            const cardIn = toMoneyNumber(movement?.cardIn);
+            const pixIn = toMoneyNumber(movement?.pixIn);
+            const paymentsOut = toMoneyNumber(movement?.paymentsOut);
+            const totalIn = cashIn + cardIn + pixIn;
+            const dailyResult = totalIn - paymentsOut;
+            return { totalIn, dailyResult, cashIn, cardIn, pixIn, paymentsOut };
+        }
+        function getTreasurySummaryDate() {
+            const dateInput = String(document.getElementById('treasury-summary-date')?.value || '');
+            return dateInput || getTodayIsoDate();
+        }
+        function getTreasuryMonthPrefix(inputId) {
+            const month = String(document.getElementById(inputId)?.value || '');
+            return month;
+        }
+        function populateTreasuryAccountSelects() {
+            const fillSelect = (id, withAll = false) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const previous = String(el.value || '');
+                const options = state.accounts.map(acc => `<option value="${escapeHtml(String(acc.id || ''))}">${escapeHtml(String(acc.name || 'Conta'))}</option>`).join('');
+                if (withAll) {
+                    el.innerHTML = `<option value="">Todas</option>${options}`;
+                    el.value = state.accounts.some(a => String(a.id || '') === previous) ? previous : '';
+                    return;
+                }
+                el.innerHTML = options || '<option value="">Sem contas cadastradas</option>';
+                if (state.accounts.some(a => String(a.id || '') === previous)) el.value = previous;
+            };
+            fillSelect('treasury-bal-account', false);
+            fillSelect('treasury-bal-filter-account', true);
+        }
+        function getLatestBalancesByAccount() {
+            const latestMap = new Map();
+            (state.dailyBalances || []).forEach(item => {
+                if (!item || !item.accountId || !item.date) return;
+                const existing = latestMap.get(item.accountId);
+                if (!existing) {
+                    latestMap.set(item.accountId, item);
+                    return;
+                }
+                const itemDate = String(item.date || '');
+                const existingDate = String(existing.date || '');
+                if (itemDate > existingDate || (itemDate === existingDate && String(item.updatedAt || '') > String(existing.updatedAt || ''))) {
+                    latestMap.set(item.accountId, item);
+                }
+            });
+            return Array.from(latestMap.values());
+        }
+        function getLatestBalancesByAccountAtDate(referenceDate) {
+            const ref = String(referenceDate || '9999-12-31');
+            const byAccount = (state.accounts || []).map(acc => {
+                const latest = (state.dailyBalances || [])
+                    .filter(item => item.accountId === acc.id && String(item.date || '') <= ref)
+                    .sort((a, b) => {
+                        const byDate = String(b.date || '').localeCompare(String(a.date || ''));
+                        if (byDate !== 0) return byDate;
+                        return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
+                    })[0];
+                return {
+                    accountId: String(acc.id || ''),
+                    name: String(acc.name || 'Conta'),
+                    balance: latest ? toMoneyNumber(latest.balance) : 0
+                };
+            });
+            return byAccount.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        function renderTreasuryFinancialPosition() {
+            const summaryDate = getTreasurySummaryDate();
+            const dayMovements = (state.storeDailyMovements || []).filter(m => m.date === summaryDate);
+            const movementDay = dayMovements.reduce((acc, m) => acc + getMovementTotals(m).totalIn, 0);
+            const currentBankBalance = getLatestBalancesByAccount().reduce((acc, b) => acc + toMoneyNumber(b.balance), 0);
+
+            const movementEl = document.getElementById('treasury-movement-day');
+            const bankEl = document.getElementById('treasury-bank-current');
+            if (movementEl) movementEl.innerText = formatBRL(movementDay);
+            if (bankEl) bankEl.innerText = formatBRL(currentBankBalance);
+        }
+        function renderTreasuryMovements() {
+            const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
+            const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
+            const historyBody = document.getElementById('treasury-mv-history-body');
+            if (!historyBody) return;
+
+            const filtered = (state.storeDailyMovements || [])
+                .filter(item => !filterMonth || String(item.date || '').startsWith(filterMonth))
+                .filter(item => !filterUnit || item.unit === filterUnit)
+                .sort((a, b) => {
+                    if (a.date === b.date) return String(a.unit || '').localeCompare(String(b.unit || ''));
+                    return String(b.date || '').localeCompare(String(a.date || ''));
+                });
+
+            if (!filtered.length) {
+                historyBody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem movimentos para os filtros aplicados</td></tr>';
+            } else {
+                historyBody.innerHTML = filtered.map(item => {
+                    const totals = getMovementTotals(item);
+                    const resultClass = totals.dailyResult < 0 ? 'text-red-600' : 'text-slate-700';
+                    return `<tr class="table-row">
+                        <td class="px-4 py-3 text-xs text-slate-600">${escapeHtml((item.date || '').split('-').reverse().join('/'))}</td>
+                        <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(item.unit || '-')}</td>
+                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.totalIn)}</td>
+                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
+                        <td class="px-4 py-3 text-xs font-black text-right ${resultClass}">${formatBRL(totals.dailyResult)}</td>
+                    </tr>`;
+                }).join('');
+            }
+
+        }
+        function findPreviousBalanceEntry(accountId, currentDate) {
+            const previous = (state.dailyBalances || [])
+                .filter(item => item.accountId === accountId && String(item.date || '') < String(currentDate || ''))
+                .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+            return previous.length ? previous[0] : null;
+        }
+        function renderTreasuryBalances() {
+            populateTreasuryAccountSelects();
+            const body = document.getElementById('treasury-bal-table-body');
+            const filterAccount = String(document.getElementById('treasury-bal-filter-account')?.value || '');
+            const filterMonth = getTreasuryMonthPrefix('treasury-bal-filter-month');
+            if (!body) return;
+            const list = (state.dailyBalances || [])
+                .filter(item => !filterMonth || String(item.date || '').startsWith(filterMonth))
+                .filter(item => !filterAccount || item.accountId === filterAccount)
+                .sort((a, b) => {
+                    if (a.date === b.date) return String(a.accountId || '').localeCompare(String(b.accountId || ''));
+                    return String(b.date || '').localeCompare(String(a.date || ''));
+                });
+            if (!list.length) {
+                body.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem saldos registrados</td></tr>';
+            } else {
+                body.innerHTML = list.map(item => {
+                    const acc = state.accounts.find(a => a.id === item.accountId);
+                    const prev = findPreviousBalanceEntry(item.accountId, item.date);
+                    const variation = prev ? (toMoneyNumber(item.balance) - toMoneyNumber(prev.balance)) : null;
+                    const variationClass = variation == null ? 'text-slate-400' : (variation < 0 ? 'text-red-600' : 'text-emerald-600');
+                    const variationText = variation == null ? '-' : `${variation >= 0 ? '+' : ''}${formatBRL(variation)}`;
+                    return `<tr class="table-row">
+                        <td class="px-4 py-3 text-xs text-slate-600">${escapeHtml((item.date || '').split('-').reverse().join('/'))}</td>
+                        <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(acc ? acc.name : 'Conta removida')}</td>
+                        <td class="px-4 py-3 text-xs font-black text-right text-slate-700">${formatBRL(item.balance)}</td>
+                        <td class="px-4 py-3 text-xs font-black text-right ${variationClass}">${variationText}</td>
+                    </tr>`;
+                }).join('');
+            }
+
+            const chartRows = (state.dailyBalances || [])
+                .filter(item => !filterMonth || String(item.date || '').startsWith(filterMonth))
+                .filter(item => !filterAccount || item.accountId === filterAccount);
+            const groupedByDate = chartRows.reduce((acc, item) => {
+                const key = String(item.date || '');
+                acc[key] = (acc[key] || 0) + toMoneyNumber(item.balance);
+                return acc;
+            }, {});
+            const labels = Object.keys(groupedByDate).sort((a, b) => a.localeCompare(b));
+            const values = labels.map(label => groupedByDate[label]);
+            const chartEl = document.getElementById('treasury-balance-chart');
+            if (chartEl && chartEl.getContext) {
+                if (treasuryBalanceChart) treasuryBalanceChart.destroy();
+                treasuryBalanceChart = new Chart(chartEl.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: labels.map(l => l.split('-').reverse().join('/')),
+                        datasets: [{
+                            label: filterAccount ? 'Evolução da conta' : 'Evolução consolidada',
+                            data: values,
+                            borderColor: '#2F4F9D',
+                            backgroundColor: 'rgba(47,79,157,0.14)',
+                            tension: 0.28,
+                            fill: true,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: getReadableTooltipConfig((ctx) => `Saldo: ${formatBRL(ctx.raw || 0)}`)
+                        },
+                        scales: {
+                            y: {
+                                ticks: { callback: (value) => formatChartBRL(value) },
+                                grid: { color: 'rgba(148,163,184,0.16)' }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+        function sendTreasuryDailySummaryWhatsApp() {
+            const date = getTreasurySummaryDate();
+            const dayMovements = (state.storeDailyMovements || []).filter(item => item.date === date);
+            const summarizeUnit = (unit) => dayMovements.filter(item => item.unit === unit).reduce((acc, item) => {
+                const totals = getMovementTotals(item);
+                acc.cashIn += totals.cashIn;
+                acc.cardIn += totals.cardIn;
+                acc.paymentsOut += totals.paymentsOut;
+                acc.totalIn += totals.totalIn;
+                acc.result += totals.dailyResult;
+                return acc;
+            }, { cashIn: 0, cardIn: 0, paymentsOut: 0, totalIn: 0, result: 0 });
+            const vila = summarizeUnit('VILA_NOVA');
+            const matriz = summarizeUnit('MATRIZ');
+            const vilaClosing = (vila.cardIn + vila.cashIn) - vila.paymentsOut;
+            const matrizClosing = (matriz.cardIn + matriz.cashIn) - matriz.paymentsOut;
+            const consolidatedIn = (matriz.cardIn + matriz.cashIn) + (vila.cardIn + vila.cashIn);
+            const balances = getLatestBalancesByAccountAtDate(date);
+            const totalBalances = balances.reduce((acc, item) => acc + toMoneyNumber(item.balance), 0);
+            const datePt = date.split('-').reverse().join('/');
+            const bankLines = balances.length
+                ? balances.map(item => `Conta ${item.name}: ${formatBRL(item.balance)}`)
+                : ['Sem contas cadastradas'];
+            const msg = [
+                `Dia ${datePt} -`,
+                ``,
+                `Vila Nova:`,
+                `- entrada cartão: ${formatBRL(vila.cardIn)}`,
+                `- entrada dinheiro: ${formatBRL(vila.cashIn)}`,
+                `- pagamentos: ${formatBRL(vila.paymentsOut)}`,
+                `- fechamento do dia: ${formatBRL(vilaClosing)}`,
+                ``,
+                `Matriz:`,
+                `- entrada cartão: ${formatBRL(matriz.cardIn)}`,
+                `- entrada dinheiro: ${formatBRL(matriz.cashIn)}`,
+                `- pagamentos: ${formatBRL(matriz.paymentsOut)}`,
+                `- fechamento do dia: ${formatBRL(matrizClosing)}`,
+                ``,
+                `Total de vendas: ${formatBRL(consolidatedIn)}`,
+                ``,
+                `Saldos bancários:`,
+                ...bankLines,
+                `Soma dos saldos: ${formatBRL(totalBalances)}`
+            ].join('\n');
+            const phone = '5511999148044';
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+        function renderTreasury() {
+            const today = getTodayIsoDate();
+            const movementDateEl = document.getElementById('treasury-mv-date');
+            const summaryDateEl = document.getElementById('treasury-summary-date');
+            const movementFilterMonthEl = document.getElementById('treasury-mv-filter-month');
+            const balanceFilterMonthEl = document.getElementById('treasury-bal-filter-month');
+            const balanceDateEl = document.getElementById('treasury-bal-date');
+            const todayMonth = today.slice(0, 7);
+            if (movementDateEl && !movementDateEl.value) movementDateEl.value = today;
+            if (balanceDateEl && !balanceDateEl.value) balanceDateEl.value = today;
+            if (summaryDateEl && !summaryDateEl.value) summaryDateEl.value = today;
+            if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
+            if (balanceFilterMonthEl && !balanceFilterMonthEl.value) balanceFilterMonthEl.value = todayMonth;
+            populateTreasuryAccountSelects();
+            renderTreasuryMovements();
+            renderTreasuryBalances();
+            renderTreasuryFinancialPosition();
         }
 
         function setSort(field) {
@@ -4665,6 +5140,51 @@
             
             closeModal('entry-modal'); render();
         };
+        document.getElementById('treasury-movement-form').onsubmit = async (event) => {
+            event.preventDefault();
+            const date = String(document.getElementById('treasury-mv-date')?.value || '');
+            const unit = String(document.getElementById('treasury-mv-unit')?.value || '');
+            if (!date || !unit) {
+                alert('Informe data e unidade.');
+                return;
+            }
+            const existing = (state.storeDailyMovements || []).find(item => item.date === date && item.unit === unit);
+            const payload = {
+                id: existing ? existing.id : generateId(),
+                date,
+                unit,
+                cashIn: toMoneyNumber(document.getElementById('treasury-mv-cash')?.value),
+                cardIn: toMoneyNumber(document.getElementById('treasury-mv-card')?.value),
+                pixIn: toMoneyNumber(document.getElementById('treasury-mv-pix')?.value),
+                paymentsOut: toMoneyNumber(document.getElementById('treasury-mv-payments')?.value),
+                notes: String(document.getElementById('treasury-mv-notes')?.value || '').trim()
+            };
+            await cloudSave('storeDailyMovements', payload);
+            if (existing) state.storeDailyMovements = state.storeDailyMovements.map(item => item.id === existing.id ? payload : item);
+            else state.storeDailyMovements.push(payload);
+            renderTreasury();
+        };
+        document.getElementById('treasury-balance-form').onsubmit = async (event) => {
+            event.preventDefault();
+            const date = String(document.getElementById('treasury-bal-date')?.value || '');
+            const accountId = String(document.getElementById('treasury-bal-account')?.value || '');
+            if (!date || !accountId) {
+                alert('Informe data e conta.');
+                return;
+            }
+            const existing = (state.dailyBalances || []).find(item => item.date === date && item.accountId === accountId);
+            const payload = {
+                id: existing ? existing.id : generateId(),
+                date,
+                accountId,
+                balance: toMoneyNumber(document.getElementById('treasury-bal-value')?.value),
+                notes: String(document.getElementById('treasury-bal-notes')?.value || '').trim()
+            };
+            await cloudSave('dailyBalances', payload);
+            if (existing) state.dailyBalances = state.dailyBalances.map(item => item.id === existing.id ? payload : item);
+            else state.dailyBalances.push(payload);
+            renderTreasury();
+        };
 
         function openDbModal(type, parentId = '', editItem = null) {
             document.getElementById('db-type').value = type;
@@ -4770,3 +5290,4 @@
     </script>
 </body>
 </html>
+
