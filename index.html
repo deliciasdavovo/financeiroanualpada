@@ -3774,8 +3774,13 @@
         async function toggleQuickStatus(id) {
             const entry = state.entries.find(e => e.id === id);
             if(entry) {
+                const previousStatus = entry.status;
                 entry.status = entry.status === 'REALIZADO' ? 'PENDENTE' : 'REALIZADO';
-                await cloudSave('entries', entry);
+                const saveResult = await cloudSave('entries', entry);
+                if (!saveResult?.ok) {
+                    entry.status = previousStatus;
+                    alert(`Não foi possível atualizar o status.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                }
                 render();
             }
         }
@@ -3783,6 +3788,12 @@
         async function updateEntryDestinationInline(id, destinationId) {
             const entry = state.entries.find(e => e.id === id);
             if (!entry) return;
+            const previous = {
+                destinationId: entry.destinationId,
+                subCategoryId: entry.subCategoryId,
+                categoryId: entry.categoryId,
+                type: entry.type
+            };
             const dst = state.destinations.find(d => d.id === destinationId);
             const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
@@ -3790,7 +3801,14 @@
             entry.subCategoryId = String((sub || {}).id || '');
             entry.categoryId = String((cat || {}).id || '');
             if ((cat || {}).type) entry.type = cat.type;
-            await cloudSave('entries', entry);
+            const saveResult = await cloudSave('entries', entry);
+            if (!saveResult?.ok) {
+                entry.destinationId = previous.destinationId;
+                entry.subCategoryId = previous.subCategoryId;
+                entry.categoryId = previous.categoryId;
+                entry.type = previous.type;
+                alert(`Não foi possível atualizar o destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+            }
             renderEntries();
         }
 
@@ -3961,8 +3979,13 @@
         async function setEntryInternal(id, flag) {
             const entry = state.entries.find(e => e.id === id);
             if (!entry) return;
+            const previousFlag = Boolean(entry.isInternalTransfer);
             entry.isInternalTransfer = Boolean(flag);
-            await cloudSave('entries', entry);
+            const saveResult = await cloudSave('entries', entry);
+            if (!saveResult?.ok) {
+                entry.isInternalTransfer = previousFlag;
+                alert(`Não foi possível atualizar marcação interna.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+            }
             render();
         }
 
@@ -3972,12 +3995,20 @@
             const label = flag ? 'marcar como transação interna' : 'remover marcação de transação interna';
             if (!confirm(`Deseja ${label} em ${ids.length} lançamento(s)?`)) return;
             const changed = [];
+            const previousFlags = new Map();
             state.entries.forEach(entry => {
                 if (!selectedEntryIds.has(entry.id)) return;
+                previousFlags.set(entry.id, Boolean(entry.isInternalTransfer));
                 entry.isInternalTransfer = Boolean(flag);
                 changed.push(entry);
             });
-            await cloudSave('entries', changed);
+            const saveResult = await cloudSave('entries', changed);
+            if (!saveResult?.ok) {
+                changed.forEach((entry) => {
+                    entry.isInternalTransfer = previousFlags.get(entry.id);
+                });
+                alert(`Não foi possível atualizar os lançamentos selecionados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+            }
             render();
         }
 
@@ -4355,8 +4386,10 @@
                     data: { 
                         labels: labelsBar, 
                         datasets: [
-                            { label: 'Entradas', data: dailyInTotal, backgroundColor: '#0F8A67', borderRadius: 8, maxBarThickness: 96 },
-                            { label: 'Saídas', data: dailyOutTotal, backgroundColor: '#C94A34', borderRadius: 8, maxBarThickness: 96 }
+                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#0F8A67', borderRadius: 8, maxBarThickness: 96, stack: 'entrada' },
+                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#A7F3D0', borderRadius: 8, maxBarThickness: 96, stack: 'entrada' },
+                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#C94A34', borderRadius: 8, maxBarThickness: 96, stack: 'saida' },
+                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#FECACA', borderRadius: 8, maxBarThickness: 96, stack: 'saida' }
                         ] 
                     }, 
                     options: { 
@@ -4370,6 +4403,7 @@
                             x: {
                                 min: 0,
                                 max: monthAxisMax,
+                                stacked: true,
                                 grid: { borderDash: [4,4] },
                                 ticks: {
                                     stepSize: monthStep,
@@ -4377,17 +4411,16 @@
                                     callback: (value) => formatChartBRL(value)
                                 }
                             }, 
-                            y: { grid: { display: false } } 
+                            y: { stacked: true, grid: { display: false } } 
                         }, 
                         plugins: {
                             legend: { position: 'top' },
                             tooltip: getReadableTooltipConfig((ctx) => {
                                 const idx = Number(ctx.dataIndex || 0);
-                                const isEntrada = ctx.datasetIndex === 0;
-                                const real = isEntrada ? Number(dailyInReal[idx] || 0) : Number(dailyOutReal[idx] || 0);
-                                const pend = isEntrada ? Number(dailyInPend[idx] || 0) : Number(dailyOutPend[idx] || 0);
-                                const total = Number(ctx.raw || 0);
-                                return `${ctx.dataset.label}: ${formatBRL(total)} (Realizado ${formatBRL(real)} | Pendente ${formatBRL(pend)})`;
+                                const datasetValue = Number(ctx.raw || 0);
+                                const totalEntradaDia = Number(dailyInTotal[idx] || 0);
+                                const totalSaidaDia = Number(dailyOutTotal[idx] || 0);
+                                return `${ctx.dataset.label}: ${formatBRL(datasetValue)} (Total Entradas ${formatBRL(totalEntradaDia)} | Total Saídas ${formatBRL(totalSaidaDia)})`;
                             })
                         } 
                     } 
