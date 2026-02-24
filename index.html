@@ -2420,7 +2420,7 @@
         let lastEntriesQueryKey = '';
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
         let selectedEntryIds = new Set();
-        let entryDestinationFillState = { active: false, sourceIndex: -1, value: '', type: '', changedIds: new Set() };
+        let entryDestinationFillState = { active: false, sourceIndex: -1, value: '', type: '', changedIds: new Set(), originalById: new Map() };
         let entriesToolbarCollapsed = true;
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
@@ -2674,7 +2674,7 @@
         async function cloudSave(table, data) {
             if (!sbClient) {
                 setSyncStatus('offline');
-                return;
+                return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             }
             const touchUpdatedAt = (value, isoNow) => {
                 if (!value || typeof value !== 'object') return value;
@@ -2694,26 +2694,37 @@
             if (error) {
                 console.error(`Erro ao salvar em ${table}:`, error);
                 setSyncStatus('offline');
+                return { ok: false, error };
             } else {
                 setSyncStatus('synced');
+                return { ok: true, error: null };
             }
         }
 
         async function cloudDelete(table, id) {
-            if (!sbClient) return;
+            if (!sbClient) {
+                setSyncStatus('offline');
+                return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
+            }
             setSyncStatus('syncing');
             const { error } = await sbClient.from(table).delete().eq('id', id);
             if (error) {
                 console.error(`Erro ao deletar em ${table}:`, error);
                 setSyncStatus('offline');
+                return { ok: false, error };
             } else {
                 setSyncStatus('synced');
+                return { ok: true, error: null };
             }
         }
 
         window.deleteEntry = async function(id) {
             if(confirm("Deseja realmente excluir este lançamento?")) {
-                await cloudDelete('entries', id);
+                const result = await cloudDelete('entries', id);
+                if (!result?.ok) {
+                    alert(`Não foi possível excluir o lançamento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                    return;
+                }
                 state.entries = state.entries.filter(e => e.id !== id);
                 render();
             }
@@ -2722,7 +2733,11 @@
             const id = String(document.getElementById('entry-id')?.value || '');
             if (!id) return;
             if (!confirm("Deseja realmente excluir este lançamento?")) return;
-            await cloudDelete('entries', id);
+            const result = await cloudDelete('entries', id);
+            if (!result?.ok) {
+                alert(`Não foi possível excluir o lançamento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
             state.entries = state.entries.filter(e => e.id !== id);
             closeModal('entry-modal');
             render();
@@ -2975,7 +2990,16 @@
             chart.update();
         }
         const MONTH_NAMES_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        const generateId = () => Math.random().toString(36).substr(2, 9);
+        function generateId() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID();
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : ((r & 0x3) | 0x8);
+                return v.toString(16);
+            });
+        }
         const formatPercentual = (v) => `${(Number(v) || 0).toFixed(1).replace('.', ',')}%`;
         const encodeSafe = (v) => encodeURIComponent(String(v || ''));
         const escapeHtml = (v) => String(v || '')
@@ -3780,6 +3804,7 @@
             entryDestinationFillState.value = source.destinationId;
             entryDestinationFillState.type = source.type;
             entryDestinationFillState.changedIds = new Set();
+            entryDestinationFillState.originalById = new Map();
         }
 
         function applyEntryDestinationFillTo(index) {
@@ -3793,6 +3818,14 @@
                 if (!row) continue;
                 if (row.type !== entryDestinationFillState.type) continue;
                 if (row.destinationId !== entryDestinationFillState.value) {
+                    if (!entryDestinationFillState.originalById.has(row.id)) {
+                        entryDestinationFillState.originalById.set(row.id, {
+                            destinationId: row.destinationId,
+                            subCategoryId: row.subCategoryId,
+                            categoryId: row.categoryId,
+                            type: row.type
+                        });
+                    }
                     const dst = state.destinations.find(d => d.id === entryDestinationFillState.value);
                     const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
                     const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
@@ -3811,36 +3844,62 @@
             if (!entryDestinationFillState.active) return;
             entryDestinationFillState.active = false;
             const changed = Array.from(entryDestinationFillState.changedIds);
+            const originalById = entryDestinationFillState.originalById;
             entryDestinationFillState.changedIds = new Set();
+            entryDestinationFillState.originalById = new Map();
             if (changed.length === 0) return;
             const changedEntries = state.entries.filter(e => changed.includes(e.id));
-            await cloudSave('entries', changedEntries);
+            const saveResult = await cloudSave('entries', changedEntries);
+            if (!saveResult?.ok) {
+                changed.forEach((id) => {
+                    const entry = state.entries.find(e => e.id === id);
+                    const original = originalById.get(id);
+                    if (!entry || !original) return;
+                    entry.destinationId = original.destinationId;
+                    entry.subCategoryId = original.subCategoryId;
+                    entry.categoryId = original.categoryId;
+                    entry.type = original.type;
+                });
+                alert(`Não foi possível salvar o arraste de destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                renderEntries();
+                return;
+            }
             renderEntries();
         }
 
         async function cloudDeleteMany(table, ids) {
-            if (!Array.isArray(ids) || ids.length === 0) return;
-            if (!sbClient) return;
+            if (!Array.isArray(ids) || ids.length === 0) return { ok: true, error: null };
+            if (!sbClient) return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             setSyncStatus('syncing');
             const { error } = await sbClient.from(table).delete().in('id', ids);
             if (error) {
                 console.error(`Erro ao deletar em lote em ${table}:`, error);
                 setSyncStatus('offline');
+                return { ok: false, error };
             } else {
                 setSyncStatus('synced');
+                return { ok: true, error: null };
             }
         }
         async function deleteTreasuryMovement(id) {
             if (!id) return;
             if (!confirm('Deseja realmente excluir este movimento?')) return;
-            await cloudDelete('storeDailyMovements', id);
+            const result = await cloudDelete('storeDailyMovements', id);
+            if (!result?.ok) {
+                alert(`Não foi possível excluir o movimento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
             state.storeDailyMovements = (state.storeDailyMovements || []).filter(item => String(item.id || '') !== String(id));
             renderTreasury();
         }
         async function deleteTreasuryBalance(id) {
             if (!id) return;
             if (!confirm('Deseja realmente excluir este saldo?')) return;
-            await cloudDelete('dailyBalances', id);
+            const result = await cloudDelete('dailyBalances', id);
+            if (!result?.ok) {
+                alert(`Não foi possível excluir o saldo.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
             state.dailyBalances = (state.dailyBalances || []).filter(item => String(item.id || '') !== String(id));
             renderTreasury();
         }
@@ -3889,7 +3948,11 @@
             const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
             if (ids.length === 0) return;
             if (!confirm(`Deseja excluir ${ids.length} lançamento(s) selecionado(s)?`)) return;
-            await cloudDeleteMany('entries', ids);
+            const result = await cloudDeleteMany('entries', ids);
+            if (!result?.ok) {
+                alert(`Não foi possível excluir os lançamentos.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
             state.entries = state.entries.filter(e => !selectedEntryIds.has(e.id));
             selectedEntryIds.clear();
             render();
@@ -4983,6 +5046,10 @@
                 alert("Selecione uma conta valida cadastrada no Banco de Dados.");
                 return;
             }
+            if (!Array.isArray(tempRecon) || tempRecon.length === 0) {
+                alert("Não há registros para importar.");
+                return;
+            }
             const allValidDestinations = getValidDestinations();
             const hasInvalidDestination = tempRecon.some(t => {
                 const allowed = getValidDestinationsByFlow(t.type);
@@ -4993,16 +5060,24 @@
                 alert("Existem registros com destino sem vinculo valido no Banco de Dados.");
                 return;
             }
-            const newEntries = [];
-            tempRecon.forEach(temp => {
+            const newEntries = tempRecon.map((temp) => {
                 const dst = state.destinations.find(d => d.id === temp.destinationId);
                 const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
                 const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                const entry = { ...temp, accountId: accId, categoryId: String((cat || {}).id || ''), subCategoryId: String((sub || {}).id || ''), status: 'REALIZADO' };
-                state.entries.push(entry);
-                newEntries.push(entry);
+                return {
+                    ...temp,
+                    accountId: accId,
+                    categoryId: String((cat || {}).id || ''),
+                    subCategoryId: String((sub || {}).id || ''),
+                    status: 'REALIZADO'
+                };
             });
-            await cloudSave('entries', newEntries);
+            const saveResult = await cloudSave('entries', newEntries);
+            if (!saveResult?.ok) {
+                alert(`Não foi possível importar a conciliação.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
+            state.entries.push(...newEntries);
             cancelRecon(); render(); switchTab('entries');
         }
 
@@ -5223,9 +5298,18 @@
             const existing = id ? state.entries.find(x => x.id === id) : null;
             const val = Number(document.getElementById('form-value').value);
             if(isNaN(val)) return alert("Valor inválido");
-            const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: document.getElementById('form-acc').value, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value, isInternalTransfer: existing ? isInternalEntry(existing) : false };
+            if (!dstId) return alert("Selecione um destino.");
+            const selectedAccountId = String(document.getElementById('form-acc').value || '');
+            if (!selectedAccountId) return alert("Selecione uma conta.");
+            if (!(cat || {}).type) return alert("Destino sem categoria/tipo válido. Revise Categoria > Subcategoria > Destino.");
+            const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: selectedAccountId, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value, isInternalTransfer: existing ? isInternalEntry(existing) : false };
             
-            await cloudSave('entries', data);
+            const saveResult = await cloudSave('entries', data);
+            if (!saveResult?.ok) {
+                const msg = String(saveResult?.error?.message || 'Falha ao salvar no Supabase.');
+                alert(`Não foi possível salvar o lançamento.\n\nDetalhe: ${msg}`);
+                return;
+            }
             
             if(id) {
                 const idx = state.entries.findIndex(x => x.id === id);
@@ -5252,7 +5336,11 @@
                 paymentsOut: toMoneyNumber(document.getElementById('treasury-mv-payments')?.value),
                 notes: String(document.getElementById('treasury-mv-notes')?.value || '').trim()
             };
-            await cloudSave('storeDailyMovements', payload);
+            const saveResult = await cloudSave('storeDailyMovements', payload);
+            if (!saveResult?.ok) {
+                alert(`Não foi possível salvar o movimento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
             if (existing) state.storeDailyMovements = state.storeDailyMovements.map(item => item.id === existing.id ? payload : item);
             else state.storeDailyMovements.push(payload);
             renderTreasury();
@@ -5273,7 +5361,11 @@
                 balance: toMoneyNumber(document.getElementById('treasury-bal-value')?.value),
                 notes: String(document.getElementById('treasury-bal-notes')?.value || '').trim()
             };
-            await cloudSave('dailyBalances', payload);
+            const saveResult = await cloudSave('dailyBalances', payload);
+            if (!saveResult?.ok) {
+                alert(`Não foi possível salvar o saldo.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
             if (existing) state.dailyBalances = state.dailyBalances.map(item => item.id === existing.id ? payload : item);
             else state.dailyBalances.push(payload);
             renderTreasury();
@@ -5324,47 +5416,70 @@
             if(type==='CATEGORY') {
                 table = 'categories';
                 data = {id, name, type: document.getElementById('db-cat-type').value };
-                if (mode === 'EDIT') state.categories = state.categories.map(item => item.id === id ? data : item);
-                else state.categories.push(data);
             }
             if(type==='SUBCATEGORY') {
                 table = 'subCategories';
                 data = {id, categoryId: parent, name};
-                if (mode === 'EDIT') state.subCategories = state.subCategories.map(item => item.id === id ? data : item);
-                else state.subCategories.push(data);
             }
             if(type==='DESTINATION') {
                 table = 'destinations';
                 data = {id, subCategoryId: parent, name};
-                if (mode === 'EDIT') state.destinations = state.destinations.map(item => item.id === id ? data : item);
-                else state.destinations.push(data);
             }
             if(type==='ACCOUNT') {
                 table = 'accounts';
                 data = {id, name, initialBalance: Number(document.getElementById('db-acc-balance').value) || 0};
-                if (mode === 'EDIT') state.accounts = state.accounts.map(item => item.id === id ? data : item);
-                else state.accounts.push(data);
             }
             
-            if (data) await cloudSave(table, data);
+            if (data) {
+                const saveResult = await cloudSave(table, data);
+                if (!saveResult?.ok) {
+                    alert(`Não foi possível salvar no banco de dados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                    return;
+                }
+                if(type==='CATEGORY') {
+                    if (mode === 'EDIT') state.categories = state.categories.map(item => item.id === id ? data : item);
+                    else state.categories.push(data);
+                }
+                if(type==='SUBCATEGORY') {
+                    if (mode === 'EDIT') state.subCategories = state.subCategories.map(item => item.id === id ? data : item);
+                    else state.subCategories.push(data);
+                }
+                if(type==='DESTINATION') {
+                    if (mode === 'EDIT') state.destinations = state.destinations.map(item => item.id === id ? data : item);
+                    else state.destinations.push(data);
+                }
+                if(type==='ACCOUNT') {
+                    if (mode === 'EDIT') state.accounts = state.accounts.map(item => item.id === id ? data : item);
+                    else state.accounts.push(data);
+                }
+            }
             closeModal('db-modal'); render();
         };
 
         async function deleteDb(type, id) {
             if(confirm("Deseja apagar este item?")) {
                 let table = '';
+                if(type==='CATEGORY') table = 'categories';
+                if(type==='SUBCATEGORY') table = 'subCategories';
+                if(type==='DESTINATION') table = 'destinations';
+                if(type==='ACCOUNT') table = 'accounts';
+
+                const result = await cloudDelete(table, id);
+                if (!result?.ok) {
+                    alert(`Não foi possível excluir.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                    return;
+                }
+
                 if(type==='CATEGORY') {
-                    table = 'categories';
                     const subs = state.subCategories.filter(s => s.categoryId === id).map(s => s.id);
                     state.categories = state.categories.filter(x=>x.id!==id);
                     state.subCategories = state.subCategories.filter(x=>x.categoryId!==id);
                     state.destinations = state.destinations.filter(x=>!subs.includes(x.subCategoryId));
                 }
-                if(type==='SUBCATEGORY') { table = 'subCategories'; state.subCategories = state.subCategories.filter(x=>x.id!==id); state.destinations = state.destinations.filter(x=>x.subCategoryId!==id); }
-                if(type==='DESTINATION') { table = 'destinations'; state.destinations = state.destinations.filter(x=>x.id!==id); }
-                if(type==='ACCOUNT') { table = 'accounts'; state.accounts = state.accounts.filter(x=>x.id!==id); }
-                
-                await cloudDelete(table, id);
+                if(type==='SUBCATEGORY') { state.subCategories = state.subCategories.filter(x=>x.id!==id); state.destinations = state.destinations.filter(x=>x.subCategoryId!==id); }
+                if(type==='DESTINATION') { state.destinations = state.destinations.filter(x=>x.id!==id); }
+                if(type==='ACCOUNT') { state.accounts = state.accounts.filter(x=>x.id!==id); }
+
                 render();
             }
         }
