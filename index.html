@@ -171,8 +171,8 @@
             background: #FFFFFF;
             border: 1px solid var(--border);
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -546,6 +546,38 @@
         }
         .modal-body {
             padding: 22px 24px 24px;
+        }
+        .field-help {
+            margin-top: 6px;
+            font-size: 11px;
+            color: #64748B;
+            line-height: 1.35;
+        }
+        .field-error {
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #B23A3A;
+            line-height: 1.35;
+        }
+        .field-error.hidden {
+            display: none;
+        }
+        #entry-form .field-invalid {
+            border-color: #B23A3A !important;
+            box-shadow: 0 0 0 3px rgba(178,58,58,0.14) !important;
+        }
+        .form-feedback {
+            border: 1px dashed #F1C8C8;
+            background: #FFF5F5;
+            color: #991B1B;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .form-feedback.hidden {
+            display: none;
         }
         .modal-grid-2 {
             display: grid;
@@ -1405,7 +1437,7 @@
             gap: 8px;
         }
         .entries-quick-btn {
-            height: 34px;
+            min-height: 40px;
             padding: 0 12px;
             border-radius: 10px;
             border: 1px solid #E2E8F0;
@@ -1556,6 +1588,42 @@
             border-radius: 999px;
             background: #FFFFFF;
         }
+        .entry-action-btn {
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quick-status-btn {
+            border: 0;
+            min-height: 36px;
+            padding: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .table-row[role="button"] {
+            outline: none;
+        }
+        .table-row[role="button"]:focus-visible {
+            box-shadow: inset 0 0 0 2px rgba(47,79,157,0.45);
+        }
+        .table-row:focus-within {
+            background-color: #F5F8FF !important;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
         .internal-row {
             opacity: 0.45 !important;
         }
@@ -1694,6 +1762,17 @@
             .entry-destination-panel .recon-fill-handle {
                 display: none;
             }
+            .entries-quick-btn {
+                min-height: 44px;
+            }
+            .entry-action-btn,
+            .internal-toggle-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            .quick-status-btn {
+                min-height: 40px;
+            }
             .modal-shell-entry,
             .modal-shell-db {
                 max-width: 100%;
@@ -1792,7 +1871,7 @@
 
     <!-- SIDEBAR -->
     <aside id="sidebar" class="w-80 bg-white border-r flex flex-col shrink-0 hidden lg:flex">
-        <button onclick="toggleSidebar()" class="sidebar-toggle">
+        <button onclick="toggleSidebar()" class="sidebar-toggle" type="button" aria-label="Expandir ou recolher menu lateral" aria-controls="sidebar" aria-expanded="true">
             <i data-lucide="chevron-left" id="sidebar-icon" class="w-4 h-4"></i>
         </button>
         
@@ -1854,32 +1933,32 @@
             
             <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
-                <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar">
+                <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top">
                         <div>
                             <p class="entries-toolbar-title">Central de Lançamentos</p>
                             <p class="entries-toolbar-sub">Use ações rápidas para filtrar e revisar mais rápido.</p>
                         </div>
-                        <div class="entries-quick-actions">
-                            <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
-                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
-                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
-                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
+                        <div class="entries-quick-actions" role="group" aria-label="Ações rápidas">
+                            <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
+                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()" aria-label="Filtrar lançamentos para o mês atual"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
+                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()" aria-label="Alternar filtro de lançamentos duplicados"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
+                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()" aria-label="Limpar todos os filtros de lançamentos"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
                         </div>
                     </div>
-                    <div class="entries-filters-grid">
-                        <div class="entries-filter-item"><label class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="queueRenderEntries()"></div>
-                        <div class="entries-filter-item"><label class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
-                        <div class="entries-filter-item"><label class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
-                        <div class="entries-filter-item"><label class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
-                        <div class="entries-filter-item"><label class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
-                        <div class="entries-filter-item"><label class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
-                        <div class="entries-filter-item"><label class="label-mini">Duplicidade</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option></select></div>
-                        <button onclick="openEntryModal()" class="btn-new-entry">
+                    <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
+                        <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="queueRenderEntries()"></div>
+                        <div class="entries-filter-item"><label for="filter-date-start" class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
+                        <div class="entries-filter-item"><label for="filter-date-end" class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
+                        <div class="entries-filter-item"><label for="filter-type" class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
+                        <div class="entries-filter-item"><label for="filter-status" class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
+                        <div class="entries-filter-item"><label for="filter-account" class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
+                        <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">Duplicidade</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option></select></div>
+                        <button onclick="openEntryModal()" class="btn-new-entry" aria-label="Adicionar novo lançamento">
                             + Novo
                         </button>
                     </div>
-                    <div id="entries-dup-summary" class="entries-dup-summary-line text-[11px] font-bold text-slate-500 hidden"></div>
+                    <div id="entries-dup-summary" class="entries-dup-summary-line text-[11px] font-bold text-slate-500 hidden" role="status" aria-live="polite"></div>
                     <div id="entries-selection-panel" class="hidden w-full border-t border-slate-100 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3">
                         <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
                             <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Entradas: <span id="entries-sum-in">R$ 0,00</span></span>
@@ -1887,7 +1966,7 @@
                             <span id="entries-net-pill" class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">Saldo: <span id="entries-sum-net">R$ 0,00</span></span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span id="entries-selected-count" class="text-[11px] font-bold text-slate-500">0 selecionado(s)</span>
+                            <span id="entries-selected-count" class="text-[11px] font-bold text-slate-500" role="status" aria-live="polite">0 selecionado(s)</span>
                             <button onclick="clearEntrySelection()" class="h-[34px] px-3.5 rounded-lg border border-slate-200 text-slate-500 text-[10px] font-black uppercase hover:bg-slate-50">
                                 Limpar seleção
                             </button>
@@ -1901,6 +1980,7 @@
                 <div class="card-premium overflow-hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="entries-table" class="w-full text-left">
+                            <caption class="sr-only">Tabela de lançamentos financeiros com filtros, seleção em lote e ações por linha.</caption>
                             <colgroup>
                                 <col class="col-check">
                                 <col class="col-date">
@@ -1911,11 +1991,11 @@
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                                 <tr>
                                     <th class="px-4 py-4 text-center">
-                                        <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)">
+                                        <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)" aria-label="Selecionar todos os lançamentos visíveis">
                                     </th>
-                                    <th onclick="setSort('date')" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
+                                    <th id="entries-sort-date" onclick="setSort('date')" onkeydown="handleSortHeaderKeydown('date', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por data" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
                                     <th class="px-6 py-4">Destino / Detalhes</th>
-                                    <th onclick="setSort('amount')" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
+                                    <th id="entries-sort-amount" onclick="setSort('amount')" onkeydown="handleSortHeaderKeydown('amount', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por valor" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
                                     <th class="px-6 py-4 w-[210px] text-center">Status / Ação</th>
                                 </tr>
                             </thead>
@@ -1936,10 +2016,10 @@
             <!-- RELATÓRIO MENSAL -->
             <div id="monthly" class="tab-content active space-y-8">
                 <div class="w-full lg:w-[420px]">
-                    <label class="label-mini">Mês de Referência</label>
+                    <label class="label-mini" for="monthly-filter-month">Mês de Referência</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()"></select>
-                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()"></select>
+                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
+                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
                     </div>
                     <input type="hidden" id="monthly-filter">
                 </div>
@@ -2026,33 +2106,33 @@
                         </div>
                         <div class="annual-filters-grid">
                             <div class="annual-filter-item">
-                                <label class="label-mini">Fluxo</label>
+                                <label class="label-mini" for="annual-temporal-flow">Fluxo</label>
                                 <select id="annual-temporal-flow">
                                     <option value="SAÍDA">Saídas</option>
                                     <option value="ENTRADA">Entradas</option>
                                 </select>
                             </div>
                             <div class="annual-filter-item">
-                                <label class="label-mini">Modo</label>
+                                <label class="label-mini" for="annual-temporal-mode">Modo</label>
                                 <select id="annual-temporal-mode">
                                     <option value="MESES">Entre os meses do ano</option>
                                     <option value="ANOS">Entre os anos</option>
                                 </select>
                             </div>
                             <div class="annual-filter-item">
-                                <label class="label-mini">Ano Base</label>
+                                <label class="label-mini" for="annual-temporal-year">Ano Base</label>
                                 <select id="annual-temporal-year"></select>
                             </div>
                             <div class="annual-filter-item">
-                                <label class="label-mini">Categoria</label>
+                                <label class="label-mini" for="annual-nav-category">Categoria</label>
                                 <select id="annual-nav-category"></select>
                             </div>
                             <div class="annual-filter-item">
-                                <label class="label-mini">Subcategoria</label>
+                                <label class="label-mini" for="annual-nav-subcategory">Subcategoria</label>
                                 <select id="annual-nav-subcategory"></select>
                             </div>
                             <div class="annual-filter-item">
-                                <label class="label-mini">Destino</label>
+                                <label class="label-mini" for="annual-nav-destination">Destino</label>
                                 <select id="annual-nav-destination"></select>
                             </div>
                         </div>
@@ -2089,7 +2169,7 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto lg:min-w-[430px]">
                             <div>
-                                <label class="label-mini">Dia do resumo</label>
+                                <label class="label-mini" for="treasury-summary-date">Dia do resumo</label>
                                 <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition()">
                             </div>
                             <div class="flex items-end">
@@ -2120,30 +2200,30 @@
                         </div>
                         <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="label-mini">Data</label>
+                                <label class="label-mini" for="treasury-mv-date">Data</label>
                                 <input id="treasury-mv-date" type="date" required>
                             </div>
                             <div>
-                                <label class="label-mini">Unidade</label>
+                                <label class="label-mini" for="treasury-mv-unit">Unidade</label>
                                 <select id="treasury-mv-unit" required>
                                     <option value="MATRIZ">MATRIZ</option>
                                     <option value="VILA_NOVA">VILA_NOVA</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="label-mini">Entrada dinheiro</label>
+                                <label class="label-mini" for="treasury-mv-cash">Entrada dinheiro</label>
                                 <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
                             </div>
                             <div>
-                                <label class="label-mini">Entrada cartão</label>
+                                <label class="label-mini" for="treasury-mv-card">Entrada cartão</label>
                                 <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
                             </div>
                             <div>
-                                <label class="label-mini">Pagamentos do dia</label>
+                                <label class="label-mini" for="treasury-mv-payments">Pagamentos do dia</label>
                                 <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
                             </div>
                             <div class="md:col-span-2">
-                                <label class="label-mini">Observações</label>
+                                <label class="label-mini" for="treasury-mv-notes">Observações</label>
                                 <input id="treasury-mv-notes" type="text" placeholder="Opcional">
                             </div>
                             <div class="md:col-span-2">
@@ -2152,11 +2232,11 @@
                         </form>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="label-mini">Filtrar por mês</label>
+                                <label class="label-mini" for="treasury-mv-filter-month">Filtrar por mês</label>
                                 <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
                             </div>
                             <div>
-                                <label class="label-mini">Filtrar por unidade</label>
+                                <label class="label-mini" for="treasury-mv-filter-unit">Filtrar por unidade</label>
                                 <select id="treasury-mv-filter-unit" onchange="renderTreasuryMovements()">
                                     <option value="">Todas</option>
                                     <option value="MATRIZ">MATRIZ</option>
@@ -2185,19 +2265,19 @@
                         <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Saldos Bancários</h4>
                         <form id="treasury-balance-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="label-mini">Data</label>
+                                <label class="label-mini" for="treasury-bal-date">Data</label>
                                 <input id="treasury-bal-date" type="date" required>
                             </div>
                             <div>
-                                <label class="label-mini">Conta</label>
+                                <label class="label-mini" for="treasury-bal-account">Conta</label>
                                 <select id="treasury-bal-account" required></select>
                             </div>
                             <div>
-                                <label class="label-mini">Saldo (R$)</label>
+                                <label class="label-mini" for="treasury-bal-value">Saldo (R$)</label>
                                 <input id="treasury-bal-value" type="number" step="0.01" required>
                             </div>
                             <div>
-                                <label class="label-mini">Observações</label>
+                                <label class="label-mini" for="treasury-bal-notes">Observações</label>
                                 <input id="treasury-bal-notes" type="text" placeholder="Opcional">
                             </div>
                             <div class="md:col-span-2">
@@ -2206,11 +2286,11 @@
                         </form>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="label-mini">Filtrar por mês</label>
+                                <label class="label-mini" for="treasury-bal-filter-month">Filtrar por mês</label>
                                 <input id="treasury-bal-filter-month" type="month" onchange="renderTreasuryBalances()">
                             </div>
                             <div>
-                                <label class="label-mini">Filtrar banco/conta</label>
+                                <label class="label-mini" for="treasury-bal-filter-account">Filtrar banco/conta</label>
                                 <select id="treasury-bal-filter-account" onchange="renderTreasuryBalances()"></select>
                             </div>
                         </div>
@@ -2237,8 +2317,8 @@
             <div id="reconciliation" class="tab-content space-y-8">
                 <div class="card-premium p-8 space-y-6">
                     <div class="flex flex-wrap gap-8 items-end">
-                        <div class="flex-1 min-w-[400px]"><label class="label-mini">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
-                        <div class="w-72"><label class="label-mini">Conta de Destino</label><select id="recon-account-select"></select></div>
+                        <div class="flex-1 min-w-[400px]"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
+                        <div class="w-72"><label class="label-mini" for="recon-account-select">Conta de Destino</label><select id="recon-account-select"></select></div>
                         <button onclick="processPaste()" class="bg-slate-900 text-white px-10 h-[50px] rounded-xl font-black text-xs uppercase shadow-xl hover:bg-black transition-all">Analisar</button>
                     </div>
                 </div>
@@ -2272,7 +2352,7 @@
                 <section>
                     <div class="db-toolbar mb-6">
                         <div class="db-search-wrap">
-                            <label class="label-mini">Buscar em categorias, subcategorias e destinos</label>
+                            <label class="label-mini" for="db-search">Buscar em categorias, subcategorias e destinos</label>
                             <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
                         </div>
                         <button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova Categoria</button>
@@ -2328,20 +2408,48 @@
             </div>
             <form id="entry-form" class="modal-body space-y-5">
                 <input type="hidden" id="entry-id">
+                <div id="entry-form-feedback" class="form-feedback hidden" role="alert" aria-live="assertive"></div>
                 <div class="modal-grid-2">
-                    <div class="flex-1"><label class="label-mini">Data</label><input type="date" id="form-date" required></div>
-                    <div class="flex-1"><label class="label-mini">Valor (R$)</label><input type="number" step="0.01" id="form-value" required></div>
-                </div>
-                <div><label class="label-mini">Destino</label><select id="form-dst" required></select></div>
-                <div><label class="label-mini">Conta</label><select id="form-acc" required></select></div>
-                <div><label class="label-mini">Observação</label><input type="text" id="form-desc"></div>
-                <div>
-                    <label class="label-mini">Status</label>
-                    <div class="status-toggle">
-                        <button type="button" id="toggle-realized" onclick="toggleStatus('REALIZADO')">Realizado</button>
-                        <button type="button" id="toggle-pending" onclick="toggleStatus('PENDENTE')">Pendente</button>
+                    <div class="flex-1">
+                        <label for="form-date" class="label-mini">Data</label>
+                        <input type="date" id="form-date" required aria-describedby="form-date-help form-date-error">
+                        <p id="form-date-help" class="field-help">Informe a data efetiva do lançamento.</p>
+                        <p id="form-date-error" class="field-error hidden" role="alert"></p>
                     </div>
-                    <input type="hidden" id="form-status" value="REALIZADO">
+                    <div class="flex-1">
+                        <label for="form-value" class="label-mini">Valor (R$)</label>
+                        <input type="text" id="form-value" required inputmode="numeric" autocomplete="off" placeholder="0,00" aria-describedby="form-value-help form-value-error">
+                        <p id="form-value-help" class="field-help">Digite apenas números. A vírgula é aplicada automaticamente.</p>
+                        <p id="form-value-error" class="field-error hidden" role="alert"></p>
+                    </div>
+                </div>
+                <div>
+                    <label for="form-dst" class="label-mini">Destino</label>
+                    <select id="form-dst" required aria-describedby="form-dst-help form-dst-error"></select>
+                    <p id="form-dst-help" class="field-help">Selecione o destino para classificar categoria e subcategoria.</p>
+                    <p id="form-dst-error" class="field-error hidden" role="alert"></p>
+                </div>
+                <div>
+                    <label for="form-acc" class="label-mini">Conta</label>
+                    <select id="form-acc" required aria-describedby="form-acc-help form-acc-error"></select>
+                    <p id="form-acc-help" class="field-help">Conta/banco que receberá ou pagará este valor.</p>
+                    <p id="form-acc-error" class="field-error hidden" role="alert"></p>
+                </div>
+                <div>
+                    <label for="form-desc" class="label-mini">Observação</label>
+                    <input type="text" id="form-desc" maxlength="180" aria-describedby="form-desc-help form-desc-error">
+                    <p id="form-desc-help" class="field-help">Opcional. Até 180 caracteres para facilitar buscas.</p>
+                    <p id="form-desc-error" class="field-error hidden" role="alert"></p>
+                </div>
+                <div>
+                    <label class="label-mini" for="form-status">Status</label>
+                    <div class="status-toggle" role="group" aria-label="Status do lançamento">
+                        <button type="button" id="toggle-realized" onclick="toggleStatus('REALIZADO')" aria-pressed="true">Realizado</button>
+                        <button type="button" id="toggle-pending" onclick="toggleStatus('PENDENTE')" aria-pressed="false">Pendente</button>
+                    </div>
+                    <input type="hidden" id="form-status" value="REALIZADO" aria-describedby="form-status-help form-status-error">
+                    <p id="form-status-help" class="field-help">Escolha se o lançamento já ocorreu ou ainda está pendente.</p>
+                    <p id="form-status-error" class="field-error hidden" role="alert"></p>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="modal-btn-primary">Salvar</button>
@@ -2365,7 +2473,7 @@
             </div>
             <form id="db-form" class="modal-body space-y-5">
                 <input type="hidden" id="db-type"><input type="hidden" id="db-parent"><input type="hidden" id="db-id"><input type="hidden" id="db-mode" value="CREATE">
-                <div><label class="label-mini">Nome</label><input type="text" id="db-name" required></div>
+                <div><label class="label-mini" for="db-name">Nome</label><input type="text" id="db-name" required></div>
                 <div id="db-extra"></div>
                 <button type="submit" class="modal-btn-neutral">Salvar</button>
             </form>
@@ -2426,6 +2534,7 @@
         let dbSelectedSubCategoryId = '';
         let cloudSupportsUpdatedAt = true;
         let treasuryBalanceChart = null;
+        let lastFocusedElement = null;
 
         function getStateSnapshot() {
             return {
@@ -2509,11 +2618,13 @@
             const labelEl = document.getElementById('entries-toggle-label');
             const iconEl = document.getElementById('entries-toggle-icon');
             const btnEl = document.getElementById('entries-toggle-btn');
-            if (!toolbar || !labelEl || !iconEl || !btnEl) return;
+            const filtersEl = document.getElementById('entries-filters-area');
+            if (!toolbar || !labelEl || !iconEl || !btnEl || !filtersEl) return;
             toolbar.classList.toggle('collapsed', entriesToolbarCollapsed);
             labelEl.innerText = entriesToolbarCollapsed ? 'Expandir' : 'Recolher';
             iconEl.setAttribute('data-lucide', entriesToolbarCollapsed ? 'chevron-down' : 'chevron-up');
             btnEl.setAttribute('aria-expanded', entriesToolbarCollapsed ? 'false' : 'true');
+            filtersEl.setAttribute('aria-hidden', entriesToolbarCollapsed ? 'true' : 'false');
             lucide.createIcons();
         }
 
@@ -2546,8 +2657,8 @@
             const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
             const startEl = document.getElementById('filter-date-start');
             const endEl = document.getElementById('filter-date-end');
-            if (startEl) startEl.value = first.toISOString().slice(0, 10);
-            if (endEl) endEl.value = last.toISOString().slice(0, 10);
+            if (startEl) startEl.value = formatLocalDate(first);
+            if (endEl) endEl.value = formatLocalDate(last);
             entriesPage = 1;
             renderEntries();
         }
@@ -2601,6 +2712,12 @@
             const code = String(error.code || '').toUpperCase();
             const message = String(error.message || '').toLowerCase();
             return code === 'PGRST205' || message.includes('does not exist') || message.includes('relation') || message.includes('could not find the table');
+        }
+        function isMissingRpcFunctionError(error) {
+            if (!error) return false;
+            const code = String(error.code || '').toUpperCase();
+            const message = String(error.message || '').toLowerCase();
+            return code === 'PGRST202' || message.includes('function') && message.includes('not found');
         }
 
         async function upsertWithUpdatedAtFallback(table, data) {
@@ -2716,6 +2833,25 @@
                 setSyncStatus('synced');
                 return { ok: true, error: null };
             }
+        }
+        async function cloudDeleteHierarchyItem(type, id) {
+            if (!sbClient) return { ok: false, missingRpc: false, error: new Error('Cliente Supabase não inicializado.') };
+            setSyncStatus('syncing');
+            const { error } = await sbClient.rpc('delete_hierarchy_item', {
+                p_item_type: String(type || ''),
+                p_item_id: String(id || '')
+            });
+            if (error) {
+                if (isMissingRpcFunctionError(error)) {
+                    setSyncStatus('offline');
+                    return { ok: false, missingRpc: true, error };
+                }
+                console.error('Erro ao executar RPC delete_hierarchy_item:', error);
+                setSyncStatus('offline');
+                return { ok: false, missingRpc: false, error };
+            }
+            setSyncStatus('synced');
+            return { ok: true, missingRpc: false, error: null };
         }
 
         window.deleteEntry = async function(id) {
@@ -2921,7 +3057,7 @@
                     }).join('')}
                 </tbody></table>`;
             } else if (currentTab === 'monthly') {
-                const filter = document.getElementById('monthly-filter')?.value || new Date().toISOString().slice(0,7);
+                const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
                 title = `Relatório Mensal (${filter})`;
                 subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
@@ -3232,7 +3368,7 @@
                 </div>
                 <div class="hm-filters">
                     <div>
-                        <label class="label-mini">Fluxo</label>
+                        <label class="label-mini" for="hm-flow-filter">Fluxo</label>
                         <select id="hm-flow-filter">
                             <option value="TODOS">Todos</option>
                             <option value="ENTRADAS">Entradas</option>
@@ -3240,7 +3376,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="label-mini">Categoria (opcional)</label>
+                        <label class="label-mini" for="hm-category-filter">Categoria (opcional)</label>
                         <select id="hm-category-filter">
                             <option value="">Todas</option>
                             ${categoriasDisponiveis.map(c => `<option value="${c}">${c}</option>`).join('')}
@@ -3292,8 +3428,10 @@
             sidebarCollapsed = !sidebarCollapsed;
             const sidebar = document.getElementById('sidebar');
             const icon = document.getElementById('sidebar-icon');
+            const toggleBtn = document.querySelector('.sidebar-toggle');
             if(sidebar) sidebar.classList.toggle('collapsed', sidebarCollapsed);
             if(icon) icon.style.transform = sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
+            if(toggleBtn) toggleBtn.setAttribute('aria-expanded', sidebarCollapsed ? 'false' : 'true');
         }
 
         function initPiggyMicroInteractions() {
@@ -3385,7 +3523,7 @@
             const hiddenEl = document.getElementById('monthly-filter');
             if(!monthEl || !yearEl || !hiddenEl) return;
 
-            const currentMonth = new Date().toISOString().slice(0, 7);
+            const currentMonth = getCurrentMonthIso();
             const selected = hiddenEl.value || currentMonth;
             const [selectedYearRaw, selectedMonthRaw] = selected.split('-');
             const selectedYear = Number(selectedYearRaw) || new Date().getFullYear();
@@ -3421,7 +3559,7 @@
         }
 
         function updateBalance() {
-            const monthPrefix = new Date().toISOString().slice(0, 7);
+            const monthPrefix = getCurrentMonthIso();
             const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && (e.date || '').startsWith(monthPrefix));
             const inc = monthEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const exp = monthEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
@@ -3434,6 +3572,16 @@
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        function getCurrentMonthIso() {
+            return getTodayIsoDate().slice(0, 7);
+        }
+        function formatLocalDate(dateValue) {
+            const d = dateValue instanceof Date ? dateValue : new Date(dateValue);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
         function toMoneyNumber(value) {
@@ -3745,6 +3893,13 @@
             renderEntries();
         }
 
+        function handleSortHeaderKeydown(field, event) {
+            if (!event) return;
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            setSort(field);
+        }
+
         function changeEntriesPage(delta) {
             entriesPage = Math.max(1, entriesPage + delta);
             renderEntries();
@@ -3769,6 +3924,42 @@
             nextEl.disabled = entriesPage >= safePages;
             prevEl.onclick = () => changeEntriesPage(-1);
             nextEl.onclick = () => changeEntriesPage(1);
+        }
+
+        function handleEntryRowClick(event, id) {
+            if (!event) return;
+            const target = event.target;
+            if (target && typeof target.closest === 'function' && target.closest('button,input,select,textarea,a,label')) return;
+            openEntryModal(id);
+        }
+
+        function handleEntryRowKeydown(event, id, rowEl) {
+            if (!event || event.target !== rowEl) return;
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            openEntryModal(id);
+        }
+
+        function focusNextEntryDestination(currentId) {
+            const visible = Array.isArray(window.currentFilteredEntries) ? window.currentFilteredEntries : [];
+            if (!visible.length) return;
+            const index = visible.findIndex(item => String((item || {}).id || '') === String(currentId || ''));
+            if (index < 0 || index >= (visible.length - 1)) return;
+            const next = visible[index + 1];
+            if (!next) return;
+            const nextEl = document.getElementById(`entry-dst-${next.id}`);
+            if (!nextEl || typeof nextEl.focus !== 'function') return;
+            nextEl.focus();
+            if (typeof nextEl.scrollIntoView === 'function') {
+                nextEl.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        function handleEntryDestinationKeydown(entryId, event) {
+            if (!event || event.key !== 'Enter') return;
+            event.preventDefault();
+            event.stopPropagation();
+            focusNextEntryDestination(entryId);
         }
 
         async function toggleQuickStatus(id) {
@@ -4109,6 +4300,10 @@
                 if (currentSort.field === 'date') return currentSort.order === 'asc' ? (vA || '').localeCompare(vB || '') : (vB || '').localeCompare(vA || '');
                 return currentSort.order === 'asc' ? (vA || 0) - (vB || 0) : (vB || 0) - (vA || 0);
             });
+            const sortDateEl = document.getElementById('entries-sort-date');
+            const sortAmountEl = document.getElementById('entries-sort-amount');
+            if (sortDateEl) sortDateEl.setAttribute('aria-sort', currentSort.field === 'date' ? (currentSort.order === 'asc' ? 'ascending' : 'descending') : 'none');
+            if (sortAmountEl) sortAmountEl.setAttribute('aria-sort', currentSort.field === 'amount' ? (currentSort.order === 'asc' ? 'ascending' : 'descending') : 'none');
             const totalRecords = filtered.length;
             const totalPages = Math.max(1, Math.ceil(totalRecords / entriesPageSize));
             if (entriesPage > totalPages) entriesPage = totalPages;
@@ -4130,9 +4325,9 @@
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 
-                return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''} ${isInternal ? 'internal-row' : ''}" onclick="openEntryModal('${e.id}')">
+                return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''} ${isInternal ? 'internal-row' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
-                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)">
+                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))}">
                     </td>
                     <td class="px-6 py-4">
                         <div class="entry-cell-main center">
@@ -4143,14 +4338,14 @@
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
-                                <select id="entry-dst-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryDestinationInline('${e.id}', this.value)" class="entry-destination-select">
+                                <select id="entry-dst-${e.id}" onclick="event.stopPropagation()" onkeydown="handleEntryDestinationKeydown('${e.id}', event)" onchange="event.stopPropagation(); updateEntryDestinationInline('${e.id}', this.value)" class="entry-destination-select" aria-label="Destino do lançamento">
                                     ${dstOptions.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
                                 </select>
                                 <div class="entry-badges">
                                     ${isDuplicate ? '<span class="dup-icon" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
                                     ${isInternal ? '<span class="badge badge-internal">INTERNA</span>' : ''}
                                 </div>
-                                <button type="button" class="recon-fill-handle" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino">
+                                <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
                                     ⋮
                                 </button>
                             </div>
@@ -4166,11 +4361,11 @@
                     <td class="px-6 py-4 text-center">
                         <div class="entry-cell-main center">
                             <div class="entry-actions-wrap">
-                                <span onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}">${e.status}</span>
-                                <button type="button" onclick="event.stopPropagation(); setEntryInternal('${e.id}', ${!isInternal})" class="internal-toggle-btn ${isInternal ? 'active' : ''}" title="${isInternal ? 'Transação interna ativa' : 'Marcar como transação interna'}">
+                                <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lançamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
+                                <button type="button" onclick="event.stopPropagation(); setEntryInternal('${e.id}', ${!isInternal})" class="internal-toggle-btn entry-action-btn ${isInternal ? 'active' : ''}" title="${isInternal ? 'Transação interna ativa' : 'Marcar como transação interna'}" aria-label="${isInternal ? 'Desmarcar transação interna' : 'Marcar transação interna'}">
                                     <i data-lucide="repeat-2" class="w-3.5 h-3.5"></i>
                                 </button>
-                                <button onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                                <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -4768,39 +4963,114 @@
                 .trim();
         }
 
+        const INTERNAL_TRANSFER_CNPJS = ['07436556000174', '40697224000119'];
+        const INTERNAL_TRANSFER_KEYWORDS = ['transferencia', 'transfer', 'transf', 'ted', 'pix'];
+
+        function onlyDigits(value) {
+            return String(value || '').replace(/\D/g, '');
+        }
+
+        function isInternalTransferByDescription(description) {
+            const textNorm = normalizeReconText(description);
+            if (!textNorm) return false;
+            const hasTransferKeyword = INTERNAL_TRANSFER_KEYWORDS.some(keyword => textNorm.includes(keyword));
+            if (!hasTransferKeyword) return false;
+            const digits = onlyDigits(description);
+            const matchedCnpjs = INTERNAL_TRANSFER_CNPJS.filter(cnpj => digits.includes(cnpj));
+            return matchedCnpjs.length >= 2;
+        }
+
+        const RECON_STOPWORDS = new Set([
+            'de', 'da', 'do', 'das', 'dos', 'para', 'por', 'com', 'sem', 'em', 'no', 'na', 'nos', 'nas',
+            'pix', 'ted', 'doc', 'pagamento', 'pgto', 'transferencia', 'transfer', 'compra', 'debito', 'credito'
+        ]);
+
+        function tokenizeReconText(value) {
+            return normalizeReconText(value)
+                .split(' ')
+                .map(t => t.trim())
+                .filter(t => t.length >= 3 && !RECON_STOPWORDS.has(t));
+        }
+
+        function getDestinationKeywordSet(destinationId) {
+            const dst = state.destinations.find(d => d.id === destinationId);
+            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+            const base = [
+                (dst || {}).name || '',
+                (sub || {}).name || '',
+                (cat || {}).name || ''
+            ].join(' ');
+            return new Set(tokenizeReconText(base));
+        }
+
+        function getMostFrequentDestination(validDestinations) {
+            const validIds = new Set((validDestinations || []).map(d => d.id));
+            const counts = {};
+            state.entries.forEach(entry => {
+                if (!entry || !validIds.has(entry.destinationId)) return;
+                counts[entry.destinationId] = (counts[entry.destinationId] || 0) + 1;
+            });
+            let bestId = '';
+            let bestCount = 0;
+            Object.entries(counts).forEach(([id, count]) => {
+                if (count > bestCount) {
+                    bestCount = count;
+                    bestId = id;
+                }
+            });
+            return bestId || ((validDestinations[0] || {}).id || '');
+        }
+
         function inferDestinationFromDescription(description, validDestinations) {
             if(!validDestinations || validDestinations.length === 0) return '';
             const descNorm = normalizeReconText(description);
-            if(!descNorm) return validDestinations[0].id;
+            if(!descNorm) return getMostFrequentDestination(validDestinations);
 
-            // 1) Match direto por nome do destino na descrição
-            let bestDirect = null;
+            const descTokens = new Set(tokenizeReconText(descNorm));
+            const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
+
+            // 1) Score direto por nome/keywords de destino
+            let bestDirectId = '';
+            let bestDirectScore = 0;
             validDestinations.forEach(dst => {
                 const nameNorm = normalizeReconText(dst.name);
-                if(!nameNorm || nameNorm.length < 3) return;
-                if(descNorm.includes(nameNorm)) {
-                    const score = nameNorm.length;
-                    if(!bestDirect || score > bestDirect.score) {
-                        bestDirect = { id: dst.id, score };
-                    }
+                const keywordSet = getDestinationKeywordSet(dst.id);
+                let score = 0;
+
+                if (nameNorm && descNorm.includes(nameNorm)) {
+                    // Nome completo do destino dentro da descrição é um sinal muito forte.
+                    score += 200 + nameNorm.length;
+                }
+
+                keywordSet.forEach(token => {
+                    if (descTokens.has(token)) score += 22;
+                });
+
+                if (score > bestDirectScore) {
+                    bestDirectScore = score;
+                    bestDirectId = dst.id;
                 }
             });
-            if(bestDirect) return bestDirect.id;
 
-            // 2) Match por similaridade com lançamentos históricos (mesmo destino)
+            // 2) Score por similaridade com histórico (mesmo conjunto de destinos válidos)
             const validIds = new Set(validDestinations.map(d => d.id));
-            const descTokens = new Set(descNorm.split(' ').filter(w => w.length >= 3));
             const scoreByDestination = {};
             state.entries.forEach(entry => {
                 if(!entry || !validIds.has(entry.destinationId)) return;
-                const entryDescNorm = normalizeReconText(entry.description);
+                const dst = state.destinations.find(d => d.id === entry.destinationId);
+                const entryText = `${entry.description || ''} ${(dst || {}).name || ''}`;
+                const entryDescNorm = normalizeReconText(entryText);
                 if(!entryDescNorm) return;
-                const entryTokens = entryDescNorm.split(' ').filter(w => w.length >= 3);
+                const entryTokens = tokenizeReconText(entryDescNorm);
                 let overlap = 0;
                 entryTokens.forEach(token => { if(descTokens.has(token)) overlap++; });
                 if(overlap <= 0) return;
-                const weight = entry.status === 'REALIZADO' ? 1.2 : 1;
-                scoreByDestination[entry.destinationId] = (scoreByDestination[entry.destinationId] || 0) + (overlap * weight);
+                const ym = Number(String(entry.date || '').slice(0, 7).replace('-', '')) || 0;
+                const monthDistance = ym > 0 ? Math.max(0, nowYearMonth - ym) : 999;
+                const recencyWeight = monthDistance <= 1 ? 1.25 : monthDistance <= 6 ? 1.1 : 0.95;
+                const statusWeight = entry.status === 'REALIZADO' ? 1.2 : 1;
+                scoreByDestination[entry.destinationId] = (scoreByDestination[entry.destinationId] || 0) + (overlap * statusWeight * recencyWeight * 12);
             });
 
             let bestHistoryId = '';
@@ -4811,9 +5081,25 @@
                     bestHistoryId = destinationId;
                 }
             });
-            if(bestHistoryId) return bestHistoryId;
+            // Combinação final priorizando evidência direta, mas aproveitando o histórico.
+            const combined = {};
+            if (bestDirectId) combined[bestDirectId] = (combined[bestDirectId] || 0) + bestDirectScore;
+            if (bestHistoryId) combined[bestHistoryId] = (combined[bestHistoryId] || 0) + bestHistoryScore;
+            Object.entries(scoreByDestination).forEach(([destinationId, score]) => {
+                combined[destinationId] = (combined[destinationId] || 0) + score;
+            });
 
-            return validDestinations[0].id;
+            let bestId = '';
+            let bestScore = 0;
+            Object.entries(combined).forEach(([destinationId, score]) => {
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestId = destinationId;
+                }
+            });
+            if (bestId) return bestId;
+
+            return getMostFrequentDestination(validDestinations);
         }
 
         function normalizeReconLines(rawText) {
@@ -5102,7 +5388,8 @@
                     accountId: accId,
                     categoryId: String((cat || {}).id || ''),
                     subCategoryId: String((sub || {}).id || ''),
-                    status: 'REALIZADO'
+                    status: 'REALIZADO',
+                    isInternalTransfer: isInternalTransferByDescription(temp.description)
                 };
             });
             const saveResult = await cloudSave('entries', newEntries);
@@ -5283,6 +5570,136 @@
             }
         }
 
+        function setEntryFormFeedback(message = '') {
+            const feedbackEl = document.getElementById('entry-form-feedback');
+            if (!feedbackEl) return;
+            if (!message) {
+                feedbackEl.classList.add('hidden');
+                feedbackEl.innerText = '';
+                return;
+            }
+            feedbackEl.classList.remove('hidden');
+            feedbackEl.innerText = message;
+        }
+
+        function setEntryFieldError(fieldId, message = '') {
+            const fieldEl = document.getElementById(fieldId);
+            const errorEl = document.getElementById(`${fieldId}-error`);
+            if (!fieldEl || !errorEl) return;
+            if (!message) {
+                fieldEl.classList.remove('field-invalid');
+                fieldEl.setAttribute('aria-invalid', 'false');
+                errorEl.classList.add('hidden');
+                errorEl.innerText = '';
+                return;
+            }
+            fieldEl.classList.add('field-invalid');
+            fieldEl.setAttribute('aria-invalid', 'true');
+            errorEl.classList.remove('hidden');
+            errorEl.innerText = message;
+        }
+
+        function clearEntryFormErrors() {
+            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status'].forEach((id) => setEntryFieldError(id, ''));
+            setEntryFormFeedback('');
+        }
+
+        function formatAmountFromDigits(digitsRaw) {
+            const digits = String(digitsRaw || '').replace(/\D/g, '');
+            if (!digits) return '';
+            const cents = Number(digits);
+            if (!Number.isFinite(cents)) return '';
+            const value = cents / 100;
+            return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function parseAmountBRL(raw) {
+            const text = String(raw || '').trim();
+            if (!text) return NaN;
+            const normalized = text.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+            const parsed = Number(normalized);
+            return Number.isFinite(parsed) ? parsed : NaN;
+        }
+
+        function bindEntryValueMask() {
+            const valueEl = document.getElementById('form-value');
+            if (!valueEl || valueEl.dataset.maskBound === '1') return;
+            valueEl.dataset.maskBound = '1';
+            valueEl.addEventListener('input', () => {
+                valueEl.value = formatAmountFromDigits(valueEl.value);
+            });
+            valueEl.addEventListener('paste', () => {
+                requestAnimationFrame(() => {
+                    valueEl.value = formatAmountFromDigits(valueEl.value);
+                });
+            });
+        }
+
+        function validateEntryForm(showErrors = true) {
+            const dateEl = document.getElementById('form-date');
+            const valueEl = document.getElementById('form-value');
+            const dstEl = document.getElementById('form-dst');
+            const accEl = document.getElementById('form-acc');
+            const descEl = document.getElementById('form-desc');
+            const statusEl = document.getElementById('form-status');
+            if (!dateEl || !valueEl || !dstEl || !accEl || !descEl || !statusEl) {
+                return { valid: false, firstInvalidId: null };
+            }
+
+            const date = String(dateEl.value || '');
+            const amount = parseAmountBRL(valueEl.value);
+            const destinationId = String(dstEl.value || '');
+            const accountId = String(accEl.value || '');
+            const description = String(descEl.value || '').trim();
+            const status = String(statusEl.value || '');
+            const errors = {};
+
+            if (!date) errors['form-date'] = 'Informe a data do lançamento.';
+            if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) errors['form-date'] = 'Data inválida.';
+            if (!Number.isFinite(amount)) errors['form-value'] = 'Informe um valor numérico.';
+            else if (amount <= 0) errors['form-value'] = 'O valor deve ser maior que zero.';
+            if (!destinationId) errors['form-dst'] = 'Selecione um destino.';
+            if (!accountId) errors['form-acc'] = 'Selecione uma conta.';
+            if (description.length > 180) errors['form-desc'] = 'Observação deve ter no máximo 180 caracteres.';
+            if (status !== 'REALIZADO' && status !== 'PENDENTE') errors['form-status'] = 'Escolha um status válido.';
+
+            if (showErrors) {
+                clearEntryFormErrors();
+                Object.entries(errors).forEach(([fieldId, message]) => setEntryFieldError(fieldId, message));
+                if (Object.keys(errors).length > 0) {
+                    setEntryFormFeedback('Revise os campos destacados antes de salvar.');
+                }
+            }
+
+            return {
+                valid: Object.keys(errors).length === 0,
+                firstInvalidId: Object.keys(errors)[0] || null,
+                values: { date, amount, destinationId, accountId, description, status }
+            };
+        }
+
+        function initEntryFormValidationBindings() {
+            const form = document.getElementById('entry-form');
+            if (!form || form.dataset.validationBound === '1') return;
+            form.dataset.validationBound = '1';
+            bindEntryValueMask();
+
+            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc'].forEach((fieldId) => {
+                const el = document.getElementById(fieldId);
+                if (!el) return;
+                const eventName = (el.tagName === 'SELECT' || el.type === 'date') ? 'change' : 'input';
+                el.addEventListener(eventName, () => {
+                    setEntryFieldError(fieldId, '');
+                    const silent = validateEntryForm(false);
+                    if (silent.valid) setEntryFormFeedback('');
+                });
+                el.addEventListener('blur', () => {
+                    const result = validateEntryForm(true);
+                    if (result.valid) clearEntryFormErrors();
+                });
+            });
+        }
+
         function toggleStatus(val) {
             const statusEl = document.getElementById('form-status');
             const tr = document.getElementById('toggle-realized');
@@ -5290,11 +5707,17 @@
             if(statusEl) statusEl.value = val;
             if(tr) tr.classList.toggle('active', val === 'REALIZADO');
             if(tp) tp.classList.toggle('active', val === 'PENDENTE');
+            if(tr) tr.setAttribute('aria-pressed', val === 'REALIZADO' ? 'true' : 'false');
+            if(tp) tp.setAttribute('aria-pressed', val === 'PENDENTE' ? 'true' : 'false');
+            setEntryFieldError('form-status', '');
         }
 
         function openEntryModal(id = null) {
+            lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
             const form = document.getElementById('entry-form');
             if(form) form.reset();
+            clearEntryFormErrors();
+            initEntryFormValidationBindings();
             const idEl = document.getElementById('entry-id');
             if(idEl) idEl.value = id || '';
             document.getElementById('delete-btn-modal')?.classList.toggle('hidden', !id);
@@ -5304,38 +5727,66 @@
                 const e = state.entries.find(x => x.id === id);
                 if(e) {
                     document.getElementById('form-date').value = e.date;
-                    document.getElementById('form-value').value = e.amount;
+                    document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     document.getElementById('form-desc').value = e.description || "";
                     document.getElementById('form-dst').value = e.destinationId;
                     document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
-                    toggleStatus(e.status);
+                    toggleStatus(e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO');
                 }
             } else { 
                 document.getElementById('form-date').valueAsDate = new Date(); 
                 toggleStatus('REALIZADO');
             }
             document.getElementById('entry-modal')?.classList.remove('hidden');
+            window.setTimeout(() => {
+                document.getElementById('form-date')?.focus();
+            }, 0);
             lucide.createIcons();
         }
 
-        function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+        function closeModal(id) {
+            document.getElementById(id)?.classList.add('hidden');
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+        }
         function populateDropdown(id, list) { const el = document.getElementById(id); if(el) el.innerHTML = list.map(item => `<option value="${String(item.id || '')}">${item.name}</option>`).join(''); }
 
         document.getElementById('entry-form').onsubmit = async (event) => {
             event.preventDefault();
             const id = document.getElementById('entry-id').value;
-            const dstId = document.getElementById('form-dst').value;
+            const validation = validateEntryForm(true);
+            if (!validation.valid) {
+                if (validation.firstInvalidId) document.getElementById(validation.firstInvalidId)?.focus();
+                return;
+            }
+            const dstId = validation.values.destinationId;
             const dst = state.destinations.find(d => d.id === dstId);
             const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
             const existing = id ? state.entries.find(x => x.id === id) : null;
-            const val = Number(document.getElementById('form-value').value);
-            if(isNaN(val)) return alert("Valor inválido");
-            if (!dstId) return alert("Selecione um destino.");
-            const selectedAccountId = String(document.getElementById('form-acc').value || '');
-            if (!selectedAccountId) return alert("Selecione uma conta.");
-            if (!(cat || {}).type) return alert("Destino sem categoria/tipo válido. Revise Categoria > Subcategoria > Destino.");
-            const data = { id: id || generateId(), date: document.getElementById('form-date').value, amount: val, type: (cat || {}).type, categoryId: (cat || {}).id, subCategoryId: (sub || {}).id, destinationId: dstId, accountId: selectedAccountId, description: document.getElementById('form-desc').value, status: document.getElementById('form-status').value, isInternalTransfer: existing ? isInternalEntry(existing) : false };
+            if (!(cat || {}).type) {
+                setEntryFieldError('form-dst', 'Destino sem categoria/tipo válido. Revise Categoria > Subcategoria > Destino.');
+                setEntryFormFeedback('Não foi possível salvar: revise o destino selecionado.');
+                document.getElementById('form-dst')?.focus();
+                return;
+            }
+            clearEntryFormErrors();
+            const data = {
+                id: id || generateId(),
+                date: validation.values.date,
+                amount: validation.values.amount,
+                type: (cat || {}).type,
+                categoryId: (cat || {}).id,
+                subCategoryId: (sub || {}).id,
+                destinationId: dstId,
+                accountId: validation.values.accountId,
+                description: validation.values.description,
+                status: validation.values.status,
+                isInternalTransfer: existing
+                    ? (isInternalEntry(existing) || isInternalTransferByDescription(validation.values.description))
+                    : isInternalTransferByDescription(validation.values.description)
+            };
             
             const saveResult = await cloudSave('entries', data);
             if (!saveResult?.ok) {
@@ -5405,6 +5856,7 @@
         };
 
         function openDbModal(type, parentId = '', editItem = null) {
+            lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
             document.getElementById('db-type').value = type;
             document.getElementById('db-parent').value = parentId;
             document.getElementById('db-id').value = editItem ? String(editItem.id || '') : '';
@@ -5423,8 +5875,8 @@
             if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
-                else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
+                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
+                else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini" for="db-acc-balance">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
                 else exEl.innerHTML = '';
             }
             if (type === 'CATEGORY' && editItem) {
@@ -5432,6 +5884,9 @@
                 if (catTypeEl) catTypeEl.value = editItem.type || 'SAÍDA';
             }
             document.getElementById('db-modal')?.classList.remove('hidden');
+            window.setTimeout(() => {
+                document.getElementById('db-name')?.focus();
+            }, 0);
             lucide.createIcons();
         }
 
@@ -5497,19 +5952,89 @@
                 if(type==='DESTINATION') table = 'destinations';
                 if(type==='ACCOUNT') table = 'accounts';
 
+                const refreshAfterCloudMismatch = async (msg) => {
+                    alert(msg);
+                    await initCloud();
+                };
+
+                // Tenta exclusão atômica via RPC (transação única no Supabase).
+                const atomicDelete = await cloudDeleteHierarchyItem(type, id);
+                if (atomicDelete?.ok) {
+                    if(type==='CATEGORY') {
+                        const subs = state.subCategories.filter(s => s.categoryId === id).map(s => s.id);
+                        state.categories = state.categories.filter(x=>x.id!==id);
+                        state.subCategories = state.subCategories.filter(x=>x.categoryId!==id);
+                        state.destinations = state.destinations.filter(x=>!subs.includes(x.subCategoryId));
+                    }
+                    if(type==='SUBCATEGORY') {
+                        state.subCategories = state.subCategories.filter(x=>x.id!==id);
+                        state.destinations = state.destinations.filter(x=>x.subCategoryId!==id);
+                    }
+                    if(type==='DESTINATION') { state.destinations = state.destinations.filter(x=>x.id!==id); }
+                    if(type==='ACCOUNT') { state.accounts = state.accounts.filter(x=>x.id!==id); }
+                    render();
+                    return;
+                }
+                if (atomicDelete && !atomicDelete.missingRpc) {
+                    await refreshAfterCloudMismatch(`Não foi possível excluir com segurança atômica na nuvem.\n\nDetalhe: ${String(atomicDelete?.error?.message || 'Erro desconhecido.')}`);
+                    return;
+                }
+
+                if(type === 'CATEGORY') {
+                    const subs = state.subCategories.filter(s => s.categoryId === id).map(s => s.id);
+                    const dsts = state.destinations.filter(d => subs.includes(d.subCategoryId)).map(d => d.id);
+                    if (dsts.length > 0) {
+                        const dstDelete = await cloudDeleteMany('destinations', dsts);
+                        if (!dstDelete?.ok) {
+                            await refreshAfterCloudMismatch(`Não foi possível excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
+                            return;
+                        }
+                    }
+                    if (subs.length > 0) {
+                        const subDelete = await cloudDeleteMany('subCategories', subs);
+                        if (!subDelete?.ok) {
+                            await refreshAfterCloudMismatch(`Não foi possível excluir as subcategorias vinculadas.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
+                            return;
+                        }
+                    }
+                    const categoryDelete = await cloudDelete('categories', id);
+                    if (!categoryDelete?.ok) {
+                        await refreshAfterCloudMismatch(`Não foi possível excluir a categoria.\n\nDetalhe: ${String(categoryDelete?.error?.message || 'Erro desconhecido.')}`);
+                        return;
+                    }
+                    state.categories = state.categories.filter(x=>x.id!==id);
+                    state.subCategories = state.subCategories.filter(x=>x.categoryId!==id);
+                    state.destinations = state.destinations.filter(x=>!subs.includes(x.subCategoryId));
+                    render();
+                    return;
+                }
+
+                if(type === 'SUBCATEGORY') {
+                    const dsts = state.destinations.filter(d => d.subCategoryId === id).map(d => d.id);
+                    if (dsts.length > 0) {
+                        const dstDelete = await cloudDeleteMany('destinations', dsts);
+                        if (!dstDelete?.ok) {
+                            await refreshAfterCloudMismatch(`Não foi possível excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
+                            return;
+                        }
+                    }
+                    const subDelete = await cloudDelete('subCategories', id);
+                    if (!subDelete?.ok) {
+                        await refreshAfterCloudMismatch(`Não foi possível excluir a subcategoria.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
+                        return;
+                    }
+                    state.subCategories = state.subCategories.filter(x=>x.id!==id);
+                    state.destinations = state.destinations.filter(x=>x.subCategoryId!==id);
+                    render();
+                    return;
+                }
+
                 const result = await cloudDelete(table, id);
                 if (!result?.ok) {
                     alert(`Não foi possível excluir.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                     return;
                 }
 
-                if(type==='CATEGORY') {
-                    const subs = state.subCategories.filter(s => s.categoryId === id).map(s => s.id);
-                    state.categories = state.categories.filter(x=>x.id!==id);
-                    state.subCategories = state.subCategories.filter(x=>x.categoryId!==id);
-                    state.destinations = state.destinations.filter(x=>!subs.includes(x.subCategoryId));
-                }
-                if(type==='SUBCATEGORY') { state.subCategories = state.subCategories.filter(x=>x.id!==id); state.destinations = state.destinations.filter(x=>x.subCategoryId!==id); }
                 if(type==='DESTINATION') { state.destinations = state.destinations.filter(x=>x.id!==id); }
                 if(type==='ACCOUNT') { state.accounts = state.accounts.filter(x=>x.id!==id); }
 
@@ -5518,7 +6043,7 @@
         }
 
         const mf = document.getElementById('monthly-filter');
-        if(mf) mf.value = new Date().toISOString().slice(0, 7);
+        if(mf) mf.value = getCurrentMonthIso();
         window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); });
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); });
         document.addEventListener('keydown', (event) => {
