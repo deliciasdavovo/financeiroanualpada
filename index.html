@@ -5121,6 +5121,13 @@
 
         const INTERNAL_TRANSFER_CNPJS = ['07436556000174', '40697224000119'];
         const INTERNAL_TRANSFER_KEYWORDS = ['transferencia', 'transfer', 'transf', 'ted', 'pix'];
+        const INTERNAL_TRANSFER_CONTEXT_KEYWORDS = [
+            'interna',
+            'entre contas',
+            'mesma titularidade',
+            'conta propria',
+            'intercontas'
+        ];
 
         function onlyDigits(value) {
             return String(value || '').replace(/\D/g, '');
@@ -5133,7 +5140,8 @@
             if (!hasTransferKeyword) return false;
             const digits = onlyDigits(description);
             const matchedCnpjs = INTERNAL_TRANSFER_CNPJS.filter(cnpj => digits.includes(cnpj));
-            return matchedCnpjs.length >= 2;
+            if (matchedCnpjs.length >= 1) return true;
+            return INTERNAL_TRANSFER_CONTEXT_KEYWORDS.some(keyword => textNorm.includes(keyword));
         }
 
         const RECON_STOPWORDS = new Set([
@@ -5160,6 +5168,20 @@
             return new Set(tokenizeReconText(base));
         }
 
+        function findPreferredBankSalesDestination(validDestinations) {
+            const list = Array.isArray(validDestinations) ? validDestinations : [];
+            if (!list.length) return '';
+            const preferred = list.find((d) => {
+                const nameNorm = normalizeReconText((d || {}).name || '');
+                if (!nameNorm) return false;
+                const hasVendas = nameNorm.includes('vendas');
+                const hasEntrada = nameNorm.includes('entrada');
+                const hasBanco = nameNorm.includes('bancaria') || nameNorm.includes('banco');
+                return hasVendas && hasEntrada && hasBanco;
+            });
+            return String((preferred || {}).id || '');
+        }
+
         function getMostFrequentDestination(validDestinations) {
             const validIds = new Set((validDestinations || []).map(d => d.id));
             const counts = {};
@@ -5175,12 +5197,15 @@
                     bestId = id;
                 }
             });
+            const preferredId = findPreferredBankSalesDestination(validDestinations);
+            if (preferredId) return preferredId;
             return bestId || ((validDestinations[0] || {}).id || '');
         }
 
         function inferDestinationFromDescription(description, validDestinations) {
             if(!validDestinations || validDestinations.length === 0) return '';
             const descNorm = normalizeReconText(description);
+            const preferredId = findPreferredBankSalesDestination(validDestinations);
             if(!descNorm) return getMostFrequentDestination(validDestinations);
 
             const descTokens = new Set(tokenizeReconText(descNorm));
@@ -5255,6 +5280,7 @@
             });
             if (bestId) return bestId;
 
+            if (preferredId) return preferredId;
             return getMostFrequentDestination(validDestinations);
         }
 
