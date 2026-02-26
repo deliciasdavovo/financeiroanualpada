@@ -2326,7 +2326,7 @@
                 <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl border border-blue-100 shadow-xl">
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
-                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
+                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button id="recon-import-btn" onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
                     <div class="card-premium overflow-hidden">
                         <div class="table-mobile-scroll custom-scrollbar">
@@ -2533,10 +2533,13 @@
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
         let cloudSupportsUpdatedAt = true;
+        let cloudSupportsInternalTransfer = true;
         let treasuryBalanceChart = null;
         let lastFocusedElement = null;
         let cloudSyncInFlight = false;
         let cloudRefreshTimer = null;
+        const CLOUD_FETCH_PAGE_SIZE = 1000;
+        let reconImportInFlight = false;
 
         function getStateSnapshot() {
             return {
@@ -2689,13 +2692,18 @@
             return clean;
         }
 
-        function sanitizePayloadForCloud(table, data, includeUpdatedAt = true) {
+        function sanitizePayloadForCloud(table, data, includeUpdatedAt = true, includeInternalTransfer = true) {
             const sanitizeEntryForCloud = (entry) => {
                 if (!entry || typeof entry !== 'object') return entry;
                 const clean = { ...entry };
+                const internalFlag = isInternalEntry(clean);
                 delete clean.isInternalTransfer;
                 delete clean.internalTransfer;
-                delete clean.is_internal_transfer;
+                if (includeInternalTransfer) {
+                    clean.is_internal_transfer = internalFlag;
+                } else {
+                    delete clean.is_internal_transfer;
+                }
                 return clean;
             };
             let payload = table === 'entries'
@@ -2708,6 +2716,10 @@
         function isUpdatedAtColumnError(error) {
             const message = String((error || {}).message || error || '').toLowerCase();
             return message.includes('updatedat') || message.includes('updated_at');
+        }
+        function isInternalTransferColumnError(error) {
+            const message = String((error || {}).message || error || '').toLowerCase();
+            return message.includes('is_internal_transfer') || message.includes('internaltransfer');
         }
         function isMissingTableError(error) {
             if (!error) return false;
@@ -2722,16 +2734,59 @@
             return code === 'PGRST202' || message.includes('function') && message.includes('not found');
         }
 
-        async function upsertWithUpdatedAtFallback(table, data) {
-            let payload = sanitizePayloadForCloud(table, data, cloudSupportsUpdatedAt);
-            let { error } = await sbClient.from(table).upsert(payload);
-            if (error && cloudSupportsUpdatedAt && isUpdatedAtColumnError(error)) {
-                cloudSupportsUpdatedAt = false;
-                payload = sanitizePayloadForCloud(table, data, false);
-                const retry = await sbClient.from(table).upsert(payload);
-                error = retry.error;
+        async function cloudSelectAllRows(table, pageSize = CLOUD_FETCH_PAGE_SIZE) {
+            const rows = [];
+            let from = 0;
+            while (true) {
+                const to = from + pageSize - 1;
+                const { data, error } = await sbClient.from(table).select('*').range(from, to);
+                if (error) return { ok: false, data: rows, error };
+                const batch = Array.isArray(data) ? data : [];
+                rows.push(...batch);
+                if (batch.length < pageSize) break;
+                from += pageSize;
             }
-            return { error };
+            return { ok: true, data: rows, error: null };
+        }
+
+        async function validateImportedEntryIds(ids, chunkSize = 400) {
+            const list = Array.isArray(ids) ? ids.filter(Boolean) : [];
+            if (!list.length) return { ok: true, imported: 0, expected: 0, error: null };
+            let imported = 0;
+            for (let i = 0; i < list.length; i += chunkSize) {
+                const chunk = list.slice(i, i + chunkSize);
+                const { data, error } = await sbClient
+                    .from('entries')
+                    .select('id')
+                    .in('id', chunk);
+                if (error) return { ok: false, imported, expected: list.length, error };
+                imported += Array.isArray(data) ? data.length : 0;
+            }
+            return { ok: true, imported, expected: list.length, error: null };
+        }
+
+        async function upsertWithUpdatedAtFallback(table, data) {
+            let includeUpdatedAt = cloudSupportsUpdatedAt;
+            let includeInternalTransfer = cloudSupportsInternalTransfer;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                const payload = sanitizePayloadForCloud(table, data, includeUpdatedAt, includeInternalTransfer);
+                const { error } = await sbClient.from(table).upsert(payload);
+                if (!error) {
+                    cloudSupportsUpdatedAt = includeUpdatedAt;
+                    cloudSupportsInternalTransfer = includeInternalTransfer;
+                    return { error: null };
+                }
+                if (includeUpdatedAt && isUpdatedAtColumnError(error)) {
+                    includeUpdatedAt = false;
+                    continue;
+                }
+                if (table === 'entries' && includeInternalTransfer && isInternalTransferColumnError(error)) {
+                    includeInternalTransfer = false;
+                    continue;
+                }
+                return { error };
+            }
+            return { error: new Error('Falha ao salvar com fallback de colunas.') };
         }
 
         function setSyncStatus(status) {
@@ -2766,15 +2821,16 @@
                 // Tenta carregar dados do Supabase
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
                 for(const t of STATE_TABLES) {
-                    const { data, error } = await sbClient.from(t).select('*');
-                    if (error) {
+                    const result = await cloudSelectAllRows(t);
+                    if (!result.ok) {
+                        const error = result.error;
                         if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
                             cloudState[t] = [];
                             continue;
                         }
                         throw error;
                     }
-                    cloudState[t] = data || [];
+                    cloudState[t] = result.data || [];
                 }
                 state = cloudState;
                 normalizeStateIds();
@@ -2798,15 +2854,16 @@
                 if (!silent) setSyncStatus('syncing');
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
                 for (const t of STATE_TABLES) {
-                    const { data, error } = await sbClient.from(t).select('*');
-                    if (error) {
+                    const result = await cloudSelectAllRows(t);
+                    if (!result.ok) {
+                        const error = result.error;
                         if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
                             cloudState[t] = [];
                             continue;
                         }
                         throw error;
                     }
-                    cloudState[t] = data || [];
+                    cloudState[t] = result.data || [];
                 }
                 state = cloudState;
                 normalizeStateIds();
@@ -2851,17 +2908,48 @@
             }
         }
 
+        async function cloudSaveBatched(table, rows, chunkSize = 200, onProgress = null) {
+            const list = Array.isArray(rows) ? rows : [];
+            if (!list.length) return { ok: true, imported: 0, expected: 0, failedChunk: -1, error: null };
+            let imported = 0;
+            if (typeof onProgress === 'function') onProgress(0, list.length);
+            for (let i = 0; i < list.length; i += chunkSize) {
+                const chunk = list.slice(i, i + chunkSize);
+                const result = await cloudSave(table, chunk);
+                if (!result?.ok) {
+                    return {
+                        ok: false,
+                        imported,
+                        expected: list.length,
+                        failedChunk: Math.floor(i / chunkSize) + 1,
+                        error: result?.error || new Error('Falha ao salvar lote.')
+                    };
+                }
+                imported += chunk.length;
+                if (typeof onProgress === 'function') onProgress(imported, list.length);
+            }
+            return { ok: true, imported, expected: list.length, failedChunk: -1, error: null };
+        }
+
         async function cloudDelete(table, id) {
             if (!sbClient) {
                 setSyncStatus('offline');
                 return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             }
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).delete().eq('id', id);
+            const { error, count } = await sbClient
+                .from(table)
+                .delete({ count: 'exact' })
+                .eq('id', id);
             if (error) {
                 console.error(`Erro ao deletar em ${table}:`, error);
                 setSyncStatus('offline');
                 return { ok: false, error };
+            } else if ((Number(count) || 0) < 1) {
+                const noEffectError = new Error('Nenhum registro foi removido na nuvem. Verifique as políticas RLS de DELETE da tabela.');
+                console.error(`Delete sem efeito em ${table}:`, { id, count });
+                setSyncStatus('offline');
+                return { ok: false, error: noEffectError };
             } else {
                 setSyncStatus('synced');
                 return { ok: true, error: null };
@@ -3973,7 +4061,17 @@
             openEntryModal(id);
         }
 
-        function focusNextEntryDestination(currentId) {
+        function tryOpenSelectPicker(el) {
+            if (!el) return;
+            if (typeof el.showPicker !== 'function') return;
+            try {
+                el.showPicker();
+            } catch (_) {
+                // Ignora browsers que bloqueiam showPicker sem gesto válido.
+            }
+        }
+
+        function focusNextEntryDestination(currentId, options = {}) {
             const visible = Array.isArray(window.currentFilteredEntries) ? window.currentFilteredEntries : [];
             if (!visible.length) return;
             const index = visible.findIndex(item => String((item || {}).id || '') === String(currentId || ''));
@@ -3983,16 +4081,20 @@
             const nextEl = document.getElementById(`entry-dst-${next.id}`);
             if (!nextEl || typeof nextEl.focus !== 'function') return;
             nextEl.focus();
+            if (options.openPicker === true) {
+                tryOpenSelectPicker(nextEl);
+            }
             if (typeof nextEl.scrollIntoView === 'function') {
                 nextEl.scrollIntoView({ block: 'nearest' });
             }
         }
 
         function handleEntryDestinationKeydown(entryId, event) {
-            if (!event || event.key !== 'Enter') return;
+            if (!event) return;
+            if (event.key !== 'Enter' && event.key !== 'NumpadEnter') return;
             event.preventDefault();
             event.stopPropagation();
-            focusNextEntryDestination(entryId);
+            focusNextEntryDestination(entryId, { openPicker: true });
         }
 
         async function toggleQuickStatus(id) {
@@ -4113,11 +4215,19 @@
             if (!Array.isArray(ids) || ids.length === 0) return { ok: true, error: null };
             if (!sbClient) return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             setSyncStatus('syncing');
-            const { error } = await sbClient.from(table).delete().in('id', ids);
+            const { error, count } = await sbClient
+                .from(table)
+                .delete({ count: 'exact' })
+                .in('id', ids);
             if (error) {
                 console.error(`Erro ao deletar em lote em ${table}:`, error);
                 setSyncStatus('offline');
                 return { ok: false, error };
+            } else if ((Number(count) || 0) < ids.length) {
+                const noEffectError = new Error(`Apenas ${Number(count) || 0} de ${ids.length} registro(s) foram removidos na nuvem. Verifique as políticas RLS de DELETE da tabela.`);
+                console.error(`Delete em lote parcial/sem efeito em ${table}:`, { count, expected: ids.length });
+                setSyncStatus('offline');
+                return { ok: false, error: noEffectError };
             } else {
                 setSyncStatus('synced');
                 return { ok: true, error: null };
@@ -5392,6 +5502,16 @@
         }
 
         async function finalizeRecon() {
+            if (reconImportInFlight) return;
+            const importBtn = document.getElementById('recon-import-btn');
+            const summaryEl = document.getElementById('recon-summary-count');
+            reconImportInFlight = true;
+            if (importBtn) {
+                importBtn.disabled = true;
+                importBtn.classList.add('opacity-60', 'cursor-not-allowed');
+                importBtn.innerText = 'Importando...';
+            }
+            try {
             const accId = String(document.getElementById('recon-account-select')?.value || '');
             const accountExists = state.accounts.some(a => String(a.id || '') === accId);
             if(!accountExists) {
@@ -5425,13 +5545,38 @@
                     isInternalTransfer: isInternalTransferByDescription(temp.description)
                 };
             });
-            const saveResult = await cloudSave('entries', newEntries);
+            if (summaryEl) summaryEl.innerText = `Importado 0 de ${newEntries.length}`;
+            const saveResult = await cloudSaveBatched('entries', newEntries, 200, (imported, total) => {
+                if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
+            });
             if (!saveResult?.ok) {
-                alert(`Não foi possível importar a conciliação.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
+                alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
-            state.entries.push(...newEntries);
+            const importedIds = Array.from(new Set(newEntries.map(item => String(item.id || ''))));
+            const validation = await validateImportedEntryIds(importedIds);
+            if (!validation.ok) {
+                alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
+            } else {
+                const importedNow = Number(validation.imported || 0);
+                if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${newEntries.length}`;
+                if (importedNow !== newEntries.length) {
+                    alert(`Atenção: foram validados ${importedNow} de ${newEntries.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
+                } else {
+                    alert(`Importação concluída.\n\nImportado ${importedNow} de ${newEntries.length}.`);
+                }
+            }
+            await refreshCloudState({ silent: false });
             cancelRecon(); render(); switchTab('entries');
+            } finally {
+                reconImportInFlight = false;
+                if (importBtn) {
+                    importBtn.disabled = false;
+                    importBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+                    importBtn.innerText = 'Importar';
+                }
+            }
         }
 
         function cancelRecon() { tempRecon = []; document.getElementById('recon-preview')?.classList.add('hidden'); }
