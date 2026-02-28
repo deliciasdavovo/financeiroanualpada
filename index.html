@@ -1716,7 +1716,7 @@
                 font-size: 9px !important;
             }
             #entries-table {
-                min-width: 780px;
+                min-width: 720px;
                 table-layout: auto;
             }
             #entries-table col.col-check { width: 44px; }
@@ -1747,23 +1747,49 @@
             .entries-toolbar {
                 position: static;
                 backdrop-filter: none;
+                padding: 12px !important;
             }
             .entries-toolbar-top {
+                flex-direction: column;
+                align-items: stretch;
                 margin-bottom: 8px;
+            }
+            .entries-quick-actions {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+            .entries-quick-actions .entries-quick-btn.toggle {
+                grid-column: 1 / -1;
             }
             .entries-filters-grid {
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
+            .entries-toolbar button {
+                white-space: normal;
+            }
+            .entries-quick-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 8px;
+                font-size: 9px;
+                line-height: 1.2;
+                text-align: center;
+            }
             .entries-toolbar .btn-new-entry {
                 width: 100%;
                 justify-content: center;
             }
+            #entries .table-mobile-scroll {
+                margin-left: -4px;
+                margin-right: -4px;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
             .entry-destination-panel .recon-fill-handle {
                 display: none;
-            }
-            .entries-quick-btn {
-                min-height: 44px;
             }
             .entry-action-btn,
             .internal-toggle-btn {
@@ -2320,6 +2346,13 @@
                     <div class="flex flex-wrap gap-8 items-end">
                         <div class="flex-1 min-w-[400px]"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
                         <div class="w-72"><label class="label-mini" for="recon-account-select">Conta de Destino</label><select id="recon-account-select"></select></div>
+                        <div class="w-52">
+                            <label class="label-mini" for="recon-batch-status">Status do Lote</label>
+                            <select id="recon-batch-status" onchange="applyReconBatchStatus(this.value)">
+                                <option value="REALIZADO" selected>Realizado</option>
+                                <option value="PENDENTE">Pendente</option>
+                            </select>
+                        </div>
                         <button onclick="processPaste()" class="bg-slate-900 text-white px-10 h-[50px] rounded-xl font-black text-xs uppercase shadow-xl hover:bg-black transition-all">Analisar</button>
                     </div>
                 </div>
@@ -2530,6 +2563,8 @@
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
         let selectedEntryIds = new Set();
         let entryDestinationFillState = { active: false, sourceIndex: -1, value: '', type: '', changedIds: new Set(), originalById: new Map() };
+        let pendingEntryDestinationFocusId = '';
+        let pendingEntryDestinationOpenPicker = false;
         let entriesToolbarCollapsed = true;
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
@@ -4080,30 +4115,58 @@
             }
         }
 
+        function scheduleEntryDestinationFocus(entryId, openPicker = false) {
+            pendingEntryDestinationFocusId = String(entryId || '');
+            pendingEntryDestinationOpenPicker = Boolean(openPicker);
+        }
+
+        function flushPendingEntryDestinationFocus() {
+            const targetId = String(pendingEntryDestinationFocusId || '');
+            if (!targetId) return;
+            const targetEl = document.getElementById(`entry-dst-${targetId}`);
+            if (!targetEl || typeof targetEl.focus !== 'function') return;
+            targetEl.focus();
+            if (pendingEntryDestinationOpenPicker) {
+                tryOpenSelectPicker(targetEl);
+            }
+            if (typeof targetEl.scrollIntoView === 'function') {
+                targetEl.scrollIntoView({ block: 'nearest' });
+            }
+            pendingEntryDestinationFocusId = '';
+            pendingEntryDestinationOpenPicker = false;
+        }
+
         function focusNextEntryDestination(currentId, options = {}) {
             const visible = Array.isArray(window.currentFilteredEntries) ? window.currentFilteredEntries : [];
-            if (!visible.length) return;
+            if (!visible.length) return '';
             const index = visible.findIndex(item => String((item || {}).id || '') === String(currentId || ''));
-            if (index < 0 || index >= (visible.length - 1)) return;
+            if (index < 0 || index >= (visible.length - 1)) return '';
             const next = visible[index + 1];
-            if (!next) return;
+            if (!next) return '';
             const nextEl = document.getElementById(`entry-dst-${next.id}`);
-            if (!nextEl || typeof nextEl.focus !== 'function') return;
-            nextEl.focus();
-            if (options.openPicker === true) {
-                tryOpenSelectPicker(nextEl);
+            if (options.immediate !== false && nextEl && typeof nextEl.focus === 'function') {
+                nextEl.focus();
+                if (options.openPicker === true) {
+                    tryOpenSelectPicker(nextEl);
+                }
+                if (typeof nextEl.scrollIntoView === 'function') {
+                    nextEl.scrollIntoView({ block: 'nearest' });
+                }
             }
-            if (typeof nextEl.scrollIntoView === 'function') {
-                nextEl.scrollIntoView({ block: 'nearest' });
-            }
+            return String(next.id || '');
         }
 
         function handleEntryDestinationKeydown(entryId, event) {
             if (!event) return;
-            if (event.key !== 'Enter' && event.key !== 'NumpadEnter') return;
+            const isEnter = event.key === 'Enter' || event.key === 'NumpadEnter';
+            const isCtrlDown = event.key === 'ArrowDown' && event.ctrlKey;
+            if (!isEnter && !isCtrlDown) return;
             event.preventDefault();
             event.stopPropagation();
-            focusNextEntryDestination(entryId, { openPicker: true });
+            const nextId = focusNextEntryDestination(entryId, { openPicker: true });
+            if (nextId) {
+                scheduleEntryDestinationFocus(nextId, true);
+            }
         }
 
         async function toggleQuickStatus(id) {
@@ -4531,6 +4594,7 @@
                 </tr>`;
             }).join('') || '<tr><td colspan="5" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
             lucide.createIcons();
+            requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
 
         function renderMonthly() {
@@ -5119,18 +5183,72 @@
                 .trim();
         }
 
-        const INTERNAL_TRANSFER_CNPJS = ['07436556000174', '40697224000119'];
+        const INTERNAL_TRANSFER_CNPJS = [
+            '07.436.556/0001-74',
+            '07436556000174',
+            '40.697.224/0001-19',
+            '40697224000119'
+        ];
         const INTERNAL_TRANSFER_KEYWORDS = ['transferencia', 'transfer', 'transf', 'ted', 'pix'];
         const INTERNAL_TRANSFER_CONTEXT_KEYWORDS = [
             'interna',
-            'entre contas',
             'mesma titularidade',
             'conta propria',
             'intercontas'
         ];
+        const INTERNAL_TRANSFER_DESTINATION_HINTS = [
+            'transferencia interna',
+            'transferencias internas',
+            'mesma titularidade',
+            'intercontas',
+            'intercompany'
+        ];
 
         function onlyDigits(value) {
             return String(value || '').replace(/\D/g, '');
+        }
+
+        function getInternalTransferCnpjVariants() {
+            const variants = new Set();
+            INTERNAL_TRANSFER_CNPJS.forEach((cnpj) => {
+                const digits = onlyDigits(cnpj);
+                if (!digits) return;
+                variants.add(digits);
+                variants.add(digits.replace(/^0+/, ''));
+            });
+            variants.delete('');
+            return Array.from(variants);
+        }
+
+        function containsTrackedInternalCnpj(description) {
+            const digits = onlyDigits(description);
+            if (!digits) return false;
+            const variants = getInternalTransferCnpjVariants();
+            return variants.some(cnpj => digits.includes(cnpj));
+        }
+
+        function findInternalTransferDestination(validDestinations) {
+            const list = Array.isArray(validDestinations) ? validDestinations : [];
+            if (!list.length) return '';
+            let bestId = '';
+            let bestScore = 0;
+
+            list.forEach((dst) => {
+                const nameNorm = normalizeReconText((dst || {}).name || '');
+                if (!nameNorm) return;
+                let score = 0;
+                if (nameNorm.includes('transfer')) score += 24;
+                if (nameNorm.includes('interna') || nameNorm.includes('internas')) score += 24;
+                INTERNAL_TRANSFER_DESTINATION_HINTS.forEach((hint) => {
+                    if (nameNorm.includes(hint)) score += 14;
+                });
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestId = String((dst || {}).id || '');
+                }
+            });
+
+            return bestScore >= 20 ? bestId : '';
         }
 
         function isInternalTransferByDescription(description) {
@@ -5138,9 +5256,7 @@
             if (!textNorm) return false;
             const hasTransferKeyword = INTERNAL_TRANSFER_KEYWORDS.some(keyword => textNorm.includes(keyword));
             if (!hasTransferKeyword) return false;
-            const digits = onlyDigits(description);
-            const matchedCnpjs = INTERNAL_TRANSFER_CNPJS.filter(cnpj => digits.includes(cnpj));
-            if (matchedCnpjs.length >= 1) return true;
+            if (containsTrackedInternalCnpj(description)) return true;
             return INTERNAL_TRANSFER_CONTEXT_KEYWORDS.some(keyword => textNorm.includes(keyword));
         }
 
@@ -5204,6 +5320,10 @@
 
         function inferDestinationFromDescription(description, validDestinations) {
             if(!validDestinations || validDestinations.length === 0) return '';
+            if (isInternalTransferByDescription(description)) {
+                const internalDestinationId = findInternalTransferDestination(validDestinations);
+                if (internalDestinationId) return internalDestinationId;
+            }
             const descNorm = normalizeReconText(description);
             const preferredId = findPreferredBankSalesDestination(validDestinations);
             if(!descNorm) return getMostFrequentDestination(validDestinations);
@@ -5334,9 +5454,22 @@
             };
         }
 
+        function getReconBatchStatus() {
+            const value = String(document.getElementById('recon-batch-status')?.value || 'REALIZADO').toUpperCase();
+            return value === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO';
+        }
+
+        function applyReconBatchStatus(statusValue) {
+            const status = String(statusValue || '').toUpperCase() === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO';
+            if (!Array.isArray(tempRecon) || tempRecon.length === 0) return;
+            tempRecon = tempRecon.map(item => ({ ...item, status }));
+            renderReconPreview();
+        }
+
         function processPaste() {
             const area = document.getElementById('recon-paste-area');
             if(!area) return;
+            const batchStatus = getReconBatchStatus();
             const validDestinations = getValidDestinations();
             if(validDestinations.length === 0) {
                 alert("Cadastre pelo menos 1 destino valido no Banco de Dados antes de analisar.");
@@ -5356,7 +5489,7 @@
                         date: parsedTableRow.date,
                         amount: parsedTableRow.amountAbs,
                         type: parsedTableRow.type,
-                        status: 'REALIZADO',
+                        status: batchStatus,
                         description: parsedTableRow.description || "Transação",
                         destinationId: inferredDestinationId,
                     });
@@ -5421,7 +5554,7 @@
                         date: rawDate, 
                         amount: Math.abs(val), 
                         type: flowType, 
-                        status: 'REALIZADO',
+                        status: batchStatus,
                         description: desc || "Transação", 
                         destinationId: inferredDestinationId,
                     });
@@ -5552,6 +5685,7 @@
             }
             try {
             const accId = String(document.getElementById('recon-account-select')?.value || '');
+            const batchStatus = getReconBatchStatus();
             const accountExists = state.accounts.some(a => String(a.id || '') === accId);
             if(!accountExists) {
                 alert("Selecione uma conta valida cadastrada no Banco de Dados.");
@@ -5580,7 +5714,7 @@
                     accountId: accId,
                     categoryId: String((cat || {}).id || ''),
                     subCategoryId: String((sub || {}).id || ''),
-                    status: 'REALIZADO',
+                    status: batchStatus,
                     isInternalTransfer: isInternalTransferByDescription(temp.description)
                 };
             });
@@ -6281,4 +6415,5 @@
     </script>
 </body>
 </html>
+
 
