@@ -430,10 +430,6 @@
             background: var(--bg-red-soft);
             color: var(--soft-red);
         }
-        .badge-internal {
-            background: #EEF2F7;
-            color: #475569;
-        }
         .dup-icon {
             width: 20px;
             height: 20px;
@@ -1312,6 +1308,21 @@
         .entry-destination-select::-ms-expand {
             display: none;
         }
+        .entry-destination-input {
+            width: 100%;
+            min-width: 0;
+            height: 26px;
+            padding: 0;
+            font-size: 12px;
+            font-weight: 800;
+            border: 0;
+            background: transparent;
+            color: #0F172A;
+        }
+        .entry-destination-input:focus {
+            outline: none;
+            box-shadow: none;
+        }
         .entry-destination-desc {
             font-size: 10px;
             color: #64748B;
@@ -1362,22 +1373,6 @@
             justify-content: center;
             gap: 8px;
             min-height: 22px;
-        }
-        .internal-toggle-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 8px;
-            border: 1px solid #E2E8F0;
-            background: #FFFFFF;
-            color: #94A3B8;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .internal-toggle-btn.active {
-            background: #EEF2F7;
-            color: #475569;
-            border-color: #CBD5E1;
         }
         #entries .table-mobile-scroll {
             overflow-x: auto;
@@ -1538,6 +1533,7 @@
         }
         #entries-table col.col-check { width: 52px; }
         #entries-table col.col-date { width: 96px; }
+        #entries-table col.col-account { width: 180px; }
         #entries-table col.col-value { width: 132px; }
         #entries-table col.col-actions { width: 188px; }
         #entries-table th:nth-child(1),
@@ -1623,9 +1619,6 @@
             clip: rect(0, 0, 0, 0);
             white-space: nowrap;
             border: 0;
-        }
-        .internal-row {
-            opacity: 0.45 !important;
         }
         @media (max-width: 1023px) {
             #sidebar .nav-text {
@@ -1791,8 +1784,7 @@
             .entry-destination-panel .recon-fill-handle {
                 display: none;
             }
-            .entry-action-btn,
-            .internal-toggle-btn {
+            .entry-action-btn {
                 min-width: 44px;
                 min-height: 44px;
             }
@@ -1969,7 +1961,6 @@
                             <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
                             <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()" aria-label="Filtrar lançamentos para o mês atual"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
                             <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()" aria-label="Alternar filtro de lançamentos duplicados"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
-                            <button type="button" id="entries-quick-internal" class="entries-quick-btn" onclick="toggleEntriesInternalQuick()" aria-label="Alternar visibilidade de transferências internas"><i data-lucide="repeat-2" class="w-3.5 h-3.5"></i>Ocultar Internas</button>
                             <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()" aria-label="Limpar todos os filtros de lançamentos"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
                         </div>
                     </div>
@@ -2009,9 +2000,10 @@
                         <table id="entries-table" class="w-full text-left">
                             <caption class="sr-only">Tabela de lançamentos financeiros com filtros, seleção em lote e ações por linha.</caption>
                             <colgroup>
-                                <col class="col-check">
+                            <col class="col-check">
                                 <col class="col-date">
                                 <col>
+                                <col class="col-account">
                                 <col class="col-value">
                                 <col class="col-actions">
                             </colgroup>
@@ -2022,6 +2014,7 @@
                                     </th>
                                     <th id="entries-sort-date" onclick="setSort('date')" onkeydown="handleSortHeaderKeydown('date', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por data" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
                                     <th class="px-6 py-4">Destino / Detalhes</th>
+                                    <th class="px-6 py-4">Conta / Banco</th>
                                     <th id="entries-sort-amount" onclick="setSort('amount')" onkeydown="handleSortHeaderKeydown('amount', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por valor" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
                                     <th class="px-6 py-4 w-[210px] text-center">Status / Ação</th>
                                 </tr>
@@ -2161,6 +2154,10 @@
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-nav-destination">Destino</label>
                                 <select id="annual-nav-destination"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-exclude-destination">Excluir destino</label>
+                                <select id="annual-exclude-destination"></select>
                             </div>
                         </div>
                     </div>
@@ -2458,8 +2455,10 @@
                     </div>
                 </div>
                 <div>
-                    <label for="form-dst" class="label-mini">Destino</label>
-                    <select id="form-dst" required aria-describedby="form-dst-help form-dst-error"></select>
+                    <label for="form-dst-search" class="label-mini">Destino</label>
+                    <input type="text" id="form-dst-search" list="form-dst-list" autocomplete="off" placeholder="Digite para buscar..." aria-describedby="form-dst-help form-dst-error">
+                    <datalist id="form-dst-list"></datalist>
+                    <input type="hidden" id="form-dst" required>
                     <p id="form-dst-help" class="field-help">Selecione o destino para classificar categoria e subcategoria.</p>
                     <p id="form-dst-error" class="field-error hidden" role="alert"></p>
                 </div>
@@ -2549,12 +2548,15 @@
         let destinoSelecionado = '';
         let fluxoSelecionado = 'TODOS';
         let categoriaFiltroSelecionada = '';
+        let subcategoriaFiltroSelecionada = '';
+        let destinoExcluidoMensal = '';
         let annualTemporalFlow = 'SAÍDA';
         let annualTemporalMode = 'MESES';
         let annualTemporalYear = new Date().getFullYear();
         let annualNavCategoryId = '';
         let annualNavSubCategoryId = '';
         let annualNavDestinationId = '';
+        let annualExcludedDestinationId = '';
         let currentTab = 'monthly';
         let entriesSearchTimer = null;
         let entriesPage = 1;
@@ -2563,20 +2565,19 @@
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
         let selectedEntryIds = new Set();
         let entryDestinationFillState = { active: false, sourceIndex: -1, value: '', type: '', changedIds: new Set(), originalById: new Map() };
+        let entryAccountFillState = { active: false, sourceIndex: -1, value: '', changedIds: new Set(), originalById: new Map() };
         let pendingEntryDestinationFocusId = '';
         let pendingEntryDestinationOpenPicker = false;
         let entriesToolbarCollapsed = true;
         let dbSelectedCategoryId = '';
         let dbSelectedSubCategoryId = '';
         let cloudSupportsUpdatedAt = true;
-        let cloudSupportsInternalTransfer = true;
         let treasuryBalanceChart = null;
         let lastFocusedElement = null;
         let cloudSyncInFlight = false;
         let cloudRefreshTimer = null;
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
-        let entriesHideInternal = false;
 
         function getStateSnapshot() {
             return {
@@ -2620,8 +2621,7 @@
                 categoryId: String((e.categoryId ?? e.category_id) || ''),
                 subCategoryId: String((e.subCategoryId ?? e.sub_category_id) || ''),
                 destinationId: String((e.destinationId ?? e.destination_id) || ''),
-                updatedAt: String((e.updatedAt ?? e.updated_at) || ''),
-                isInternalTransfer: isInternalEntry(e)
+                updatedAt: String((e.updatedAt ?? e.updated_at) || '')
             }));
             state.storeDailyMovements = (state.storeDailyMovements || []).map(m => ({
                 ...m,
@@ -2689,7 +2689,6 @@
                 const el = document.getElementById(id);
                 if (el) el.value = value;
             });
-            entriesHideInternal = false;
             entriesPage = 1;
             renderEntries();
         }
@@ -2714,12 +2713,6 @@
             renderEntries();
         }
 
-        function toggleEntriesInternalQuick() {
-            entriesHideInternal = !entriesHideInternal;
-            entriesPage = 1;
-            renderEntries();
-        }
-
         function updateBackupIndicator(savedAtIso) {
             const el = document.getElementById('backup-status');
             if (!el) return;
@@ -2736,18 +2729,13 @@
             return clean;
         }
 
-        function sanitizePayloadForCloud(table, data, includeUpdatedAt = true, includeInternalTransfer = true) {
+        function sanitizePayloadForCloud(table, data, includeUpdatedAt = true) {
             const sanitizeEntryForCloud = (entry) => {
                 if (!entry || typeof entry !== 'object') return entry;
                 const clean = { ...entry };
-                const internalFlag = isInternalEntry(clean);
                 delete clean.isInternalTransfer;
                 delete clean.internalTransfer;
-                if (includeInternalTransfer) {
-                    clean.is_internal_transfer = internalFlag;
-                } else {
-                    delete clean.is_internal_transfer;
-                }
+                delete clean.is_internal_transfer;
                 return clean;
             };
             let payload = table === 'entries'
@@ -2760,10 +2748,6 @@
         function isUpdatedAtColumnError(error) {
             const message = String((error || {}).message || error || '').toLowerCase();
             return message.includes('updatedat') || message.includes('updated_at');
-        }
-        function isInternalTransferColumnError(error) {
-            const message = String((error || {}).message || error || '').toLowerCase();
-            return message.includes('is_internal_transfer') || message.includes('internaltransfer');
         }
         function isMissingTableError(error) {
             if (!error) return false;
@@ -2811,21 +2795,15 @@
 
         async function upsertWithUpdatedAtFallback(table, data) {
             let includeUpdatedAt = cloudSupportsUpdatedAt;
-            let includeInternalTransfer = cloudSupportsInternalTransfer;
             for (let attempt = 0; attempt < 3; attempt++) {
-                const payload = sanitizePayloadForCloud(table, data, includeUpdatedAt, includeInternalTransfer);
+                const payload = sanitizePayloadForCloud(table, data, includeUpdatedAt);
                 const { error } = await sbClient.from(table).upsert(payload);
                 if (!error) {
                     cloudSupportsUpdatedAt = includeUpdatedAt;
-                    cloudSupportsInternalTransfer = includeInternalTransfer;
                     return { error: null };
                 }
                 if (includeUpdatedAt && isUpdatedAtColumnError(error)) {
                     includeUpdatedAt = false;
-                    continue;
-                }
-                if (table === 'entries' && includeInternalTransfer && isInternalTransferColumnError(error)) {
-                    includeInternalTransfer = false;
                     continue;
                 }
                 return { error };
@@ -3201,7 +3179,215 @@
             const filtered = duplicateFilter === 'ONLY' ? base.filter(e => dupMeta.duplicateIds.has(e.id)) : base;
             return filtered.sort((a,b) => (b.date || '').localeCompare(a.date || '') || (Number(b.amount)||0) - (Number(a.amount)||0));
         }
-        function exportCurrentReportPDF() {
+        function buildPrintableShellV2(title, subtitle, tableHtml) {
+            return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+            <style>
+                @page{size:A4 portrait;margin:14mm;}
+                *{box-sizing:border-box;}
+                body{font-family:Arial,sans-serif;color:#0f172a;padding:0;margin:0;background:#fff;}
+                h1{margin:0 0 4px;font-size:20px;}
+                p{margin:0 0 14px;color:#475569;font-size:12px;}
+                table{width:100%;border-collapse:collapse;font-size:11px;}
+                th,td{border:1px solid #e2e8f0;padding:7px 8px;text-align:left;vertical-align:top;}
+                th{background:#f8fafc;font-weight:700;text-transform:uppercase;font-size:10px;color:#475569;}
+                .r{text-align:right;}
+                .c{text-align:center;}
+                .report{display:flex;flex-direction:column;gap:14px;}
+                .report-head{border-bottom:2px solid #e2e8f0;padding-bottom:10px;}
+                .report-subtitle{margin-bottom:0;}
+                .report-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+                .report-pill{display:inline-flex;align-items:center;border:1px solid #dbe4ee;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:700;color:#475569;background:#f8fafc;}
+                .print-section{break-inside:avoid;page-break-inside:avoid;}
+                .print-section-title{margin:0 0 8px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#0f172a;}
+                .print-kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0;}
+                .print-kpi-card{border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;}
+                .print-kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;color:#64748b;margin:0 0 4px;}
+                .print-kpi-value{font-size:14px;font-weight:800;margin:0;color:#0f172a;}
+                .print-card{border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#fff;}
+                .level-cell{font-weight:700;}
+                .level-1{padding-left:8px;}
+                .level-2{padding-left:22px;}
+                .level-3{padding-left:36px;}
+                .flow-in{color:#1f7a5c;}
+                .flow-out{color:#b23a3a;}
+                @media print {
+                    body{padding:0;}
+                    .print-section{break-inside:avoid-page;page-break-inside:avoid;}
+                }
+            </style></head><body>
+            <div class="report">
+                <div class="report-head">
+                    <h1>${escapeHtml(title)}</h1>
+                    <p class="report-subtitle">${escapeHtml(subtitle)}</p>
+                </div>
+                ${tableHtml}
+            </div>
+            </body></html>`;
+        }
+        function buildExportSectionV2(title, content) {
+            return `<section class="print-section">
+                <h2 class="print-section-title">${escapeHtml(title)}</h2>
+                ${content}
+            </section>`;
+        }
+        function formatDateBRV2(value) {
+            const raw = String(value || '');
+            if (!raw) return '-';
+            const parts = raw.split('-');
+            if (parts.length !== 3) return escapeHtml(raw);
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        function buildExportPillsV2(pairs) {
+            const items = (pairs || []).filter(pair => pair && pair[1]);
+            if (!items.length) return '';
+            return `<div class="report-meta">${items.map(([label, value]) => `<span class="report-pill">${escapeHtml(label)}: ${escapeHtml(value)}</span>`).join('')}</div>`;
+        }
+        function buildExportKpiCardsV2(cards) {
+            const safeCards = (cards || []).filter(Boolean);
+            return `<div class="print-kpi">${safeCards.map(card => `<div class="print-kpi-card">
+                <p class="print-kpi-label">${escapeHtml(card.label || '')}</p>
+                <p class="print-kpi-value ${card.className || ''}">${escapeHtml(card.value || '')}</p>
+            </div>`).join('')}</div>`;
+        }
+        function getFlowMetaV2(flow) {
+            const normalized = normalizeFlowType(flow);
+            return normalized === 'ENTRADA'
+                ? { label: 'Entrada', className: 'flow-in', sign: '+' }
+                : { label: 'Saída', className: 'flow-out', sign: '-' };
+        }
+        function formatSignedBRLV2(value, flow) {
+            const meta = getFlowMetaV2(flow);
+            return `${meta.sign} ${formatBRL(Math.abs(Number(value) || 0))}`;
+        }
+        function buildMonthlyDailyExportTableV2(filter, entries) {
+            const daysInMonth = new Date(...filter.split('-').map((v, i) => i === 0 ? v : v - 1), 0).getDate();
+            let cumulative = 0;
+            const rows = [];
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dayStr = `${filter}-${String(d).padStart(2, '0')}`;
+                const dayEntries = entries.filter(e => e.date === dayStr);
+                const inc = dayEntries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                const exp = dayEntries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                const net = inc - exp;
+                cumulative += net;
+                rows.push(`<tr>
+                    <td>${String(d).padStart(2, '0')}</td>
+                    <td class="r">${formatBRL(inc)}</td>
+                    <td class="r">${formatBRL(exp)}</td>
+                    <td class="r ${net >= 0 ? 'flow-in' : 'flow-out'}">${formatBRL(net)}</td>
+                    <td class="r">${formatBRL(cumulative)}</td>
+                </tr>`);
+            }
+            return `<div class="print-card"><table><thead><tr><th>Dia</th><th class="r">Entradas Realizadas</th><th class="r">Saídas Realizadas</th><th class="r">Saldo do Dia</th><th class="r">Saldo Acumulado</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+        }
+        function buildMonthlyHierarchyTableV2Legacy(entries) {
+            const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
+            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>';
+
+            const grouped = new Map();
+            dadosBase.forEach((item) => {
+                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
+                const categoria = item.categoria || 'Sem categoria';
+                const subcategoria = item.subcategoria || 'Sem subcategoria';
+                const destino = item.destino || 'Sem destino';
+                const valor = Number(item.valor) || 0;
+                const flowKey = `${fluxo}::${categoria}`;
+
+                if (!grouped.has(flowKey)) grouped.set(flowKey, { flow: fluxo, categoria, total: 0, count: 0, subs: new Map() });
+                const catRef = grouped.get(flowKey);
+                catRef.total += valor;
+                catRef.count += 1;
+
+                if (!catRef.subs.has(subcategoria)) catRef.subs.set(subcategoria, { total: 0, count: 0, destinos: new Map() });
+                const subRef = catRef.subs.get(subcategoria);
+                subRef.total += valor;
+                subRef.count += 1;
+
+                if (!subRef.destinos.has(destino)) subRef.destinos.set(destino, { total: 0, count: 0 });
+                const dstRef = subRef.destinos.get(destino);
+                dstRef.total += valor;
+                dstRef.count += 1;
+            });
+
+            const rows = [];
+            Array.from(grouped.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([categoria, catData]) => {
+                rows.push(`<tr><td class="level-cell level-1">${escapeHtml(categoria)}</td><td>Categoria</td><td class="r">${catData.count}</td><td class="r">${formatBRL(catData.total)}</td></tr>`);
+                Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([subcategoria, subData]) => {
+                    rows.push(`<tr><td class="level-cell level-2">${escapeHtml(subcategoria)}</td><td>Subcategoria</td><td class="r">${subData.count}</td><td class="r">${formatBRL(subData.total)}</td></tr>`);
+                    Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([destino, dstData]) => {
+                        rows.push(`<tr><td class="level-cell level-3">${escapeHtml(destino)}</td><td>Destino</td><td class="r">${dstData.count}</td><td class="r">${formatBRL(dstData.total)}</td></tr>`);
+                    });
+                });
+            });
+
+            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+        }
+        function buildMonthlyHierarchyExportHtmlV2(entries) {
+            const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
+            if (!dadosBase.length) return buildExportSectionV2('Resumo', '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>');
+
+            const totais = dadosBase.reduce((acc, item) => {
+                const valor = Number(item.valor) || 0;
+                if (item.tipo === 'entrada') acc.entrada += valor;
+                else acc.saida += valor;
+                acc.count += 1;
+                return acc;
+            }, { entrada: 0, saida: 0, count: 0 });
+
+            return [
+                buildExportSectionV2('Resumo', buildExportKpiCardsV2([
+                    { label: 'Entradas', value: formatBRL(totais.entrada), className: 'flow-in' },
+                    { label: 'Saídas', value: formatBRL(totais.saida), className: 'flow-out' },
+                    { label: 'Saldo', value: formatBRL(totais.entrada - totais.saida), className: totais.entrada - totais.saida >= 0 ? 'flow-in' : 'flow-out' },
+                    { label: 'Lançamentos', value: String(totais.count) }
+                ])),
+                buildExportSectionV2('Distribuição Por Categoria', buildMonthlyHierarchyTableV2(entries))
+            ].join('');
+        }
+        function buildMonthlyHierarchyTableV2(entries) {
+            const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
+            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>';
+
+            const grouped = new Map();
+            dadosBase.forEach((item) => {
+                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
+                const categoria = item.categoria || 'Sem categoria';
+                const subcategoria = item.subcategoria || 'Sem subcategoria';
+                const destino = item.destino || 'Sem destino';
+                const valor = Number(item.valor) || 0;
+                const flowKey = `${fluxo}::${categoria}`;
+
+                if (!grouped.has(flowKey)) grouped.set(flowKey, { flow: fluxo, categoria, total: 0, count: 0, subs: new Map() });
+                const catRef = grouped.get(flowKey);
+                catRef.total += valor;
+                catRef.count += 1;
+
+                if (!catRef.subs.has(subcategoria)) catRef.subs.set(subcategoria, { total: 0, count: 0, destinos: new Map() });
+                const subRef = catRef.subs.get(subcategoria);
+                subRef.total += valor;
+                subRef.count += 1;
+
+                if (!subRef.destinos.has(destino)) subRef.destinos.set(destino, { total: 0, count: 0 });
+                const dstRef = subRef.destinos.get(destino);
+                dstRef.total += valor;
+                dstRef.count += 1;
+            });
+
+            const rows = [];
+            Array.from(grouped.values()).sort((a, b) => b.total - a.total).forEach((catData) => {
+                const catMeta = getFlowMetaV2(catData.flow);
+                rows.push(`<tr><td class="level-cell level-1">${escapeHtml(catData.categoria)}</td><td>${catMeta.label}</td><td>Categoria</td><td class="r">${catData.count}</td><td class="r ${catMeta.className}">${formatSignedBRLV2(catData.total, catData.flow)}</td></tr>`);
+                Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([subcategoria, subData]) => {
+                    rows.push(`<tr><td class="level-cell level-2">${escapeHtml(subcategoria)}</td><td>${catMeta.label}</td><td>Subcategoria</td><td class="r">${subData.count}</td><td class="r ${catMeta.className}">${formatSignedBRLV2(subData.total, catData.flow)}</td></tr>`);
+                    Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([destino, dstData]) => {
+                        rows.push(`<tr><td class="level-cell level-3">${escapeHtml(destino)}</td><td>${catMeta.label}</td><td>Destino</td><td class="r">${dstData.count}</td><td class="r ${catMeta.className}">${formatSignedBRLV2(dstData.total, catData.flow)}</td></tr>`);
+                    });
+                });
+            });
+
+            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Fluxo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+        }
+        function exportCurrentReportPDFLegacy() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
             let tableHtml = '<p>Sem dados para exportação.</p>';
@@ -3253,6 +3439,192 @@
             }
             win.document.open();
             win.document.write(buildPrintableShell(title, subtitle, tableHtml));
+            win.document.close();
+            win.focus();
+            setTimeout(() => win.print(), 250);
+        }
+        function exportCurrentReportPDFV2() {
+            let title = '';
+            let subtitle = `Gerado em ${getExportTimestamp()}`;
+            let tableHtml = '<p>Sem dados para exportação.</p>';
+
+            if (currentTab === 'entries') {
+                const rows = getEntriesForExport();
+                const totalEntrada = rows.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                const totalSaida = rows.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                title = 'Relatório de Lançamentos';
+                tableHtml = [
+                    buildExportSectionV2('Resumo', buildExportKpiCardsV2([
+                        { label: 'Entradas', value: formatBRL(totalEntrada), className: 'flow-in' },
+                        { label: 'Saídas', value: formatBRL(totalSaida), className: 'flow-out' },
+                        { label: 'Saldo', value: formatBRL(totalEntrada - totalSaida), className: totalEntrada - totalSaida >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Registros', value: String(rows.length) }
+                    ])),
+                    buildExportSectionV2('Lançamentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
+                        ${rows.map(e => {
+                            const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
+                            return `<tr>
+                                <td>${formatDateBRV2(e.date)}</td>
+                                <td>${escapeHtml(dst)}</td>
+                                <td>${escapeHtml(e.description || '')}</td>
+                                <td class="c">${escapeHtml(e.status || '-')}</td>
+                                <td class="r">${formatBRL(e.amount)}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody></table></div>`)
+                ].join('');
+            } else if (currentTab === 'monthly') {
+                const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
+                const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+                title = `Relatório Mensal (${filter})`;
+                subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
+                tableHtml = [
+                    buildExportPillsV2([
+                        ['Período', filter],
+                        ['Fluxo', fluxoSelecionado || 'TODOS'],
+                        ['Categoria', categoriaFiltroSelecionada || 'Todas']
+                    ]),
+                    buildMonthlyHierarchyExportHtmlV2(entries),
+                    buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries))
+                ].join('');
+            } else if (currentTab === 'annual') {
+                const year = new Date().getFullYear();
+                const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                const data = monthNames.map((_, idx) => {
+                    const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
+                    const mEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
+                    const inc = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                    return { month: monthNames[idx], inc, exp, bal: inc - exp };
+                });
+                const totalInc = data.reduce((acc, row) => acc + row.inc, 0);
+                const totalExp = data.reduce((acc, row) => acc + row.exp, 0);
+                title = `Relatório Anual (${year})`;
+                tableHtml = [
+                    buildExportSectionV2('Resumo', buildExportKpiCardsV2([
+                        { label: 'Entradas', value: formatBRL(totalInc), className: 'flow-in' },
+                        { label: 'Saídas', value: formatBRL(totalExp), className: 'flow-out' },
+                        { label: 'Saldo', value: formatBRL(totalInc - totalExp), className: totalInc - totalExp >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Meses', value: '12' }
+                    ])),
+                    buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th></tr></thead><tbody>
+                        ${data.map(r => `<tr><td>${r.month}</td><td class="r">${formatBRL(r.inc)}</td><td class="r">${formatBRL(r.exp)}</td><td class="r">${formatBRL(r.bal)}</td></tr>`).join('')}
+                    </tbody></table></div>`)
+                ].join('');
+            } else {
+                title = 'Relatório';
+                tableHtml = '<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>';
+            }
+
+            const win = window.open('', '_blank');
+            if (!win) {
+                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
+                return;
+            }
+            win.document.open();
+            win.document.write(buildPrintableShellV2(title, subtitle, tableHtml));
+            win.document.close();
+            win.focus();
+            setTimeout(() => win.print(), 250);
+        }
+        function exportCurrentReportPDF() {
+            let title = '';
+            let subtitle = `Gerado em ${getExportTimestamp()}`;
+            let tableHtml = '<p>Sem dados para exportação.</p>';
+
+            if (currentTab === 'entries') {
+                const rows = getEntriesForExport();
+                const totalEntrada = rows.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                const totalSaida = rows.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                title = 'Relatório de Lançamentos';
+                tableHtml = [
+                    buildExportSectionV2('Resumo', buildExportKpiCardsV2([
+                        { label: 'Entradas', value: formatBRL(totalEntrada), className: 'flow-in' },
+                        { label: 'Saídas', value: formatBRL(totalSaida), className: 'flow-out' },
+                        { label: 'Saldo', value: formatBRL(totalEntrada - totalSaida), className: totalEntrada - totalSaida >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Registros', value: String(rows.length) }
+                    ])),
+                    buildExportSectionV2('Lançamentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Fluxo</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
+                        ${rows.map(e => {
+                            const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
+                            const flowMeta = getFlowMetaV2(e.type);
+                            return `<tr>
+                                <td>${formatDateBRV2(e.date)}</td>
+                                <td class="${flowMeta.className}">${flowMeta.label}</td>
+                                <td>${escapeHtml(dst)}</td>
+                                <td>${escapeHtml(e.description || '')}</td>
+                                <td class="c">${escapeHtml(e.status || '-')}</td>
+                                <td class="r ${flowMeta.className}">${formatSignedBRLV2(e.amount, e.type)}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody></table></div>`)
+                ].join('');
+            } else if (currentTab === 'monthly') {
+                const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
+                const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+                const monthlyRows = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
+                title = `Relatório Mensal (${filter})`;
+                subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
+
+                const hierarchyRows = monthlyRows
+                    .sort((a, b) => (Number(b.valor) || 0) - (Number(a.valor) || 0))
+                    .map(item => {
+                        const flowMeta = getFlowMetaV2(item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA');
+                        return `<tr>
+                            <td class="${flowMeta.className}">${flowMeta.label}</td>
+                            <td>${escapeHtml(item.categoria || 'Sem categoria')}</td>
+                            <td>${escapeHtml(item.subcategoria || 'Sem subcategoria')}</td>
+                            <td>${escapeHtml(item.destino || 'Sem destino')}</td>
+                            <td class="r ${flowMeta.className}">${formatSignedBRLV2(item.valor, flowMeta.label === 'Entrada' ? 'ENTRADA' : 'SAÍDA')}</td>
+                        </tr>`;
+                    }).join('');
+
+                tableHtml = [
+                    buildExportPillsV2([
+                        ['Período', filter],
+                        ['Fluxo', fluxoSelecionado || 'TODOS'],
+                        ['Categoria', categoriaFiltroSelecionada || 'Todas']
+                    ]),
+                    buildMonthlyHierarchyExportHtmlV2(entries),
+                    buildExportSectionV2('Detalhamento do Fluxo', `<div class="print-card"><table><thead><tr><th>Fluxo</th><th>Categoria</th><th>Subcategoria</th><th>Destino</th><th class="r">Valor</th></tr></thead><tbody>${hierarchyRows || '<tr><td colspan="5" class="c">Sem dados</td></tr>'}</tbody></table></div>`),
+                    buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries))
+                ].join('');
+            } else if (currentTab === 'annual') {
+                const year = new Date().getFullYear();
+                const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                const data = monthNames.map((_, idx) => {
+                    const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
+                    const mEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
+                    const inc = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                    return { month: monthNames[idx], inc, exp, bal: inc - exp };
+                });
+                const totalInc = data.reduce((acc, row) => acc + row.inc, 0);
+                const totalExp = data.reduce((acc, row) => acc + row.exp, 0);
+                title = `Relatório Anual (${year})`;
+                tableHtml = [
+                    buildExportSectionV2('Resumo', buildExportKpiCardsV2([
+                        { label: 'Entradas', value: formatBRL(totalInc), className: 'flow-in' },
+                        { label: 'Saídas', value: formatBRL(totalExp), className: 'flow-out' },
+                        { label: 'Saldo', value: formatBRL(totalInc - totalExp), className: totalInc - totalExp >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Meses', value: '12' }
+                    ])),
+                    buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r flow-in">Entradas (+)</th><th class="r flow-out">Saídas (-)</th><th class="r">Saldo</th></tr></thead><tbody>
+                        ${data.map(r => `<tr><td>${r.month}</td><td class="r flow-in">+ ${formatBRL(r.inc)}</td><td class="r flow-out">- ${formatBRL(r.exp)}</td><td class="r ${r.bal >= 0 ? 'flow-in' : 'flow-out'}">${r.bal >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(r.bal))}</td></tr>`).join('')}
+                    </tbody></table></div>`)
+                ].join('');
+            } else {
+                title = 'Relatório';
+                tableHtml = '<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>';
+            }
+
+            const win = window.open('', '_blank');
+            if (!win) {
+                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
+                return;
+            }
+            win.document.open();
+            win.document.write(buildPrintableShellV2(title, subtitle, tableHtml));
             win.document.close();
             win.focus();
             setTimeout(() => win.print(), 250);
@@ -3315,13 +3687,8 @@
             if (raw === 'SAÍDA' || raw === 'SAIDA') return 'SAÍDA';
             return raw;
         }
-        const isInternalEntry = (entry) => Boolean(
-            entry &&
-            (entry.isInternalTransfer === true ||
-             entry.internalTransfer === true ||
-             entry.is_internal_transfer === true)
-        );
-        const getAnalyticalEntries = (entries) => (Array.isArray(entries) ? entries : []).filter(e => !isInternalEntry(e));
+        const isInternalEntry = () => false;
+        const getAnalyticalEntries = (entries) => (Array.isArray(entries) ? entries : []);
 
         function agruparPor(dados, campo) {
             return dados.reduce((acc, item) => {
@@ -3356,6 +3723,7 @@
                     tipo: normalizeFlowType(e.type) === 'ENTRADA' ? 'entrada' : 'saida',
                     categoria: (cat || {}).name || 'Sem categoria',
                     subcategoria: (sub || {}).name || 'Sem subcategoria',
+                    destinationId: String((dst || {}).id || ''),
                     destino: (dst || {}).name || 'Sem destino',
                     valor: Number(e.amount) || 0,
                     data: e.date || '',
@@ -3364,12 +3732,30 @@
                 };
             });
         }
+        function applyMonthlySelectionFiltersToEntries(entries) {
+            return (entries || []).filter(e => {
+                const dst = state.destinations.find(d => d.id === e.destinationId);
+                const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+                const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+                const flowName = normalizeFlowType(e.type) === 'ENTRADA' ? 'ENTRADAS' : 'SAIDAS';
+                const categoryName = (cat || {}).name || 'Sem categoria';
+                const subCategoryName = (sub || {}).name || 'Sem subcategoria';
+                const destinationName = (dst || {}).name || 'Sem destino';
+                if (fluxoSelecionado !== 'TODOS' && flowName !== fluxoSelecionado) return false;
+                if (categoriaFiltroSelecionada && categoryName !== categoriaFiltroSelecionada) return false;
+                if (subcategoriaFiltroSelecionada && subCategoryName !== subcategoriaFiltroSelecionada) return false;
+                if (destinoExcluidoMensal && destinationName === destinoExcluidoMensal) return false;
+                return true;
+            });
+        }
 
         function aplicarFiltrosBaseHierarquia(dados) {
             let filtrado = [...dados];
             if(fluxoSelecionado === 'ENTRADAS') filtrado = filtrado.filter(d => d.tipo === 'entrada');
             if(fluxoSelecionado === 'SAIDAS') filtrado = filtrado.filter(d => d.tipo === 'saida');
             if(categoriaFiltroSelecionada) filtrado = filtrado.filter(d => d.categoria === categoriaFiltroSelecionada);
+            if(subcategoriaFiltroSelecionada) filtrado = filtrado.filter(d => d.subcategoria === subcategoriaFiltroSelecionada);
+            if(destinoExcluidoMensal) filtrado = filtrado.filter(d => d.destino !== destinoExcluidoMensal);
             return filtrado;
         }
 
@@ -3410,7 +3796,6 @@
             nivelAtual = 'lancamentos';
             renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
         }
-
         function renderResumoCardsAgrupados(grupos, totalMes, onClickFn) {
             const entries = Object.entries(grupos).sort((a, b) => b[1].total - a[1].total);
             if(entries.length === 0) return `<div class="hm-empty">Nenhum dado encontrado para os filtros selecionados.</div>`;
@@ -3513,12 +3898,25 @@
             </div>`;
         }
 
-        function renderAnaliseHierarquicaMensal(entries) {
+        function renderAnaliseHierarquicaMensalLegacy(entries) {
             const section = document.getElementById('analise-hierarquica-mensal');
             if(!section) return;
             const dados = getMonthlyHierarchyData(entries);
-            const categoriasDisponiveis = Array.from(new Set(dados.map(d => d.categoria))).sort((a, b) => a.localeCompare(b));
+            const dadosFluxo = fluxoSelecionado === 'ENTRADAS'
+                ? dados.filter(d => d.tipo === 'entrada')
+                : fluxoSelecionado === 'SAIDAS'
+                    ? dados.filter(d => d.tipo === 'saida')
+                    : [...dados];
+            const categoriasDisponiveis = Array.from(new Set(dadosFluxo.map(d => d.categoria))).sort((a, b) => a.localeCompare(b));
             if(categoriaFiltroSelecionada && !categoriasDisponiveis.includes(categoriaFiltroSelecionada)) categoriaFiltroSelecionada = '';
+            const dadosCategoria = categoriaFiltroSelecionada ? dadosFluxo.filter(d => d.categoria === categoriaFiltroSelecionada) : dadosFluxo;
+            const subcategoriasDisponiveis = Array.from(new Set(dadosCategoria.map(d => d.subcategoria))).sort((a, b) => a.localeCompare(b));
+            if(subcategoriaFiltroSelecionada && !subcategoriasDisponiveis.includes(subcategoriaFiltroSelecionada)) subcategoriaFiltroSelecionada = '';
+            const dadosSubcategoria = subcategoriaFiltroSelecionada ? dadosCategoria.filter(d => d.subcategoria === subcategoriaFiltroSelecionada) : dadosCategoria;
+            const destinosDisponiveis = Array.from(new Set(dadosSubcategoria.map(d => d.destino))).sort((a, b) => a.localeCompare(b));
+            if(!Array.isArray(destinosFiltroSelecionados)) destinosFiltroSelecionados = [];
+            destinosFiltroSelecionados = destinosFiltroSelecionados.filter(dest => destinosDisponiveis.includes(dest));
+            if(destinosDisponiveis.length && destinosFiltroSelecionados.length === 0) destinosFiltroSelecionados = [...destinosDisponiveis];
 
             section.className = 'card-premium p-8 space-y-6';
             section.innerHTML = `
@@ -3547,32 +3945,69 @@
                             ${categoriasDisponiveis.map(c => `<option value="${c}">${c}</option>`).join('')}
                         </select>
                     </div>
+                    <div>
+                        <label class="label-mini" for="hm-subcategory-filter">Subcategoria</label>
+                        <select id="hm-subcategory-filter">
+                            <option value="">Todas</option>
+                            ${subcategoriasDisponiveis.map(s => `<option value="${s}">${s}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-mini">Destinos</label>
+                        <div class="hm-destination-picker">
+                            <div class="hm-destination-actions">
+                                <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(true)">Todos</button>
+                                <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(false)">Limpar</button>
+                            </div>
+                            <div class="hm-destination-list">
+                                ${destinosDisponiveis.map(d => `<label class="hm-check"><input type="checkbox" ${destinosFiltroSelecionados.includes(d) ? 'checked' : ''} onchange="hmToggleDestinationSelection(decodeURIComponent('${encodeSafe(d)}'), this.checked)"><span>${d}</span></label>`).join('') || '<span class="text-[11px] text-slate-400">Nenhum destino disponível</span>'}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="hm-content"></div>
             `;
 
             const flowFilterEl = document.getElementById('hm-flow-filter');
             const catFilterEl = document.getElementById('hm-category-filter');
+            const subFilterEl = document.getElementById('hm-subcategory-filter');
             if(flowFilterEl) {
                 flowFilterEl.value = fluxoSelecionado;
                 flowFilterEl.onchange = () => {
                     fluxoSelecionado = flowFilterEl.value;
+                    categoriaFiltroSelecionada = '';
+                    subcategoriaFiltroSelecionada = '';
+                    destinosFiltroSelecionados = [];
                     nivelAtual = 'categoria';
                     categoriaSelecionada = '';
                     subcategoriaSelecionada = '';
                     destinoSelecionado = '';
-                    renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+                    renderMonthly();
                 };
             }
             if(catFilterEl) {
                 catFilterEl.value = categoriaFiltroSelecionada;
                 catFilterEl.onchange = () => {
                     categoriaFiltroSelecionada = catFilterEl.value;
+                    subcategoriaFiltroSelecionada = '';
+                    destinosFiltroSelecionados = [];
                     nivelAtual = 'categoria';
                     categoriaSelecionada = '';
                     subcategoriaSelecionada = '';
                     destinoSelecionado = '';
-                    renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
+                    renderMonthly();
+                };
+            }
+            if(subFilterEl) {
+                subFilterEl.value = subcategoriaFiltroSelecionada;
+                subFilterEl.onchange = () => {
+                    subcategoriaFiltroSelecionada = subFilterEl.value;
+                    destinosFiltroSelecionados = [];
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderMonthly();
                 };
             }
 
@@ -3589,6 +4024,136 @@
             return renderLancamentos(dadosBase);
         }
 
+        function renderAnaliseHierarquicaMensal(entries) {
+            const section = document.getElementById('analise-hierarquica-mensal');
+            if(!section) return;
+            const dados = getMonthlyHierarchyData(entries);
+            const dadosFluxo = fluxoSelecionado === 'ENTRADAS'
+                ? dados.filter(d => d.tipo === 'entrada')
+                : fluxoSelecionado === 'SAIDAS'
+                    ? dados.filter(d => d.tipo === 'saida')
+                    : [...dados];
+            const categoriasDisponiveis = Array.from(new Set(dadosFluxo.map(d => d.categoria))).sort((a, b) => a.localeCompare(b));
+            if(categoriaFiltroSelecionada && !categoriasDisponiveis.includes(categoriaFiltroSelecionada)) categoriaFiltroSelecionada = '';
+            const dadosCategoria = categoriaFiltroSelecionada ? dadosFluxo.filter(d => d.categoria === categoriaFiltroSelecionada) : dadosFluxo;
+            const subcategoriasDisponiveis = Array.from(new Set(dadosCategoria.map(d => d.subcategoria))).sort((a, b) => a.localeCompare(b));
+            if(subcategoriaFiltroSelecionada && !subcategoriasDisponiveis.includes(subcategoriaFiltroSelecionada)) subcategoriaFiltroSelecionada = '';
+            const dadosSubcategoria = subcategoriaFiltroSelecionada ? dadosCategoria.filter(d => d.subcategoria === subcategoriaFiltroSelecionada) : dadosCategoria;
+            const destinosDisponiveis = Array.from(new Set(dadosSubcategoria.map(d => d.destino))).sort((a, b) => a.localeCompare(b));
+            if(destinoExcluidoMensal && !destinosDisponiveis.includes(destinoExcluidoMensal)) destinoExcluidoMensal = '';
+
+            section.className = 'card-premium p-8 space-y-6';
+            section.innerHTML = `
+                <div class="flex items-center justify-between gap-4 flex-wrap">
+                    <h4 class="text-sm font-black text-slate-900">Análise hierárquica mensal</h4>
+                    <div class="hm-breadcrumb">
+                        <button onclick="hmBreadcrumbTo('categoria')">Relatório Mensal</button>
+                        ${categoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('subcategoria')">${categoriaSelecionada}</button>` : ''}
+                        ${subcategoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('destino')">${subcategoriaSelecionada}</button>` : ''}
+                        ${destinoSelecionado ? `<span class="hm-sep">></span><span class="text-slate-700 font-semibold">${destinoSelecionado}</span>` : ''}
+                    </div>
+                </div>
+                <div class="hm-filters">
+                    <div>
+                        <label class="label-mini" for="hm-flow-filter">Fluxo</label>
+                        <select id="hm-flow-filter">
+                            <option value="TODOS">Todos</option>
+                            <option value="ENTRADAS">Entradas</option>
+                            <option value="SAIDAS">Saídas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-mini" for="hm-category-filter">Categoria (opcional)</label>
+                        <select id="hm-category-filter">
+                            <option value="">Todas</option>
+                            ${categoriasDisponiveis.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-mini" for="hm-subcategory-filter">Subcategoria</label>
+                        <select id="hm-subcategory-filter">
+                            <option value="">Todas</option>
+                            ${subcategoriasDisponiveis.map(s => `<option value="${s}">${s}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-mini" for="hm-exclude-destination-filter">Excluir destino</label>
+                        <select id="hm-exclude-destination-filter">
+                            <option value="">Nenhum</option>
+                            ${destinosDisponiveis.map(d => `<option value="${d}">${d}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                <div id="hm-content"></div>
+            `;
+
+            const flowFilterEl = document.getElementById('hm-flow-filter');
+            const catFilterEl = document.getElementById('hm-category-filter');
+            const subFilterEl = document.getElementById('hm-subcategory-filter');
+            const excludeDestinationEl = document.getElementById('hm-exclude-destination-filter');
+            if(flowFilterEl) {
+                flowFilterEl.value = fluxoSelecionado;
+                flowFilterEl.onchange = () => {
+                    fluxoSelecionado = flowFilterEl.value;
+                    categoriaFiltroSelecionada = '';
+                    subcategoriaFiltroSelecionada = '';
+                    destinoExcluidoMensal = '';
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderMonthly();
+                };
+            }
+            if(catFilterEl) {
+                catFilterEl.value = categoriaFiltroSelecionada;
+                catFilterEl.onchange = () => {
+                    categoriaFiltroSelecionada = catFilterEl.value;
+                    subcategoriaFiltroSelecionada = '';
+                    destinoExcluidoMensal = '';
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderMonthly();
+                };
+            }
+            if(subFilterEl) {
+                subFilterEl.value = subcategoriaFiltroSelecionada;
+                subFilterEl.onchange = () => {
+                    subcategoriaFiltroSelecionada = subFilterEl.value;
+                    destinoExcluidoMensal = '';
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderMonthly();
+                };
+            }
+            if(excludeDestinationEl) {
+                excludeDestinationEl.value = destinoExcluidoMensal;
+                excludeDestinationEl.onchange = () => {
+                    destinoExcluidoMensal = excludeDestinationEl.value;
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderMonthly();
+                };
+            }
+
+            const dadosBase = aplicarFiltrosBaseHierarquia(dados);
+            if(dadosBase.length === 0) {
+                const content = document.getElementById('hm-content');
+                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponível para o mês e filtros selecionados.</div>`;
+                return;
+            }
+
+            if(nivelAtual === 'categoria') return renderCategorias(dadosBase);
+            if(nivelAtual === 'subcategoria') return renderSubcategorias(dadosBase);
+            if(nivelAtual === 'destino') return renderDestinos(dadosBase);
+            return renderLancamentos(dadosBase);
+        }
         function toggleSidebar() {
             sidebarCollapsed = !sidebarCollapsed;
             const sidebar = document.getElementById('sidebar');
@@ -4209,6 +4774,27 @@
             }
             renderEntries();
         }
+        async function updateEntryDestinationInlineByLabel(id, label, validDestinations) {
+            const destinationId = findDestinationIdByLabel(label, validDestinations);
+            if (!destinationId) {
+                alert('Selecione um destino válido da lista.');
+                renderEntries();
+                return;
+            }
+            await updateEntryDestinationInline(id, destinationId);
+        }
+        async function updateEntryAccountInline(id, accountId) {
+            const entry = state.entries.find(e => e.id === id);
+            if (!entry) return;
+            const previousAccountId = String((entry.accountId ?? entry.account_id) || '');
+            entry.accountId = String(accountId || '');
+            const saveResult = await cloudSave('entries', entry);
+            if (!saveResult?.ok) {
+                entry.accountId = previousAccountId;
+                alert(`Não foi possível atualizar a conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+            }
+            renderEntries();
+        }
 
         function startEntryDestinationFill(index, event) {
             event.preventDefault();
@@ -4255,6 +4841,38 @@
                 if (el) el.value = entryDestinationFillState.value;
             }
         }
+        function startEntryAccountFill(index, event) {
+            event.preventDefault();
+            const visible = window.currentFilteredEntries || [];
+            const source = visible[index];
+            if (!source) return;
+            entryAccountFillState.active = true;
+            entryAccountFillState.sourceIndex = index;
+            entryAccountFillState.value = String((source.accountId ?? source.account_id) || '');
+            entryAccountFillState.changedIds = new Set();
+            entryAccountFillState.originalById = new Map();
+        }
+        function applyEntryAccountFillTo(index) {
+            if (!entryAccountFillState.active) return;
+            const visible = window.currentFilteredEntries || [];
+            if (!visible.length) return;
+            const start = Math.min(entryAccountFillState.sourceIndex, index);
+            const end = Math.max(entryAccountFillState.sourceIndex, index);
+            for (let i = start; i <= end; i++) {
+                const row = visible[i];
+                if (!row) continue;
+                const currentAccountId = String((row.accountId ?? row.account_id) || '');
+                if (currentAccountId !== entryAccountFillState.value) {
+                    if (!entryAccountFillState.originalById.has(row.id)) {
+                        entryAccountFillState.originalById.set(row.id, { accountId: currentAccountId });
+                    }
+                    row.accountId = entryAccountFillState.value;
+                    entryAccountFillState.changedIds.add(row.id);
+                }
+                const el = document.getElementById(`entry-acc-${row.id}`);
+                if (el) el.value = entryAccountFillState.value;
+            }
+        }
 
         async function stopEntryDestinationFill() {
             if (!entryDestinationFillState.active) return;
@@ -4277,6 +4895,29 @@
                     entry.type = original.type;
                 });
                 alert(`Não foi possível salvar o arraste de destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                renderEntries();
+                return;
+            }
+            renderEntries();
+        }
+        async function stopEntryAccountFill() {
+            if (!entryAccountFillState.active) return;
+            entryAccountFillState.active = false;
+            const changed = Array.from(entryAccountFillState.changedIds);
+            const originalById = entryAccountFillState.originalById;
+            entryAccountFillState.changedIds = new Set();
+            entryAccountFillState.originalById = new Map();
+            if (changed.length === 0) return;
+            const changedEntries = state.entries.filter(e => changed.includes(e.id));
+            const saveResult = await cloudSave('entries', changedEntries);
+            if (!saveResult?.ok) {
+                changed.forEach((id) => {
+                    const entry = state.entries.find(e => e.id === id);
+                    const original = originalById.get(id);
+                    if (!entry || !original) return;
+                    entry.accountId = original.accountId;
+                });
+                alert(`Não foi possível salvar o arraste de conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 renderEntries();
                 return;
             }
@@ -4382,42 +5023,6 @@
             render();
         }
 
-        async function setEntryInternal(id, flag) {
-            const entry = state.entries.find(e => e.id === id);
-            if (!entry) return;
-            const previousFlag = Boolean(entry.isInternalTransfer);
-            entry.isInternalTransfer = Boolean(flag);
-            const saveResult = await cloudSave('entries', entry);
-            if (!saveResult?.ok) {
-                entry.isInternalTransfer = previousFlag;
-                alert(`Não foi possível atualizar marcação interna.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-            }
-            render();
-        }
-
-        async function markSelectedInternal(flag) {
-            const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
-            if (ids.length === 0) return;
-            const label = flag ? 'marcar como transação interna' : 'remover marcação de transação interna';
-            if (!confirm(`Deseja ${label} em ${ids.length} lançamento(s)?`)) return;
-            const changed = [];
-            const previousFlags = new Map();
-            state.entries.forEach(entry => {
-                if (!selectedEntryIds.has(entry.id)) return;
-                previousFlags.set(entry.id, Boolean(entry.isInternalTransfer));
-                entry.isInternalTransfer = Boolean(flag);
-                changed.push(entry);
-            });
-            const saveResult = await cloudSave('entries', changed);
-            if (!saveResult?.ok) {
-                changed.forEach((entry) => {
-                    entry.isInternalTransfer = previousFlags.get(entry.id);
-                });
-                alert(`Não foi possível atualizar os lançamentos selecionados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-            }
-            render();
-        }
-
         function updateEntriesSummaryAndSelection(filtered) {
             const panelEl = document.getElementById('entries-selection-panel');
             const inEl = document.getElementById('entries-sum-in');
@@ -4429,9 +5034,8 @@
             const selectAllEl = document.getElementById('entries-select-all');
 
             const selectedEntries = state.entries.filter(e => selectedEntryIds.has(e.id));
-            const selectedAnalytical = selectedEntries.filter(e => !isInternalEntry(e));
-            const inTotal = selectedAnalytical.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-            const outTotal = selectedAnalytical.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const inTotal = selectedEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const outTotal = selectedEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const netTotal = inTotal - outTotal;
 
             if (inEl) inEl.innerText = formatBRL(inTotal);
@@ -4440,9 +5044,7 @@
             if (netPillEl) netPillEl.className = 'px-2.5 py-1 rounded-full bg-blue-50 text-blue-700';
 
             const selectedCount = selectedEntries.length;
-            const internalCount = selectedEntries.length - selectedAnalytical.length;
             if (countEl) countEl.innerText = `${selectedCount} selecionado(s)`;
-            if (countEl && internalCount > 0) countEl.innerText += ` • ${internalCount} interno(s)`;
             if (deleteBtnEl) deleteBtnEl.disabled = selectedCount === 0;
             if (panelEl) panelEl.classList.toggle('hidden', selectedCount === 0);
 
@@ -4464,10 +5066,8 @@
             const accountFilter = document.getElementById('filter-account')?.value || '';
             const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
             const quickDupEl = document.getElementById('entries-quick-dup');
-            const quickInternalEl = document.getElementById('entries-quick-internal');
             const duplicateSummaryEl = document.getElementById('entries-dup-summary');
             if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY');
-            if (quickInternalEl) quickInternalEl.classList.toggle('active', entriesHideInternal);
             const queryKey = [
                 search,
                 dateStart,
@@ -4476,7 +5076,6 @@
                 statusFilter,
                 accountFilter,
                 duplicateFilter,
-                entriesHideInternal ? 'HIDE_INTERNAL' : 'SHOW_INTERNAL',
                 currentSort.field,
                 currentSort.order
             ].join('|');
@@ -4494,8 +5093,7 @@
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                const matchesInternal = !entriesHideInternal || !isInternalEntry(e);
-                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount && matchesInternal;
+                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
             const duplicateMeta = getDuplicateMeta(baseFiltered);
 
@@ -4536,15 +5134,15 @@
             body.innerHTML = pageItems.map((e, i) => {
                 const dstOptionsByType = getValidDestinationsByFlow(e.type);
                 const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
+                const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
-                const isInternal = isInternalEntry(e);
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
                 const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 
-                return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''} ${isInternal ? 'internal-row' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))} no valor de ${escapeHtml(formatBRL(e.amount))}">
+                return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
                         <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))}">
                     </td>
@@ -4557,18 +5155,39 @@
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
-                                <select id="entry-dst-${e.id}" onclick="event.stopPropagation()" onkeydown="handleEntryDestinationKeydown('${e.id}', event)" onchange="event.stopPropagation(); updateEntryDestinationInline('${e.id}', this.value)" class="entry-destination-select" aria-label="Destino do lançamento">
-                                    ${dstOptions.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
-                                </select>
+                                <input
+                                    id="entry-dst-${e.id}"
+                                    list="entry-dst-list-${e.id}"
+                                    value="${escapeHtml(getDestinationLabelById(e.destinationId, dstOptions))}"
+                                    onclick="event.stopPropagation()"
+                                    onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
+                                    onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value, ${JSON.stringify(dstOptions).replace(/"/g, '&quot;')})"
+                                    class="entry-destination-input"
+                                    aria-label="Destino do lançamento">
+                                <datalist id="entry-dst-list-${e.id}">
+                                    ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
+                                </datalist>
                                 <div class="entry-badges">
                                     ${isDuplicate ? '<span class="dup-icon" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
-                                    ${isInternal ? '<span class="badge badge-internal">INTERNA</span>' : ''}
                                 </div>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
                                     ⋮
                                 </button>
                             </div>
                             <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observação')}</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})">
+                            <div class="recon-destination-cell entry-cell-main">
+                                <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lançamento">
+                                    ${accountOptions.map(acc => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '')===String(acc.id || '')?'selected':''}>${acc.name}</option>`).join('')}
+                                </select>
+                                <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryAccountFill(${i}, event)" title="Arraste para copiar conta" aria-label="Arrastar para copiar conta">
+                                    ⋮
+                                </button>
+                            </div>
+                            <p class="entry-destination-desc entry-cell-sub">Conta / banco</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
@@ -4581,9 +5200,6 @@
                         <div class="entry-cell-main center">
                             <div class="entry-actions-wrap">
                                 <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lançamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
-                                <button type="button" onclick="event.stopPropagation(); setEntryInternal('${e.id}', ${!isInternal})" class="internal-toggle-btn entry-action-btn ${isInternal ? 'active' : ''}" title="${isInternal ? 'Transação interna ativa' : 'Marcar como transação interna'}" aria-label="${isInternal ? 'Desmarcar transação interna' : 'Marcar transação interna'}">
-                                    <i data-lucide="repeat-2" class="w-3.5 h-3.5"></i>
-                                </button>
                                 <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
@@ -4592,7 +5208,7 @@
                         <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                 </tr>`;
-            }).join('') || '<tr><td colspan="5" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
+            }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
             lucide.createIcons();
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
@@ -4600,7 +5216,8 @@
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
-            const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+            const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+            const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
             const incR = entries.filter(e=>e.type==='ENTRADA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const incP = entries.filter(e=>e.type==='ENTRADA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const expR = entries.filter(e=>e.type==='SAÍDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
@@ -4610,7 +5227,7 @@
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRL(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
-            renderAnaliseHierarquicaMensal(entries);
+            renderAnaliseHierarquicaMensal(monthEntries);
 
             const balR = incR - expR;
             const balEl = document.getElementById('month-bal-r');
@@ -4650,7 +5267,7 @@
                     </tr>`;
                 }
             }
-            document.getElementById('monthly-daily-table').innerHTML = html;
+            document.getElementById('monthly-daily-table').innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
             renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar);
         }
 
@@ -4918,10 +5535,11 @@
             const catEl = document.getElementById('annual-nav-category');
             const subEl = document.getElementById('annual-nav-subcategory');
             const dstEl = document.getElementById('annual-nav-destination');
+            const excludeDstEl = document.getElementById('annual-exclude-destination');
             const tableBody = document.getElementById('annual-temporal-table-body');
             const summaryEl = document.getElementById('annual-temporal-summary');
             const chartEl = document.getElementById('chartAnnualTemporal');
-            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !tableBody || !summaryEl || !chartEl) return;
+            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !excludeDstEl || !tableBody || !summaryEl || !chartEl) return;
 
             const validYears = Array.from(new Set(
                 getAnalyticalEntries(state.entries)
@@ -4963,13 +5581,16 @@
                 .filter(d => validDstIds.has(d.id))
                 .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
             if(annualNavDestinationId && !dstOptions.some(d => d.id === annualNavDestinationId)) annualNavDestinationId = '';
+            if(annualExcludedDestinationId && !dstOptions.some(d => d.id === annualExcludedDestinationId)) annualExcludedDestinationId = '';
 
             catEl.innerHTML = `<option value="">Todas</option>${catOptions.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}`;
             subEl.innerHTML = `<option value="">Todas</option>${subOptions.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}`;
             dstEl.innerHTML = `<option value="">Todos</option>${dstOptions.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}`;
+            excludeDstEl.innerHTML = `<option value="">Nenhum</option>${dstOptions.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}`;
             catEl.value = annualNavCategoryId;
             subEl.value = annualNavSubCategoryId;
             dstEl.value = annualNavDestinationId;
+            excludeDstEl.value = annualExcludedDestinationId;
 
             catEl.onchange = () => {
                 annualNavCategoryId = catEl.value;
@@ -4986,11 +5607,17 @@
                 annualNavDestinationId = dstEl.value;
                 renderAnnualTemporalComparison(year);
             };
+            excludeDstEl.onchange = () => {
+                annualExcludedDestinationId = excludeDstEl.value;
+                if(annualNavDestinationId && annualNavDestinationId === annualExcludedDestinationId) annualNavDestinationId = '';
+                renderAnnualTemporalComparison(year);
+            };
 
             const filtered = baseFlowEntries.filter(e =>
                 (!annualNavCategoryId || e.categoryId === annualNavCategoryId) &&
                 (!annualNavSubCategoryId || e.subCategoryId === annualNavSubCategoryId) &&
-                (!annualNavDestinationId || e.destinationId === annualNavDestinationId)
+                (!annualNavDestinationId || e.destinationId === annualNavDestinationId) &&
+                (!annualExcludedDestinationId || e.destinationId !== annualExcludedDestinationId)
             );
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             let labels = [];
@@ -5022,6 +5649,7 @@
             if(annualNavSubCategoryId) navParts.push(subOptions.find(s => s.id === annualNavSubCategoryId)?.name || '');
             if(annualNavDestinationId) navParts.push(dstOptions.find(d => d.id === annualNavDestinationId)?.name || '');
             if(navParts.length) summaryEl.innerText += ` Filtro: ${navParts.filter(Boolean).join(' > ')}.`;
+            if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
 
             if(values.every(v => v === 0)) {
                 tableBody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
@@ -5156,12 +5784,14 @@
         }
 
         function getValidDestinations() {
-            return state.destinations.filter(d => {
-                const sub = state.subCategories.find(s => s.id === d.subCategoryId);
-                if(!sub) return false;
-                const cat = state.categories.find(c => c.id === sub.categoryId);
-                return !!cat;
-            });
+            return state.destinations
+                .filter(d => {
+                    const sub = state.subCategories.find(s => s.id === d.subCategoryId);
+                    if(!sub) return false;
+                    const cat = state.categories.find(c => c.id === sub.categoryId);
+                    return !!cat;
+                })
+                .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
         }
         function getDestinationFlowType(destinationId) {
             const dst = state.destinations.find(d => d.id === destinationId);
@@ -5170,7 +5800,26 @@
             return (cat || {}).type || '';
         }
         function getValidDestinationsByFlow(flowType) {
-            return getValidDestinations().filter(d => getDestinationFlowType(d.id) === flowType);
+            return getValidDestinations()
+                .filter(d => getDestinationFlowType(d.id) === flowType)
+                .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
+        }
+        function getDestinationLabel(destination) {
+            return String((destination || {}).name || '').trim();
+        }
+        function buildDestinationOptionsMarkup(list, selectedId = '') {
+            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => getDestinationLabel(a).localeCompare(getDestinationLabel(b), 'pt-BR', { sensitivity: 'base' }));
+            return sorted.map(item => `<option value="${escapeHtml(getDestinationLabel(item))}" data-id="${String(item.id || '')}" ${String(item.id || '') === String(selectedId || '') ? 'selected' : ''}></option>`).join('');
+        }
+        function findDestinationIdByLabel(label, list) {
+            const target = String(label || '').trim();
+            if (!target) return '';
+            const match = (Array.isArray(list) ? list : []).find(item => getDestinationLabel(item).localeCompare(target, 'pt-BR', { sensitivity: 'base' }) === 0);
+            return String((match || {}).id || '');
+        }
+        function getDestinationLabelById(id, list = state.destinations) {
+            const match = (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
+            return getDestinationLabel(match);
         }
 
         function normalizeReconText(value) {
@@ -5183,81 +5832,8 @@
                 .trim();
         }
 
-        const INTERNAL_TRANSFER_CNPJS = [
-            '07.436.556/0001-74',
-            '07436556000174',
-            '40.697.224/0001-19',
-            '40697224000119'
-        ];
-        const INTERNAL_TRANSFER_KEYWORDS = ['transferencia', 'transfer', 'transf', 'ted', 'pix'];
-        const INTERNAL_TRANSFER_CONTEXT_KEYWORDS = [
-            'interna',
-            'mesma titularidade',
-            'conta propria',
-            'intercontas'
-        ];
-        const INTERNAL_TRANSFER_DESTINATION_HINTS = [
-            'transferencia interna',
-            'transferencias internas',
-            'mesma titularidade',
-            'intercontas',
-            'intercompany'
-        ];
-
         function onlyDigits(value) {
             return String(value || '').replace(/\D/g, '');
-        }
-
-        function getInternalTransferCnpjVariants() {
-            const variants = new Set();
-            INTERNAL_TRANSFER_CNPJS.forEach((cnpj) => {
-                const digits = onlyDigits(cnpj);
-                if (!digits) return;
-                variants.add(digits);
-                variants.add(digits.replace(/^0+/, ''));
-            });
-            variants.delete('');
-            return Array.from(variants);
-        }
-
-        function containsTrackedInternalCnpj(description) {
-            const digits = onlyDigits(description);
-            if (!digits) return false;
-            const variants = getInternalTransferCnpjVariants();
-            return variants.some(cnpj => digits.includes(cnpj));
-        }
-
-        function findInternalTransferDestination(validDestinations) {
-            const list = Array.isArray(validDestinations) ? validDestinations : [];
-            if (!list.length) return '';
-            let bestId = '';
-            let bestScore = 0;
-
-            list.forEach((dst) => {
-                const nameNorm = normalizeReconText((dst || {}).name || '');
-                if (!nameNorm) return;
-                let score = 0;
-                if (nameNorm.includes('transfer')) score += 24;
-                if (nameNorm.includes('interna') || nameNorm.includes('internas')) score += 24;
-                INTERNAL_TRANSFER_DESTINATION_HINTS.forEach((hint) => {
-                    if (nameNorm.includes(hint)) score += 14;
-                });
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestId = String((dst || {}).id || '');
-                }
-            });
-
-            return bestScore >= 20 ? bestId : '';
-        }
-
-        function isInternalTransferByDescription(description) {
-            const textNorm = normalizeReconText(description);
-            if (!textNorm) return false;
-            const hasTransferKeyword = INTERNAL_TRANSFER_KEYWORDS.some(keyword => textNorm.includes(keyword));
-            if (!hasTransferKeyword) return false;
-            if (containsTrackedInternalCnpj(description)) return true;
-            return INTERNAL_TRANSFER_CONTEXT_KEYWORDS.some(keyword => textNorm.includes(keyword));
         }
 
         const RECON_STOPWORDS = new Set([
@@ -5320,10 +5896,6 @@
 
         function inferDestinationFromDescription(description, validDestinations) {
             if(!validDestinations || validDestinations.length === 0) return '';
-            if (isInternalTransferByDescription(description)) {
-                const internalDestinationId = findInternalTransferDestination(validDestinations);
-                if (internalDestinationId) return internalDestinationId;
-            }
             const descNorm = normalizeReconText(description);
             const preferredId = findPreferredBankSalesDestination(validDestinations);
             if(!descNorm) return getMostFrequentDestination(validDestinations);
@@ -5490,7 +6062,7 @@
                         amount: parsedTableRow.amountAbs,
                         type: parsedTableRow.type,
                         status: batchStatus,
-                        description: parsedTableRow.description || "Transação",
+                        description: String(parsedTableRow.description || '').trim(),
                         destinationId: inferredDestinationId,
                     });
                     return;
@@ -5555,7 +6127,7 @@
                         amount: Math.abs(val), 
                         type: flowType, 
                         status: batchStatus,
-                        description: desc || "Transação", 
+                        description: String(desc || '').trim(), 
                         destinationId: inferredDestinationId,
                     });
                 }
@@ -5715,7 +6287,6 @@
                     categoryId: String((cat || {}).id || ''),
                     subCategoryId: String((sub || {}).id || ''),
                     status: batchStatus,
-                    isInternalTransfer: isInternalTransferByDescription(temp.description)
                 };
             });
             if (summaryEl) summaryEl.innerText = `Importado 0 de ${newEntries.length}`;
@@ -6050,6 +6621,29 @@
                 });
             });
         }
+        function populateDestinationCombobox(inputId, hiddenId, listId, list, selectedId = '') {
+            const inputEl = document.getElementById(inputId);
+            const hiddenEl = document.getElementById(hiddenId);
+            const listEl = document.getElementById(listId);
+            if (!inputEl || !hiddenEl || !listEl) return;
+            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => getDestinationLabel(a).localeCompare(getDestinationLabel(b), 'pt-BR', { sensitivity: 'base' }));
+            listEl.innerHTML = sorted.map(item => `<option value="${escapeHtml(getDestinationLabel(item))}" data-id="${String(item.id || '')}"></option>`).join('');
+            hiddenEl.value = String(selectedId || '');
+            inputEl.value = getDestinationLabelById(selectedId, sorted);
+            inputEl.oninput = () => {
+                hiddenEl.value = findDestinationIdByLabel(inputEl.value, sorted);
+                setEntryFieldError('form-dst', '');
+            };
+            inputEl.onchange = () => {
+                hiddenEl.value = findDestinationIdByLabel(inputEl.value, sorted);
+                if (!hiddenEl.value) setEntryFieldError('form-dst', 'Selecione um destino válido da lista.');
+            };
+            inputEl.onblur = () => {
+                const resolvedId = findDestinationIdByLabel(inputEl.value, sorted);
+                hiddenEl.value = resolvedId;
+                if (resolvedId) inputEl.value = getDestinationLabelById(resolvedId, sorted);
+            };
+        }
 
         function toggleStatus(val) {
             const statusEl = document.getElementById('form-status');
@@ -6072,7 +6666,7 @@
             const idEl = document.getElementById('entry-id');
             if(idEl) idEl.value = id || '';
             document.getElementById('delete-btn-modal')?.classList.toggle('hidden', !id);
-            populateDropdown('form-dst', state.destinations);
+            populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-list', state.destinations);
             populateDropdown('form-acc', state.accounts);
             if(id) {
                 const e = state.entries.find(x => x.id === id);
@@ -6080,7 +6674,7 @@
                     document.getElementById('form-date').value = e.date;
                     document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     document.getElementById('form-desc').value = e.description || "";
-                    document.getElementById('form-dst').value = e.destinationId;
+                    populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-list', state.destinations, e.destinationId);
                     document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
                     toggleStatus(e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO');
                 }
@@ -6101,7 +6695,12 @@
                 lastFocusedElement.focus();
             }
         }
-        function populateDropdown(id, list) { const el = document.getElementById(id); if(el) el.innerHTML = list.map(item => `<option value="${String(item.id || '')}">${item.name}</option>`).join(''); }
+        function populateDropdown(id, list) {
+            const el = document.getElementById(id);
+            if(!el) return;
+            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+            el.innerHTML = sorted.map(item => `<option value="${String(item.id || '')}">${item.name}</option>`).join('');
+        }
 
         document.getElementById('entry-form').onsubmit = async (event) => {
             event.preventDefault();
@@ -6133,10 +6732,7 @@
                 destinationId: dstId,
                 accountId: validation.values.accountId,
                 description: validation.values.description,
-                status: validation.values.status,
-                isInternalTransfer: existing
-                    ? (isInternalEntry(existing) || isInternalTransferByDescription(validation.values.description))
-                    : isInternalTransferByDescription(validation.values.description)
+                status: validation.values.status
             };
             
             const saveResult = await cloudSave('entries', data);
@@ -6395,8 +6991,8 @@
 
         const mf = document.getElementById('monthly-filter');
         if(mf) mf.value = getCurrentMonthIso();
-        window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); });
-        window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); });
+        window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
+        window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') return;
             if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
