@@ -1323,6 +1323,26 @@
             outline: none;
             box-shadow: none;
         }
+        .entry-account-select {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #334155;
+        }
+        .entry-account-caption {
+            font-size: 10px;
+            color: #94A3B8;
+            font-weight: 700;
+            line-height: 1.25;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            margin-top: 6px;
+            padding-left: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .entry-destination-desc {
             font-size: 10px;
             color: #64748B;
@@ -3237,6 +3257,47 @@
             if (parts.length !== 3) return escapeHtml(raw);
             return `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
+        function getAccountShortLabel(account) {
+            const fullName = String((account || {}).name || '').trim();
+            if (!fullName) return 'Conta';
+            const compact = fullName
+                .replace(/\b(conta|corrente|banco|bank|ag|agencia|cc|pix)\b/gi, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            const source = compact || fullName;
+            const parts = source.split(/[\s\/-]+/).filter(Boolean);
+            if (parts.length >= 2) {
+                const shortPair = `${parts[0]} ${parts[1]}`.trim();
+                if (shortPair.length <= 12) return shortPair.toUpperCase();
+            }
+            if (parts[0] && parts[0].length <= 12) return parts[0].toUpperCase();
+            return source.slice(0, 12).trim().toUpperCase();
+        }
+        function applyCompactEntryAccountLabels(scope = document) {
+            const selects = scope.querySelectorAll('select[id^="entry-acc-"]');
+            selects.forEach((select) => {
+                const options = Array.from(select.options || []);
+                options.forEach((option) => {
+                    const fullName = option.dataset.fullName || option.textContent || '';
+                    option.dataset.fullName = fullName;
+                    option.textContent = getAccountShortLabel({ name: fullName });
+                    option.title = fullName;
+                });
+
+                const currentOption = options[select.selectedIndex] || null;
+                const selectedFullName = String((currentOption?.dataset?.fullName || currentOption?.title || currentOption?.textContent || 'Conta') || 'Conta');
+                const selectedShortName = getAccountShortLabel({ name: selectedFullName });
+                select.classList.add('entry-account-select');
+                select.title = selectedFullName;
+
+                const caption = select.closest('.entry-destination-panel')?.querySelector('.entry-destination-desc.entry-cell-sub');
+                if (caption) {
+                    caption.classList.add('entry-account-caption');
+                    caption.textContent = selectedShortName;
+                    caption.title = selectedFullName;
+                }
+            });
+        }
         function buildExportPillsV2(pairs) {
             const items = (pairs || []).filter(pair => pair && pair[1]);
             if (!items.length) return '';
@@ -5135,6 +5196,8 @@
                 const dstOptionsByType = getValidDestinationsByFlow(e.type);
                 const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
                 const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+                const selectedAccount = accountOptions.find(acc => String(acc.id || '') === String((e.accountId ?? e.account_id) || '')) || null;
+                const selectedAccountName = String((selectedAccount || {}).name || 'Conta não informada');
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
@@ -5209,6 +5272,7 @@
                     </td>
                 </tr>`;
             }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
+            applyCompactEntryAccountLabels(body);
             lucide.createIcons();
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
