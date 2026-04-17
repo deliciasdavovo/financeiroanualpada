@@ -147,6 +147,13 @@
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
         }
+        body.is-fill-dragging,
+        body.is-fill-dragging * {
+            user-select: none;
+        }
+        body.is-fill-dragging .recon-fill-handle {
+            cursor: ns-resize !important;
+        }
 
         main { background: linear-gradient(180deg, #F6F7F9 0%, var(--bg-main) 100%) !important; }
 
@@ -2570,6 +2577,7 @@
         let categoriaFiltroSelecionada = '';
         let subcategoriaFiltroSelecionada = '';
         let destinoExcluidoMensal = '';
+        let destinosFiltroSelecionados = [];
         let annualTemporalFlow = 'SAÍDA';
         let annualTemporalMode = 'MESES';
         let annualTemporalYear = new Date().getFullYear();
@@ -2598,6 +2606,7 @@
         let cloudRefreshTimer = null;
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
+        let entryFillDragMode = '';
 
         function getStateSnapshot() {
             return {
@@ -4391,7 +4400,7 @@
             const cardIn = toMoneyNumber(movement?.cardIn);
             const paymentsOut = toMoneyNumber(movement?.paymentsOut);
             const totalIn = cashIn + cardIn;
-            const dailyResult = totalIn + paymentsOut;
+            const dailyResult = totalIn - paymentsOut;
             return { totalIn, dailyResult, cashIn, cardIn, paymentsOut };
         }
         function getTreasurySummaryDate() {
@@ -4782,13 +4791,16 @@
             return String(next.id || '');
         }
 
-        function handleEntryDestinationKeydown(entryId, event) {
+        async function handleEntryDestinationKeydown(entryId, event) {
             if (!event) return;
             const isEnter = event.key === 'Enter' || event.key === 'NumpadEnter';
             const isCtrlDown = event.key === 'ArrowDown' && event.ctrlKey;
             if (!isEnter && !isCtrlDown) return;
             event.preventDefault();
             event.stopPropagation();
+            const inputEl = document.getElementById(`entry-dst-${entryId}`);
+            const saved = await commitEntryDestinationInlineInput(entryId, inputEl ? inputEl.value : '', { showAlert: true });
+            if (!saved) return;
             const nextId = focusNextEntryDestination(entryId, { openPicker: true });
             if (nextId) {
                 scheduleEntryDestinationFocus(nextId, true);
@@ -4835,7 +4847,7 @@
             }
             renderEntries();
         }
-        async function updateEntryDestinationInlineByLabel(id, label, validDestinations) {
+        async function updateEntryDestinationInlineByLabelLegacy(id, label, validDestinations) {
             const destinationId = findDestinationIdByLabel(label, validDestinations);
             if (!destinationId) {
                 alert('Selecione um destino válido da lista.');
@@ -4843,6 +4855,37 @@
                 return;
             }
             await updateEntryDestinationInline(id, destinationId);
+        }
+        function getValidDestinationsForEntry(entry) {
+            if (!entry) return getValidDestinations();
+            const flowDestinations = getValidDestinationsByFlow(entry.type);
+            return flowDestinations.length ? flowDestinations : getValidDestinations();
+        }
+        async function commitEntryDestinationInlineInput(id, label, options = {}) {
+            const entry = state.entries.find(e => e.id === id);
+            const inputEl = document.getElementById(`entry-dst-${id}`);
+            if (!entry) return false;
+            const validDestinations = getValidDestinationsForEntry(entry);
+            const currentLabel = getDestinationLabelById(entry.destinationId, validDestinations) || getDestinationLabelById(entry.destinationId);
+            const typedLabel = String(label || '').trim();
+            if (!typedLabel) {
+                if (inputEl) inputEl.value = currentLabel;
+                return false;
+            }
+            const destinationId = findDestinationIdByLabel(typedLabel, validDestinations);
+            if (!destinationId) {
+                if (inputEl) inputEl.value = currentLabel;
+                if (options.showAlert) alert('Selecione um destino vÃ¡lido da lista.');
+                return false;
+            }
+            const canonicalLabel = getDestinationLabelById(destinationId, validDestinations) || getDestinationLabelById(destinationId);
+            if (inputEl) inputEl.value = canonicalLabel;
+            if (String(destinationId) === String(entry.destinationId || '')) return true;
+            await updateEntryDestinationInline(id, destinationId);
+            return true;
+        }
+        async function updateEntryDestinationInlineByLabel(id, label) {
+            await commitEntryDestinationInlineInput(id, label, { showAlert: true });
         }
         async function updateEntryAccountInline(id, accountId) {
             const entry = state.entries.find(e => e.id === id);
@@ -4857,11 +4900,18 @@
             renderEntries();
         }
 
+        function setEntryFillDragMode(mode = '') {
+            entryFillDragMode = String(mode || '');
+            document.body.classList.toggle('is-fill-dragging', Boolean(entryFillDragMode));
+        }
+
         function startEntryDestinationFill(index, event) {
+            if (event && event.button !== 0) return;
             event.preventDefault();
             const visible = window.currentFilteredEntries || [];
             const source = visible[index];
             if (!source) return;
+            setEntryFillDragMode('destination');
             entryDestinationFillState.active = true;
             entryDestinationFillState.sourceIndex = index;
             entryDestinationFillState.value = source.destinationId;
@@ -4899,14 +4949,16 @@
                     entryDestinationFillState.changedIds.add(row.id);
                 }
                 const el = document.getElementById(`entry-dst-${row.id}`);
-                if (el) el.value = entryDestinationFillState.value;
+                if (el) el.value = getDestinationLabelById(entryDestinationFillState.value, state.destinations);
             }
         }
         function startEntryAccountFill(index, event) {
+            if (event && event.button !== 0) return;
             event.preventDefault();
             const visible = window.currentFilteredEntries || [];
             const source = visible[index];
             if (!source) return;
+            setEntryFillDragMode('account');
             entryAccountFillState.active = true;
             entryAccountFillState.sourceIndex = index;
             entryAccountFillState.value = String((source.accountId ?? source.account_id) || '');
@@ -4937,6 +4989,7 @@
 
         async function stopEntryDestinationFill() {
             if (!entryDestinationFillState.active) return;
+            setEntryFillDragMode('');
             entryDestinationFillState.active = false;
             const changed = Array.from(entryDestinationFillState.changedIds);
             const originalById = entryDestinationFillState.originalById;
@@ -4944,7 +4997,7 @@
             entryDestinationFillState.originalById = new Map();
             if (changed.length === 0) return;
             const changedEntries = state.entries.filter(e => changed.includes(e.id));
-            const saveResult = await cloudSave('entries', changedEntries);
+            const saveResult = await cloudSaveBatched('entries', changedEntries, 100);
             if (!saveResult?.ok) {
                 changed.forEach((id) => {
                     const entry = state.entries.find(e => e.id === id);
@@ -4956,13 +5009,14 @@
                     entry.type = original.type;
                 });
                 alert(`Não foi possível salvar o arraste de destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                renderEntries();
+                await refreshCloudState({ silent: false });
                 return;
             }
             renderEntries();
         }
         async function stopEntryAccountFill() {
             if (!entryAccountFillState.active) return;
+            setEntryFillDragMode('');
             entryAccountFillState.active = false;
             const changed = Array.from(entryAccountFillState.changedIds);
             const originalById = entryAccountFillState.originalById;
@@ -4970,7 +5024,7 @@
             entryAccountFillState.originalById = new Map();
             if (changed.length === 0) return;
             const changedEntries = state.entries.filter(e => changed.includes(e.id));
-            const saveResult = await cloudSave('entries', changedEntries);
+            const saveResult = await cloudSaveBatched('entries', changedEntries, 100);
             if (!saveResult?.ok) {
                 changed.forEach((id) => {
                     const entry = state.entries.find(e => e.id === id);
@@ -4979,7 +5033,7 @@
                     entry.accountId = original.accountId;
                 });
                 alert(`Não foi possível salvar o arraste de conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                renderEntries();
+                await refreshCloudState({ silent: false });
                 return;
             }
             renderEntries();
@@ -5216,7 +5270,7 @@
                         <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})">
+                        <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
                                 <input
                                     id="entry-dst-${e.id}"
@@ -5224,7 +5278,8 @@
                                     value="${escapeHtml(getDestinationLabelById(e.destinationId, dstOptions))}"
                                     onclick="event.stopPropagation()"
                                     onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
-                                    onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value, ${JSON.stringify(dstOptions).replace(/"/g, '&quot;')})"
+                                    onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
+                                    onblur="event.stopPropagation(); commitEntryDestinationInlineInput('${e.id}', this.value, { showAlert: false })"
                                     class="entry-destination-input"
                                     aria-label="Destino do lançamento">
                                 <datalist id="entry-dst-list-${e.id}">
@@ -5241,7 +5296,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})">
+                        <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})" onmousemove="applyEntryAccountFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
                                 <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lançamento">
                                     ${accountOptions.map(acc => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '')===String(acc.id || '')?'selected':''}>${acc.name}</option>`).join('')}
@@ -6556,6 +6611,68 @@
             }
         }
 
+        function getDbUsageCount(type, id) {
+            const targetId = String(id || '');
+            if (!targetId) return 0;
+            if (type === 'ACCOUNT') {
+                const entryCount = state.entries.filter(e => String((e.accountId ?? e.account_id) || '') === targetId).length;
+                const balanceCount = (state.dailyBalances || []).filter(item => String(item.accountId || '') === targetId).length;
+                return entryCount + balanceCount;
+            }
+            if (type === 'DESTINATION') {
+                return state.entries.filter(e => String((e.destinationId ?? e.destination_id) || '') === targetId).length;
+            }
+            if (type === 'SUBCATEGORY') {
+                const destinationIds = new Set(state.destinations.filter(d => String(d.subCategoryId || '') === targetId).map(d => String(d.id || '')));
+                return state.entries.filter(e => {
+                    const entrySubId = String((e.subCategoryId ?? e.sub_category_id) || '');
+                    const entryDstId = String((e.destinationId ?? e.destination_id) || '');
+                    return entrySubId === targetId || destinationIds.has(entryDstId);
+                }).length;
+            }
+            if (type === 'CATEGORY') {
+                const subCategoryIds = new Set(state.subCategories.filter(s => String(s.categoryId || '') === targetId).map(s => String(s.id || '')));
+                const destinationIds = new Set(state.destinations.filter(d => subCategoryIds.has(String(d.subCategoryId || ''))).map(d => String(d.id || '')));
+                return state.entries.filter(e => {
+                    const entryCategoryId = String((e.categoryId ?? e.category_id) || '');
+                    const entrySubId = String((e.subCategoryId ?? e.sub_category_id) || '');
+                    const entryDstId = String((e.destinationId ?? e.destination_id) || '');
+                    return entryCategoryId === targetId || subCategoryIds.has(entrySubId) || destinationIds.has(entryDstId);
+                }).length;
+            }
+            return 0;
+        }
+
+        function getDbUsageDeleteMessage(type, count) {
+            if (count <= 0) return '';
+            if (type === 'ACCOUNT') return `Esta conta possui ${count} registro(s) vinculado(s) em lançamentos e/ou saldos bancários. Exclua ou reclassifique esses registros antes de remover a conta.`;
+            if (type === 'DESTINATION') return `Este destino possui ${count} lançamento(s) vinculado(s). Reclassifique esses lançamentos antes de excluir o destino.`;
+            if (type === 'SUBCATEGORY') return `Esta subcategoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a subcategoria.`;
+            if (type === 'CATEGORY') return `Esta categoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a categoria.`;
+            return `Existem ${count} registro(s) vinculados a este item.`;
+        }
+
+        async function syncEntriesWithCategoryType(categoryId, nextType) {
+            const categoryIdStr = String(categoryId || '');
+            const normalizedType = normalizeFlowType(nextType);
+            const affectedEntries = state.entries.filter(e => String((e.categoryId ?? e.category_id) || '') === categoryIdStr);
+            if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
+            const previousTypes = new Map();
+            affectedEntries.forEach(entry => {
+                previousTypes.set(String(entry.id || ''), entry.type);
+                entry.type = normalizedType;
+            });
+            const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
+            if (!saveResult?.ok) {
+                affectedEntries.forEach(entry => {
+                    const previousType = previousTypes.get(String(entry.id || ''));
+                    if (previousType) entry.type = previousType;
+                });
+                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lançamentos da categoria.') };
+            }
+            return { ok: true, changed: affectedEntries.length, error: null };
+        }
+
         function setEntryFormFeedback(message = '') {
             const feedbackEl = document.getElementById('entry-form-feedback');
             if (!feedbackEl) return;
@@ -6911,21 +7028,26 @@
             if(!name) return alert('Informe um nome válido.');
             let data = null;
             let table = '';
+            let previousItem = null;
 
             if(type==='CATEGORY') {
                 table = 'categories';
+                previousItem = state.categories.find(item => item.id === id) || null;
                 data = {id, name, type: document.getElementById('db-cat-type').value };
             }
             if(type==='SUBCATEGORY') {
                 table = 'subCategories';
+                previousItem = state.subCategories.find(item => item.id === id) || null;
                 data = {id, categoryId: parent, name};
             }
             if(type==='DESTINATION') {
                 table = 'destinations';
+                previousItem = state.destinations.find(item => item.id === id) || null;
                 data = {id, subCategoryId: parent, name};
             }
             if(type==='ACCOUNT') {
                 table = 'accounts';
+                previousItem = state.accounts.find(item => item.id === id) || null;
                 data = {id, name, initialBalance: Number(document.getElementById('db-acc-balance').value) || 0};
             }
             
@@ -6934,6 +7056,21 @@
                 if (!saveResult?.ok) {
                     alert(`Não foi possível salvar no banco de dados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                     return;
+                }
+                if (type === 'CATEGORY' && mode === 'EDIT') {
+                    const previousType = normalizeFlowType((previousItem || {}).type);
+                    const nextType = normalizeFlowType(data.type);
+                    if (previousType && nextType && previousType !== nextType) {
+                        const syncResult = await syncEntriesWithCategoryType(id, nextType);
+                        if (!syncResult?.ok) {
+                            if (previousItem) {
+                                await cloudSave('categories', previousItem);
+                            }
+                            alert(`A categoria foi revertida porque não foi possível sincronizar o fluxo dos lançamentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
+                            await refreshCloudState({ silent: false });
+                            return;
+                        }
+                    }
                 }
                 if(type==='CATEGORY') {
                     if (mode === 'EDIT') state.categories = state.categories.map(item => item.id === id ? data : item);
@@ -6957,6 +7094,11 @@
 
         async function deleteDb(type, id) {
             if(confirm("Deseja apagar este item?")) {
+                const usageCount = getDbUsageCount(type, id);
+                if (usageCount > 0) {
+                    alert(getDbUsageDeleteMessage(type, usageCount));
+                    return;
+                }
                 let table = '';
                 if(type==='CATEGORY') table = 'categories';
                 if(type==='SUBCATEGORY') table = 'subCategories';
