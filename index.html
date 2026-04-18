@@ -41,9 +41,11 @@
         .flow-income-text { color: var(--primary-green) !important; }
         .flow-expense-text { color: var(--soft-red) !important; }
         .flow-balance-text { color: var(--primary-blue) !important; }
+        .flow-capital-text { color: #7CBF8E !important; }
         .flow-income-bg { background: var(--primary-green) !important; }
         .flow-expense-bg { background: var(--soft-red) !important; }
         .flow-balance-bg { background: var(--primary-blue) !important; }
+        .flow-capital-bg { background: #DDF4E4 !important; }
 
         .kpi-card {
             border-radius: 18px;
@@ -906,6 +908,20 @@
         }
         .annual-filter-item select {
             height: 42px;
+        }
+        .annual-aporte-note {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 6px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #E8F7ED;
+            color: #6EAF81;
+            font-size: 10px;
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
         }
         .db-toolbar {
             display: flex;
@@ -3758,6 +3774,24 @@
             if (raw === 'SAÍDA' || raw === 'SAIDA') return 'SAÍDA';
             return raw;
         }
+        function isCapitalContributionName(value) {
+            const normalized = normalizeDestinationLookupLabel(value);
+            return normalized.includes('aporte') && normalized.includes('capital');
+        }
+        function getEntryHierarchyNames(entry) {
+            const dst = state.destinations.find(d => String((d || {}).id || '') === String((entry || {}).destinationId || ''));
+            const sub = state.subCategories.find(s => String((s || {}).id || '') === String((dst || {}).subCategoryId || (entry || {}).subCategoryId || ''));
+            const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || (entry || {}).categoryId || ''));
+            return [
+                String((cat || {}).name || ''),
+                String((sub || {}).name || ''),
+                String((dst || {}).name || ''),
+                String((entry || {}).description || '')
+            ].filter(Boolean);
+        }
+        function isCapitalContributionEntry(entry) {
+            return getEntryHierarchyNames(entry).some(isCapitalContributionName);
+        }
         const isInternalEntry = () => false;
         const getAnalyticalEntries = (entries) => (Array.isArray(entries) ? entries : []);
 
@@ -5932,12 +5966,16 @@
                 const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                 const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                data.push({m, inc, exp, bal: inc-exp});
+                const aporte = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA' && isCapitalContributionEntry(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                data.push({m, inc, exp, aporte, bal: inc-exp});
             }
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             document.getElementById('annual-table-body').innerHTML = data.map((d,i) => `<tr class="table-row">
                 <td class="px-12 py-5 uppercase text-slate-600 font-bold">${monthNames[i]}</td>
-                <td class="px-12 py-5 text-right flow-income-text font-bold">${formatBRL(d.inc)}</td>
+                <td class="px-12 py-5 text-right flow-income-text font-bold">
+                    <div>${formatBRL(d.inc)}</div>
+                    ${d.aporte > 0 ? `<div class="annual-aporte-note">Aporte: ${formatBRL(d.aporte)}</div>` : ''}
+                </td>
                 <td class="px-12 py-5 text-right flow-expense-text font-bold">${formatBRL(d.exp)}</td>
                 <td class="px-12 py-5 text-right font-black ${d.bal>=0?'flow-balance-text':'flow-expense-text'}">${formatBRL(d.bal)}</td>
             </tr>`).join('');
@@ -5982,6 +6020,22 @@
                         }
                     } 
                 });
+                window.aChart.data.datasets.push({
+                    type: 'line',
+                    label: 'Aporte de capital',
+                    data: data.map(x => x.aporte),
+                    borderColor: '#8FD19E',
+                    backgroundColor: 'rgba(143, 209, 158, 0.18)',
+                    pointBackgroundColor: '#8FD19E',
+                    pointBorderColor: '#FFFFFF',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 5,
+                    tension: 0.34,
+                    borderWidth: 3,
+                    fill: false
+                });
+                window.aChart.update();
             }
             renderAnnualTemporalComparison(year);
         }
@@ -6112,6 +6166,15 @@
             if(annualNavCategoryId) navParts.push(catOptions.find(c => c.id === annualNavCategoryId)?.name || '');
             if(annualNavSubCategoryId) navParts.push(subOptions.find(s => s.id === annualNavSubCategoryId)?.name || '');
             if(annualNavDestinationId) navParts.push(dstOptions.find(d => d.id === annualNavDestinationId)?.name || '');
+            const selectedAnnualNames = [
+                catOptions.find(c => c.id === annualNavCategoryId)?.name || '',
+                subOptions.find(s => s.id === annualNavSubCategoryId)?.name || '',
+                dstOptions.find(d => d.id === annualNavDestinationId)?.name || ''
+            ].filter(Boolean);
+            const isCapitalView = annualTemporalFlow === 'ENTRADA' && (
+                selectedAnnualNames.some(isCapitalContributionName) ||
+                (filtered.length > 0 && filtered.every(isCapitalContributionEntry))
+            );
             if(navParts.length) summaryEl.innerText += ` Filtro: ${navParts.filter(Boolean).join(' > ')}.`;
             if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
 
@@ -6127,12 +6190,12 @@
                 const varText = formatVariation(current, prev);
                 return `<tr class="table-row">
                     <td class="px-4 py-3 text-[11px] font-black text-slate-700 uppercase">${label}</td>
-                    <td class="px-4 py-3 text-right text-[11px] font-black ${annualTemporalFlow === 'ENTRADA' ? 'flow-income-text' : 'flow-expense-text'}">${formatBRL(current)}</td>
+                    <td class="px-4 py-3 text-right text-[11px] font-black ${isCapitalView ? 'flow-capital-text' : annualTemporalFlow === 'ENTRADA' ? 'flow-income-text' : 'flow-expense-text'}">${formatBRL(current)}</td>
                     <td class="px-4 py-3 text-right text-[11px] font-bold text-slate-500">${varText}</td>
                 </tr>`;
             }).join('');
 
-            const chartColor = annualTemporalFlow === 'ENTRADA' ? '#0F8A67' : '#C94A34';
+            const chartColor = isCapitalView ? '#8FD19E' : annualTemporalFlow === 'ENTRADA' ? '#0F8A67' : '#C94A34';
             if(window.aTemporalChart) window.aTemporalChart.destroy();
             window.aTemporalChart = new Chart(chartEl.getContext('2d'), {
                 type: 'bar',
