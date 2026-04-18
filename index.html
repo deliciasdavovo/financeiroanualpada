@@ -6423,6 +6423,32 @@
             }
         }
 
+        function getReconAllowedDestinations(item, fallbackList = null) {
+            const baseList = Array.isArray(fallbackList) ? fallbackList : getValidDestinations();
+            const allowed = getValidDestinationsByFlow((item || {}).type);
+            return allowed.length ? allowed : baseList;
+        }
+
+        function hasReconValidDestination(item, fallbackList = null) {
+            const destinationId = String((item || {}).destinationId || '');
+            if (!destinationId) return false;
+            return getReconAllowedDestinations(item, fallbackList).some(d => String(d.id || '') === destinationId);
+        }
+
+        function normalizeDuplicateDescription(value) {
+            return normalizeReconText(value).slice(0, 140);
+        }
+
+        function buildEntryDuplicateKey(entry, accountIdOverride = '') {
+            const accountId = String(accountIdOverride || (entry.accountId ?? entry.account_id) || '');
+            const destinationId = String((entry.destinationId ?? entry.destination_id) || '');
+            const date = String(entry.date || '');
+            const type = normalizeFlowType(entry.type);
+            const amount = Number(entry.amount ?? 0).toFixed(2);
+            const description = normalizeDuplicateDescription(entry.description || '');
+            return [date, type, amount, destinationId, accountId, description].join('|');
+        }
+
         function renderReconPreview() {
             const preview = document.getElementById('recon-preview');
             const summary = document.getElementById('recon-summary-count');
@@ -6434,21 +6460,20 @@
                     if(preview) preview.classList.add('hidden');
                     return;
                 }
-                tempRecon = tempRecon.map(item => {
-                    const allowed = getValidDestinationsByFlow(item.type);
-                    const source = allowed.length ? allowed : validDestinations;
-                    const allowedIds = new Set(source.map(d => d.id));
-                    return {
-                        ...item,
-                        destinationId: allowedIds.has(item.destinationId) ? item.destinationId : source[0].id
-                    };
-                });
+                tempRecon = tempRecon.map(item => ({
+                    ...item,
+                    destinationId: hasReconValidDestination(item, validDestinations) ? String(item.destinationId || '') : ''
+                }));
                 if(summary) summary.innerText = `${tempRecon.length} registros extraídos`;
+                const invalidCount = tempRecon.filter(item => !hasReconValidDestination(item, validDestinations)).length;
+                if(summary) summary.innerText = invalidCount > 0
+                    ? `${tempRecon.length} registros extraídos • ${invalidCount} sem destino confirmado`
+                    : `${tempRecon.length} registros extraídos`;
                 if(preview) preview.classList.remove('hidden');
                 if(body) body.innerHTML = tempRecon.map((e,i) => {
-                    const typeDestinations = getValidDestinationsByFlow(e.type);
-                    const destinationSource = typeDestinations.length ? typeDestinations : validDestinations;
-                    return `<tr class="table-row">
+                    const destinationSource = getReconAllowedDestinations(e, validDestinations);
+                    const invalidDestination = !hasReconValidDestination(e, validDestinations);
+                    return `<tr class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
                         <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${(e.date || '').split('-').reverse().join('/')}</td>
                         <td class="px-4 py-3 w-[180px]">
                             <input
@@ -6461,13 +6486,15 @@
                         </td>
                         <td class="px-4 py-3 w-[320px]">
                             <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
-                                <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value)" class="recon-destination-select">
+                                <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value)" class="recon-destination-select ${invalidDestination ? 'border-red-300 bg-red-50 text-red-700' : ''}">
+                                    <option value="" ${invalidDestination ? 'selected' : ''}>Selecionar destino...</option>
                                     ${destinationSource.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
                                 </select>
                                 <button type="button" class="recon-fill-handle" onmousedown="startReconFill(${i}, event)" title="Arraste para baixo para copiar o destino">
                                     ⋮
                                 </button>
                             </div>
+                            ${invalidDestination ? '<p class="field-error mt-2">Confirme o destino antes de importar.</p>' : ''}
                         </td>
                         <td class="px-4 py-3 text-center">
                             <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
@@ -6534,12 +6561,30 @@
                     status: batchStatus,
                 };
             });
+            const existingKeys = new Set(state.entries.map(entry => buildEntryDuplicateKey(entry)));
+            const duplicateAgainstExisting = newEntries.filter(entry => existingKeys.has(buildEntryDuplicateKey(entry, accId)));
+            if (duplicateAgainstExisting.length > 0) {
+                alert(`A importação foi bloqueada porque ${duplicateAgainstExisting.length} lançamento(s) já existem com mesma data, tipo, valor, destino, conta e descrição.`);
+                return;
+            }
+            const batchSeen = new Set();
+            const duplicateInsideBatch = [];
+            newEntries.forEach((entry) => {
+                const key = buildEntryDuplicateKey(entry, accId);
+                if (batchSeen.has(key)) duplicateInsideBatch.push(entry);
+                else batchSeen.add(key);
+            });
+            if (duplicateInsideBatch.length > 0) {
+                alert(`A importação foi bloqueada porque o lote contém ${duplicateInsideBatch.length} lançamento(s) duplicado(s). Revise a prévia antes de importar.`);
+                return;
+            }
             if (summaryEl) summaryEl.innerText = `Importado 0 de ${newEntries.length}`;
             const saveResult = await cloudSaveBatched('entries', newEntries, 200, (imported, total) => {
                 if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
             });
             if (!saveResult?.ok) {
                 if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
+                await refreshCloudState({ silent: false });
                 alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
