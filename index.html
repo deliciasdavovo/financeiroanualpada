@@ -454,11 +454,18 @@
         tbody .table-row:nth-child(odd):hover,
         tbody .table-row:nth-child(even):hover { background-color: #F8FAFF; }
         tbody .table-row.entry-row-transfer {
-            background-color: #EFF6FF;
+            background-color: #DCEBFF;
         }
         tbody .table-row.entry-row-transfer:hover,
         tbody .table-row.entry-row-transfer:focus-within {
-            background-color: #DBEAFE !important;
+            background-color: #C7DCFF !important;
+        }
+        tbody .table-row.entry-row-transfer-confirmed {
+            background-color: #D4E7FF;
+        }
+        tbody .table-row.entry-row-transfer-confirmed:hover,
+        tbody .table-row.entry-row-transfer-confirmed:focus-within {
+            background-color: #BCD7FF !important;
         }
 
         .badge {
@@ -1230,12 +1237,145 @@
             line-height: 1.2;
             color: #64748B;
         }
+        .treasury-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(280px, 360px);
+            gap: 16px;
+            align-items: end;
+        }
+        .treasury-hero-panel {
+            border: 1px solid #E5ECF4;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
+            padding: 18px 20px;
+        }
+        .treasury-hero-title {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #0F172A;
+        }
+        .treasury-hero-sub {
+            margin-top: 6px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #64748B;
+        }
+        .treasury-form-grid {
+            display: grid;
+            grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+            gap: 20px;
+        }
+        .treasury-form-card,
+        .treasury-history-card {
+            border: 1px solid #E5ECF4;
+            border-radius: 18px;
+            background: #FFFFFF;
+        }
+        .treasury-panel-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px 0;
+        }
+        .treasury-panel-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #334155;
+        }
+        .treasury-panel-sub {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #64748B;
+            line-height: 1.45;
+        }
+        .treasury-form-body {
+            padding: 18px 20px 20px;
+        }
+        .treasury-form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .treasury-form-actions .modal-btn-primary {
+            width: auto;
+            min-width: 180px;
+        }
+        .treasury-secondary-btn {
+            height: 46px;
+            padding: 0 16px;
+            border-radius: 12px;
+            border: 1px solid #D7DFEA;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .treasury-history-toolbar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            padding: 18px 20px;
+            border-top: 1px solid #EEF2F7;
+            border-bottom: 1px solid #EEF2F7;
+            background: #FAFCFF;
+        }
+        .treasury-history-summary {
+            padding: 12px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            border-bottom: 1px solid #EEF2F7;
+            background: #FFFFFF;
+        }
+        .treasury-notes {
+            max-width: 260px;
+            white-space: normal;
+            line-height: 1.4;
+        }
+        .treasury-action-group {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .treasury-action-btn {
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #64748B;
+        }
+        .treasury-action-btn:hover {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+            color: #0F172A;
+        }
+        .treasury-action-btn.danger:hover {
+            color: #B23A3A;
+            border-color: #F1C8C8;
+            background: #FFF5F5;
+        }
         @media (max-width: 1200px) {
             .db-explorer {
                 grid-template-columns: 1fr;
             }
             .db-col {
                 min-height: 240px;
+            }
+            .treasury-hero,
+            .treasury-form-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1720,6 +1860,61 @@
             align-items: center;
             justify-content: center;
         }
+        .transfer-review-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .transfer-review-btn {
+            min-height: 28px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid #C7D2FE;
+            background: #EFF6FF;
+            color: #1D4ED8;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .transfer-review-btn:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+        }
+        .transfer-review-btn.reject {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+            color: #475569;
+        }
+        .transfer-review-btn.reject:hover {
+            background: #E2E8F0;
+            border-color: #94A3B8;
+        }
+        .transfer-review-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 28px;
+            padding: 0 10px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .transfer-review-badge.confirmed {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+        .transfer-review-badge.dismissed {
+            background: #E2E8F0;
+            color: #475569;
+        }
         .table-row[role="button"] {
             outline: none;
         }
@@ -1911,6 +2106,17 @@
             .quick-status-btn {
                 min-height: 40px;
             }
+            .treasury-history-toolbar {
+                grid-template-columns: 1fr;
+            }
+            .treasury-form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .treasury-form-actions .modal-btn-primary,
+            .treasury-secondary-btn {
+                width: 100%;
+            }
             .modal-shell-entry,
             .modal-shell-db {
                 max-width: 100%;
@@ -1972,10 +2178,6 @@
                 padding-right: 8px !important;
                 font-size: 10px !important;
             }
-            #treasury-mv-table th:nth-child(2),
-            #treasury-mv-table td:nth-child(2),
-            #treasury-mv-table th:nth-child(4),
-            #treasury-mv-table td:nth-child(4),
             #treasury-bal-main-table th:nth-child(2),
             #treasury-bal-main-table td:nth-child(2),
             #treasury-bal-main-table th:nth-child(4),
@@ -2323,21 +2525,14 @@
             <!-- TESOURARIA -->
             <div id="treasury" class="tab-content space-y-8">
                 <div class="card-premium p-6 lg:p-8 space-y-6">
-                    <div class="flex flex-wrap items-end justify-between gap-4">
-                        <div>
-                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide">Base de Relatório de Vendas</h4>
-                            <p class="text-[11px] text-slate-500 mt-1">Fechamento diário das unidades MATRIZ e VILA NOVA com visão por semana, mês e ano.</p>
+                    <div class="treasury-hero">
+                        <div class="treasury-hero-panel">
+                            <h4 class="treasury-hero-title">Relatório de Vendas</h4>
+                            <p class="treasury-hero-sub">Cadastre, revise e edite os fechamentos das unidades com uma leitura mais clara de vendas, saídas e resultado do dia.</p>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto lg:min-w-[430px]">
-                            <div>
-                                <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
-                                <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
-                            </div>
-                            <div class="flex items-end">
-                                <button type="button" onclick="sendTreasuryDailySummaryWhatsApp()" class="h-[44px] px-4 rounded-xl bg-[#16a34a] text-white text-[11px] font-black uppercase tracking-wide hover:bg-[#15803d] transition-all w-full">
-                                    Enviar resumo no WhatsApp
-                                </button>
-                            </div>
+                        <div class="treasury-hero-panel">
+                            <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
+                            <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2359,44 +2554,60 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    <section class="card-premium p-6 lg:p-8 space-y-6">
-                        <div class="flex items-center justify-between gap-4">
-                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Fechamento Diário das Unidades</h4>
+                <div class="treasury-form-grid">
+                    <section class="treasury-form-card">
+                        <div class="treasury-panel-head">
+                            <div>
+                                <h4 id="treasury-mv-form-title" class="treasury-panel-title">Novo fechamento</h4>
+                                <p id="treasury-mv-form-subtitle" class="treasury-panel-sub">Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.</p>
+                            </div>
                         </div>
-                        <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="treasury-form-body">
+                            <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input id="treasury-mv-edit-id" type="hidden">
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-date">Data</label>
+                                    <input id="treasury-mv-date" type="date" required>
+                                </div>
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-unit">Unidade</label>
+                                    <select id="treasury-mv-unit" required>
+                                        <option value="MATRIZ">MATRIZ</option>
+                                        <option value="VILA_NOVA">VILA_NOVA</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-cash">Venda em dinheiro</label>
+                                    <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
+                                </div>
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-card">Venda em cartão</label>
+                                    <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
+                                </div>
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-payments">Saídas / pagamentos do dia</label>
+                                    <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="label-mini" for="treasury-mv-notes">Observações</label>
+                                    <input id="treasury-mv-notes" type="text" placeholder="Ex.: sangria, fornecedor, ajuste de caixa...">
+                                </div>
+                                <div class="md:col-span-2 treasury-form-actions">
+                                    <button type="submit" class="modal-btn-primary"><span id="treasury-mv-submit-label">Salvar fechamento</span></button>
+                                    <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar edição</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+                    <section class="treasury-history-card">
+                        <div class="treasury-panel-head">
                             <div>
-                                <label class="label-mini" for="treasury-mv-date">Data</label>
-                                <input id="treasury-mv-date" type="date" required>
+                                <h4 class="treasury-panel-title">Histórico de lançamentos</h4>
+                                <p class="treasury-panel-sub">Filtre por mês e unidade para localizar rapidamente um fechamento e editar com mais clareza.</p>
                             </div>
-                            <div>
-                                <label class="label-mini" for="treasury-mv-unit">Unidade</label>
-                                <select id="treasury-mv-unit" required>
-                                    <option value="MATRIZ">MATRIZ</option>
-                                    <option value="VILA_NOVA">VILA_NOVA</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-mv-cash">Venda em dinheiro</label>
-                                <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-mv-card">Venda em cartão</label>
-                                <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-mv-payments">Saídas / pagamentos do dia</label>
-                                <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="label-mini" for="treasury-mv-notes">Observações</label>
-                                <input id="treasury-mv-notes" type="text" placeholder="Opcional">
-                            </div>
-                            <div class="md:col-span-2">
-                                <button type="submit" class="modal-btn-primary w-full sm:w-auto">Salvar fechamento</button>
-                            </div>
-                        </form>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        </div>
+                        <div class="treasury-history-toolbar">
                             <div>
                                 <label class="label-mini" for="treasury-mv-filter-month">Filtrar por mês</label>
                                 <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
@@ -2410,15 +2621,16 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="table-mobile-scroll custom-scrollbar border border-slate-100 rounded-2xl">
+                        <div id="treasury-mv-history-summary" class="treasury-history-summary">0 lançamento(s) encontrados.</div>
+                        <div class="table-mobile-scroll custom-scrollbar">
                             <table id="treasury-mv-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                                     <tr>
                                         <th class="px-4 py-3">Data</th>
-                                        <th class="px-4 py-3">Unidade</th>
                                         <th class="px-4 py-3 text-right">Vendas</th>
                                         <th class="px-4 py-3 text-right">Saídas</th>
                                         <th class="px-4 py-3 text-right">Fechamento</th>
+                                        <th class="px-4 py-3">Observações</th>
                                         <th class="px-4 py-3 text-center">Ação</th>
                                     </tr>
                                 </thead>
@@ -2426,7 +2638,7 @@
                             </table>
                         </div>
                     </section>
-
+                </div>
                     <section class="card-premium p-6 lg:p-8 space-y-6">
                         <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Análise de Vendas</h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -2715,6 +2927,38 @@
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
         let entryFillDragMode = '';
+        const ENTRY_TRANSFER_REVIEW_STORAGE_KEY = 'entryTransferReviewDecisions';
+        let entryTransferReviewDecisions = loadEntryTransferReviewDecisions();
+
+        function loadEntryTransferReviewDecisions() {
+            try {
+                const raw = window.localStorage.getItem(ENTRY_TRANSFER_REVIEW_STORAGE_KEY);
+                const parsed = raw ? JSON.parse(raw) : {};
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (error) {
+                console.warn('Não foi possível carregar confirmações de transferência:', error);
+                return {};
+            }
+        }
+        function persistEntryTransferReviewDecisions() {
+            try {
+                window.localStorage.setItem(ENTRY_TRANSFER_REVIEW_STORAGE_KEY, JSON.stringify(entryTransferReviewDecisions || {}));
+            } catch (error) {
+                console.warn('Não foi possível salvar confirmações de transferência:', error);
+            }
+        }
+        function getEntryTransferReviewStatus(entryId) {
+            const value = String((entryTransferReviewDecisions || {})[String(entryId || '')] || '');
+            return value === 'confirmed' || value === 'dismissed' ? value : '';
+        }
+        function setEntryTransferReviewStatus(entryId, status = '') {
+            const id = String(entryId || '');
+            if (!id) return;
+            if (!status) delete entryTransferReviewDecisions[id];
+            else entryTransferReviewDecisions[id] = status;
+            persistEntryTransferReviewDecisions();
+            renderEntries();
+        }
 
         function getStateSnapshot() {
             return {
@@ -4816,6 +5060,54 @@
             if (salesEl) salesEl.innerText = formatBRL(movementDay);
             if (closingEl) closingEl.innerText = formatBRL(closingDay);
         }
+        function resetTreasuryMovementForm(options = {}) {
+            const { keepDate = true } = options;
+            const editIdEl = document.getElementById('treasury-mv-edit-id');
+            const dateEl = document.getElementById('treasury-mv-date');
+            const unitEl = document.getElementById('treasury-mv-unit');
+            const cashEl = document.getElementById('treasury-mv-cash');
+            const cardEl = document.getElementById('treasury-mv-card');
+            const paymentsEl = document.getElementById('treasury-mv-payments');
+            const notesEl = document.getElementById('treasury-mv-notes');
+            const titleEl = document.getElementById('treasury-mv-form-title');
+            const subtitleEl = document.getElementById('treasury-mv-form-subtitle');
+            const submitLabelEl = document.getElementById('treasury-mv-submit-label');
+            const cancelBtnEl = document.getElementById('treasury-mv-cancel-edit');
+            const today = getTodayIsoDate();
+
+            if (editIdEl) editIdEl.value = '';
+            if (dateEl && (!keepDate || !dateEl.value)) dateEl.value = today;
+            if (unitEl && !unitEl.value) unitEl.value = 'MATRIZ';
+            if (cashEl) cashEl.value = '0';
+            if (cardEl) cardEl.value = '0';
+            if (paymentsEl) paymentsEl.value = '0';
+            if (notesEl) notesEl.value = '';
+            if (titleEl) titleEl.innerText = 'Novo fechamento';
+            if (subtitleEl) subtitleEl.innerText = 'Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.';
+            if (submitLabelEl) submitLabelEl.innerText = 'Salvar fechamento';
+            if (cancelBtnEl) cancelBtnEl.classList.add('hidden');
+        }
+        function startTreasuryMovementEdit(id) {
+            const item = (state.storeDailyMovements || []).find(entry => String(entry.id || '') === String(id || ''));
+            if (!item) return;
+            const totals = getMovementTotals(item);
+            document.getElementById('treasury-mv-edit-id').value = String(item.id || '');
+            document.getElementById('treasury-mv-date').value = String(item.date || '');
+            document.getElementById('treasury-mv-unit').value = String(item.unit || 'MATRIZ');
+            document.getElementById('treasury-mv-cash').value = String(totals.cashIn || 0);
+            document.getElementById('treasury-mv-card').value = String(totals.cardIn || 0);
+            document.getElementById('treasury-mv-payments').value = String(totals.paymentsOut || 0);
+            document.getElementById('treasury-mv-notes').value = String(item.notes || '');
+            document.getElementById('treasury-mv-form-title').innerText = 'Editar fechamento';
+            document.getElementById('treasury-mv-form-subtitle').innerText = `Revise os valores de ${String(item.unit || '').replace('_', ' ')} em ${(item.date || '').split('-').reverse().join('/')}.`;
+            document.getElementById('treasury-mv-submit-label').innerText = 'Salvar alterações';
+            document.getElementById('treasury-mv-cancel-edit').classList.remove('hidden');
+            document.getElementById('treasury-mv-date')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('treasury-mv-date')?.focus();
+        }
+        function cancelTreasuryMovementEdit() {
+            resetTreasuryMovementForm({ keepDate: false });
+        }
         function renderTreasuryMovements() {
             const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
             const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
@@ -5079,6 +5371,89 @@
             if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
             if (salesReferenceEl && !salesReferenceEl.value) salesReferenceEl.value = today;
             if (salesPeriodEl && !salesPeriodEl.value) salesPeriodEl.value = 'SEMANA';
+            renderTreasuryMovements();
+            renderTreasuryFinancialPosition();
+            renderTreasurySalesAnalytics();
+        }
+
+        function renderTreasuryMovements() {
+            const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
+            const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
+            const historyBody = document.getElementById('treasury-mv-history-body');
+            const summaryEl = document.getElementById('treasury-mv-history-summary');
+            if (!historyBody) return;
+
+            const filtered = (state.storeDailyMovements || [])
+                .filter(item => !filterMonth || String(item.date || '').startsWith(filterMonth))
+                .filter(item => !filterUnit || item.unit === filterUnit)
+                .sort((a, b) => {
+                    if (a.date === b.date) return String(a.unit || '').localeCompare(String(b.unit || ''));
+                    return String(b.date || '').localeCompare(String(a.date || ''));
+                });
+
+            const summaryTotals = filtered.reduce((acc, item) => {
+                const totals = getMovementTotals(item);
+                acc.totalIn += totals.totalIn;
+                acc.paymentsOut += totals.paymentsOut;
+                acc.dailyResult += totals.dailyResult;
+                return acc;
+            }, { totalIn: 0, paymentsOut: 0, dailyResult: 0 });
+
+            if (summaryEl) {
+                const unitText = filterUnit ? filterUnit.replace('_', ' ') : 'todas as unidades';
+                summaryEl.innerText = `${filtered.length} lançamento(s) • ${unitText} • vendas ${formatBRL(summaryTotals.totalIn)} • saídas ${formatBRL(summaryTotals.paymentsOut)} • fechamento ${formatBRL(summaryTotals.dailyResult)}`;
+            }
+
+            if (!filtered.length) {
+                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem fechamentos para os filtros aplicados</td></tr>';
+            } else {
+                historyBody.innerHTML = filtered.map(item => {
+                    const totals = getMovementTotals(item);
+                    const resultClass = totals.dailyResult < 0 ? 'text-red-600' : 'text-slate-700';
+                    return `<tr class="table-row">
+                        <td class="px-4 py-3">
+                            <div class="treasury-cell-main text-slate-700">${escapeHtml((item.date || '').split('-').reverse().join('/'))}</div>
+                            <div class="treasury-cell-sub">${escapeHtml(String(item.unit || '-').replace('_', ' '))}</div>
+                        </td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
+                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} | Cartão: ${formatBRL(totals.cardIn)}</div>
+                        </td>
+                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="treasury-cell-main ${resultClass}">${formatBRL(totals.dailyResult)}</div>
+                        </td>
+                        <td class="px-4 py-3 text-xs text-slate-600 treasury-notes">${escapeHtml(String(item.notes || '—'))}</td>
+                        <td class="px-4 py-3 text-center">
+                            <div class="treasury-action-group">
+                                <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar movimento" aria-label="Editar movimento">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="treasury-action-btn danger" title="Excluir movimento" aria-label="Excluir movimento">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('');
+            }
+            lucide.createIcons();
+        }
+
+        function renderTreasury() {
+            const today = getTodayIsoDate();
+            const movementDateEl = document.getElementById('treasury-mv-date');
+            const summaryDateEl = document.getElementById('treasury-summary-date');
+            const movementFilterMonthEl = document.getElementById('treasury-mv-filter-month');
+            const salesReferenceEl = document.getElementById('treasury-sales-reference');
+            const salesPeriodEl = document.getElementById('treasury-sales-period');
+            const todayMonth = today.slice(0, 7);
+            if (movementDateEl && !movementDateEl.value) movementDateEl.value = today;
+            if (summaryDateEl && !summaryDateEl.value) summaryDateEl.value = today;
+            if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
+            if (salesReferenceEl && !salesReferenceEl.value) salesReferenceEl.value = today;
+            if (salesPeriodEl && !salesPeriodEl.value) salesPeriodEl.value = 'SEMANA';
+            resetTreasuryMovementForm({ keepDate: true });
             renderTreasuryMovements();
             renderTreasuryFinancialPosition();
             renderTreasurySalesAnalytics();
@@ -5545,6 +5920,9 @@
                 return;
             }
             state.storeDailyMovements = (state.storeDailyMovements || []).filter(item => String(item.id || '') !== String(id));
+            if (String(document.getElementById('treasury-mv-edit-id')?.value || '') === String(id)) {
+                resetTreasuryMovementForm({ keepDate: false });
+            }
             renderTreasury();
         }
         async function deleteTreasuryBalance(id) {
@@ -5609,6 +5987,26 @@
                 }
             });
             return { duplicateIds, duplicateGroups, transferIds, transferGroups };
+        }
+        function getTransferReviewMarkup(entryId, isPossibleTransfer) {
+            if (!isPossibleTransfer) return '';
+            const status = getEntryTransferReviewStatus(entryId);
+            if (status === 'confirmed') {
+                return `<div class="transfer-review-group">
+                    <span class="transfer-review-badge confirmed">Transferência confirmada</span>
+                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
+                </div>`;
+            }
+            if (status === 'dismissed') {
+                return `<div class="transfer-review-group">
+                    <span class="transfer-review-badge dismissed">Transferência descartada</span>
+                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
+                </div>`;
+            }
+            return `<div class="transfer-review-group">
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn">É transferência</button>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject">Não é</button>
+            </div>`;
         }
 
         function clearEntrySelection() {
@@ -5685,6 +6083,27 @@
             if (countEl) countEl.innerText = `${filtered.length} lançamento(s) no filtro`;
         }
 
+        function getTransferReviewMarkup(entryId, isPossibleTransfer) {
+            if (!isPossibleTransfer) return '';
+            const status = getEntryTransferReviewStatus(entryId);
+            if (status === 'confirmed') {
+                return `<div class="transfer-review-group">
+                    <span class="transfer-review-badge confirmed">Transferencia confirmada</span>
+                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
+                </div>`;
+            }
+            if (status === 'dismissed') {
+                return `<div class="transfer-review-group">
+                    <span class="transfer-review-badge dismissed">Transferencia descartada</span>
+                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
+                </div>`;
+            }
+            return `<div class="transfer-review-group">
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn">E transferencia</button>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject">Nao e</button>
+            </div>`;
+        }
+
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
             if(!body) return;
@@ -5729,17 +6148,25 @@
             let filtered = duplicateFilter === 'ONLY'
                 ? baseFiltered.filter(e => duplicateMeta.duplicateIds.has(e.id))
                 : duplicateFilter === 'TRANSFER'
-                    ? baseFiltered.filter(e => duplicateMeta.transferIds.has(e.id))
+                    ? baseFiltered.filter(e => {
+                        const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
+                        return isPossibleTransfer && getEntryTransferReviewStatus(e.id) !== 'dismissed';
+                    })
                     : baseFiltered;
 
             if (duplicateSummaryEl) {
                 const dupCount = duplicateMeta.duplicateIds.size;
                 const transferCount = duplicateMeta.transferIds.size;
+                const confirmedTransferCount = baseFiltered.filter(e => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) === 'confirmed').length;
+                const dismissedTransferCount = baseFiltered.filter(e => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) === 'dismissed').length;
+                const pendingTransferCount = Math.max(0, transferCount - confirmedTransferCount - dismissedTransferCount);
                 if (dupCount > 0 || transferCount > 0) {
                     duplicateSummaryEl.classList.remove('hidden');
+                    duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
                     duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
                     duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicado(s) por data + valor absoluto (ignora sinal).`;
                     duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
+                    duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
                 } else {
                     duplicateSummaryEl.classList.add('hidden');
                     duplicateSummaryEl.innerText = '';
@@ -5779,6 +6206,17 @@
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
+                const transferReviewStatus = getEntryTransferReviewStatus(e.id);
+                const isConfirmedTransfer = transferReviewStatus === 'confirmed';
+                const isDismissedTransfer = transferReviewStatus === 'dismissed';
+                const transferRowClass = isPossibleTransfer
+                    ? (isConfirmedTransfer ? 'entry-row-transfer-confirmed' : isDismissedTransfer ? '' : 'entry-row-transfer')
+                    : '';
+                const transferIconTitle = isConfirmedTransfer
+                    ? 'Transferencia confirmada'
+                    : isDismissedTransfer
+                        ? 'Transferencia descartada'
+                        : 'Possivel transferencia';
                 
                 return `<tr class="table-row ${isPossibleTransfer ? 'entry-row-transfer' : ''} ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
@@ -5849,6 +6287,190 @@
                     </td>
                 </tr>`;
             }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
+            applyCompactEntryAccountLabels(body);
+            lucide.createIcons();
+            requestAnimationFrame(() => flushPendingEntryDestinationFocus());
+        }
+
+        function renderEntries() {
+            const body = document.getElementById('entries-table-body');
+            if (!body) return;
+            const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
+            const dateStart = document.getElementById('filter-date-start')?.value || '';
+            const dateEnd = document.getElementById('filter-date-end')?.value || '';
+            const typeFilter = document.getElementById('filter-type')?.value || '';
+            const statusFilter = document.getElementById('filter-status')?.value || '';
+            const accountFilter = document.getElementById('filter-account')?.value || '';
+            const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
+            const quickDupEl = document.getElementById('entries-quick-dup');
+            const duplicateSummaryEl = document.getElementById('entries-dup-summary');
+            if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY' || duplicateFilter === 'TRANSFER');
+
+            const queryKey = [
+                search,
+                dateStart,
+                dateEnd,
+                typeFilter,
+                statusFilter,
+                accountFilter,
+                duplicateFilter,
+                currentSort.field,
+                currentSort.order
+            ].join('|');
+            if (lastEntriesQueryKey !== queryKey) {
+                entriesPage = 1;
+                lastEntriesQueryKey = queryKey;
+            }
+
+            const baseFiltered = state.entries.filter((e) => {
+                const matchesSearch = !search || getEntrySearchHaystack(e).includes(search);
+                const matchesStart = !dateStart || e.date >= dateStart;
+                const matchesEnd = !dateEnd || e.date <= dateEnd;
+                const matchesType = !typeFilter || e.type === typeFilter;
+                const matchesStatus = !statusFilter || e.status === statusFilter;
+                const entryAccountId = String((e.accountId ?? e.account_id) || '');
+                const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
+                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+            });
+
+            const duplicateMeta = getDuplicateMeta(baseFiltered);
+            let filtered = duplicateFilter === 'ONLY'
+                ? baseFiltered.filter((e) => duplicateMeta.duplicateIds.has(e.id))
+                : duplicateFilter === 'TRANSFER'
+                    ? baseFiltered.filter((e) => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) !== 'dismissed')
+                    : baseFiltered;
+
+            if (duplicateSummaryEl) {
+                const dupCount = duplicateMeta.duplicateIds.size;
+                const transferCount = duplicateMeta.transferIds.size;
+                const confirmedTransferCount = baseFiltered.filter((e) => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) === 'confirmed').length;
+                const dismissedTransferCount = baseFiltered.filter((e) => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) === 'dismissed').length;
+                const pendingTransferCount = Math.max(0, transferCount - confirmedTransferCount - dismissedTransferCount);
+                if (dupCount > 0 || transferCount > 0) {
+                    duplicateSummaryEl.classList.remove('hidden');
+                    duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
+                } else {
+                    duplicateSummaryEl.classList.add('hidden');
+                    duplicateSummaryEl.innerText = '';
+                }
+            }
+
+            filtered.sort((a, b) => {
+                const vA = a[currentSort.field];
+                const vB = b[currentSort.field];
+                if (currentSort.field === 'date') return currentSort.order === 'asc' ? (vA || '').localeCompare(vB || '') : (vB || '').localeCompare(vA || '');
+                return currentSort.order === 'asc' ? (vA || 0) - (vB || 0) : (vB || 0) - (vA || 0);
+            });
+
+            const sortDateEl = document.getElementById('entries-sort-date');
+            const sortAmountEl = document.getElementById('entries-sort-amount');
+            if (sortDateEl) sortDateEl.setAttribute('aria-sort', currentSort.field === 'date' ? (currentSort.order === 'asc' ? 'ascending' : 'descending') : 'none');
+            if (sortAmountEl) sortAmountEl.setAttribute('aria-sort', currentSort.field === 'amount' ? (currentSort.order === 'asc' ? 'ascending' : 'descending') : 'none');
+
+            const totalRecords = filtered.length;
+            const totalPages = Math.max(1, Math.ceil(totalRecords / entriesPageSize));
+            if (entriesPage > totalPages) entriesPage = totalPages;
+            const startIdx = (entriesPage - 1) * entriesPageSize;
+            const pageItems = filtered.slice(startIdx, startIdx + entriesPageSize);
+
+            updateEntriesFilterReport(filtered);
+            selectedEntryIds = new Set(Array.from(selectedEntryIds).filter((id) => state.entries.some((e) => e.id === id)));
+            updateEntriesSummaryAndSelection(pageItems);
+            renderEntriesPagination(totalRecords, totalPages, pageItems.length);
+
+            body.innerHTML = pageItems.map((e, i) => {
+                const dstOptionsByType = getValidDestinationsByFlow(e.type);
+                const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
+                const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+                const isEntrada = e.type === 'ENTRADA';
+                const isRealizado = e.status === 'REALIZADO';
+                const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const isSelected = selectedEntryIds.has(e.id);
+                const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
+                const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
+                const transferReviewStatus = getEntryTransferReviewStatus(e.id);
+                const transferRowClass = isPossibleTransfer
+                    ? (transferReviewStatus === 'confirmed' ? 'entry-row-transfer-confirmed' : transferReviewStatus === 'dismissed' ? '' : 'entry-row-transfer')
+                    : '';
+                const transferIconTitle = transferReviewStatus === 'confirmed'
+                    ? 'Transferencia confirmada'
+                    : transferReviewStatus === 'dismissed'
+                        ? 'Transferencia descartada'
+                        : 'Possivel transferencia';
+
+                return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lancamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))} no valor de ${escapeHtml(formatBRL(e.amount))}">
+                    <td class="px-4 py-4 text-center">
+                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lancamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))}">
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-cell-main center">
+                            <span class="entry-date-main">${(e.date || '').split('-').reverse().join('/')}</span>
+                        </div>
+                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
+                            <div class="recon-destination-cell entry-cell-main">
+                                <input
+                                    id="entry-dst-${e.id}"
+                                    list="entry-dst-list-${e.id}"
+                                    value="${escapeHtml(getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId))}"
+                                    onclick="event.stopPropagation()"
+                                    onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
+                                    onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
+                                    onblur="event.stopPropagation(); commitEntryDestinationInlineInput('${e.id}', this.value, { showAlert: false })"
+                                    class="entry-destination-input"
+                                    aria-label="Destino do lancamento">
+                                <datalist id="entry-dst-list-${e.id}">
+                                    ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
+                                </datalist>
+                                <div class="entry-badges">
+                                    ${isPossibleTransfer ? `<span class="dup-icon" title="${transferIconTitle}"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>` : ''}
+                                    ${isDuplicate ? '<span class="dup-icon" title="Possivel duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
+                                </div>
+                                <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
+                                    ...
+                                </button>
+                            </div>
+                            <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observacao')}</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})" onmousemove="applyEntryAccountFillTo(${i})">
+                            <div class="recon-destination-cell entry-cell-main">
+                                <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lancamento">
+                                    ${accountOptions.map((acc) => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '') === String(acc.id || '') ? 'selected' : ''}>${acc.name}</option>`).join('')}
+                                </select>
+                                <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryAccountFill(${i}, event)" title="Arraste para copiar conta" aria-label="Arrastar para copiar conta">
+                                    ...
+                                </button>
+                            </div>
+                            <p class="entry-destination-desc entry-cell-sub">Conta / banco</p>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="entry-cell-main center">
+                            <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
+                        </div>
+                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="entry-cell-main center">
+                            <div class="entry-actions-wrap">
+                                <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lancamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
+                                <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lancamento">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="entry-cell-sub">
+                            ${getTransferReviewMarkup(e.id, isPossibleTransfer)}
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
+
             applyCompactEntryAccountLabels(body);
             lucide.createIcons();
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
@@ -7627,6 +8249,54 @@
             if (existing) state.dailyBalances = state.dailyBalances.map(item => item.id === existing.id ? payload : item);
             else state.dailyBalances.push(payload);
             renderTreasury();
+        };
+        if (treasuryMovementFormEl) treasuryMovementFormEl.onsubmit = async (event) => {
+            event.preventDefault();
+            const editId = String(document.getElementById('treasury-mv-edit-id')?.value || '');
+            const date = String(document.getElementById('treasury-mv-date')?.value || '');
+            const unit = String(document.getElementById('treasury-mv-unit')?.value || '');
+            if (!date || !unit) {
+                alert('Informe data e unidade.');
+                return;
+            }
+
+            const duplicate = (state.storeDailyMovements || []).find(item =>
+                item.date === date &&
+                item.unit === unit &&
+                String(item.id || '') !== editId
+            );
+            if (duplicate) {
+                alert('Já existe um fechamento para essa data e unidade. Edite o lançamento existente pelo histórico.');
+                return;
+            }
+
+            const existing = editId
+                ? (state.storeDailyMovements || []).find(item => String(item.id || '') === editId)
+                : null;
+            const payload = {
+                id: existing ? existing.id : generateId(),
+                date,
+                unit,
+                cashIn: toMoneyNumber(document.getElementById('treasury-mv-cash')?.value),
+                cardIn: toMoneyNumber(document.getElementById('treasury-mv-card')?.value),
+                paymentsOut: toMoneyNumber(document.getElementById('treasury-mv-payments')?.value),
+                notes: String(document.getElementById('treasury-mv-notes')?.value || '').trim()
+            };
+            const saveResult = await cloudSave('storeDailyMovements', payload);
+            if (!saveResult?.ok) {
+                alert(`Não foi possível salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
+
+            if (existing) {
+                state.storeDailyMovements = state.storeDailyMovements.map(item => String(item.id || '') === String(existing.id || '') ? payload : item);
+            } else {
+                state.storeDailyMovements.push(payload);
+            }
+            resetTreasuryMovementForm({ keepDate: false });
+            renderTreasuryMovements();
+            renderTreasuryFinancialPosition();
+            renderTreasurySalesAnalytics();
         };
 
         function openDbModal(type, parentId = '', editItem = null) {
