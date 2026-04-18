@@ -1946,7 +1946,7 @@
                 <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
             <button onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="scissors" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Tesouraria</span>
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
             </button>
             <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
@@ -2215,13 +2215,13 @@
                 <div class="card-premium p-6 lg:p-8 space-y-6">
                     <div class="flex flex-wrap items-end justify-between gap-4">
                         <div>
-                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide">Posição Financeira Diária</h4>
-                            <p class="text-[11px] text-slate-500 mt-1">Controle operacional sem gerar lançamentos financeiros automáticos.</p>
+                            <h4 class="text-sm font-black text-slate-900 uppercase tracking-wide">Base de Relatório de Vendas</h4>
+                            <p class="text-[11px] text-slate-500 mt-1">Fechamento diário das unidades MATRIZ e VILA NOVA com visão por semana, mês e ano.</p>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto lg:min-w-[430px]">
                             <div>
-                                <label class="label-mini" for="treasury-summary-date">Dia do resumo</label>
-                                <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition()">
+                                <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
+                                <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
                             </div>
                             <div class="flex items-end">
                                 <button type="button" onclick="sendTreasuryDailySummaryWhatsApp()" class="h-[44px] px-4 rounded-xl bg-[#16a34a] text-white text-[11px] font-black uppercase tracking-wide hover:bg-[#15803d] transition-all w-full">
@@ -2230,16 +2230,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="kpi-card p-5">
-                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Movimento do dia</p>
-                            <p id="treasury-movement-day" class="text-2xl font-black flow-income-text mt-2">R$ 0,00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Soma de entradas das unidades</p>
+                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Vendas do dia</p>
+                            <p id="treasury-sales-day" class="text-2xl font-black flow-income-text mt-2">R$ 0,00</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Dinheiro + cartão das unidades</p>
                         </div>
                         <div class="kpi-card p-5">
-                            <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Saldo bancário atual</p>
-                            <p id="treasury-bank-current" class="text-2xl font-black flow-balance-text mt-2">R$ 0,00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Último saldo registrado por conta</p>
+                            <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Fechamento do dia</p>
+                            <p id="treasury-closing-day" class="text-2xl font-black flow-balance-text mt-2">R$ 0,00</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Vendas menos saídas do dia</p>
+                        </div>
+                        <div class="kpi-card p-5">
+                            <p class="text-[9px] font-black text-slate-700 uppercase tracking-widest">Vendas do período</p>
+                            <p id="treasury-sales-period-total" class="text-2xl font-black text-slate-900 mt-2">R$ 0,00</p>
+                            <p id="treasury-sales-period-caption" class="text-[10px] text-slate-500 mt-1">Resumo do filtro atual</p>
                         </div>
                     </div>
                 </div>
@@ -2247,7 +2252,7 @@
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     <section class="card-premium p-6 lg:p-8 space-y-6">
                         <div class="flex items-center justify-between gap-4">
-                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Movimento das Lojas</h4>
+                            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Fechamento Diário das Unidades</h4>
                         </div>
                         <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -2262,15 +2267,15 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="label-mini" for="treasury-mv-cash">Entrada dinheiro</label>
+                                <label class="label-mini" for="treasury-mv-cash">Venda em dinheiro</label>
                                 <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
                             </div>
                             <div>
-                                <label class="label-mini" for="treasury-mv-card">Entrada cartão</label>
+                                <label class="label-mini" for="treasury-mv-card">Venda em cartão</label>
                                 <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
                             </div>
                             <div>
-                                <label class="label-mini" for="treasury-mv-payments">Pagamentos do dia</label>
+                                <label class="label-mini" for="treasury-mv-payments">Saídas / pagamentos do dia</label>
                                 <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
                             </div>
                             <div class="md:col-span-2">
@@ -2278,7 +2283,7 @@
                                 <input id="treasury-mv-notes" type="text" placeholder="Opcional">
                             </div>
                             <div class="md:col-span-2">
-                                <button type="submit" class="modal-btn-primary w-full sm:w-auto">Salvar movimento</button>
+                                <button type="submit" class="modal-btn-primary w-full sm:w-auto">Salvar fechamento</button>
                             </div>
                         </form>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2301,9 +2306,9 @@
                                     <tr>
                                         <th class="px-4 py-3">Data</th>
                                         <th class="px-4 py-3">Unidade</th>
-                                        <th class="px-4 py-3 text-right">Entradas</th>
-                                        <th class="px-4 py-3 text-right">Pagamentos</th>
-                                        <th class="px-4 py-3 text-right">Resultado</th>
+                                        <th class="px-4 py-3 text-right">Vendas</th>
+                                        <th class="px-4 py-3 text-right">Saídas</th>
+                                        <th class="px-4 py-3 text-right">Fechamento</th>
                                         <th class="px-4 py-3 text-center">Ação</th>
                                     </tr>
                                 </thead>
@@ -2313,51 +2318,43 @@
                     </section>
 
                     <section class="card-premium p-6 lg:p-8 space-y-6">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Saldos Bancários</h4>
-                        <form id="treasury-balance-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Análise de Vendas</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="label-mini" for="treasury-bal-date">Data</label>
-                                <input id="treasury-bal-date" type="date" required>
+                                <label class="label-mini" for="treasury-sales-period">Visualizar por</label>
+                                <select id="treasury-sales-period" onchange="renderTreasurySalesAnalytics()">
+                                    <option value="SEMANA">Semana</option>
+                                    <option value="MES">Mês</option>
+                                    <option value="ANO">Ano</option>
+                                </select>
                             </div>
                             <div>
-                                <label class="label-mini" for="treasury-bal-account">Conta</label>
-                                <select id="treasury-bal-account" required></select>
+                                <label class="label-mini" for="treasury-sales-reference">Referência</label>
+                                <input id="treasury-sales-reference" type="date" onchange="renderTreasurySalesAnalytics()">
                             </div>
                             <div>
-                                <label class="label-mini" for="treasury-bal-value">Saldo (R$)</label>
-                                <input id="treasury-bal-value" type="number" step="0.01" required>
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-bal-notes">Observações</label>
-                                <input id="treasury-bal-notes" type="text" placeholder="Opcional">
-                            </div>
-                            <div class="md:col-span-2">
-                                <button type="submit" class="modal-btn-primary w-full sm:w-auto">Salvar saldo</button>
-                            </div>
-                        </form>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                                <label class="label-mini" for="treasury-bal-filter-month">Filtrar por mês</label>
-                                <input id="treasury-bal-filter-month" type="month" onchange="renderTreasuryBalances()">
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-bal-filter-account">Filtrar banco/conta</label>
-                                <select id="treasury-bal-filter-account" onchange="renderTreasuryBalances()"></select>
+                                <label class="label-mini" for="treasury-sales-unit-filter">Unidade</label>
+                                <select id="treasury-sales-unit-filter" onchange="renderTreasurySalesAnalytics()">
+                                    <option value="">Todas</option>
+                                    <option value="MATRIZ">MATRIZ</option>
+                                    <option value="VILA_NOVA">VILA_NOVA</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="h-[280px]"><canvas id="treasury-balance-chart"></canvas></div>
+                        <div class="h-[280px]"><canvas id="treasury-sales-chart"></canvas></div>
                         <div class="table-mobile-scroll custom-scrollbar border border-slate-100 rounded-2xl">
-                            <table id="treasury-bal-main-table" class="w-full text-left">
+                            <table id="treasury-sales-summary-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                                     <tr>
-                                        <th class="px-4 py-3">Data</th>
-                                        <th class="px-4 py-3">Conta</th>
-                                        <th class="px-4 py-3 text-right">Saldo</th>
-                                        <th class="px-4 py-3 text-right">Variação dia anterior</th>
-                                        <th class="px-4 py-3 text-center">Ação</th>
+                                        <th class="px-4 py-3">Unidade</th>
+                                        <th class="px-4 py-3 text-right">Dinheiro</th>
+                                        <th class="px-4 py-3 text-right">Cartão</th>
+                                        <th class="px-4 py-3 text-right">Vendas</th>
+                                        <th class="px-4 py-3 text-right">Saídas</th>
+                                        <th class="px-4 py-3 text-right">Fechamento</th>
                                     </tr>
                                 </thead>
-                                <tbody id="treasury-bal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                <tbody id="treasury-sales-summary-body" class="divide-y divide-slate-50 bg-white"></tbody>
                             </table>
                         </div>
                     </section>
@@ -2442,9 +2439,9 @@
             <i data-lucide="landmark" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Conc.</span>
         </button>
-        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Tesouraria">
-            <i data-lucide="scissors" class="w-5 h-5"></i>
-            <span class="mobile-nav-label">Tes.</span>
+        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
+            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Vendas</span>
         </button>
         <button onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
             <i data-lucide="database" class="w-5 h-5"></i>
@@ -2601,6 +2598,7 @@
         let dbSelectedSubCategoryId = '';
         let cloudSupportsUpdatedAt = true;
         let treasuryBalanceChart = null;
+        let treasurySalesChart = null;
         let lastFocusedElement = null;
         let cloudSyncInFlight = false;
         let cloudRefreshTimer = null;
@@ -4274,7 +4272,7 @@
                 monthly: 'Relatório Mensal',
                 annual: 'Relatório Anual',
                 reconciliation: 'Conciliação',
-                treasury: 'Tesouraria',
+                treasury: 'Relatório de Vendas',
                 database: 'Banco de Dados'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
@@ -4402,6 +4400,191 @@
             const dailyResult = totalIn - paymentsOut;
             return { totalIn, dailyResult, cashIn, cardIn, paymentsOut };
         }
+        function getTreasurySalesPeriod() {
+            return String(document.getElementById('treasury-sales-period')?.value || 'SEMANA').toUpperCase();
+        }
+        function getTreasurySalesReferenceDate() {
+            return String(document.getElementById('treasury-sales-reference')?.value || '') || getTodayIsoDate();
+        }
+        function getTreasurySalesUnitFilter() {
+            return String(document.getElementById('treasury-sales-unit-filter')?.value || '');
+        }
+        function getTreasuryWeekRange(referenceDateStr) {
+            const base = new Date(`${referenceDateStr}T12:00:00`);
+            const start = new Date(base);
+            const offset = (start.getDay() + 6) % 7;
+            start.setDate(start.getDate() - offset);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 6);
+            return { start, end };
+        }
+        function getTreasurySalesFilteredMovements() {
+            const period = getTreasurySalesPeriod();
+            const reference = getTreasurySalesReferenceDate();
+            const unit = getTreasurySalesUnitFilter();
+            const referenceDate = new Date(`${reference}T12:00:00`);
+            const { start, end } = getTreasuryWeekRange(reference);
+            return (state.storeDailyMovements || []).filter(item => {
+                if (!item || !item.date) return false;
+                if (unit && item.unit !== unit) return false;
+                const itemDate = new Date(`${item.date}T12:00:00`);
+                if (period === 'ANO') return itemDate.getFullYear() === referenceDate.getFullYear();
+                if (period === 'MES') return itemDate.getFullYear() === referenceDate.getFullYear() && itemDate.getMonth() === referenceDate.getMonth();
+                return itemDate >= start && itemDate <= end;
+            });
+        }
+        function buildTreasurySalesSeries() {
+            const period = getTreasurySalesPeriod();
+            const reference = getTreasurySalesReferenceDate();
+            const referenceDate = new Date(`${reference}T12:00:00`);
+            const movements = getTreasurySalesFilteredMovements();
+            const buckets = new Map();
+            const labels = [];
+            const keys = [];
+
+            if (period === 'ANO') {
+                ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'].forEach((label, index) => {
+                    labels.push(label);
+                    keys.push(`${referenceDate.getFullYear()}-${String(index + 1).padStart(2, '0')}`);
+                });
+            } else if (period === 'MES') {
+                const totalDays = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 0).getDate();
+                for (let day = 1; day <= totalDays; day++) {
+                    const key = `${reference.slice(0, 7)}-${String(day).padStart(2, '0')}`;
+                    labels.push(String(day).padStart(2, '0'));
+                    keys.push(key);
+                }
+            } else {
+                const { start } = getTreasuryWeekRange(reference);
+                for (let index = 0; index < 7; index++) {
+                    const day = new Date(start);
+                    day.setDate(start.getDate() + index);
+                    labels.push(day.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit' }));
+                    keys.push(formatLocalDate(day));
+                }
+            }
+
+            keys.forEach(key => buckets.set(key, { sales: 0, closing: 0 }));
+            movements.forEach(item => {
+                const totals = getMovementTotals(item);
+                const key = period === 'ANO' ? String(item.date || '').slice(0, 7) : String(item.date || '');
+                if (!buckets.has(key)) return;
+                const bucket = buckets.get(key);
+                bucket.sales += totals.totalIn;
+                bucket.closing += totals.dailyResult;
+            });
+
+            return {
+                labels,
+                salesValues: keys.map(key => buckets.get(key)?.sales || 0),
+                closingValues: keys.map(key => buckets.get(key)?.closing || 0)
+            };
+        }
+        function renderTreasurySalesAnalytics() {
+            const body = document.getElementById('treasury-sales-summary-body');
+            const chartEl = document.getElementById('treasury-sales-chart');
+            const periodTotalEl = document.getElementById('treasury-sales-period-total');
+            const periodCaptionEl = document.getElementById('treasury-sales-period-caption');
+            if (!body || !chartEl || !periodTotalEl || !periodCaptionEl) return;
+
+            const period = getTreasurySalesPeriod();
+            const reference = getTreasurySalesReferenceDate();
+            const unitFilter = getTreasurySalesUnitFilter();
+            const movements = getTreasurySalesFilteredMovements();
+            const series = buildTreasurySalesSeries();
+            const units = unitFilter ? [unitFilter] : ['MATRIZ', 'VILA_NOVA'];
+            const summary = units.map(unit => movements
+                .filter(item => item.unit === unit)
+                .reduce((acc, item) => {
+                    const totals = getMovementTotals(item);
+                    acc.unit = unit;
+                    acc.cashIn += totals.cashIn;
+                    acc.cardIn += totals.cardIn;
+                    acc.totalIn += totals.totalIn;
+                    acc.paymentsOut += totals.paymentsOut;
+                    acc.dailyResult += totals.dailyResult;
+                    return acc;
+                }, { unit, cashIn: 0, cardIn: 0, totalIn: 0, paymentsOut: 0, dailyResult: 0 }));
+            const consolidated = summary.reduce((acc, item) => {
+                acc.cashIn += item.cashIn;
+                acc.cardIn += item.cardIn;
+                acc.totalIn += item.totalIn;
+                acc.paymentsOut += item.paymentsOut;
+                acc.dailyResult += item.dailyResult;
+                return acc;
+            }, { cashIn: 0, cardIn: 0, totalIn: 0, paymentsOut: 0, dailyResult: 0 });
+
+            const periodText = period === 'ANO'
+                ? `Ano de ${reference.slice(0, 4)}`
+                : period === 'MES'
+                    ? `Mês ${reference.slice(5, 7)}/${reference.slice(0, 4)}`
+                    : `Semana de ${new Date(`${reference}T12:00:00`).toLocaleDateString('pt-BR')}`;
+            periodTotalEl.innerText = formatBRL(consolidated.totalIn);
+            periodCaptionEl.innerText = `${periodText}${unitFilter ? ` • ${unitFilter.replace('_', ' ')}` : ' • todas as unidades'}`;
+
+            if (!summary.length || !movements.length) {
+                body.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem vendas no período selecionado</td></tr>';
+            } else {
+                body.innerHTML = `${summary.map(item => `<tr class="table-row">
+                        <td class="px-4 py-3 text-xs font-black text-slate-800">${escapeHtml(item.unit.replace('_', ' '))}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-700">${formatBRL(item.cashIn)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-700">${formatBRL(item.cardIn)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-black flow-income-text">${formatBRL(item.totalIn)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-700">${formatBRL(item.paymentsOut)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-black ${item.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(item.dailyResult)}</td>
+                    </tr>`).join('')}
+                    <tr class="bg-slate-50">
+                        <td class="px-4 py-3 text-xs font-black text-slate-900">Consolidado</td>
+                        <td class="px-4 py-3 text-right text-xs font-black text-slate-700">${formatBRL(consolidated.cashIn)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-black text-slate-700">${formatBRL(consolidated.cardIn)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-black flow-income-text">${formatBRL(consolidated.totalIn)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-black text-slate-700">${formatBRL(consolidated.paymentsOut)}</td>
+                        <td class="px-4 py-3 text-right text-xs font-black ${consolidated.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(consolidated.dailyResult)}</td>
+                    </tr>`;
+            }
+
+            if (treasurySalesChart) treasurySalesChart.destroy();
+            treasurySalesChart = new Chart(chartEl.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: series.labels,
+                    datasets: [
+                        {
+                            label: 'Vendas',
+                            data: series.salesValues,
+                            backgroundColor: '#1F7A5C',
+                            borderRadius: 8,
+                            maxBarThickness: 28
+                        },
+                        {
+                            label: 'Fechamento',
+                            data: series.closingValues,
+                            type: 'line',
+                            borderColor: '#2F4F9D',
+                            backgroundColor: 'rgba(47,79,157,0.14)',
+                            tension: 0.28,
+                            pointRadius: 3,
+                            pointHoverRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: getReadableTooltipConfig((ctx) => `${ctx.dataset.label}: ${formatBRL(ctx.raw || 0)}`)
+                    },
+                    scales: {
+                        y: {
+                            ticks: { callback: (value) => formatChartBRL(value) },
+                            grid: { color: 'rgba(148,163,184,0.16)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
         function getTreasurySummaryDate() {
             const dateInput = String(document.getElementById('treasury-summary-date')?.value || '');
             return dateInput || getTodayIsoDate();
@@ -4469,12 +4652,12 @@
             const summaryDate = getTreasurySummaryDate();
             const dayMovements = (state.storeDailyMovements || []).filter(m => m.date === summaryDate);
             const movementDay = dayMovements.reduce((acc, m) => acc + getMovementTotals(m).totalIn, 0);
-            const currentBankBalance = getLatestBalancesByAccount().reduce((acc, b) => acc + toMoneyNumber(b.balance), 0);
+            const closingDay = dayMovements.reduce((acc, m) => acc + getMovementTotals(m).dailyResult, 0);
 
-            const movementEl = document.getElementById('treasury-movement-day');
-            const bankEl = document.getElementById('treasury-bank-current');
-            if (movementEl) movementEl.innerText = formatBRL(movementDay);
-            if (bankEl) bankEl.innerText = formatBRL(currentBankBalance);
+            const salesEl = document.getElementById('treasury-sales-day');
+            const closingEl = document.getElementById('treasury-closing-day');
+            if (salesEl) salesEl.innerText = formatBRL(movementDay);
+            if (closingEl) closingEl.innerText = formatBRL(closingDay);
         }
         function renderTreasuryMovements() {
             const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
@@ -4491,7 +4674,7 @@
                 });
 
             if (!filtered.length) {
-                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem movimentos para os filtros aplicados</td></tr>';
+                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem fechamentos para os filtros aplicados</td></tr>';
             } else {
                 historyBody.innerHTML = filtered.map(item => {
                     const totals = getMovementTotals(item);
@@ -4504,7 +4687,7 @@
                         <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(item.unit || '-')}</td>
                         <td class="px-4 py-3 text-right">
                             <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Pagamentos: ${formatBRL(totals.paymentsOut)}</div>
+                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} • Cartão: ${formatBRL(totals.cardIn)}</div>
                         </td>
                         <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
                         <td class="px-4 py-3 text-right">
@@ -4633,9 +4816,8 @@
             const matriz = summarizeUnit('MATRIZ');
             const vilaClosing = (vila.cardIn + vila.cashIn) - vila.paymentsOut;
             const matrizClosing = (matriz.cardIn + matriz.cashIn) - matriz.paymentsOut;
-            const consolidatedIn = (matriz.cardIn + matriz.cashIn + matriz.paymentsOut) + (vila.cardIn + vila.cashIn + vila.paymentsOut);
-            const balances = getLatestBalancesByAccountAtDate(date);
-            const totalBalances = balances.reduce((acc, item) => acc + toMoneyNumber(item.balance), 0);
+            const consolidatedSales = (matriz.cardIn + matriz.cashIn) + (vila.cardIn + vila.cashIn);
+            const consolidatedClosing = matrizClosing + vilaClosing;
             const datePt = date.split('-').reverse().join('/');
             const bankLines = balances.length
                 ? balances.map(item => `• ${item.name}: ${formatBRL(item.balance)}`)
@@ -4683,6 +4865,66 @@
             renderTreasuryMovements();
             renderTreasuryBalances();
             renderTreasuryFinancialPosition();
+        }
+
+        function sendTreasuryDailySummaryWhatsApp() {
+            const date = getTreasurySummaryDate();
+            const dayMovements = (state.storeDailyMovements || []).filter(item => item.date === date);
+            const summarizeUnit = (unit) => dayMovements.filter(item => item.unit === unit).reduce((acc, item) => {
+                const totals = getMovementTotals(item);
+                acc.cashIn += totals.cashIn;
+                acc.cardIn += totals.cardIn;
+                acc.paymentsOut += totals.paymentsOut;
+                acc.totalIn += totals.totalIn;
+                acc.result += totals.dailyResult;
+                return acc;
+            }, { cashIn: 0, cardIn: 0, paymentsOut: 0, totalIn: 0, result: 0 });
+            const vila = summarizeUnit('VILA_NOVA');
+            const matriz = summarizeUnit('MATRIZ');
+            const vilaClosing = (vila.cardIn + vila.cashIn) - vila.paymentsOut;
+            const matrizClosing = (matriz.cardIn + matriz.cashIn) - matriz.paymentsOut;
+            const consolidatedSales = (matriz.cardIn + matriz.cashIn) + (vila.cardIn + vila.cashIn);
+            const consolidatedClosing = matrizClosing + vilaClosing;
+            const datePt = date.split('-').reverse().join('/');
+            const msg = [
+                `Resumo de Vendas`,
+                `${datePt}`,
+                ``,
+                `Vila Nova`,
+                `Cartão: ${formatBRL(vila.cardIn)}`,
+                `Dinheiro: ${formatBRL(vila.cashIn)}`,
+                `Saídas: ${formatBRL(vila.paymentsOut)}`,
+                `Fechamento: ${formatBRL(vilaClosing)}`,
+                ``,
+                `Matriz`,
+                `Cartão: ${formatBRL(matriz.cardIn)}`,
+                `Dinheiro: ${formatBRL(matriz.cashIn)}`,
+                `Saídas: ${formatBRL(matriz.paymentsOut)}`,
+                `Fechamento: ${formatBRL(matrizClosing)}`,
+                ``,
+                `Total de vendas: ${formatBRL(consolidatedSales)}`,
+                `Fechamento consolidado: ${formatBRL(consolidatedClosing)}`
+            ].join('\n');
+            const phone = '5511999148044';
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+        function renderTreasury() {
+            const today = getTodayIsoDate();
+            const movementDateEl = document.getElementById('treasury-mv-date');
+            const summaryDateEl = document.getElementById('treasury-summary-date');
+            const movementFilterMonthEl = document.getElementById('treasury-mv-filter-month');
+            const salesReferenceEl = document.getElementById('treasury-sales-reference');
+            const salesPeriodEl = document.getElementById('treasury-sales-period');
+            const todayMonth = today.slice(0, 7);
+            if (movementDateEl && !movementDateEl.value) movementDateEl.value = today;
+            if (summaryDateEl && !summaryDateEl.value) summaryDateEl.value = today;
+            if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
+            if (salesReferenceEl && !salesReferenceEl.value) salesReferenceEl.value = today;
+            if (salesPeriodEl && !salesPeriodEl.value) salesPeriodEl.value = 'SEMANA';
+            renderTreasuryMovements();
+            renderTreasuryFinancialPosition();
+            renderTreasurySalesAnalytics();
         }
 
         function setSort(field) {
@@ -7101,7 +7343,8 @@
             
             closeModal('entry-modal'); render();
         };
-        document.getElementById('treasury-movement-form').onsubmit = async (event) => {
+        const treasuryMovementFormEl = document.getElementById('treasury-movement-form');
+        if (treasuryMovementFormEl) treasuryMovementFormEl.onsubmit = async (event) => {
             event.preventDefault();
             const date = String(document.getElementById('treasury-mv-date')?.value || '');
             const unit = String(document.getElementById('treasury-mv-unit')?.value || '');
@@ -7121,14 +7364,15 @@
             };
             const saveResult = await cloudSave('storeDailyMovements', payload);
             if (!saveResult?.ok) {
-                alert(`Não foi possível salvar o movimento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             if (existing) state.storeDailyMovements = state.storeDailyMovements.map(item => item.id === existing.id ? payload : item);
             else state.storeDailyMovements.push(payload);
             renderTreasury();
         };
-        document.getElementById('treasury-balance-form').onsubmit = async (event) => {
+        const treasuryBalanceFormEl = document.getElementById('treasury-balance-form');
+        if (treasuryBalanceFormEl) treasuryBalanceFormEl.onsubmit = async (event) => {
             event.preventDefault();
             const date = String(document.getElementById('treasury-bal-date')?.value || '');
             const accountId = String(document.getElementById('treasury-bal-account')?.value || '');
