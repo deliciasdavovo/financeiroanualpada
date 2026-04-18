@@ -7362,22 +7362,55 @@
             return getMostFrequentDestination(validDestinations);
         }
 
+        function isReconDateStart(value) {
+            return /^(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?|\d{4}-\d{1,2}-\d{1,2})\b/.test(String(value || '').trim());
+        }
+
+        function mergeReconLineFragments(baseLine, nextLine) {
+            const left = String(baseLine || '').trim();
+            const right = String(nextLine || '').trim();
+            if (!left) return right;
+            if (!right) return left;
+
+            const leftMatch = left.match(/([A-Za-zÀ-ÿ]{1,6})$/);
+            const rightMatch = right.match(/^([a-zà-ÿ]{1,6})(\b.*)?$/);
+            if (leftMatch && rightMatch) {
+                const leftToken = leftMatch[1];
+                const rightToken = rightMatch[1];
+                const rightRest = right.slice(rightToken.length);
+                return `${left.slice(0, -leftToken.length)}${leftToken}${rightToken}${rightRest}`.replace(/\s+/g, ' ').trim();
+            }
+
+            return `${left} ${right}`.replace(/\s+/g, ' ').trim();
+        }
+
         function normalizeReconLines(rawText) {
             const lines = String(rawText || '')
                 .split(/\r?\n/)
-                .map(l => l.trim())
-                .filter(l => l.length > 0);
+                .map(l => l.replace(/\u00a0/g, ' ').trim())
+                .filter(l => l.length > 0)
+                .filter(l => !/^(data|hist[oó]rico|valor|documento)\b/i.test(l));
 
-            // Junta linhas isoladas de C/D ao lançamento anterior.
             const merged = [];
             lines.forEach(line => {
-                if (/^[CD]$/i.test(line) && merged.length > 0) {
-                    merged[merged.length - 1] = `${merged[merged.length - 1]} ${line.toUpperCase()}`;
-                } else {
+                if (merged.length === 0) {
                     merged.push(line);
+                    return;
                 }
+
+                if (/^[CD]$/i.test(line)) {
+                    merged[merged.length - 1] = `${merged[merged.length - 1]} ${line.toUpperCase()}`.trim();
+                    return;
+                }
+
+                if (isReconDateStart(line)) {
+                    merged.push(line);
+                    return;
+                }
+
+                merged[merged.length - 1] = mergeReconLineFragments(merged[merged.length - 1], line);
             });
-            return merged;
+            return merged.map(line => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
         }
 
         function parseBankTableRow(rawLine) {
