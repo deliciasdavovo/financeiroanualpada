@@ -1523,9 +1523,18 @@
             background: transparent;
             color: #0F172A;
         }
+        .entry-destination-input.transfer-highlight {
+            color: #1D4ED8;
+        }
+        .entry-destination-input.transfer-highlight:hover {
+            color: #1E40AF;
+        }
         .entry-destination-input:focus {
             outline: none;
             box-shadow: none;
+        }
+        .entry-destination-input.transfer-highlight:focus {
+            color: #1E3A8A;
         }
         .entry-account-select {
             font-size: 11px;
@@ -1868,8 +1877,10 @@
             margin-top: 6px;
         }
         .transfer-review-btn {
-            min-height: 28px;
-            padding: 0 10px;
+            width: 28px;
+            min-width: 28px;
+            height: 28px;
+            padding: 0;
             border-radius: 999px;
             border: 1px solid #C7D2FE;
             background: #EFF6FF;
@@ -1894,6 +1905,10 @@
         .transfer-review-btn.reject:hover {
             background: #E2E8F0;
             border-color: #94A3B8;
+        }
+        .transfer-review-btn i {
+            width: 13px;
+            height: 13px;
         }
         .transfer-review-badge {
             display: inline-flex;
@@ -6089,18 +6104,26 @@
             if (status === 'confirmed') {
                 return `<div class="transfer-review-group">
                     <span class="transfer-review-badge confirmed">Transferencia confirmada</span>
-                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
+                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject" title="Rever confirmacao" aria-label="Rever confirmacao de transferencia">
+                        <i data-lucide="rotate-ccw"></i>
+                    </button>
                 </div>`;
             }
             if (status === 'dismissed') {
                 return `<div class="transfer-review-group">
                     <span class="transfer-review-badge dismissed">Transferencia descartada</span>
-                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
+                    <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject" title="Rever descarte" aria-label="Rever descarte de transferencia">
+                        <i data-lucide="rotate-ccw"></i>
+                    </button>
                 </div>`;
             }
             return `<div class="transfer-review-group">
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn">E transferencia</button>
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject">Nao e</button>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn" title="Confirmar transferencia" aria-label="Confirmar transferencia">
+                    <i data-lucide="check"></i>
+                </button>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject" title="Descartar transferencia" aria-label="Descartar transferencia">
+                    <i data-lucide="x"></i>
+                </button>
             </div>`;
         }
 
@@ -6420,7 +6443,7 @@
                                     onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
                                     onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
                                     onblur="event.stopPropagation(); commitEntryDestinationInlineInput('${e.id}', this.value, { showAlert: false })"
-                                    class="entry-destination-input"
+                                    class="entry-destination-input ${isPossibleTransfer && transferReviewStatus !== 'dismissed' ? 'transfer-highlight' : ''}"
                                     aria-label="Destino do lancamento">
                                 <datalist id="entry-dst-list-${e.id}">
                                     ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
