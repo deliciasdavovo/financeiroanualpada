@@ -3194,8 +3194,7 @@
             const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
 
             const base = state.entries.filter(e => {
-                const dst = state.destinations.find(d => d.id === e.destinationId)?.name || "";
-                const matchesSearch = ((e.description || "") + dst).toLowerCase().includes(search);
+                const matchesSearch = !search || getEntrySearchHaystack(e).includes(search);
                 const matchesStart = !dateStart || e.date >= dateStart;
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || normalizeFlowType(e.type) === normalizeFlowType(typeFilter);
@@ -4771,6 +4770,73 @@
             pendingEntryDestinationOpenPicker = false;
         }
 
+        function getEntriesFilterSnapshot() {
+            return {
+                search: (document.getElementById('entry-search')?.value || '').toLowerCase().trim(),
+                dateStart: document.getElementById('filter-date-start')?.value || '',
+                dateEnd: document.getElementById('filter-date-end')?.value || '',
+                typeFilter: document.getElementById('filter-type')?.value || '',
+                statusFilter: document.getElementById('filter-status')?.value || '',
+                accountFilter: document.getElementById('filter-account')?.value || '',
+                duplicateFilter: document.getElementById('filter-duplicates')?.value || ''
+            };
+        }
+
+        function getEntrySearchHaystack(entry) {
+            const destination = state.destinations.find(d => String((d || {}).id || '') === String((entry || {}).destinationId || ''));
+            return [
+                String((entry || {}).date || ''),
+                String((entry || {}).description || ''),
+                getDestinationLabel(destination),
+                getDestinationDisplayLabel(destination)
+            ].join(' ').toLowerCase();
+        }
+
+        function entryMatchesCurrentEntryFilters(entry, filters = getEntriesFilterSnapshot()) {
+            if (!entry) return false;
+            const entryAccountId = String((entry.accountId ?? entry.account_id) || '');
+            const entryType = normalizeFlowType(entry.type);
+            return (
+                (!filters.search || getEntrySearchHaystack(entry).includes(filters.search)) &&
+                (!filters.dateStart || String(entry.date || '') >= filters.dateStart) &&
+                (!filters.dateEnd || String(entry.date || '') <= filters.dateEnd) &&
+                (!filters.typeFilter || entryType === normalizeFlowType(filters.typeFilter)) &&
+                (!filters.statusFilter || String(entry.status || '') === filters.statusFilter) &&
+                (!filters.accountFilter || entryAccountId === String(filters.accountFilter))
+            );
+        }
+
+        function refreshEntryRowInlineUI(entryId) {
+            const entry = state.entries.find(e => String(e.id || '') === String(entryId || ''));
+            if (!entry) return;
+            const dstInput = document.getElementById(`entry-dst-${entryId}`);
+            const dstList = document.getElementById(`entry-dst-list-${entryId}`);
+            const valueEl = dstInput?.closest('tr')?.querySelector('.entry-value-main');
+            const accountSelect = document.getElementById(`entry-acc-${entryId}`);
+            const accountCaption = accountSelect?.closest('.entry-destination-panel')?.querySelector('.entry-destination-desc.entry-cell-sub');
+
+            const dstOptionsByType = getValidDestinationsByFlow(entry.type);
+            const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
+            if (dstInput) dstInput.value = getDestinationDisplayLabelById(entry.destinationId, dstOptions) || getDestinationDisplayLabelById(entry.destinationId);
+            if (dstList) dstList.innerHTML = buildDestinationOptionsMarkup(dstOptions, entry.destinationId);
+
+            if (valueEl) {
+                const isEntrada = normalizeFlowType(entry.type) === 'ENTRADA';
+                valueEl.className = `entry-value-main ${entry.status === 'REALIZADO' ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold'}`;
+            }
+
+            if (accountSelect) {
+                accountSelect.value = String((entry.accountId ?? entry.account_id) || '');
+                const selectedOption = accountSelect.options[accountSelect.selectedIndex] || null;
+                const fullName = String(selectedOption?.dataset?.fullName || selectedOption?.textContent || '');
+                accountSelect.title = fullName;
+                if (accountCaption) {
+                    accountCaption.textContent = getAccountShortLabel({ name: fullName });
+                    accountCaption.title = fullName;
+                }
+            }
+        }
+
         function focusNextEntryDestination(currentId, options = {}) {
             const visible = Array.isArray(window.currentFilteredEntries) ? window.currentFilteredEntries : [];
             if (!visible.length) return '';
@@ -4823,7 +4889,8 @@
 
         async function updateEntryDestinationInline(id, destinationId) {
             const entry = state.entries.find(e => e.id === id);
-            if (!entry) return;
+            if (!entry) return false;
+            const filters = getEntriesFilterSnapshot();
             const previous = {
                 destinationId: entry.destinationId,
                 subCategoryId: entry.subCategoryId,
@@ -4845,7 +4912,13 @@
                 entry.type = previous.type;
                 alert(`Não foi possível atualizar o destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
             }
-            renderEntries();
+            if (!saveResult?.ok) {
+                renderEntries();
+                return false;
+            }
+            if (!entryMatchesCurrentEntryFilters(entry, filters) || filters.duplicateFilter === 'ONLY') renderEntries();
+            else refreshEntryRowInlineUI(id);
+            return true;
         }
         async function updateEntryDestinationInlineByLabelLegacy(id, label, validDestinations) {
             const destinationId = findDestinationIdByLabel(label, validDestinations);
@@ -4866,7 +4939,7 @@
             const inputEl = document.getElementById(`entry-dst-${id}`);
             if (!entry) return false;
             const validDestinations = getValidDestinationsForEntry(entry);
-            const currentLabel = getDestinationLabelById(entry.destinationId, validDestinations) || getDestinationLabelById(entry.destinationId);
+            const currentLabel = getDestinationDisplayLabelById(entry.destinationId, validDestinations) || getDestinationDisplayLabelById(entry.destinationId);
             const typedLabel = String(label || '').trim();
             if (!typedLabel) {
                 if (inputEl) inputEl.value = currentLabel;
@@ -4878,11 +4951,10 @@
                 if (options.showAlert) alert('Selecione um destino vÃ¡lido da lista.');
                 return false;
             }
-            const canonicalLabel = getDestinationLabelById(destinationId, validDestinations) || getDestinationLabelById(destinationId);
+            const canonicalLabel = getDestinationDisplayLabelById(destinationId, validDestinations) || getDestinationDisplayLabelById(destinationId);
             if (inputEl) inputEl.value = canonicalLabel;
             if (String(destinationId) === String(entry.destinationId || '')) return true;
-            await updateEntryDestinationInline(id, destinationId);
-            return true;
+            return await updateEntryDestinationInline(id, destinationId);
         }
         async function updateEntryDestinationInlineByLabel(id, label) {
             await commitEntryDestinationInlineInput(id, label, { showAlert: true });
@@ -4890,14 +4962,18 @@
         async function updateEntryAccountInline(id, accountId) {
             const entry = state.entries.find(e => e.id === id);
             if (!entry) return;
+            const filters = getEntriesFilterSnapshot();
             const previousAccountId = String((entry.accountId ?? entry.account_id) || '');
             entry.accountId = String(accountId || '');
             const saveResult = await cloudSave('entries', entry);
             if (!saveResult?.ok) {
                 entry.accountId = previousAccountId;
                 alert(`Não foi possível atualizar a conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                renderEntries();
+                return;
             }
-            renderEntries();
+            if (!entryMatchesCurrentEntryFilters(entry, filters) || filters.duplicateFilter === 'ONLY') renderEntries();
+            else refreshEntryRowInlineUI(id);
         }
 
         function setEntryFillDragMode(mode = '') {
@@ -5200,8 +5276,7 @@
             }
 
             const baseFiltered = state.entries.filter(e => {
-                const dst = state.destinations.find(d => d.id === e.destinationId)?.name || "";
-                const matchesSearch = ((e.description || "") + dst).toLowerCase().includes(search);
+                const matchesSearch = !search || getEntrySearchHaystack(e).includes(search);
                 const matchesStart = !dateStart || e.date >= dateStart;
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || e.type === typeFilter;
@@ -5275,7 +5350,7 @@
                                 <input
                                     id="entry-dst-${e.id}"
                                     list="entry-dst-list-${e.id}"
-                                    value="${escapeHtml(getDestinationLabelById(e.destinationId, dstOptions))}"
+                                    value="${escapeHtml(getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId))}"
                                     onclick="event.stopPropagation()"
                                     onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
                                     onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
@@ -5923,22 +5998,73 @@
                 .filter(d => getDestinationFlowType(d.id) === flowType)
                 .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
         }
+        function normalizeDestinationLookupLabel(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
         function getDestinationLabel(destination) {
             return String((destination || {}).name || '').trim();
         }
+        function getDestinationDisplayLabel(destination) {
+            const dst = destination || {};
+            const sub = state.subCategories.find(s => String((s || {}).id || '') === String(dst.subCategoryId || ''));
+            const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || ''));
+            const parts = [
+                String((dst || {}).name || '').trim(),
+                String((sub || {}).name || '').trim(),
+                String((cat || {}).name || '').trim()
+            ].filter(Boolean);
+            return parts.join(' / ');
+        }
         function buildDestinationOptionsMarkup(list, selectedId = '') {
-            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => getDestinationLabel(a).localeCompare(getDestinationLabel(b), 'pt-BR', { sensitivity: 'base' }));
-            return sorted.map(item => `<option value="${escapeHtml(getDestinationLabel(item))}" data-id="${String(item.id || '')}" ${String(item.id || '') === String(selectedId || '') ? 'selected' : ''}></option>`).join('');
+            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => getDestinationDisplayLabel(a).localeCompare(getDestinationDisplayLabel(b), 'pt-BR', { sensitivity: 'base' }));
+            return sorted.map(item => `<option value="${escapeHtml(getDestinationDisplayLabel(item))}" data-id="${String(item.id || '')}" ${String(item.id || '') === String(selectedId || '') ? 'selected' : ''}></option>`).join('');
         }
         function findDestinationIdByLabel(label, list) {
-            const target = String(label || '').trim();
-            if (!target) return '';
-            const match = (Array.isArray(list) ? list : []).find(item => getDestinationLabel(item).localeCompare(target, 'pt-BR', { sensitivity: 'base' }) === 0);
-            return String((match || {}).id || '');
+            const targetRaw = String(label || '').trim();
+            const target = normalizeDestinationLookupLabel(targetRaw);
+            const source = Array.isArray(list) ? list : [];
+            if (!target || !source.length) return '';
+
+            const enriched = source.map((item) => {
+                const displayLabel = getDestinationDisplayLabel(item);
+                const nameLabel = getDestinationLabel(item);
+                return {
+                    item,
+                    id: String((item || {}).id || ''),
+                    displayLabel,
+                    nameLabel,
+                    displayNorm: normalizeDestinationLookupLabel(displayLabel),
+                    nameNorm: normalizeDestinationLookupLabel(nameLabel)
+                };
+            });
+
+            const exactDisplay = enriched.find(entry => entry.displayNorm === target);
+            if (exactDisplay) return exactDisplay.id;
+
+            const exactName = enriched.filter(entry => entry.nameNorm === target);
+            if (exactName.length === 1) return exactName[0].id;
+
+            const startsWith = enriched.filter(entry => entry.displayNorm.startsWith(target) || entry.nameNorm.startsWith(target));
+            if (startsWith.length === 1) return startsWith[0].id;
+
+            const contains = enriched.filter(entry => entry.displayNorm.includes(target) || entry.nameNorm.includes(target));
+            if (contains.length === 1) return contains[0].id;
+
+            return '';
         }
         function getDestinationLabelById(id, list = state.destinations) {
             const match = (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
             return getDestinationLabel(match);
+        }
+        function getDestinationDisplayLabelById(id, list = state.destinations) {
+            const match = (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
+            return getDestinationDisplayLabel(match);
         }
 
         function normalizeReconText(value) {
@@ -6807,10 +6933,10 @@
             const hiddenEl = document.getElementById(hiddenId);
             const listEl = document.getElementById(listId);
             if (!inputEl || !hiddenEl || !listEl) return;
-            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => getDestinationLabel(a).localeCompare(getDestinationLabel(b), 'pt-BR', { sensitivity: 'base' }));
-            listEl.innerHTML = sorted.map(item => `<option value="${escapeHtml(getDestinationLabel(item))}" data-id="${String(item.id || '')}"></option>`).join('');
+            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => getDestinationDisplayLabel(a).localeCompare(getDestinationDisplayLabel(b), 'pt-BR', { sensitivity: 'base' }));
+            listEl.innerHTML = sorted.map(item => `<option value="${escapeHtml(getDestinationDisplayLabel(item))}" data-id="${String(item.id || '')}"></option>`).join('');
             hiddenEl.value = String(selectedId || '');
-            inputEl.value = getDestinationLabelById(selectedId, sorted);
+            inputEl.value = getDestinationDisplayLabelById(selectedId, sorted);
             inputEl.oninput = () => {
                 hiddenEl.value = findDestinationIdByLabel(inputEl.value, sorted);
                 setEntryFieldError('form-dst', '');
@@ -6822,7 +6948,7 @@
             inputEl.onblur = () => {
                 const resolvedId = findDestinationIdByLabel(inputEl.value, sorted);
                 hiddenEl.value = resolvedId;
-                if (resolvedId) inputEl.value = getDestinationLabelById(resolvedId, sorted);
+                if (resolvedId) inputEl.value = getDestinationDisplayLabelById(resolvedId, sorted);
             };
         }
 
