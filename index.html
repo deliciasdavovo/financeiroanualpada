@@ -1998,7 +1998,7 @@
                         <div class="entries-filter-item"><label for="filter-type" class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
                         <div class="entries-filter-item"><label for="filter-status" class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
                         <div class="entries-filter-item"><label for="filter-account" class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
-                        <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">Duplicidade</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option></select></div>
+                        <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">Ocorrência</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option><option value="TRANSFER">Possível transferência</option></select></div>
                         <button onclick="openEntryModal()" class="btn-new-entry" aria-label="Adicionar novo lançamento">
                             + Novo
                         </button>
@@ -3202,7 +3202,11 @@
                 return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
             const dupMeta = getDuplicateMeta(base);
-            const filtered = duplicateFilter === 'ONLY' ? base.filter(e => dupMeta.duplicateIds.has(e.id)) : base;
+            const filtered = duplicateFilter === 'ONLY'
+                ? base.filter(e => dupMeta.duplicateIds.has(e.id))
+                : duplicateFilter === 'TRANSFER'
+                    ? base.filter(e => dupMeta.transferIds.has(e.id))
+                    : base;
             return filtered.sort((a,b) => (b.date || '').localeCompare(a.date || '') || (Number(b.amount)||0) - (Number(a.amount)||0));
         }
         function buildPrintableShellV2(title, subtitle, tableHtml) {
@@ -5424,17 +5428,34 @@
                 const amountAbs = Math.abs(Number(e.amount) || 0);
                 const key = `${e.date || ''}|${amountAbs}`;
                 if (!groups[key]) groups[key] = [];
-                groups[key].push(e.id);
+                groups[key].push({
+                    id: e.id,
+                    type: normalizeFlowType(e.type)
+                });
             });
             const duplicateIds = new Set();
+            const transferIds = new Set();
             let duplicateGroups = 0;
-            Object.values(groups).forEach(ids => {
-                if (ids.length > 1) {
-                    duplicateGroups += 1;
-                    ids.forEach(id => duplicateIds.add(id));
+            let transferGroups = 0;
+            Object.values(groups).forEach(items => {
+                const byType = items.reduce((acc, item) => {
+                    const key = item.type || '';
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(item.id);
+                    return acc;
+                }, {});
+                Object.values(byType).forEach(ids => {
+                    if (ids.length > 1) {
+                        duplicateGroups += 1;
+                        ids.forEach(id => duplicateIds.add(id));
+                    }
+                });
+                if ((byType['ENTRADA'] || []).length > 0 && (byType['SAÍDA'] || []).length > 0) {
+                    transferGroups += 1;
+                    items.forEach(item => transferIds.add(item.id));
                 }
             });
-            return { duplicateIds, duplicateGroups };
+            return { duplicateIds, duplicateGroups, transferIds, transferGroups };
         }
 
         function clearEntrySelection() {
@@ -5531,13 +5552,18 @@
 
             let filtered = duplicateFilter === 'ONLY'
                 ? baseFiltered.filter(e => duplicateMeta.duplicateIds.has(e.id))
-                : baseFiltered;
+                : duplicateFilter === 'TRANSFER'
+                    ? baseFiltered.filter(e => duplicateMeta.transferIds.has(e.id))
+                    : baseFiltered;
 
             if (duplicateSummaryEl) {
                 const dupCount = duplicateMeta.duplicateIds.size;
-                if (dupCount > 0) {
+                const transferCount = duplicateMeta.transferIds.size;
+                if (dupCount > 0 || transferCount > 0) {
                     duplicateSummaryEl.classList.remove('hidden');
+                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
                     duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicado(s) por data + valor absoluto (ignora sinal).`;
+                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
                 } else {
                     duplicateSummaryEl.classList.add('hidden');
                     duplicateSummaryEl.innerText = '';
@@ -5575,6 +5601,7 @@
                 const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
+                const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
                 
                 return `<tr class="table-row ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml((e.date || '').split('-').reverse().join('/'))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
@@ -5603,6 +5630,7 @@
                                     ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
                                 </datalist>
                                 <div class="entry-badges">
+                                    ${isPossibleTransfer ? '<span class="dup-icon" title="Possível transferência"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>' : ''}
                                     ${isDuplicate ? '<span class="dup-icon" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
                                 </div>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
