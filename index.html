@@ -1582,11 +1582,12 @@
             min-width: 0;
             height: 26px;
             padding: 0;
-            font-size: 12px;
-            font-weight: 800;
+            font-size: 13px;
+            font-weight: 900;
             border: 0;
             background: transparent;
             color: #0F172A;
+            line-height: 1.2;
         }
         .entry-destination-input.transfer-highlight {
             color: #162033;
@@ -1622,16 +1623,17 @@
             text-overflow: ellipsis;
         }
         .entry-destination-desc {
-            font-size: 10px;
-            color: #64748B;
-            font-weight: 400;
-            line-height: 1.25;
-            letter-spacing: 0;
-            text-transform: none;
+            font-size: 9px;
+            color: #94A3B8;
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
             white-space: normal;
             word-break: break-word;
-            margin-top: 6px;
+            margin-top: 4px;
             padding-left: 2px;
+            opacity: 0.78;
         }
         .entry-cell-main {
             display: flex;
@@ -2027,9 +2029,10 @@
             box-shadow: 0 0 0 4px rgba(255,255,255,0.72);
         }
         .transfer-review-badge.confirmed {
-            color: #244A94;
-            border-color: #C9D7F2;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(239,245,255,0.96) 100%);
+            color: #FFFFFF;
+            border-color: #274388;
+            background: linear-gradient(180deg, #3B61B3 0%, #274388 100%);
+            box-shadow: 0 8px 18px rgba(39, 67, 136, 0.20);
         }
         .transfer-review-badge.dismissed {
             color: #5B6778;
@@ -2327,7 +2330,7 @@
 
     <div id="loading-overlay">
         <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="font-black text-xs uppercase tracking-widest text-slate-400">Sincronizando com Supabase...</p>
+        <p class="font-black text-xs uppercase tracking-widest text-slate-400">Atualizando seus dados...</p>
     </div>
 
     <!-- SIDEBAR -->
@@ -4275,6 +4278,20 @@
                 String((entry || {}).description || '')
             ].filter(Boolean);
         }
+        function getEntryDestinationMeta(entry) {
+            const dst = state.destinations.find(d => String((d || {}).id || '') === String((entry || {}).destinationId || ''));
+            const sub = state.subCategories.find(s => String((s || {}).id || '') === String((dst || {}).subCategoryId || (entry || {}).subCategoryId || ''));
+            const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || (entry || {}).categoryId || ''));
+            return {
+                destination: String((dst || {}).name || '').trim(),
+                subCategory: String((sub || {}).name || '').trim(),
+                category: String((cat || {}).name || '').trim()
+            };
+        }
+        function getEntryDestinationMetaLabel(entry) {
+            const meta = getEntryDestinationMeta(entry);
+            return [meta.category, meta.subCategory].filter(Boolean).join(' • ');
+        }
         function isCapitalContributionEntry(entry) {
             return getEntryHierarchyNames(entry).some(isCapitalContributionName);
         }
@@ -5859,7 +5876,7 @@
             const inputEl = document.getElementById(`entry-dst-${id}`);
             if (!entry) return false;
             const validDestinations = getValidDestinationsForEntry(entry);
-            const currentLabel = getDestinationDisplayLabelById(entry.destinationId, validDestinations) || getDestinationDisplayLabelById(entry.destinationId);
+            const currentLabel = getDestinationLabelById(entry.destinationId, validDestinations) || getDestinationLabelById(entry.destinationId);
             const typedLabel = String(label || '').trim();
             if (!typedLabel) {
                 if (inputEl) inputEl.value = currentLabel;
@@ -5871,7 +5888,7 @@
                 if (options.showAlert) alert('Selecione um destino válido da lista.');
                 return false;
             }
-            const canonicalLabel = getDestinationDisplayLabelById(destinationId, validDestinations) || getDestinationDisplayLabelById(destinationId);
+            const canonicalLabel = getDestinationLabelById(destinationId, validDestinations) || getDestinationLabelById(destinationId);
             if (inputEl) inputEl.value = canonicalLabel;
             if (String(destinationId) === String(entry.destinationId || '')) return true;
             return await updateEntryDestinationInline(id, destinationId);
@@ -6137,7 +6154,7 @@
             const status = getEntryTransferReviewStatus(entryId);
             if (status === 'confirmed') {
                 return `<div class="transfer-review-group">
-                    <span class="transfer-review-badge confirmed" role="status" aria-label="Transferencia confirmada">Transferência confirmada</span>
+                    <span class="transfer-review-badge confirmed" role="status" aria-label="Transferencia">Transferência</span>
                     <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject icon-only" title="Rever confirmacao" aria-label="Rever confirmacao de transferencia">
                         <i data-lucide="rotate-ccw"></i>
                     </button>
@@ -6242,7 +6259,7 @@
             const status = getEntryTransferReviewStatus(entryId);
             if (status === 'confirmed') {
                 return `<div class="transfer-review-group">
-                    <span class="transfer-review-badge confirmed" role="status" aria-label="Transferencia confirmada">Transferencia confirmada</span>
+                    <span class="transfer-review-badge confirmed" role="status" aria-label="Transferencia">Transferência</span>
                     <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject icon-only" title="Rever confirmacao" aria-label="Rever confirmacao de transferencia">
                         <i data-lucide="rotate-ccw"></i>
                     </button>
@@ -6377,7 +6394,7 @@
                     ? (isConfirmedTransfer ? 'entry-row-transfer-confirmed' : isDismissedTransfer ? '' : 'entry-row-transfer')
                     : '';
                 const transferIconTitle = isConfirmedTransfer
-                    ? 'Transferencia confirmada'
+                    ? 'Transferencia'
                     : isDismissedTransfer
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
@@ -6546,6 +6563,9 @@
                 const dstOptionsByType = getValidDestinationsByFlow(e.type);
                 const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
                 const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+                const destinationMainLabel = getDestinationLabelById(e.destinationId, dstOptions) || getDestinationLabelById(e.destinationId) || '-';
+                const destinationDisplayLabel = getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId) || destinationMainLabel;
+                const destinationMetaLabel = getEntryDestinationMetaLabel(e) || 'Sem classificação';
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
@@ -6558,7 +6578,7 @@
                     ? (transferReviewStatus === 'confirmed' ? 'entry-row-transfer-confirmed' : transferReviewStatus === 'dismissed' ? '' : 'entry-row-transfer')
                     : '';
                 const transferIconTitle = transferReviewStatus === 'confirmed'
-                    ? 'Transferencia confirmada'
+                    ? 'Transferencia'
                     : transferReviewStatus === 'dismissed'
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
@@ -6579,7 +6599,8 @@
                                 <input
                                     id="entry-dst-${e.id}"
                                     list="entry-dst-list-${e.id}"
-                                    value="${escapeHtml(getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId))}"
+                                    value="${escapeHtml(destinationMainLabel)}"
+                                    title="${escapeHtml(destinationDisplayLabel)}"
                                     onclick="event.stopPropagation()"
                                     onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
                                     onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
@@ -6597,7 +6618,7 @@
                                     ...
                                 </button>
                             </div>
-                            <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observacao')}</p>
+                            <p class="entry-destination-desc entry-cell-sub" title="${escapeHtml(destinationDisplayLabel)}">${escapeHtml(destinationMetaLabel)}</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
