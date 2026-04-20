@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DelÃ­cias da VovÃ³ | GestÃ£o Financeira Premium</title>
+    <title>Delícias da Vovó | Gestão Financeira Premium</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -2255,31 +2255,31 @@
         
         <div class="p-8">
             <div class="flex items-center gap-4 mb-2">
-                <div id="logo-pig" class="logo-pig-wrap w-10 h-10 bg-[#E09132] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0" title="DelÃ­cias da VovÃ³">
+                <div id="logo-pig" class="logo-pig-wrap w-10 h-10 bg-[#E09132] rounded-xl flex items-center justify-center text-white shadow-xl shrink-0" title="Delícias da Vovó">
                     <i data-lucide="piggy-bank" class="w-5 h-5"></i>
                 </div>
                 <div class="sidebar-header-text">
-                    <h1 class="font-black text-xl tracking-tighter leading-none">DelÃ­cias</h1>
-                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">GestÃ£o Financeira</p>
+                    <h1 class="font-black text-xl tracking-tighter leading-none">Delícias</h1>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">Gestão Financeira</p>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 px-4 space-y-2">
             <button onclick="switchTab('monthly')" id="nav-monthly" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃ³rio Mensal</span>
+                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Mensal</span>
             </button>
             <button onclick="switchTab('annual')" id="nav-annual" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃ³rio Anual</span>
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Anual</span>
             </button>
             <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">LanÃ§amentos</span>
+                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
             </button>
             <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">ConciliaÃ§Ã£o</span>
+                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
             <button onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">RelatÃ³rio de Vendas</span>
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
             </button>
             <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
@@ -2291,7 +2291,7 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         <header class="h-24 bg-white border-b px-10 flex items-center shrink-0">
             <div class="flex items-center gap-6">
-                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">RelatÃ³rio Mensal</h2>
+                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Relatório Mensal</h2>
                 <div id="sync-status" class="sync-indicator">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
@@ -2309,30 +2309,30 @@
 
         <div id="main-scroll" class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll">
             
-            <!-- LANÃ‡AMENTOS -->
+            <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
-                <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e aÃ§Ãµes de lanÃ§amentos">
+                <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top">
                         <div>
-                            <p class="entries-toolbar-title">Central de LanÃ§amentos</p>
-                            <p class="entries-toolbar-sub">Use aÃ§Ãµes rÃ¡pidas para filtrar e revisar mais rÃ¡pido.</p>
+                            <p class="entries-toolbar-title">Central de Lançamentos</p>
+                            <p class="entries-toolbar-sub">Use ações rápidas para filtrar e revisar mais rápido.</p>
                         </div>
-                        <div class="entries-quick-actions" role="group" aria-label="AÃ§Ãµes rÃ¡pidas">
+                        <div class="entries-quick-actions" role="group" aria-label="Ações rápidas">
                             <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
-                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()" aria-label="Filtrar lanÃ§amentos para o mÃªs atual"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>MÃªs Atual</button>
-                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()" aria-label="Alternar filtro de lanÃ§amentos duplicados"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
-                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()" aria-label="Limpar todos os filtros de lanÃ§amentos"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
+                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()" aria-label="Filtrar lançamentos para o mês atual"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
+                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()" aria-label="Alternar filtro de lançamentos duplicados"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
+                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()" aria-label="Limpar todos os filtros de lançamentos"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
                         </div>
                     </div>
-                    <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lanÃ§amentos">
-                        <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descriÃ§Ã£o..." oninput="queueRenderEntries()"></div>
-                        <div class="entries-filter-item"><label for="filter-date-start" class="label-mini">InÃ­cio</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
+                    <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
+                        <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="queueRenderEntries()"></div>
+                        <div class="entries-filter-item"><label for="filter-date-start" class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
                         <div class="entries-filter-item"><label for="filter-date-end" class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
-                        <div class="entries-filter-item"><label for="filter-type" class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÃDA">SaÃ­das</option></select></div>
+                        <div class="entries-filter-item"><label for="filter-type" class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
                         <div class="entries-filter-item"><label for="filter-status" class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
                         <div class="entries-filter-item"><label for="filter-account" class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
-                        <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">OcorrÃªncia</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option><option value="TRANSFER">PossÃ­vel transferÃªncia</option></select></div>
-                        <button onclick="openEntryModal()" class="btn-new-entry" aria-label="Adicionar novo lanÃ§amento">
+                        <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">Ocorrência</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option><option value="TRANSFER">Possível transferência</option></select></div>
+                        <button onclick="openEntryModal()" class="btn-new-entry" aria-label="Adicionar novo lançamento">
                             + Novo
                         </button>
                     </div>
@@ -2344,26 +2344,26 @@
                             <p class="entries-filter-report-note">Resumo do filtro atual</p>
                         </div>
                         <div class="entries-filter-report-card">
-                            <p class="entries-filter-report-label">Total SaÃ­das</p>
+                            <p class="entries-filter-report-label">Total Saídas</p>
                             <p id="entries-filter-total-out" class="entries-filter-report-value flow-expense-text">R$ 0,00</p>
-                            <p class="entries-filter-report-note">SomatÃ³rio das saÃ­das visÃ­veis</p>
+                            <p class="entries-filter-report-note">Somatório das saídas visíveis</p>
                         </div>
                         <div class="entries-filter-report-card">
                             <p class="entries-filter-report-label">Saldo</p>
                             <p id="entries-filter-total-net" class="entries-filter-report-value flow-balance-text">R$ 0,00</p>
-                            <p id="entries-filter-report-count" class="entries-filter-report-note">0 lanÃ§amento(s) no filtro</p>
+                            <p id="entries-filter-report-count" class="entries-filter-report-note">0 lançamento(s) no filtro</p>
                         </div>
                     </div>
                     <div id="entries-selection-panel" class="hidden w-full border-t border-slate-100 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3">
                         <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
                             <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Entradas: <span id="entries-sum-in">R$ 0,00</span></span>
-                            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">SaÃ­das: <span id="entries-sum-out">R$ 0,00</span></span>
+                            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Saídas: <span id="entries-sum-out">R$ 0,00</span></span>
                             <span id="entries-net-pill" class="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">Saldo: <span id="entries-sum-net">R$ 0,00</span></span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span id="entries-selected-count" class="text-[11px] font-bold text-slate-500" role="status" aria-live="polite">0 selecionado(s)</span>
                             <button onclick="clearEntrySelection()" class="h-[34px] px-3.5 rounded-lg border border-slate-200 text-slate-500 text-[10px] font-black uppercase hover:bg-slate-50">
-                                Limpar seleÃ§Ã£o
+                                Limpar seleção
                             </button>
                             <button onclick="deleteSelectedEntries()" id="delete-selected-btn" class="h-[34px] px-3.5 rounded-lg bg-slate-200 text-slate-700 text-[10px] font-black uppercase hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed" disabled>
                                 Excluir selecionados
@@ -2375,7 +2375,7 @@
                 <div class="card-premium overflow-hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="entries-table" class="w-full text-left">
-                            <caption class="sr-only">Tabela de lanÃ§amentos financeiros com filtros, seleÃ§Ã£o em lote e aÃ§Ãµes por linha.</caption>
+                            <caption class="sr-only">Tabela de lançamentos financeiros com filtros, seleção em lote e ações por linha.</caption>
                             <colgroup>
                             <col class="col-check">
                                 <col class="col-date">
@@ -2387,13 +2387,13 @@
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                                 <tr>
                                     <th class="px-4 py-4 text-center">
-                                        <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)" aria-label="Selecionar todos os lanÃ§amentos visÃ­veis">
+                                        <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)" aria-label="Selecionar todos os lançamentos visíveis">
                                     </th>
                                     <th id="entries-sort-date" onclick="setSort('date')" onkeydown="handleSortHeaderKeydown('date', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por data" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
                                     <th class="px-6 py-4">Destino / Detalhes</th>
                                     <th class="px-6 py-4">Conta / Banco</th>
                                     <th id="entries-sort-amount" onclick="setSort('amount')" onkeydown="handleSortHeaderKeydown('amount', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por valor" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
-                                    <th class="px-6 py-4 w-[210px] text-center">Status / AÃ§Ã£o</th>
+                                    <th class="px-6 py-4 w-[210px] text-center">Status / Ação</th>
                                 </tr>
                             </thead>
                             <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
@@ -2404,19 +2404,19 @@
                         <div class="flex items-center gap-2">
                             <button id="entries-page-prev" class="h-8 px-3 rounded-lg border border-slate-200 text-slate-600 font-bold uppercase text-[10px]">Anterior</button>
                             <span id="entries-page-number" class="text-slate-500 font-bold">1 / 1</span>
-                            <button id="entries-page-next" class="h-8 px-3 rounded-lg border border-slate-200 text-slate-600 font-bold uppercase text-[10px]">PrÃ³xima</button>
+                            <button id="entries-page-next" class="h-8 px-3 rounded-lg border border-slate-200 text-slate-600 font-bold uppercase text-[10px]">Próxima</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RELATÃ“RIO MENSAL -->
+            <!-- RELATÓRIO MENSAL -->
             <div id="monthly" class="tab-content active space-y-8">
                 <div class="w-full lg:w-[420px]">
-                    <label class="label-mini" for="monthly-filter-month">MÃªs de ReferÃªncia</label>
+                    <label class="label-mini" for="monthly-filter-month">Mês de Referência</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="MÃªs de referÃªncia"></select>
-                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referÃªncia"></select>
+                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
+                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
                     </div>
                     <input type="hidden" id="monthly-filter">
                 </div>
@@ -2424,7 +2424,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="card-premium kpi-card kpi-card-income p-6">
                         <div class="kpi-card-header">
-                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Entradas do MÃªs</p>
+                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Entradas do Mês</p>
                             <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
                         </div>
                         <div class="space-y-4">
@@ -2434,7 +2434,7 @@
                     </div>
                     <div class="card-premium kpi-card kpi-card-expense p-6">
                         <div class="kpi-card-header">
-                            <p class="text-[9px] font-black flow-expense-text uppercase tracking-widest">SaÃ­das do MÃªs</p>
+                            <p class="text-[9px] font-black flow-expense-text uppercase tracking-widest">Saídas do Mês</p>
                             <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
                         </div>
                         <div class="space-y-4">
@@ -2460,13 +2460,13 @@
                         <div class="h-full"><canvas id="monthChartPieInc"></canvas></div>
                     </div>
                     <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black flow-expense-text mb-6 tracking-widest">SaÃ­das por categoria</h4>
+                        <h4 class="text-xs font-black flow-expense-text mb-6 tracking-widest">Saídas por categoria</h4>
                         <div class="h-full"><canvas id="monthChartPieExp"></canvas></div>
                     </div>
                 </div>
 
                 <div class="card-premium p-8 h-[620px] lg:h-[760px] flex flex-col">
-                    <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diÃ¡rio: Entradas vs SaÃ­das</h4>
+                    <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
                     <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
                 </div>
 
@@ -2474,7 +2474,7 @@
                     <div class="flex-1 overflow-auto table-mobile-scroll custom-scrollbar">
                         <table id="monthly-daily-view" class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400 sticky top-0 z-10">
-                                <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">SaÃ­das</th><th class="px-8 py-4 text-right">LÃ­quido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
+                                <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
                             </thead>
                             <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
                         </table>
@@ -2482,14 +2482,14 @@
                 </div>
             </div>
 
-            <!-- RELATÃ“RIO ANUAL -->
+            <!-- RELATÓRIO ANUAL -->
             <div id="annual" class="tab-content space-y-12">
                 <div class="card-premium p-10 h-[450px]"><h4 class="text-xs font-black uppercase text-slate-400 mb-10 tracking-widest">Performance Anual</h4><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
                 <div class="card-premium overflow-hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="annual-main-table" class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
-                                <tr><th class="px-12 py-6">MÃªs</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">SaÃ­das</th><th class="px-12 py-6 text-right">Saldo LÃ­quido</th></tr>
+                                <tr><th class="px-12 py-6">Mês</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">Saídas</th><th class="px-12 py-6 text-right">Saldo Líquido</th></tr>
                             </thead>
                             <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
                         </table>
@@ -2499,13 +2499,13 @@
                     <div class="flex flex-wrap items-end justify-between gap-4">
                         <div>
                             <h4 class="text-sm font-black text-slate-900">Comparativo temporal</h4>
-                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Comparando perÃ­odos...</p>
+                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Comparando períodos...</p>
                         </div>
                         <div class="annual-filters-grid">
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-temporal-flow">Fluxo</label>
                                 <select id="annual-temporal-flow">
-                                    <option value="SAÃDA">SaÃ­das</option>
+                                    <option value="SAÍDA">Saídas</option>
                                     <option value="ENTRADA">Entradas</option>
                                 </select>
                             </div>
@@ -2547,9 +2547,9 @@
                                 <table id="annual-temporal-table" class="w-full text-left">
                                     <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
                                         <tr>
-                                            <th class="px-4 py-3">PerÃ­odo</th>
+                                            <th class="px-4 py-3">Período</th>
                                             <th class="px-4 py-3 text-right">Total</th>
-                                            <th class="px-4 py-3 text-right">VariaÃ§Ã£o</th>
+                                            <th class="px-4 py-3 text-right">Variação</th>
                                         </tr>
                                     </thead>
                                     <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
@@ -2565,11 +2565,11 @@
                 <div class="card-premium p-6 lg:p-8 space-y-6">
                     <div class="treasury-hero">
                         <div class="treasury-hero-panel">
-                            <h4 class="treasury-hero-title">RelatÃ³rio de Vendas</h4>
-                            <p class="treasury-hero-sub">Cadastre, revise e edite os fechamentos das unidades com uma leitura mais clara de vendas, saÃ­das e resultado do dia.</p>
+                            <h4 class="treasury-hero-title">Relatório de Vendas</h4>
+                            <p class="treasury-hero-sub">Cadastre, revise e edite os fechamentos das unidades com uma leitura mais clara de vendas, saídas e resultado do dia.</p>
                         </div>
                         <div class="treasury-hero-panel">
-                            <label class="label-mini" for="treasury-summary-date">Dia de referÃªncia</label>
+                            <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
                             <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
                         </div>
                     </div>
@@ -2577,15 +2577,15 @@
                         <div class="kpi-card p-5">
                             <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Vendas do dia</p>
                             <p id="treasury-sales-day" class="text-2xl font-black flow-income-text mt-2">R$ 0,00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Dinheiro + cartÃ£o das unidades</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Dinheiro + cartão das unidades</p>
                         </div>
                         <div class="kpi-card p-5">
                             <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Fechamento do dia</p>
                             <p id="treasury-closing-day" class="text-2xl font-black flow-balance-text mt-2">R$ 0,00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Vendas menos saÃ­das do dia</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Vendas menos saídas do dia</p>
                         </div>
                         <div class="kpi-card p-5">
-                            <p class="text-[9px] font-black text-slate-700 uppercase tracking-widest">Vendas do perÃ­odo</p>
+                            <p class="text-[9px] font-black text-slate-700 uppercase tracking-widest">Vendas do período</p>
                             <p id="treasury-sales-period-total" class="text-2xl font-black text-slate-900 mt-2">R$ 0,00</p>
                             <p id="treasury-sales-period-caption" class="text-[10px] text-slate-500 mt-1">Resumo do filtro atual</p>
                         </div>
@@ -2597,7 +2597,7 @@
                         <div class="treasury-panel-head">
                             <div>
                                 <h4 id="treasury-mv-form-title" class="treasury-panel-title">Novo fechamento</h4>
-                                <p id="treasury-mv-form-subtitle" class="treasury-panel-sub">Preencha os valores do dia para MATRIZ ou VILA NOVA. VocÃª pode editar um lanÃ§amento existente pelo histÃ³rico ao lado.</p>
+                                <p id="treasury-mv-form-subtitle" class="treasury-panel-sub">Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.</p>
                             </div>
                         </div>
                         <div class="treasury-form-body">
@@ -2619,20 +2619,20 @@
                                     <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
                                 </div>
                                 <div>
-                                    <label class="label-mini" for="treasury-mv-card">Venda em cartÃ£o</label>
+                                    <label class="label-mini" for="treasury-mv-card">Venda em cartão</label>
                                     <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
                                 </div>
                                 <div>
-                                    <label class="label-mini" for="treasury-mv-payments">SaÃ­das / pagamentos do dia</label>
+                                    <label class="label-mini" for="treasury-mv-payments">Saídas / pagamentos do dia</label>
                                     <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="label-mini" for="treasury-mv-notes">ObservaÃ§Ãµes</label>
+                                    <label class="label-mini" for="treasury-mv-notes">Observações</label>
                                     <input id="treasury-mv-notes" type="text" placeholder="Ex.: sangria, fornecedor, ajuste de caixa...">
                                 </div>
                                 <div class="md:col-span-2 treasury-form-actions">
                                     <button type="submit" class="modal-btn-primary"><span id="treasury-mv-submit-label">Salvar fechamento</span></button>
-                                    <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar ediÃ§Ã£o</button>
+                                    <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar edição</button>
                                 </div>
                             </form>
                         </div>
@@ -2641,13 +2641,13 @@
                     <section class="treasury-history-card">
                         <div class="treasury-panel-head">
                             <div>
-                                <h4 class="treasury-panel-title">HistÃ³rico de lanÃ§amentos</h4>
-                                <p class="treasury-panel-sub">Filtre por mÃªs e unidade para localizar rapidamente um fechamento e editar com mais clareza.</p>
+                                <h4 class="treasury-panel-title">Histórico de lançamentos</h4>
+                                <p class="treasury-panel-sub">Filtre por mês e unidade para localizar rapidamente um fechamento e editar com mais clareza.</p>
                             </div>
                         </div>
                         <div class="treasury-history-toolbar">
                             <div>
-                                <label class="label-mini" for="treasury-mv-filter-month">Filtrar por mÃªs</label>
+                                <label class="label-mini" for="treasury-mv-filter-month">Filtrar por mês</label>
                                 <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
                             </div>
                             <div>
@@ -2659,17 +2659,17 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="treasury-mv-history-summary" class="treasury-history-summary">0 lanÃ§amento(s) encontrados.</div>
+                        <div id="treasury-mv-history-summary" class="treasury-history-summary">0 lançamento(s) encontrados.</div>
                         <div class="table-mobile-scroll custom-scrollbar">
                             <table id="treasury-mv-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
                                     <tr>
                                         <th class="px-4 py-3">Data</th>
                                         <th class="px-4 py-3 text-right">Vendas</th>
-                                        <th class="px-4 py-3 text-right">SaÃ­das</th>
+                                        <th class="px-4 py-3 text-right">Saídas</th>
                                         <th class="px-4 py-3 text-right">Fechamento</th>
-                                        <th class="px-4 py-3">ObservaÃ§Ãµes</th>
-                                        <th class="px-4 py-3 text-center">AÃ§Ã£o</th>
+                                        <th class="px-4 py-3">Observações</th>
+                                        <th class="px-4 py-3 text-center">Ação</th>
                                     </tr>
                                 </thead>
                                 <tbody id="treasury-mv-history-body" class="divide-y divide-slate-50 bg-white"></tbody>
@@ -2678,18 +2678,18 @@
                     </section>
                 </div>
                     <section class="card-premium p-6 lg:p-8 space-y-6">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">AnÃ¡lise de Vendas</h4>
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Análise de Vendas</h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="label-mini" for="treasury-sales-period">Visualizar por</label>
                                 <select id="treasury-sales-period" onchange="renderTreasurySalesAnalytics()">
                                     <option value="SEMANA">Semana</option>
-                                    <option value="MES">MÃªs</option>
+                                    <option value="MES">Mês</option>
                                     <option value="ANO">Ano</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="label-mini" for="treasury-sales-reference">ReferÃªncia</label>
+                                <label class="label-mini" for="treasury-sales-reference">Referência</label>
                                 <input id="treasury-sales-reference" type="date" onchange="renderTreasurySalesAnalytics()">
                             </div>
                             <div>
@@ -2708,9 +2708,9 @@
                                     <tr>
                                         <th class="px-4 py-3">Unidade</th>
                                         <th class="px-4 py-3 text-right">Dinheiro</th>
-                                        <th class="px-4 py-3 text-right">CartÃ£o</th>
+                                        <th class="px-4 py-3 text-right">Cartão</th>
                                         <th class="px-4 py-3 text-right">Vendas</th>
-                                        <th class="px-4 py-3 text-right">SaÃ­das</th>
+                                        <th class="px-4 py-3 text-right">Saídas</th>
                                         <th class="px-4 py-3 text-right">Fechamento</th>
                                     </tr>
                                 </thead>
@@ -2721,11 +2721,11 @@
                 </div>
             </div>
 
-            <!-- CONCILIAÃ‡ÃƒO -->
+            <!-- CONCILIAÇÃO -->
             <div id="reconciliation" class="tab-content space-y-8">
                 <div class="card-premium p-8 space-y-6">
                     <div class="flex flex-wrap gap-8 items-end">
-                        <div class="flex-1 min-w-[400px]"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para anÃ¡lise inteligente..."></textarea></div>
+                        <div class="flex-1 min-w-[400px]"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
                         <div class="w-72"><label class="label-mini" for="recon-account-select">Conta de Destino</label><select id="recon-account-select" onchange="renderReconPreview()"></select></div>
                         <div class="w-52">
                             <label class="label-mini" for="recon-batch-status">Status do Lote</label>
@@ -2749,10 +2749,10 @@
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
                                     <tr>
                                         <th class="px-4 py-3 w-[90px]">Data</th>
-                                        <th class="px-4 py-3 w-[180px]">DescriÃ§Ã£o</th>
+                                        <th class="px-4 py-3 w-[180px]">Descrição</th>
                                         <th class="px-4 py-3 w-[320px]">Destino</th>
-                                        <th class="px-4 py-3 w-[170px]">ConferÃªncia</th>
-                                        <th class="px-4 py-3 w-[70px] text-center">AÃ§Ã£o</th>
+                                        <th class="px-4 py-3 w-[170px]">Conferência</th>
+                                        <th class="px-4 py-3 w-[70px] text-center">Ação</th>
                                         <th class="px-4 py-3 w-[130px] text-right">Valor</th>
                                     </tr>
                                 </thead>
@@ -2769,7 +2769,7 @@
                     <div class="db-toolbar mb-6">
                         <div class="db-search-wrap">
                             <label class="label-mini" for="db-search">Buscar em categorias, subcategorias e destinos</label>
-                            <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartÃ£o..." oninput="renderDatabase()">
+                            <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
                         </div>
                         <button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova Categoria</button>
                     </div>
@@ -2784,23 +2784,23 @@
     </main>
 
     <nav id="mobile-nav" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
-        <button onclick="switchTab('monthly')" id="mnav-monthly" class="mobile-nav-btn active" aria-label="RelatÃ³rio Mensal">
+        <button onclick="switchTab('monthly')" id="mnav-monthly" class="mobile-nav-btn active" aria-label="Relatório Mensal">
             <i data-lucide="calendar" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Mensal</span>
         </button>
-        <button onclick="switchTab('annual')" id="mnav-annual" class="mobile-nav-btn" aria-label="RelatÃ³rio Anual">
+        <button onclick="switchTab('annual')" id="mnav-annual" class="mobile-nav-btn" aria-label="Relatório Anual">
             <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Anual</span>
         </button>
-        <button onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="LanÃ§amentos">
+        <button onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
             <i data-lucide="receipt" class="w-5 h-5"></i>
-            <span class="mobile-nav-label">LanÃ§.</span>
+            <span class="mobile-nav-label">Lanç.</span>
         </button>
-        <button onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="ConciliaÃ§Ã£o">
+        <button onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
             <i data-lucide="landmark" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Conc.</span>
         </button>
-        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="RelatÃ³rio de Vendas">
+        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
             <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Vendas</span>
         </button>
@@ -2810,13 +2810,13 @@
         </button>
     </nav>
 
-    <!-- MODAL LANÃ‡AMENTO -->
+    <!-- MODAL LANÇAMENTO -->
     <div id="entry-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('entry-modal')">
         <div class="modal-shell modal-shell-entry">
             <div class="modal-head">
                 <div>
-                    <h3 class="modal-head-title">Editor de LanÃ§amento</h3>
-                    <p class="modal-head-sub">Preencha os campos e salve com seguranÃ§a.</p>
+                    <h3 class="modal-head-title">Editor de Lançamento</h3>
+                    <p class="modal-head-sub">Preencha os campos e salve com segurança.</p>
                 </div>
                 <button onclick="closeModal('entry-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -2829,13 +2829,13 @@
                     <div class="flex-1">
                         <label for="form-date" class="label-mini">Data</label>
                         <input type="date" id="form-date" required aria-describedby="form-date-help form-date-error">
-                        <p id="form-date-help" class="field-help">Informe a data efetiva do lanÃ§amento.</p>
+                        <p id="form-date-help" class="field-help">Informe a data efetiva do lançamento.</p>
                         <p id="form-date-error" class="field-error hidden" role="alert"></p>
                     </div>
                     <div class="flex-1">
                         <label for="form-value" class="label-mini">Valor (R$)</label>
                         <input type="text" id="form-value" required inputmode="numeric" autocomplete="off" placeholder="0,00" aria-describedby="form-value-help form-value-error">
-                        <p id="form-value-help" class="field-help">Digite apenas nÃºmeros. A vÃ­rgula Ã© aplicada automaticamente.</p>
+                        <p id="form-value-help" class="field-help">Digite apenas números. A vírgula é aplicada automaticamente.</p>
                         <p id="form-value-error" class="field-error hidden" role="alert"></p>
                     </div>
                 </div>
@@ -2850,23 +2850,23 @@
                 <div>
                     <label for="form-acc" class="label-mini">Conta</label>
                     <select id="form-acc" required aria-describedby="form-acc-help form-acc-error"></select>
-                    <p id="form-acc-help" class="field-help">Conta/banco que receberÃ¡ ou pagarÃ¡ este valor.</p>
+                    <p id="form-acc-help" class="field-help">Conta/banco que receberá ou pagará este valor.</p>
                     <p id="form-acc-error" class="field-error hidden" role="alert"></p>
                 </div>
                 <div>
-                    <label for="form-desc" class="label-mini">ObservaÃ§Ã£o</label>
+                    <label for="form-desc" class="label-mini">Observação</label>
                     <input type="text" id="form-desc" maxlength="180" aria-describedby="form-desc-help form-desc-error">
-                    <p id="form-desc-help" class="field-help">Opcional. AtÃ© 180 caracteres para facilitar buscas.</p>
+                    <p id="form-desc-help" class="field-help">Opcional. Até 180 caracteres para facilitar buscas.</p>
                     <p id="form-desc-error" class="field-error hidden" role="alert"></p>
                 </div>
                 <div>
                     <label class="label-mini" for="form-status">Status</label>
-                    <div class="status-toggle" role="group" aria-label="Status do lanÃ§amento">
+                    <div class="status-toggle" role="group" aria-label="Status do lançamento">
                         <button type="button" id="toggle-realized" onclick="toggleStatus('REALIZADO')" aria-pressed="true">Realizado</button>
                         <button type="button" id="toggle-pending" onclick="toggleStatus('PENDENTE')" aria-pressed="false">Pendente</button>
                     </div>
                     <input type="hidden" id="form-status" value="REALIZADO" aria-describedby="form-status-help form-status-error">
-                    <p id="form-status-help" class="field-help">Escolha se o lanÃ§amento jÃ¡ ocorreu ou ainda estÃ¡ pendente.</p>
+                    <p id="form-status-help" class="field-help">Escolha se o lançamento já ocorreu ou ainda está pendente.</p>
                     <p id="form-status-error" class="field-error hidden" role="alert"></p>
                 </div>
                 <div class="modal-actions">
@@ -2882,7 +2882,7 @@
         <div class="modal-shell modal-shell-db">
             <div class="modal-head">
                 <div>
-                    <h3 id="db-modal-title" class="modal-head-title">ConfiguraÃ§Ã£o</h3>
+                    <h3 id="db-modal-title" class="modal-head-title">Configuração</h3>
                     <p id="db-modal-subtitle" class="modal-head-sub">Cadastre rapidamente um novo item.</p>
                 </div>
                 <button onclick="closeModal('db-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
@@ -2899,11 +2899,11 @@
     </div>
 
     <script>
-        // ConfiguraÃ§Ãµes Supabase
+        // Configurações Supabase
         const SUPABASE_URL = 'https://uvmidrjjbnfsxofhthfq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_JZ56monDH_4qIB9zwkYEFQ_KyrX4xCc';
         
-        // CORREÃ‡ÃƒO: Usando a referÃªncia global correta do Supabase SDK e evitando conflito de nomes
+        // CORREÇÃO: Usando a referência global correta do Supabase SDK e evitando conflito de nomes
         let sbClient;
         try {
             sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -2936,7 +2936,7 @@
         let subcategoriaFiltroSelecionada = '';
         let destinoExcluidoMensal = '';
         let destinosFiltroSelecionados = [];
-        let annualTemporalFlow = 'SAÃDA';
+        let annualTemporalFlow = 'SAÍDA';
         let annualTemporalMode = 'MESES';
         let annualTemporalYear = new Date().getFullYear();
         let annualNavCategoryId = '';
@@ -2975,7 +2975,7 @@
                 const parsed = raw ? JSON.parse(raw) : {};
                 return parsed && typeof parsed === 'object' ? parsed : {};
             } catch (error) {
-                console.warn('NÃ£o foi possÃ­vel carregar confirmaÃ§Ãµes de transferÃªncia:', error);
+                console.warn('Não foi possível carregar confirmações de transferência:', error);
                 return {};
             }
         }
@@ -2983,7 +2983,7 @@
             try {
                 window.localStorage.setItem(ENTRY_TRANSFER_REVIEW_STORAGE_KEY, JSON.stringify(entryTransferReviewDecisions || {}));
             } catch (error) {
-                console.warn('NÃ£o foi possÃ­vel salvar confirmaÃ§Ãµes de transferÃªncia:', error);
+                console.warn('Não foi possível salvar confirmações de transferência:', error);
             }
         }
         function getEntryTransferReviewStatus(entryId) {
@@ -3252,7 +3252,7 @@
 
         async function initCloud() {
             if (!sbClient) {
-                console.error("Supabase client nÃ£o disponÃ­vel.");
+                console.error("Supabase client não disponível.");
                 document.getElementById('loading-overlay').style.display = 'none';
                 setSyncStatus('offline');
                 return;
@@ -3281,7 +3281,7 @@
                 updateBackupIndicator();
                 render();
             } catch (err) {
-                console.error("Erro na sincronizaÃ§Ã£o:", err);
+                console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
                 document.getElementById('loading-overlay').style.display = 'none';
                 render();
@@ -3323,7 +3323,7 @@
         async function cloudSave(table, data) {
             if (!sbClient) {
                 setSyncStatus('offline');
-                return { ok: false, error: new Error('Cliente Supabase nÃ£o inicializado.') };
+                return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             }
             const touchUpdatedAt = (value, isoNow) => {
                 if (!value || typeof value !== 'object') return value;
@@ -3376,7 +3376,7 @@
         async function cloudDelete(table, id) {
             if (!sbClient) {
                 setSyncStatus('offline');
-                return { ok: false, error: new Error('Cliente Supabase nÃ£o inicializado.') };
+                return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             }
             setSyncStatus('syncing');
             const { error, count } = await sbClient
@@ -3388,7 +3388,7 @@
                 setSyncStatus('offline');
                 return { ok: false, error };
             } else if ((Number(count) || 0) < 1) {
-                const noEffectError = new Error('Nenhum registro foi removido na nuvem. Verifique as polÃ­ticas RLS de DELETE da tabela.');
+                const noEffectError = new Error('Nenhum registro foi removido na nuvem. Verifique as políticas RLS de DELETE da tabela.');
                 console.error(`Delete sem efeito em ${table}:`, { id, count });
                 setSyncStatus('offline');
                 return { ok: false, error: noEffectError };
@@ -3398,7 +3398,7 @@
             }
         }
         async function cloudDeleteHierarchyItem(type, id) {
-            if (!sbClient) return { ok: false, missingRpc: false, error: new Error('Cliente Supabase nÃ£o inicializado.') };
+            if (!sbClient) return { ok: false, missingRpc: false, error: new Error('Cliente Supabase não inicializado.') };
             setSyncStatus('syncing');
             const { error } = await sbClient.rpc('delete_hierarchy_item', {
                 p_item_type: String(type || ''),
@@ -3418,10 +3418,10 @@
         }
 
         window.deleteEntry = async function(id) {
-            if(confirm("Deseja realmente excluir este lanÃ§amento?")) {
+            if(confirm("Deseja realmente excluir este lançamento?")) {
                 const result = await cloudDelete('entries', id);
                 if (!result?.ok) {
-                    alert(`NÃ£o foi possÃ­vel excluir o lanÃ§amento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                    alert(`Não foi possível excluir o lançamento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                     return;
                 }
                 state.entries = state.entries.filter(e => e.id !== id);
@@ -3431,10 +3431,10 @@
         async function confirmDeleteFromModal() {
             const id = String(document.getElementById('entry-id')?.value || '');
             if (!id) return;
-            if (!confirm("Deseja realmente excluir este lanÃ§amento?")) return;
+            if (!confirm("Deseja realmente excluir este lançamento?")) return;
             const result = await cloudDelete('entries', id);
             if (!result?.ok) {
-                alert(`NÃ£o foi possÃ­vel excluir o lanÃ§amento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível excluir o lançamento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             state.entries = state.entries.filter(e => e.id !== id);
@@ -3487,7 +3487,7 @@
         }
         function buildMonthlyHierarchyExportHtml(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-            if (!dadosBase.length) return '<p>Sem dados para exportaÃ§Ã£o no perÃ­odo/filtro selecionado.</p>';
+            if (!dadosBase.length) return '<p>Sem dados para exportação no período/filtro selecionado.</p>';
 
             const totais = dadosBase.reduce((acc, item) => {
                 const valor = Number(item.valor) || 0;
@@ -3533,14 +3533,14 @@
                         return `<details class="mdetails-level mdetails-l3" open>
                             <summary>
                                 <span class="mdetails-title">${escapeHtml(destino)}</span>
-                                <span class="mdetails-meta">${formatBRL(dstData.total)} â€¢ ${dstData.count} lanÃ§.</span>
+                                <span class="mdetails-meta">${formatBRL(dstData.total)} • ${dstData.count} lanç.</span>
                             </summary>
                         </details>`;
                     }).join('');
                     return `<details class="mdetails-level mdetails-l2" open>
                         <summary>
                             <span class="mdetails-title">${escapeHtml(subcategoria)}</span>
-                            <span class="mdetails-meta">${formatBRL(subData.total)} â€¢ ${subData.count} lanÃ§.</span>
+                            <span class="mdetails-meta">${formatBRL(subData.total)} • ${subData.count} lanç.</span>
                         </summary>
                         <div class="mdetails-inner">${destinoHtml}</div>
                     </details>`;
@@ -3548,7 +3548,7 @@
                 return `<details class="mdetails-level" open>
                     <summary>
                         <span class="mdetails-title">${escapeHtml(categoria)}</span>
-                        <span class="mdetails-meta">${formatBRL(catData.total)} â€¢ ${catData.count} lanÃ§.</span>
+                        <span class="mdetails-meta">${formatBRL(catData.total)} • ${catData.count} lanç.</span>
                     </summary>
                     <div class="mdetails-inner">${subHtml}</div>
                 </details>`;
@@ -3560,7 +3560,7 @@
                     <p class="print-kpi-value flow-in">${formatBRL(totais.entrada)}</p>
                 </div>
                 <div class="print-kpi-card">
-                    <p class="print-kpi-label">SaÃ­das</p>
+                    <p class="print-kpi-label">Saídas</p>
                     <p class="print-kpi-value flow-out">${formatBRL(totais.saida)}</p>
                 </div>
                 <div class="print-kpi-card">
@@ -3568,10 +3568,10 @@
                     <p class="print-kpi-value ${totais.entrada - totais.saida >= 0 ? 'flow-in' : 'flow-out'}">${formatBRL(totais.entrada - totais.saida)}</p>
                 </div>
             </div>
-            <table><thead><tr><th>NÃ­vel</th><th>Filtros aplicados</th><th class="r">Quantidade</th></tr></thead><tbody>
+            <table><thead><tr><th>Nível</th><th>Filtros aplicados</th><th class="r">Quantidade</th></tr></thead><tbody>
                 <tr><td>1. Categoria</td><td>${escapeHtml(categoriaFiltroSelecionada || 'Todas')}</td><td class="r">${orderedCategories.length}</td></tr>
                 <tr><td>2. Subcategoria</td><td>${escapeHtml(fluxoSelecionado || 'TODOS')}</td><td class="r">${totalSubcategorias}</td></tr>
-                <tr><td>3. Destino</td><td>Resumo sem detalhamento de lanÃ§amentos</td><td class="r">${totalDestinos}</td></tr>
+                <tr><td>3. Destino</td><td>Resumo sem detalhamento de lançamentos</td><td class="r">${totalDestinos}</td></tr>
             </tbody></table>
             <div class="mdetails-wrap">${detailsHtml}</div>`;
         }
@@ -3717,7 +3717,7 @@
             const normalized = normalizeFlowType(flow);
             return normalized === 'ENTRADA'
                 ? { label: 'Entrada', className: 'flow-in', sign: '+' }
-                : { label: 'SaÃ­da', className: 'flow-out', sign: '-' };
+                : { label: 'Saída', className: 'flow-out', sign: '-' };
         }
         function formatSignedBRLV2(value, flow) {
             const meta = getFlowMetaV2(flow);
@@ -3731,7 +3731,7 @@
                 const dayStr = `${filter}-${String(d).padStart(2, '0')}`;
                 const dayEntries = entries.filter(e => e.date === dayStr);
                 const inc = dayEntries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                const exp = dayEntries.filter(e => e.type === 'SAÃDA' && e.status === 'REALIZADO').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                const exp = dayEntries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').reduce((a, b) => a + (Number(b.amount) || 0), 0);
                 const net = inc - exp;
                 cumulative += net;
                 rows.push(`<tr>
@@ -3742,15 +3742,15 @@
                     <td class="r">${formatBRL(cumulative)}</td>
                 </tr>`);
             }
-            return `<div class="print-card"><table><thead><tr><th>Dia</th><th class="r">Entradas Realizadas</th><th class="r">SaÃ­das Realizadas</th><th class="r">Saldo do Dia</th><th class="r">Saldo Acumulado</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+            return `<div class="print-card"><table><thead><tr><th>Dia</th><th class="r">Entradas Realizadas</th><th class="r">Saídas Realizadas</th><th class="r">Saldo do Dia</th><th class="r">Saldo Acumulado</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
         }
         function buildMonthlyHierarchyTableV2Legacy(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportaÃ§Ã£o no perÃ­odo/filtro selecionado.</p></div>';
+            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>';
 
             const grouped = new Map();
             dadosBase.forEach((item) => {
-                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÃDA';
+                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
                 const categoria = item.categoria || 'Sem categoria';
                 const subcategoria = item.subcategoria || 'Sem subcategoria';
                 const destino = item.destino || 'Sem destino';
@@ -3784,11 +3784,11 @@
                 });
             });
 
-            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>NÃ­vel</th><th class="r">LanÃ§amentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
         }
         function buildMonthlyHierarchyExportHtmlV2(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-            if (!dadosBase.length) return buildExportSectionV2('Resumo', '<div class="print-card"><p>Sem dados para exportaÃ§Ã£o no perÃ­odo/filtro selecionado.</p></div>');
+            if (!dadosBase.length) return buildExportSectionV2('Resumo', '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>');
 
             const totais = dadosBase.reduce((acc, item) => {
                 const valor = Number(item.valor) || 0;
@@ -3801,20 +3801,20 @@
             return [
                 buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                     { label: 'Entradas', value: formatBRL(totais.entrada), className: 'flow-in' },
-                    { label: 'SaÃ­das', value: formatBRL(totais.saida), className: 'flow-out' },
+                    { label: 'Saídas', value: formatBRL(totais.saida), className: 'flow-out' },
                     { label: 'Saldo', value: formatBRL(totais.entrada - totais.saida), className: totais.entrada - totais.saida >= 0 ? 'flow-in' : 'flow-out' },
-                    { label: 'LanÃ§amentos', value: String(totais.count) }
+                    { label: 'Lançamentos', value: String(totais.count) }
                 ])),
-                buildExportSectionV2('DistribuiÃ§Ã£o Por Categoria', buildMonthlyHierarchyTableV2(entries))
+                buildExportSectionV2('Distribuição Por Categoria', buildMonthlyHierarchyTableV2(entries))
             ].join('');
         }
         function buildMonthlyHierarchyTableV2(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportaÃ§Ã£o no perÃ­odo/filtro selecionado.</p></div>';
+            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>';
 
             const grouped = new Map();
             dadosBase.forEach((item) => {
-                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÃDA';
+                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
                 const categoria = item.categoria || 'Sem categoria';
                 const subcategoria = item.subcategoria || 'Sem subcategoria';
                 const destino = item.destino || 'Sem destino';
@@ -3849,17 +3849,17 @@
                 });
             });
 
-            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Fluxo</th><th>NÃ­vel</th><th class="r">LanÃ§amentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Fluxo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
         }
         function exportCurrentReportPDFLegacy() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
-            let tableHtml = '<p>Sem dados para exportaÃ§Ã£o.</p>';
+            let tableHtml = '<p>Sem dados para exportação.</p>';
 
             if (currentTab === 'entries') {
                 const rows = getEntriesForExport();
-                title = 'RelatÃ³rio de LanÃ§amentos';
-                tableHtml = `<table><thead><tr><th>Data</th><th>Destino</th><th>DescriÃ§Ã£o</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
+                title = 'Relatório de Lançamentos';
+                tableHtml = `<table><thead><tr><th>Data</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
                     ${rows.map(e => {
                         const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
                         return `<tr>
@@ -3874,7 +3874,7 @@
             } else if (currentTab === 'monthly') {
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
-                title = `RelatÃ³rio Mensal (${filter})`;
+                title = `Relatório Mensal (${filter})`;
                 subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
                 tableHtml = buildMonthlyHierarchyExportHtml(entries);
             } else if (currentTab === 'annual') {
@@ -3884,21 +3884,21 @@
                     const prefix = `${year}-${String(idx + 1).padStart(2,'0')}`;
                     const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                     const inc = mEntries.filter(e=>normalizeFlowType(e.type)==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                    const exp = mEntries.filter(e=>normalizeFlowType(e.type)==='SAÃDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                    const exp = mEntries.filter(e=>normalizeFlowType(e.type)==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                     return { month: monthNames[idx], inc, exp, bal: inc - exp };
                 });
-                title = `RelatÃ³rio Anual (${year})`;
-                tableHtml = `<table><thead><tr><th>MÃªs</th><th class="r">Entradas</th><th class="r">SaÃ­das</th><th class="r">Saldo</th></tr></thead><tbody>
+                title = `Relatório Anual (${year})`;
+                tableHtml = `<table><thead><tr><th>Mês</th><th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th></tr></thead><tbody>
                     ${data.map(r => `<tr><td>${r.month}</td><td class="r">${formatBRL(r.inc)}</td><td class="r">${formatBRL(r.exp)}</td><td class="r">${formatBRL(r.bal)}</td></tr>`).join('')}
                 </tbody></table>`;
             } else {
-                title = 'RelatÃ³rio';
-                tableHtml = `<p>A exportaÃ§Ã£o PDF estÃ¡ disponÃ­vel para as abas LanÃ§amentos, RelatÃ³rio Mensal e RelatÃ³rio Anual.</p>`;
+                title = 'Relatório';
+                tableHtml = `<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>`;
             }
 
             const win = window.open('', '_blank');
             if (!win) {
-                alert('NÃ£o foi possÃ­vel abrir a janela de impressÃ£o. Verifique bloqueador de pop-up.');
+                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
                 return;
             }
             win.document.open();
@@ -3910,21 +3910,21 @@
         function exportCurrentReportPDFV2() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
-            let tableHtml = '<p>Sem dados para exportaÃ§Ã£o.</p>';
+            let tableHtml = '<p>Sem dados para exportação.</p>';
 
             if (currentTab === 'entries') {
                 const rows = getEntriesForExport();
                 const totalEntrada = rows.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-                const totalSaida = rows.filter(e => normalizeFlowType(e.type) === 'SAÃDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-                title = 'RelatÃ³rio de LanÃ§amentos';
+                const totalSaida = rows.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                title = 'Relatório de Lançamentos';
                 tableHtml = [
                     buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                         { label: 'Entradas', value: formatBRL(totalEntrada), className: 'flow-in' },
-                        { label: 'SaÃ­das', value: formatBRL(totalSaida), className: 'flow-out' },
+                        { label: 'Saídas', value: formatBRL(totalSaida), className: 'flow-out' },
                         { label: 'Saldo', value: formatBRL(totalEntrada - totalSaida), className: totalEntrada - totalSaida >= 0 ? 'flow-in' : 'flow-out' },
                         { label: 'Registros', value: String(rows.length) }
                     ])),
-                    buildExportSectionV2('LanÃ§amentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Destino</th><th>DescriÃ§Ã£o</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
+                    buildExportSectionV2('Lançamentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
                         ${rows.map(e => {
                             const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
                             return `<tr>
@@ -3940,16 +3940,16 @@
             } else if (currentTab === 'monthly') {
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
-                title = `RelatÃ³rio Mensal (${filter})`;
+                title = `Relatório Mensal (${filter})`;
                 subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
                 tableHtml = [
                     buildExportPillsV2([
-                        ['PerÃ­odo', filter],
+                        ['Período', filter],
                         ['Fluxo', fluxoSelecionado || 'TODOS'],
                         ['Categoria', categoriaFiltroSelecionada || 'Todas']
                     ]),
                     buildMonthlyHierarchyExportHtmlV2(entries),
-                    buildExportSectionV2('Resumo DiÃ¡rio', buildMonthlyDailyExportTableV2(filter, entries))
+                    buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries))
                 ].join('');
             } else if (currentTab === 'annual') {
                 const year = new Date().getFullYear();
@@ -3958,31 +3958,31 @@
                     const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
                     const mEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                     const inc = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÃDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
                     return { month: monthNames[idx], inc, exp, bal: inc - exp };
                 });
                 const totalInc = data.reduce((acc, row) => acc + row.inc, 0);
                 const totalExp = data.reduce((acc, row) => acc + row.exp, 0);
-                title = `RelatÃ³rio Anual (${year})`;
+                title = `Relatório Anual (${year})`;
                 tableHtml = [
                     buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                         { label: 'Entradas', value: formatBRL(totalInc), className: 'flow-in' },
-                        { label: 'SaÃ­das', value: formatBRL(totalExp), className: 'flow-out' },
+                        { label: 'Saídas', value: formatBRL(totalExp), className: 'flow-out' },
                         { label: 'Saldo', value: formatBRL(totalInc - totalExp), className: totalInc - totalExp >= 0 ? 'flow-in' : 'flow-out' },
                         { label: 'Meses', value: '12' }
                     ])),
-                    buildExportSectionV2('EvoluÃ§Ã£o Mensal', `<div class="print-card"><table><thead><tr><th>MÃªs</th><th class="r">Entradas</th><th class="r">SaÃ­das</th><th class="r">Saldo</th></tr></thead><tbody>
+                    buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th></tr></thead><tbody>
                         ${data.map(r => `<tr><td>${r.month}</td><td class="r">${formatBRL(r.inc)}</td><td class="r">${formatBRL(r.exp)}</td><td class="r">${formatBRL(r.bal)}</td></tr>`).join('')}
                     </tbody></table></div>`)
                 ].join('');
             } else {
-                title = 'RelatÃ³rio';
-                tableHtml = '<p>A exportaÃ§Ã£o PDF estÃ¡ disponÃ­vel para as abas LanÃ§amentos, RelatÃ³rio Mensal e RelatÃ³rio Anual.</p>';
+                title = 'Relatório';
+                tableHtml = '<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>';
             }
 
             const win = window.open('', '_blank');
             if (!win) {
-                alert('NÃ£o foi possÃ­vel abrir a janela de impressÃ£o. Verifique bloqueador de pop-up.');
+                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
                 return;
             }
             win.document.open();
@@ -3994,21 +3994,21 @@
         function exportCurrentReportPDF() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
-            let tableHtml = '<p>Sem dados para exportaÃ§Ã£o.</p>';
+            let tableHtml = '<p>Sem dados para exportação.</p>';
 
             if (currentTab === 'entries') {
                 const rows = getEntriesForExport();
                 const totalEntrada = rows.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-                const totalSaida = rows.filter(e => normalizeFlowType(e.type) === 'SAÃDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-                title = 'RelatÃ³rio de LanÃ§amentos';
+                const totalSaida = rows.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                title = 'Relatório de Lançamentos';
                 tableHtml = [
                     buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                         { label: 'Entradas', value: formatBRL(totalEntrada), className: 'flow-in' },
-                        { label: 'SaÃ­das', value: formatBRL(totalSaida), className: 'flow-out' },
+                        { label: 'Saídas', value: formatBRL(totalSaida), className: 'flow-out' },
                         { label: 'Saldo', value: formatBRL(totalEntrada - totalSaida), className: totalEntrada - totalSaida >= 0 ? 'flow-in' : 'flow-out' },
                         { label: 'Registros', value: String(rows.length) }
                     ])),
-                    buildExportSectionV2('LanÃ§amentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Fluxo</th><th>Destino</th><th>DescriÃ§Ã£o</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
+                    buildExportSectionV2('Lançamentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Fluxo</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
                         ${rows.map(e => {
                             const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
                             const flowMeta = getFlowMetaV2(e.type);
@@ -4027,31 +4027,31 @@
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
                 const monthlyRows = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-                title = `RelatÃ³rio Mensal (${filter})`;
+                title = `Relatório Mensal (${filter})`;
                 subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
 
                 const hierarchyRows = monthlyRows
                     .sort((a, b) => (Number(b.valor) || 0) - (Number(a.valor) || 0))
                     .map(item => {
-                        const flowMeta = getFlowMetaV2(item.tipo === 'entrada' ? 'ENTRADA' : 'SAÃDA');
+                        const flowMeta = getFlowMetaV2(item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA');
                         return `<tr>
                             <td class="${flowMeta.className}">${flowMeta.label}</td>
                             <td>${escapeHtml(item.categoria || 'Sem categoria')}</td>
                             <td>${escapeHtml(item.subcategoria || 'Sem subcategoria')}</td>
                             <td>${escapeHtml(item.destino || 'Sem destino')}</td>
-                            <td class="r ${flowMeta.className}">${formatSignedBRLV2(item.valor, flowMeta.label === 'Entrada' ? 'ENTRADA' : 'SAÃDA')}</td>
+                            <td class="r ${flowMeta.className}">${formatSignedBRLV2(item.valor, flowMeta.label === 'Entrada' ? 'ENTRADA' : 'SAÍDA')}</td>
                         </tr>`;
                     }).join('');
 
                 tableHtml = [
                     buildExportPillsV2([
-                        ['PerÃ­odo', filter],
+                        ['Período', filter],
                         ['Fluxo', fluxoSelecionado || 'TODOS'],
                         ['Categoria', categoriaFiltroSelecionada || 'Todas']
                     ]),
                     buildMonthlyHierarchyExportHtmlV2(entries),
                     buildExportSectionV2('Detalhamento do Fluxo', `<div class="print-card"><table><thead><tr><th>Fluxo</th><th>Categoria</th><th>Subcategoria</th><th>Destino</th><th class="r">Valor</th></tr></thead><tbody>${hierarchyRows || '<tr><td colspan="5" class="c">Sem dados</td></tr>'}</tbody></table></div>`),
-                    buildExportSectionV2('Resumo DiÃ¡rio', buildMonthlyDailyExportTableV2(filter, entries))
+                    buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries))
                 ].join('');
             } else if (currentTab === 'annual') {
                 const year = new Date().getFullYear();
@@ -4060,31 +4060,31 @@
                     const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
                     const mEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                     const inc = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÃDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
                     return { month: monthNames[idx], inc, exp, bal: inc - exp };
                 });
                 const totalInc = data.reduce((acc, row) => acc + row.inc, 0);
                 const totalExp = data.reduce((acc, row) => acc + row.exp, 0);
-                title = `RelatÃ³rio Anual (${year})`;
+                title = `Relatório Anual (${year})`;
                 tableHtml = [
                     buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                         { label: 'Entradas', value: formatBRL(totalInc), className: 'flow-in' },
-                        { label: 'SaÃ­das', value: formatBRL(totalExp), className: 'flow-out' },
+                        { label: 'Saídas', value: formatBRL(totalExp), className: 'flow-out' },
                         { label: 'Saldo', value: formatBRL(totalInc - totalExp), className: totalInc - totalExp >= 0 ? 'flow-in' : 'flow-out' },
                         { label: 'Meses', value: '12' }
                     ])),
-                    buildExportSectionV2('EvoluÃ§Ã£o Mensal', `<div class="print-card"><table><thead><tr><th>MÃªs</th><th class="r flow-in">Entradas (+)</th><th class="r flow-out">SaÃ­das (-)</th><th class="r">Saldo</th></tr></thead><tbody>
+                    buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r flow-in">Entradas (+)</th><th class="r flow-out">Saídas (-)</th><th class="r">Saldo</th></tr></thead><tbody>
                         ${data.map(r => `<tr><td>${r.month}</td><td class="r flow-in">+ ${formatBRL(r.inc)}</td><td class="r flow-out">- ${formatBRL(r.exp)}</td><td class="r ${r.bal >= 0 ? 'flow-in' : 'flow-out'}">${r.bal >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(r.bal))}</td></tr>`).join('')}
                     </tbody></table></div>`)
                 ].join('');
             } else {
-                title = 'RelatÃ³rio';
-                tableHtml = '<p>A exportaÃ§Ã£o PDF estÃ¡ disponÃ­vel para as abas LanÃ§amentos, RelatÃ³rio Mensal e RelatÃ³rio Anual.</p>';
+                title = 'Relatório';
+                tableHtml = '<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>';
             }
 
             const win = window.open('', '_blank');
             if (!win) {
-                alert('NÃ£o foi possÃ­vel abrir a janela de impressÃ£o. Verifique bloqueador de pop-up.');
+                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
                 return;
             }
             win.document.open();
@@ -4126,7 +4126,7 @@
             chart.tooltip.setActiveElements(active, center);
             chart.update();
         }
-        const MONTH_NAMES_PT = ['Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const MONTH_NAMES_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         function generateId() {
             if (window.crypto && typeof window.crypto.randomUUID === 'function') {
                 return window.crypto.randomUUID();
@@ -4148,7 +4148,7 @@
         function normalizeFlowType(type) {
             const raw = String(type || '').trim().toUpperCase();
             if (raw === 'ENTRADA') return 'ENTRADA';
-            if (raw === 'SAÃDA' || raw === 'SAIDA') return 'SAÃDA';
+            if (raw === 'SAÍDA' || raw === 'SAIDA') return 'SAÍDA';
             return raw;
         }
         function isCapitalContributionName(value) {
@@ -4300,7 +4300,7 @@
                                 <p class="text-xs font-black ${classeCor}">${formatBRL(valor)}</p>
                             </div>
                             <div class="flex items-center justify-between text-[11px] mb-2">
-                                <span class="text-slate-500">ParticipaÃ§Ã£o no mÃªs</span>
+                                <span class="text-slate-500">Participação no mês</span>
                                 <span class="font-bold text-slate-700">${formatPercentual(percentual)}</span>
                             </div>
                             <div class="hm-progress-track">
@@ -4346,7 +4346,7 @@
                 .sort((a, b) => (b.data || '').localeCompare(a.data || '') || b.valor - a.valor);
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
             if(filtrado.length === 0) {
-                content.innerHTML = `<div class="hm-empty">Nenhum lanÃ§amento encontrado para este destino.</div>`;
+                content.innerHTML = `<div class="hm-empty">Nenhum lançamento encontrado para este destino.</div>`;
                 return;
             }
             content.innerHTML = `<div class="hm-launch-list">
@@ -4363,12 +4363,12 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="text-[11px] font-black ${cor}">${formatBRL(item.valor)}</p>
-                                    <p class="text-[10px] text-slate-500">${item.tipo === 'entrada' ? 'Entrada' : 'SaÃ­da'} â€¢ ${item.status}</p>
+                                    <p class="text-[10px] text-slate-500">${item.tipo === 'entrada' ? 'Entrada' : 'Saída'} • ${item.status}</p>
                                 </div>
                             </div>
                             <p class="text-[11px] text-slate-600 mb-2">${item.descricao || '-'}</p>
                             <div class="flex items-center justify-between text-[11px] mb-2">
-                                <span class="text-slate-500">ParticipaÃ§Ã£o no mÃªs</span>
+                                <span class="text-slate-500">Participação no mês</span>
                                 <span class="font-bold text-slate-700">${formatPercentual(percentual)}</span>
                             </div>
                             <div class="hm-progress-track">
@@ -4403,9 +4403,9 @@
             section.className = 'card-premium p-8 space-y-6';
             section.innerHTML = `
                 <div class="flex items-center justify-between gap-4 flex-wrap">
-                    <h4 class="text-sm font-black text-slate-900">AnÃ¡lise hierÃ¡rquica mensal</h4>
+                    <h4 class="text-sm font-black text-slate-900">Análise hierárquica mensal</h4>
                     <div class="hm-breadcrumb">
-                        <button onclick="hmBreadcrumbTo('categoria')">RelatÃ³rio Mensal</button>
+                        <button onclick="hmBreadcrumbTo('categoria')">Relatório Mensal</button>
                         ${categoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('subcategoria')">${categoriaSelecionada}</button>` : ''}
                         ${subcategoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('destino')">${subcategoriaSelecionada}</button>` : ''}
                         ${destinoSelecionado ? `<span class="hm-sep">></span><span class="text-slate-700 font-semibold">${destinoSelecionado}</span>` : ''}
@@ -4417,7 +4417,7 @@
                         <select id="hm-flow-filter">
                             <option value="TODOS">Todos</option>
                             <option value="ENTRADAS">Entradas</option>
-                            <option value="SAIDAS">SaÃ­das</option>
+                            <option value="SAIDAS">Saídas</option>
                         </select>
                     </div>
                     <div>
@@ -4442,7 +4442,7 @@
                                 <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(false)">Limpar</button>
                             </div>
                             <div class="hm-destination-list">
-                                ${destinosDisponiveis.map(d => `<label class="hm-check"><input type="checkbox" ${destinosFiltroSelecionados.includes(d) ? 'checked' : ''} onchange="hmToggleDestinationSelection(decodeURIComponent('${encodeSafe(d)}'), this.checked)"><span>${d}</span></label>`).join('') || '<span class="text-[11px] text-slate-400">Nenhum destino disponÃ­vel</span>'}
+                                ${destinosDisponiveis.map(d => `<label class="hm-check"><input type="checkbox" ${destinosFiltroSelecionados.includes(d) ? 'checked' : ''} onchange="hmToggleDestinationSelection(decodeURIComponent('${encodeSafe(d)}'), this.checked)"><span>${d}</span></label>`).join('') || '<span class="text-[11px] text-slate-400">Nenhum destino disponível</span>'}
                             </div>
                         </div>
                     </div>
@@ -4496,7 +4496,7 @@
             const dadosBase = aplicarFiltrosBaseHierarquia(dados);
             if(dadosBase.length === 0) {
                 const content = document.getElementById('hm-content');
-                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponÃ­vel para o mÃªs e filtros selecionados.</div>`;
+                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponível para o mês e filtros selecionados.</div>`;
                 return;
             }
 
@@ -4527,9 +4527,9 @@
             section.className = 'card-premium p-8 space-y-6';
             section.innerHTML = `
                 <div class="flex items-center justify-between gap-4 flex-wrap">
-                    <h4 class="text-sm font-black text-slate-900">AnÃ¡lise hierÃ¡rquica mensal</h4>
+                    <h4 class="text-sm font-black text-slate-900">Análise hierárquica mensal</h4>
                     <div class="hm-breadcrumb">
-                        <button onclick="hmBreadcrumbTo('categoria')">RelatÃ³rio Mensal</button>
+                        <button onclick="hmBreadcrumbTo('categoria')">Relatório Mensal</button>
                         ${categoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('subcategoria')">${categoriaSelecionada}</button>` : ''}
                         ${subcategoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('destino')">${subcategoriaSelecionada}</button>` : ''}
                         ${destinoSelecionado ? `<span class="hm-sep">></span><span class="text-slate-700 font-semibold">${destinoSelecionado}</span>` : ''}
@@ -4541,7 +4541,7 @@
                         <select id="hm-flow-filter">
                             <option value="TODOS">Todos</option>
                             <option value="ENTRADAS">Entradas</option>
-                            <option value="SAIDAS">SaÃ­das</option>
+                            <option value="SAIDAS">Saídas</option>
                         </select>
                     </div>
                     <div>
@@ -4627,7 +4627,7 @@
             const dadosBase = aplicarFiltrosBaseHierarquia(dados);
             if(dadosBase.length === 0) {
                 const content = document.getElementById('hm-content');
-                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponÃ­vel para o mÃªs e filtros selecionados.</div>`;
+                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponível para o mês e filtros selecionados.</div>`;
                 return;
             }
 
@@ -4652,7 +4652,7 @@
             pig.dataset.microBound = '1';
             pig.setAttribute('tabindex', '0');
             pig.setAttribute('role', 'button');
-            pig.setAttribute('aria-label', 'Logo DelÃ­cias da VovÃ³');
+            pig.setAttribute('aria-label', 'Logo Delícias da Vovó');
 
             const triggerPop = () => {
                 pig.classList.remove('is-pop');
@@ -4683,14 +4683,14 @@
             currentTab = tabId;
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
-                entries: 'LanÃ§amentos',
-                monthly: 'RelatÃ³rio Mensal',
-                annual: 'RelatÃ³rio Anual',
-                reconciliation: 'ConciliaÃ§Ã£o',
-                treasury: 'RelatÃ³rio de Vendas',
+                entries: 'Lançamentos',
+                monthly: 'Relatório Mensal',
+                annual: 'Relatório Anual',
+                reconciliation: 'Conciliação',
+                treasury: 'Relatório de Vendas',
                 database: 'Banco de Dados'
             };
-            if(titleEl) titleEl.innerText = titleMap[tabId] || 'LanÃ§amentos';
+            if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
             if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
             render();
@@ -4799,10 +4799,10 @@
             const monthPrefix = getCurrentMonthIso();
             const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && (e.date || '').startsWith(monthPrefix));
             const inc = monthEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-            const exp = monthEntries.filter(e => e.type === 'SAÃDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const exp = monthEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const total = inc - exp;
             const el = document.getElementById('global-balance');
-            if(el) el.innerText = `Resultado do mÃªs: ${formatBRL(total)}`;
+            if(el) el.innerText = `Resultado do mês: ${formatBRL(total)}`;
         }
         function getTodayIsoDate() {
             const now = new Date();
@@ -4957,13 +4957,13 @@
             const periodText = period === 'ANO'
                 ? `Ano de ${reference.slice(0, 4)}`
                 : period === 'MES'
-                    ? `MÃªs ${reference.slice(5, 7)}/${reference.slice(0, 4)}`
+                    ? `Mês ${reference.slice(5, 7)}/${reference.slice(0, 4)}`
                     : `Semana de ${new Date(`${reference}T12:00:00`).toLocaleDateString('pt-BR')}`;
             periodTotalEl.innerText = formatBRL(consolidated.totalIn);
-            periodCaptionEl.innerText = `${periodText}${unitFilter ? ` â€¢ ${unitFilter.replace('_', ' ')}` : ' â€¢ todas as unidades'}`;
+            periodCaptionEl.innerText = `${periodText}${unitFilter ? ` • ${unitFilter.replace('_', ' ')}` : ' • todas as unidades'}`;
 
             if (!summary.length || !movements.length) {
-                body.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem vendas no perÃ­odo selecionado</td></tr>';
+                body.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem vendas no período selecionado</td></tr>';
             } else {
                 body.innerHTML = `${summary.map(item => `<tr class="table-row">
                         <td class="px-4 py-3 text-xs font-black text-slate-800">${escapeHtml(item.unit.replace('_', ' '))}</td>
@@ -5045,7 +5045,7 @@
                     el.value = treasuryAccounts.some(a => String(a.id || '') === previous) ? previous : '';
                     return;
                 }
-                el.innerHTML = options || '<option value="">Sem contas bancÃ¡rias cadastradas</option>';
+                el.innerHTML = options || '<option value="">Sem contas bancárias cadastradas</option>';
                 if (treasuryAccounts.some(a => String(a.id || '') === previous)) el.value = previous;
             };
             fillSelect('treasury-bal-account', false);
@@ -5122,7 +5122,7 @@
             if (paymentsEl) paymentsEl.value = '0';
             if (notesEl) notesEl.value = '';
             if (titleEl) titleEl.innerText = 'Novo fechamento';
-            if (subtitleEl) subtitleEl.innerText = 'Preencha os valores do dia para MATRIZ ou VILA NOVA. VocÃª pode editar um lanÃ§amento existente pelo histÃ³rico ao lado.';
+            if (subtitleEl) subtitleEl.innerText = 'Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.';
             if (submitLabelEl) submitLabelEl.innerText = 'Salvar fechamento';
             if (cancelBtnEl) cancelBtnEl.classList.add('hidden');
         }
@@ -5139,7 +5139,7 @@
             document.getElementById('treasury-mv-notes').value = String(item.notes || '');
             document.getElementById('treasury-mv-form-title').innerText = 'Editar fechamento';
             document.getElementById('treasury-mv-form-subtitle').innerText = `Revise os valores de ${String(item.unit || '').replace('_', ' ')} em ${formatDateBRV2(item.date)}.`;
-            document.getElementById('treasury-mv-submit-label').innerText = 'Salvar alteraÃ§Ãµes';
+            document.getElementById('treasury-mv-submit-label').innerText = 'Salvar alterações';
             document.getElementById('treasury-mv-cancel-edit').classList.remove('hidden');
             document.getElementById('treasury-mv-date')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             document.getElementById('treasury-mv-date')?.focus();
@@ -5175,7 +5175,7 @@
                         <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(item.unit || '-')}</td>
                         <td class="px-4 py-3 text-right">
                             <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} â€¢ CartÃ£o: ${formatBRL(totals.cardIn)}</div>
+                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} • Cartão: ${formatBRL(totals.cardIn)}</div>
                         </td>
                         <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
                         <td class="px-4 py-3 text-right">
@@ -5228,7 +5228,7 @@
                         <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(acc ? acc.name : 'Conta removida')}</td>
                         <td class="px-4 py-3 text-right">
                             <div class="treasury-cell-main text-slate-700">${formatBRL(item.balance)}</div>
-                            <div class="treasury-cell-sub ${variationClass}">VariaÃ§Ã£o: ${variationText}</div>
+                            <div class="treasury-cell-sub ${variationClass}">Variação: ${variationText}</div>
                         </td>
                         <td class="px-4 py-3 text-xs font-black text-right ${variationClass}">${variationText}</td>
                         <td class="px-4 py-3 text-center">
@@ -5259,7 +5259,7 @@
                     data: {
                         labels: labels.map(l => formatDateBRV2(l)),
                         datasets: [{
-                            label: filterAccount ? 'EvoluÃ§Ã£o da conta' : 'EvoluÃ§Ã£o consolidada',
+                            label: filterAccount ? 'Evolução da conta' : 'Evolução consolidada',
                             data: values,
                             borderColor: '#2F4F9D',
                             backgroundColor: 'rgba(47,79,157,0.14)',
@@ -5308,29 +5308,29 @@
             const consolidatedClosing = matrizClosing + vilaClosing;
             const datePt = formatDateBRV2(date);
             const bankLines = balances.length
-                ? balances.map(item => `â€¢ ${item.name}: ${formatBRL(item.balance)}`)
-                : ['â€¢ Sem contas bancÃ¡rias cadastradas'];
+                ? balances.map(item => `• ${item.name}: ${formatBRL(item.balance)}`)
+                : ['• Sem contas bancárias cadastradas'];
             const msg = [
-                `ðŸ“Š *Resumo Tesouraria*`,
-                `ðŸ“… *${datePt}*`,
+                `📊 *Resumo Tesouraria*`,
+                `📅 *${datePt}*`,
                 ``,
-                `ðŸ¬ *Vila Nova*`,
-                `â€¢ ðŸ’³ CartÃ£o: ${formatBRL(vila.cardIn)}`,
-                `â€¢ ðŸ’µ Dinheiro: ${formatBRL(vila.cashIn)}`,
-                `â€¢ ðŸ§¾ Pagamentos: ${formatBRL(vila.paymentsOut)}`,
-                `â€¢ âœ… Fechamento: ${formatBRL(vilaClosing)}`,
+                `🏬 *Vila Nova*`,
+                `• 💳 Cartão: ${formatBRL(vila.cardIn)}`,
+                `• 💵 Dinheiro: ${formatBRL(vila.cashIn)}`,
+                `• 🧾 Pagamentos: ${formatBRL(vila.paymentsOut)}`,
+                `• ✅ Fechamento: ${formatBRL(vilaClosing)}`,
                 ``,
-                `ðŸ­ *Matriz*`,
-                `â€¢ ðŸ’³ CartÃ£o: ${formatBRL(matriz.cardIn)}`,
-                `â€¢ ðŸ’µ Dinheiro: ${formatBRL(matriz.cashIn)}`,
-                `â€¢ ðŸ§¾ Pagamentos: ${formatBRL(matriz.paymentsOut)}`,
-                `â€¢ âœ… Fechamento: ${formatBRL(matrizClosing)}`,
+                `🏭 *Matriz*`,
+                `• 💳 Cartão: ${formatBRL(matriz.cardIn)}`,
+                `• 💵 Dinheiro: ${formatBRL(matriz.cashIn)}`,
+                `• 🧾 Pagamentos: ${formatBRL(matriz.paymentsOut)}`,
+                `• ✅ Fechamento: ${formatBRL(matrizClosing)}`,
                 ``,
-                `ðŸ§® *Total de vendas (entradas + pagamentos):* ${formatBRL(consolidatedIn)}`,
+                `🧮 *Total de vendas (entradas + pagamentos):* ${formatBRL(consolidatedIn)}`,
                 ``,
-                `ðŸ¦ *Saldos bancÃ¡rios*`,
+                `🏦 *Saldos bancários*`,
                 ...bankLines,
-                `ðŸ”¢ *Soma dos saldos:* ${formatBRL(totalBalances)}`
+                `🔢 *Soma dos saldos:* ${formatBRL(totalBalances)}`
             ].join('\n');
             const phone = '5511999148044';
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
@@ -5379,15 +5379,15 @@
                 `${datePt}`,
                 ``,
                 `Vila Nova`,
-                `CartÃ£o: ${formatBRL(vila.cardIn)}`,
+                `Cartão: ${formatBRL(vila.cardIn)}`,
                 `Dinheiro: ${formatBRL(vila.cashIn)}`,
-                `SaÃ­das: ${formatBRL(vila.paymentsOut)}`,
+                `Saídas: ${formatBRL(vila.paymentsOut)}`,
                 `Fechamento: ${formatBRL(vilaClosing)}`,
                 ``,
                 `Matriz`,
-                `CartÃ£o: ${formatBRL(matriz.cardIn)}`,
+                `Cartão: ${formatBRL(matriz.cardIn)}`,
                 `Dinheiro: ${formatBRL(matriz.cashIn)}`,
-                `SaÃ­das: ${formatBRL(matriz.paymentsOut)}`,
+                `Saídas: ${formatBRL(matriz.paymentsOut)}`,
                 `Fechamento: ${formatBRL(matrizClosing)}`,
                 ``,
                 `Total de vendas: ${formatBRL(consolidatedSales)}`,
@@ -5440,7 +5440,7 @@
 
             if (summaryEl) {
                 const unitText = filterUnit ? filterUnit.replace('_', ' ') : 'todas as unidades';
-                summaryEl.innerText = `${filtered.length} lanÃ§amento(s) â€¢ ${unitText} â€¢ vendas ${formatBRL(summaryTotals.totalIn)} â€¢ saÃ­das ${formatBRL(summaryTotals.paymentsOut)} â€¢ fechamento ${formatBRL(summaryTotals.dailyResult)}`;
+                summaryEl.innerText = `${filtered.length} lançamento(s) • ${unitText} • vendas ${formatBRL(summaryTotals.totalIn)} • saídas ${formatBRL(summaryTotals.paymentsOut)} • fechamento ${formatBRL(summaryTotals.dailyResult)}`;
             }
 
             if (!filtered.length) {
@@ -5456,13 +5456,13 @@
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} | CartÃ£o: ${formatBRL(totals.cardIn)}</div>
+                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} | Cartão: ${formatBRL(totals.cardIn)}</div>
                         </td>
                         <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
                         <td class="px-4 py-3 text-right">
                             <div class="treasury-cell-main ${resultClass}">${formatBRL(totals.dailyResult)}</div>
                         </td>
-                        <td class="px-4 py-3 text-xs text-slate-600 treasury-notes">${escapeHtml(String(item.notes || 'â€”'))}</td>
+                        <td class="px-4 py-3 text-xs text-slate-600 treasury-notes">${escapeHtml(String(item.notes || '—'))}</td>
                         <td class="px-4 py-3 text-center">
                             <div class="treasury-action-group">
                                 <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar movimento" aria-label="Editar movimento">
@@ -5558,7 +5558,7 @@
             try {
                 el.showPicker();
             } catch (_) {
-                // Ignora browsers que bloqueiam showPicker sem gesto vÃ¡lido.
+                // Ignora browsers que bloqueiam showPicker sem gesto válido.
             }
         }
 
@@ -5694,7 +5694,7 @@
                 const saveResult = await cloudSave('entries', entry);
                 if (!saveResult?.ok) {
                     entry.status = previousStatus;
-                    alert(`NÃ£o foi possÃ­vel atualizar o status.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                    alert(`Não foi possível atualizar o status.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 }
                 render();
             }
@@ -5703,7 +5703,6 @@
         async function updateEntryDestinationInline(id, destinationId) {
             const entry = state.entries.find(e => e.id === id);
             if (!entry) return false;
-            const filters = getEntriesFilterSnapshot();
             const previous = {
                 destinationId: entry.destinationId,
                 subCategoryId: entry.subCategoryId,
@@ -5723,20 +5722,19 @@
                 entry.subCategoryId = previous.subCategoryId;
                 entry.categoryId = previous.categoryId;
                 entry.type = previous.type;
-                alert(`NÃ£o foi possÃ­vel atualizar o destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível atualizar o destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
             }
             if (!saveResult?.ok) {
                 renderEntries();
                 return false;
             }
-            if (!entryMatchesCurrentEntryFilters(entry, filters) || filters.duplicateFilter === 'ONLY') renderEntries();
-            else refreshEntryRowInlineUI(id);
+            refreshEntryRowInlineUI(id);
             return true;
         }
         async function updateEntryDestinationInlineByLabelLegacy(id, label, validDestinations) {
             const destinationId = findDestinationIdByLabel(label, validDestinations);
             if (!destinationId) {
-                alert('Selecione um destino vÃ¡lido da lista.');
+                alert('Selecione um destino válido da lista.');
                 renderEntries();
                 return;
             }
@@ -5761,7 +5759,7 @@
             const destinationId = findDestinationIdByLabel(typedLabel, validDestinations);
             if (!destinationId) {
                 if (inputEl) inputEl.value = currentLabel;
-                if (options.showAlert) alert('Selecione um destino vÃƒÂ¡lido da lista.');
+                if (options.showAlert) alert('Selecione um destino válido da lista.');
                 return false;
             }
             const canonicalLabel = getDestinationDisplayLabelById(destinationId, validDestinations) || getDestinationDisplayLabelById(destinationId);
@@ -5775,18 +5773,16 @@
         async function updateEntryAccountInline(id, accountId) {
             const entry = state.entries.find(e => e.id === id);
             if (!entry) return;
-            const filters = getEntriesFilterSnapshot();
             const previousAccountId = String((entry.accountId ?? entry.account_id) || '');
             entry.accountId = String(accountId || '');
             const saveResult = await cloudSave('entries', entry);
             if (!saveResult?.ok) {
                 entry.accountId = previousAccountId;
-                alert(`NÃ£o foi possÃ­vel atualizar a conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível atualizar a conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 renderEntries();
                 return;
             }
-            if (!entryMatchesCurrentEntryFilters(entry, filters) || filters.duplicateFilter === 'ONLY') renderEntries();
-            else refreshEntryRowInlineUI(id);
+            refreshEntryRowInlineUI(id);
         }
 
         function setEntryFillDragMode(mode = '') {
@@ -5897,11 +5893,11 @@
                     entry.categoryId = original.categoryId;
                     entry.type = original.type;
                 });
-                alert(`NÃ£o foi possÃ­vel salvar o arraste de destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível salvar o arraste de destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 await refreshCloudState({ silent: false });
                 return;
             }
-            renderEntries();
+            changed.forEach((id) => refreshEntryRowInlineUI(id));
         }
         async function stopEntryAccountFill() {
             if (!entryAccountFillState.active) return;
@@ -5921,16 +5917,16 @@
                     if (!entry || !original) return;
                     entry.accountId = original.accountId;
                 });
-                alert(`NÃ£o foi possÃ­vel salvar o arraste de conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível salvar o arraste de conta.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 await refreshCloudState({ silent: false });
                 return;
             }
-            renderEntries();
+            changed.forEach((id) => refreshEntryRowInlineUI(id));
         }
 
         async function cloudDeleteMany(table, ids) {
             if (!Array.isArray(ids) || ids.length === 0) return { ok: true, error: null };
-            if (!sbClient) return { ok: false, error: new Error('Cliente Supabase nÃ£o inicializado.') };
+            if (!sbClient) return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             setSyncStatus('syncing');
             const { error, count } = await sbClient
                 .from(table)
@@ -5941,7 +5937,7 @@
                 setSyncStatus('offline');
                 return { ok: false, error };
             } else if ((Number(count) || 0) < ids.length) {
-                const noEffectError = new Error(`Apenas ${Number(count) || 0} de ${ids.length} registro(s) foram removidos na nuvem. Verifique as polÃ­ticas RLS de DELETE da tabela.`);
+                const noEffectError = new Error(`Apenas ${Number(count) || 0} de ${ids.length} registro(s) foram removidos na nuvem. Verifique as políticas RLS de DELETE da tabela.`);
                 console.error(`Delete em lote parcial/sem efeito em ${table}:`, { count, expected: ids.length });
                 setSyncStatus('offline');
                 return { ok: false, error: noEffectError };
@@ -5955,7 +5951,7 @@
             if (!confirm('Deseja realmente excluir este movimento?')) return;
             const result = await cloudDelete('storeDailyMovements', id);
             if (!result?.ok) {
-                alert(`NÃ£o foi possÃ­vel excluir o movimento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível excluir o movimento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             state.storeDailyMovements = (state.storeDailyMovements || []).filter(item => String(item.id || '') !== String(id));
@@ -5969,7 +5965,7 @@
             if (!confirm('Deseja realmente excluir este saldo?')) return;
             const result = await cloudDelete('dailyBalances', id);
             if (!result?.ok) {
-                alert(`NÃ£o foi possÃ­vel excluir o saldo.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível excluir o saldo.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             state.dailyBalances = (state.dailyBalances || []).filter(item => String(item.id || '') !== String(id));
@@ -6020,7 +6016,7 @@
                         ids.forEach(id => duplicateIds.add(id));
                     }
                 });
-                if ((byType['ENTRADA'] || []).length > 0 && (byType['SAÃDA'] || []).length > 0) {
+                if ((byType['ENTRADA'] || []).length > 0 && (byType['SAÍDA'] || []).length > 0) {
                     transferGroups += 1;
                     items.forEach(item => transferIds.add(item.id));
                 }
@@ -6032,19 +6028,19 @@
             const status = getEntryTransferReviewStatus(entryId);
             if (status === 'confirmed') {
                 return `<div class="transfer-review-group">
-                    <span class="transfer-review-badge confirmed">TransferÃªncia confirmada</span>
+                    <span class="transfer-review-badge confirmed">Transferência confirmada</span>
                     <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
                 </div>`;
             }
             if (status === 'dismissed') {
                 return `<div class="transfer-review-group">
-                    <span class="transfer-review-badge dismissed">TransferÃªncia descartada</span>
+                    <span class="transfer-review-badge dismissed">Transferência descartada</span>
                     <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', '')" class="transfer-review-btn reject">Rever</button>
                 </div>`;
             }
             return `<div class="transfer-review-group">
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn">Ã‰ transferÃªncia</button>
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject">NÃ£o Ã©</button>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn">É transferência</button>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject">Não é</button>
             </div>`;
         }
 
@@ -6056,10 +6052,10 @@
         async function deleteSelectedEntries() {
             const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
             if (ids.length === 0) return;
-            if (!confirm(`Deseja excluir ${ids.length} lanÃ§amento(s) selecionado(s)?`)) return;
+            if (!confirm(`Deseja excluir ${ids.length} lançamento(s) selecionado(s)?`)) return;
             const result = await cloudDeleteMany('entries', ids);
             if (!result?.ok) {
-                alert(`NÃ£o foi possÃ­vel excluir os lanÃ§amentos.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível excluir os lançamentos.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             state.entries = state.entries.filter(e => !selectedEntryIds.has(e.id));
@@ -6079,7 +6075,7 @@
 
             const selectedEntries = state.entries.filter(e => selectedEntryIds.has(e.id));
             const inTotal = selectedEntries.filter(e => e.type === 'ENTRADA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
-            const outTotal = selectedEntries.filter(e => e.type === 'SAÃDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const outTotal = selectedEntries.filter(e => e.type === 'SAÍDA').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const netTotal = inTotal - outTotal;
 
             if (inEl) inEl.innerText = formatBRL(inTotal);
@@ -6109,7 +6105,7 @@
                 .filter(e => e.type === 'ENTRADA')
                 .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const totalOut = filtered
-                .filter(e => e.type === 'SAÃDA')
+                .filter(e => e.type === 'SAÍDA')
                 .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
             const totalNet = totalIn - totalOut;
 
@@ -6119,7 +6115,7 @@
                 totalNetEl.innerText = formatBRL(totalNet);
                 totalNetEl.className = `entries-filter-report-value ${totalNet >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
-            if (countEl) countEl.innerText = `${filtered.length} lanÃ§amento(s) no filtro`;
+            if (countEl) countEl.innerText = `${filtered.length} lançamento(s) no filtro`;
         }
 
         function getTransferReviewMarkup(entryId, isPossibleTransfer) {
@@ -6210,9 +6206,9 @@
                 if (dupCount > 0 || transferCount > 0) {
                     duplicateSummaryEl.classList.remove('hidden');
                     duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
-                    duplicateSummaryEl.innerText = `${dupCount} lanÃ§amento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lanÃ§amento(s) em ${duplicateMeta.transferGroups} grupo(s) de possÃ­vel transferÃªncia.`;
-                    duplicateSummaryEl.innerText = `${dupCount} lanÃ§amento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicado(s) por data + valor absoluto (ignora sinal).`;
-                    duplicateSummaryEl.innerText = `${dupCount} lanÃ§amento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lanÃ§amento(s) em ${duplicateMeta.transferGroups} grupo(s) de possÃ­vel transferÃªncia.`;
+                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
+                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicado(s) por data + valor absoluto (ignora sinal).`;
+                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
                     duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
                 } else {
                     duplicateSummaryEl.classList.add('hidden');
@@ -6245,7 +6241,7 @@
                 const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
                 const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
                 const selectedAccount = accountOptions.find(acc => String(acc.id || '') === String((e.accountId ?? e.account_id) || '')) || null;
-                const selectedAccountName = String((selectedAccount || {}).name || 'Conta nÃ£o informada');
+                const selectedAccountName = String((selectedAccount || {}).name || 'Conta não informada');
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
@@ -6265,9 +6261,9 @@
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
                 
-                return `<tr class="table-row ${isPossibleTransfer ? 'entry-row-transfer' : ''} ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lanÃ§amento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
+                return `<tr class="table-row ${isPossibleTransfer ? 'entry-row-transfer' : ''} ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
-                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lanÃ§amento de ${escapeHtml(formatDateBRV2(e.date))}">
+                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lançamento de ${escapeHtml(formatDateBRV2(e.date))}">
                     </td>
                     <td class="px-6 py-4">
                         <div class="entry-cell-main center">
@@ -6287,29 +6283,29 @@
                                     onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
                                     onblur="event.stopPropagation(); commitEntryDestinationInlineInput('${e.id}', this.value, { showAlert: false })"
                                     class="entry-destination-input"
-                                    aria-label="Destino do lanÃ§amento">
+                                    aria-label="Destino do lançamento">
                                 <datalist id="entry-dst-list-${e.id}">
                                     ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
                                 </datalist>
                                 <div class="entry-badges">
-                                    ${isPossibleTransfer ? '<span class="dup-icon" title="PossÃ­vel transferÃªncia"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>' : ''}
-                                    ${isDuplicate ? '<span class="dup-icon" title="PossÃ­vel duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
+                                    ${isPossibleTransfer ? '<span class="dup-icon" title="Possível transferência"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>' : ''}
+                                    ${isDuplicate ? '<span class="dup-icon" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
                                 </div>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
-                                    â‹®
+                                    ⋮
                                 </button>
                             </div>
-                            <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observaÃ§Ã£o')}</p>
+                            <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observação')}</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})" onmousemove="applyEntryAccountFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
-                                <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lanÃ§amento">
+                                <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lançamento">
                                     ${accountOptions.map(acc => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '')===String(acc.id || '')?'selected':''}>${acc.name}</option>`).join('')}
                                 </select>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryAccountFill(${i}, event)" title="Arraste para copiar conta" aria-label="Arrastar para copiar conta">
-                                    â‹®
+                                    ⋮
                                 </button>
                             </div>
                             <p class="entry-destination-desc entry-cell-sub">Conta / banco</p>
@@ -6324,8 +6320,8 @@
                     <td class="px-6 py-4 text-center">
                         <div class="entry-cell-main center">
                             <div class="entry-actions-wrap">
-                                <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lanÃ§amento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
-                                <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lanÃ§amento">
+                                <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lançamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
+                                <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -6530,8 +6526,8 @@
             const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
             const incR = entries.filter(e=>e.type==='ENTRADA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
             const incP = entries.filter(e=>e.type==='ENTRADA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expR = entries.filter(e=>e.type==='SAÃDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expP = entries.filter(e=>e.type==='SAÃDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const expR = entries.filter(e=>e.type==='SAÍDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const expP = entries.filter(e=>e.type==='SAÍDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
 
             document.getElementById('sum-inc-real').innerText = formatBRL(incR);
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
@@ -6555,9 +6551,9 @@
                 const dayStr = `${filter}-${d.toString().padStart(2, '0')}`;
                 const dEntries = entries.filter(e => e.date === dayStr);
                 const dInc = dEntries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExp = dEntries.filter(e => e.type === 'SAÃDA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dExp = dEntries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const dIncPend = dEntries.filter(e => e.type === 'ENTRADA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExpPend = dEntries.filter(e => e.type === 'SAÃDA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const dExpPend = dEntries.filter(e => e.type === 'SAÍDA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const dBal = dInc - dExp;
                 cumulative += dBal;
                 if (d <= daysInMonth) {
@@ -6610,7 +6606,7 @@
             }
 
             const expByCat = {};
-            entries.filter(e => e.type === 'SAÃDA' && e.status === 'REALIZADO').forEach(e => {
+            entries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').forEach(e => {
                 const c = state.categories.find(x => x.id === e.categoryId)?.name || 'Outros';
                 expByCat[c] = (expByCat[c] || 0) + Number(e.amount || 0);
             });
@@ -6730,8 +6726,8 @@
                         datasets: [
                             { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#0F8A67', borderRadius: 8, maxBarThickness: 96, stack: 'entrada' },
                             { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#A7F3D0', borderRadius: 8, maxBarThickness: 96, stack: 'entrada' },
-                            { label: 'SaÃ­das (Realizado)', data: dailyOutReal, backgroundColor: '#C94A34', borderRadius: 8, maxBarThickness: 96, stack: 'saida' },
-                            { label: 'SaÃ­das (Pendente)', data: dailyOutPend, backgroundColor: '#FECACA', borderRadius: 8, maxBarThickness: 96, stack: 'saida' }
+                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#C94A34', borderRadius: 8, maxBarThickness: 96, stack: 'saida' },
+                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#FECACA', borderRadius: 8, maxBarThickness: 96, stack: 'saida' }
                         ] 
                     }, 
                     options: { 
@@ -6762,7 +6758,7 @@
                                 const datasetValue = Number(ctx.raw || 0);
                                 const totalEntradaDia = Number(dailyInTotal[idx] || 0);
                                 const totalSaidaDia = Number(dailyOutTotal[idx] || 0);
-                                return `${ctx.dataset.label}: ${formatBRL(datasetValue)} (Total Entradas ${formatBRL(totalEntradaDia)} | Total SaÃ­das ${formatBRL(totalSaidaDia)})`;
+                                return `${ctx.dataset.label}: ${formatBRL(datasetValue)} (Total Entradas ${formatBRL(totalEntradaDia)} | Total Saídas ${formatBRL(totalSaidaDia)})`;
                             })
                         } 
                     } 
@@ -6777,7 +6773,7 @@
                 const prefix = `${year}-${(m+1).toString().padStart(2,'0')}`;
                 const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                 const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const exp = mEntries.filter(e=>e.type==='SAÃDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const aporte = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA' && isCapitalContributionEntry(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
                 data.push({m, inc, exp, aporte, bal: inc-exp});
             }
@@ -6809,7 +6805,7 @@
                         datasets: [
                             { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#0F8A67', borderRadius: 8, stack: 'entrada' }, 
                             { label: 'Aporte de capital', data: annualAporte, backgroundColor: '#8FD19E', borderRadius: 8, stack: 'entrada' },
-                            { label: 'SaÃ­das', data: annualExp, backgroundColor: '#C94A34', borderRadius: 8, stack: 'saida' }
+                            { label: 'Saídas', data: annualExp, backgroundColor: '#C94A34', borderRadius: 8, stack: 'saida' }
                         ] 
                     }, 
                     options: {
@@ -6958,7 +6954,7 @@
                         .filter(e => (e.date || '').startsWith(prefix))
                         .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
                 });
-                summaryEl.innerText = `Comparativo mensal de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saÃ­das'} em ${annualTemporalYear}.`;
+                summaryEl.innerText = `Comparativo mensal de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} em ${annualTemporalYear}.`;
             } else {
                 const years = validYears;
                 labels = years.map(String);
@@ -6968,7 +6964,7 @@
                         .filter(e => (e.date || '').startsWith(prefix))
                         .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
                 });
-                summaryEl.innerText = `Comparativo anual de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saÃ­das'} entre anos.`;
+                summaryEl.innerText = `Comparativo anual de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} entre anos.`;
             }
 
             const navParts = [];
@@ -6988,7 +6984,7 @@
             if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
 
             if(values.every(v => v === 0)) {
-                tableBody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparaÃ§Ã£o</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
                 if(window.aTemporalChart) window.aTemporalChart.destroy();
                 return;
             }
@@ -7011,7 +7007,7 @@
                 data: {
                     labels,
                     datasets: [{
-                        label: annualTemporalFlow === 'ENTRADA' ? 'Entradas' : 'SaÃ­das',
+                        label: annualTemporalFlow === 'ENTRADA' ? 'Entradas' : 'Saídas',
                         data: values,
                         backgroundColor: chartColor,
                         borderRadius: 8,
@@ -7299,7 +7295,7 @@
                 let score = 0;
 
                 if (nameNorm && descNorm.includes(nameNorm)) {
-                    // Nome completo do destino dentro da descriÃ§Ã£o Ã© um sinal muito forte.
+                    // Nome completo do destino dentro da descrição é um sinal muito forte.
                     score += 200 + nameNorm.length;
                 }
 
@@ -7313,7 +7309,7 @@
                 }
             });
 
-            // 2) Score por similaridade com histÃ³rico (mesmo conjunto de destinos vÃ¡lidos)
+            // 2) Score por similaridade com histórico (mesmo conjunto de destinos válidos)
             const validIds = new Set(validDestinations.map(d => d.id));
             const scoreByDestination = {};
             state.entries.forEach(entry => {
@@ -7341,7 +7337,7 @@
                     bestHistoryId = destinationId;
                 }
             });
-            // CombinaÃ§Ã£o final priorizando evidÃªncia direta, mas aproveitando o histÃ³rico.
+            // Combinação final priorizando evidência direta, mas aproveitando o histórico.
             const combined = {};
             if (bestDirectId) combined[bestDirectId] = (combined[bestDirectId] || 0) + bestDirectScore;
             if (bestHistoryId) combined[bestHistoryId] = (combined[bestHistoryId] || 0) + bestHistoryScore;
@@ -7373,8 +7369,8 @@
             if (!left) return right;
             if (!right) return left;
 
-            const leftMatch = left.match(/([A-Za-zÃ€-Ã¿]{1,6})$/);
-            const rightMatch = right.match(/^([a-zÃ -Ã¿]{1,6})(\b.*)?$/);
+            const leftMatch = left.match(/([A-Za-zÀ-ÿ]{1,6})$/);
+            const rightMatch = right.match(/^([a-zà-ÿ]{1,6})(\b.*)?$/);
             if (leftMatch && rightMatch) {
                 const leftToken = leftMatch[1];
                 const rightToken = rightMatch[1];
@@ -7390,7 +7386,7 @@
                 .split(/\r?\n/)
                 .map(l => l.replace(/\u00a0/g, ' ').trim())
                 .filter(l => l.length > 0)
-                .filter(l => !/^(data|hist[oÃ³]rico|valor|documento)\b/i.test(l));
+                .filter(l => !/^(data|hist[oó]rico|valor|documento)\b/i.test(l));
 
             const merged = [];
             lines.forEach(line => {
@@ -7417,7 +7413,7 @@
         function parseBankTableRow(rawLine) {
             const line = String(rawLine || '').replace(/\s+/g, ' ').trim();
             if(!line) return null;
-            if (/^(agencia|conta|data|historico|histÃ³rico|documento|valor|saldo)\b/i.test(line)) return null;
+            if (/^(agencia|conta|data|histórico|histórico|documento|valor|saldo)\b/i.test(line)) return null;
 
             const dateStart = line.match(/^(\d{1,2}\/\d{1,2}\/\d{2,4})\b/);
             if(!dateStart) return null;
@@ -7425,13 +7421,13 @@
             const moneyMatches = [...line.matchAll(/-?\s*R\$\s*\d{1,3}(?:\.\d{3})*,\d{2}/gi)];
             if(moneyMatches.length === 0) return null;
 
-            // No extrato tabular com coluna Saldo, o valor do lanÃ§amento Ã© o penÃºltimo monetÃ¡rio.
+            // No extrato tabular com coluna Saldo, o valor do lançamento é o penúltimo monetário.
             const amountMatch = moneyMatches.length >= 2 ? moneyMatches[moneyMatches.length - 2] : moneyMatches[0];
             const amount = parseValueRobust(amountMatch[0]);
             if (isNaN(amount) || amount === 0) return null;
 
             let description = line.slice(dateStart[0].length, amountMatch.index || line.length).trim();
-            description = description.replace(/\s+\d{6,}\s*$/, '').trim(); // remove possÃ­vel documento no final
+            description = description.replace(/\s+\d{6,}\s*$/, '').trim(); // remove possível documento no final
             if (!description || /^\s*saldo\b/i.test(description)) return null;
 
             const [d, m, yRaw] = dateStart[1].split('/');
@@ -7441,7 +7437,7 @@
             return {
                 date: isoDate,
                 amountAbs: Math.abs(amount),
-                type: amount >= 0 ? 'ENTRADA' : 'SAÃDA',
+                type: amount >= 0 ? 'ENTRADA' : 'SAÍDA',
                 description
             };
         }
@@ -7535,10 +7531,10 @@
                         )
                         .join(' ');
 
-                    // NÃ£o importa linhas de saldo (sÃ£o posiÃ§Ã£o de conta, nÃ£o lanÃ§amento).
+                    // Não importa linhas de saldo (são posição de conta, não lançamento).
                     if (/^\s*saldo\b/i.test(desc)) return;
 
-                    const flowType = val >= 0 ? 'ENTRADA' : 'SAÃDA';
+                    const flowType = val >= 0 ? 'ENTRADA' : 'SAÍDA';
                     const typeDestinations = getValidDestinationsByFlow(flowType);
                     const inferredDestinationId = inferDestinationFromDescription(desc, typeDestinations.length ? typeDestinations : validDestinations);
                     tempRecon.push({ 
@@ -7683,21 +7679,21 @@
                 return {
                     badgeClass: 'bg-red-50 text-red-700 border border-red-200',
                     badgeText: 'Revisar destino',
-                    note: 'Escolha um destino vÃ¡lido antes de importar.'
+                    note: 'Escolha um destino válido antes de importar.'
                 };
             }
             if (meta.status === 'select-account') {
                 return {
                     badgeClass: 'bg-slate-50 text-slate-600 border border-slate-200',
                     badgeText: 'Escolha a conta',
-                    note: 'Selecione a conta para comparar com os lanÃ§amentos jÃ¡ cadastrados.'
+                    note: 'Selecione a conta para comparar com os lançamentos já cadastrados.'
                 };
             }
             if (meta.status === 'exact') {
                 return {
                     badgeClass: 'bg-green-50 text-green-700 border border-green-200',
-                    badgeText: 'JÃ¡ lanÃ§ado',
-                    note: 'Esse lanÃ§amento jÃ¡ existe com a mesma conta, destino e descriÃ§Ã£o.'
+                    badgeText: 'Já lançado',
+                    note: 'Esse lançamento já existe com a mesma conta, destino e descrição.'
                 };
             }
             if (meta.status === 'conflict') {
@@ -7706,23 +7702,22 @@
                 return {
                     badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
                     badgeText: 'Conferir destino',
-                    note: `HÃ¡ lanÃ§amento parecido em ${firstConflict}${suffix}.`
+                    note: `Há lançamento parecido em ${firstConflict}${suffix}.`
                 };
             }
             if (meta.status === 'similar') {
                 return {
                     badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
                     badgeText: 'Destino confere',
-                    note: 'JÃ¡ existe lanÃ§amento parecido com este mesmo destino.'
+                    note: 'Já existe lançamento parecido com este mesmo destino.'
                 };
             }
             return {
                 badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',
-                badgeText: 'Novo lanÃ§amento',
-                note: 'NÃ£o encontrei registro parecido nesta conta.'
+                badgeText: 'Novo lançamento',
+                note: 'Não encontrei registro parecido nesta conta.'
             };
         }
-
         function renderReconPreview() {
             const preview = document.getElementById('recon-preview');
             const summary = document.getElementById('recon-summary-count');
@@ -7731,7 +7726,7 @@
             const selectedAccountId = getReconSelectedAccountId();
             if(tempRecon.length > 0) {
                 if(validDestinations.length === 0) {
-                    if(summary) summary.innerText = 'Nenhum destino valido no Banco de Dados';
+                    if(summary) summary.innerText = 'Nenhum destino válido no Banco de Dados';
                     if(preview) preview.classList.add('hidden');
                     return;
                 }
@@ -7750,14 +7745,14 @@
                     return acc;
                 }, { invalid: 0, exact: 0, conflict: 0, similar: 0, newItems: 0 });
                 if(summary) {
-                    const summaryParts = [`${tempRecon.length} registro(s) extraido(s)`];
+                    const summaryParts = [`${tempRecon.length} registro(s) extraído(s)`];
                     if (selectedAccountId) {
-                        if (reconStats.exact > 0) summaryParts.push(`${reconStats.exact} ja lancado(s)`);
+                        if (reconStats.exact > 0) summaryParts.push(`${reconStats.exact} já lançado(s)`);
                         if (reconStats.similar > 0) summaryParts.push(`${reconStats.similar} com destino coerente`);
                         if (reconStats.conflict > 0) summaryParts.push(`${reconStats.conflict} para conferir destino`);
                         if (reconStats.newItems > 0) summaryParts.push(`${reconStats.newItems} novo(s)`);
                     } else {
-                        summaryParts.push('selecione a conta para comparar com o historico');
+                        summaryParts.push('selecione a conta para comparar com o histórico');
                     }
                     if (reconStats.invalid > 0) summaryParts.push(`${reconStats.invalid} sem destino confirmado`);
                     summary.innerText = summaryParts.join(' • ');
@@ -7776,7 +7771,7 @@
                                 class="recon-desc-input custom-scrollbar"
                                 value="${escapeHtml(e.description)}"
                                 oninput="updateReconDescription(${i}, this.value)"
-                                placeholder="Descricao do lancamento"
+                                placeholder="Descrição do lançamento"
                             />
                         </td>
                         <td class="px-4 py-3 w-[320px]">
@@ -7809,7 +7804,6 @@
                 if(body) body.innerHTML = '';
             }
         }
-
         function removeRecon(index) {
             tempRecon.splice(index, 1);
             renderReconPreview();
@@ -7826,83 +7820,83 @@
                 importBtn.innerText = 'Importando...';
             }
             try {
-            const accId = String(document.getElementById('recon-account-select')?.value || '');
-            const batchStatus = getReconBatchStatus();
-            const accountExists = state.accounts.some(a => String(a.id || '') === accId);
-            if(!accountExists) {
-                alert("Selecione uma conta valida cadastrada no Banco de Dados.");
-                return;
-            }
-            if (!Array.isArray(tempRecon) || tempRecon.length === 0) {
-                alert("Nao ha registros para importar.");
-                return;
-            }
-            const allValidDestinations = getValidDestinations();
-            const hasInvalidDestination = tempRecon.some(t => {
-                const allowed = getValidDestinationsByFlow(t.type);
-                const source = allowed.length > 0 ? allowed : allValidDestinations;
-                return !source.some(d => d.id === t.destinationId);
-            });
-            if(hasInvalidDestination) {
-                alert("Existem registros com destino sem vinculo valido no Banco de Dados.");
-                return;
-            }
-            const newEntries = tempRecon.map((temp) => {
-                const dst = state.destinations.find(d => d.id === temp.destinationId);
-                const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-                const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                return {
-                    ...temp,
-                    accountId: accId,
-                    categoryId: String((cat || {}).id || ''),
-                    subCategoryId: String((sub || {}).id || ''),
-                    status: batchStatus,
-                };
-            });
-            const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
-            const entriesToImport = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches === 0);
-            if (entriesToImport.length === 0) {
-                alert(`Nenhum novo lancamento para importar.\n\n${duplicateAgainstExisting.length} item(ns) da previa ja existem nesta conta com a mesma data, tipo, valor, destino e descricao.`);
-                return;
-            }
-            const batchSeen = new Set();
-            const duplicateInsideBatch = [];
-            entriesToImport.forEach((entry) => {
-                const key = buildEntryDuplicateKey(entry, accId);
-                if (batchSeen.has(key)) duplicateInsideBatch.push(entry);
-                else batchSeen.add(key);
-            });
-            if (duplicateInsideBatch.length > 0) {
-                alert(`A importacao foi bloqueada porque o lote contem ${duplicateInsideBatch.length} lancamento(s) duplicado(s). Revise a previa antes de importar.`);
-                return;
-            }
-            if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
-            const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
-                if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
-            });
-            if (!saveResult?.ok) {
-                if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
-                await refreshCloudState({ silent: false });
-                alert(`Nao foi possivel importar toda a conciliacao.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                return;
-            }
-            const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
-            const validation = await validateImportedEntryIds(importedIds);
-            if (!validation.ok) {
-                alert(`Conciliacao salva, mas nao foi possivel validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
-            } else {
-                const importedNow = Number(validation.imported || 0);
-                if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
-                if (importedNow !== entriesToImport.length) {
-                    alert(`Atencao: foram validados ${importedNow} de ${entriesToImport.length} lancamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
-                } else {
-                    const skippedCount = duplicateAgainstExisting.length;
-                    const skippedNote = skippedCount > 0 ? `\nIgnorados por ja existirem: ${skippedCount}.` : '';
-                    alert(`Importacao concluida.\n\nImportado ${importedNow} de ${entriesToImport.length}.${skippedNote}`);
+                const accId = String(document.getElementById('recon-account-select')?.value || '');
+                const batchStatus = getReconBatchStatus();
+                const accountExists = state.accounts.some(a => String(a.id || '') === accId);
+                if(!accountExists) {
+                    alert('Selecione uma conta válida cadastrada no Banco de Dados.');
+                    return;
                 }
-            }
-            await refreshCloudState({ silent: false });
-            cancelRecon(); render(); switchTab('entries');
+                if (!Array.isArray(tempRecon) || tempRecon.length === 0) {
+                    alert('Não há registros para importar.');
+                    return;
+                }
+                const allValidDestinations = getValidDestinations();
+                const hasInvalidDestination = tempRecon.some(t => {
+                    const allowed = getValidDestinationsByFlow(t.type);
+                    const source = allowed.length > 0 ? allowed : allValidDestinations;
+                    return !source.some(d => d.id === t.destinationId);
+                });
+                if(hasInvalidDestination) {
+                    alert('Existem registros com destino sem vínculo válido no Banco de Dados.');
+                    return;
+                }
+                const newEntries = tempRecon.map((temp) => {
+                    const dst = state.destinations.find(d => d.id === temp.destinationId);
+                    const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+                    const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+                    return {
+                        ...temp,
+                        accountId: accId,
+                        categoryId: String((cat || {}).id || ''),
+                        subCategoryId: String((sub || {}).id || ''),
+                        status: batchStatus,
+                    };
+                });
+                const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
+                const entriesToImport = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches === 0);
+                if (entriesToImport.length === 0) {
+                    alert(`Nenhum novo lançamento para importar.\n\n${duplicateAgainstExisting.length} item(ns) da prévia já existem nesta conta com a mesma data, tipo, valor, destino e descrição.`);
+                    return;
+                }
+                const batchSeen = new Set();
+                const duplicateInsideBatch = [];
+                entriesToImport.forEach((entry) => {
+                    const key = buildEntryDuplicateKey(entry, accId);
+                    if (batchSeen.has(key)) duplicateInsideBatch.push(entry);
+                    else batchSeen.add(key);
+                });
+                if (duplicateInsideBatch.length > 0) {
+                    alert(`A importação foi bloqueada porque o lote contém ${duplicateInsideBatch.length} lançamento(s) duplicado(s). Revise a prévia antes de importar.`);
+                    return;
+                }
+                if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
+                const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
+                    if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
+                });
+                if (!saveResult?.ok) {
+                    if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
+                    await refreshCloudState({ silent: false });
+                    alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                    return;
+                }
+                const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
+                const validation = await validateImportedEntryIds(importedIds);
+                if (!validation.ok) {
+                    alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
+                } else {
+                    const importedNow = Number(validation.imported || 0);
+                    if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
+                    if (importedNow !== entriesToImport.length) {
+                        alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
+                    } else {
+                        const skippedCount = duplicateAgainstExisting.length;
+                        const skippedNote = skippedCount > 0 ? `\nIgnorados por já existirem: ${skippedCount}.` : '';
+                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${skippedNote}`);
+                    }
+                }
+                await refreshCloudState({ silent: false });
+                cancelRecon(); render(); switchTab('entries');
             } finally {
                 reconImportInFlight = false;
                 if (importBtn) {
@@ -7912,7 +7906,6 @@
                 }
             }
         }
-
         function cancelRecon() { tempRecon = []; document.getElementById('recon-preview')?.classList.add('hidden'); }
 
         function renderDatabase() {
@@ -8116,10 +8109,10 @@
 
         function getDbUsageDeleteMessage(type, count) {
             if (count <= 0) return '';
-            if (type === 'ACCOUNT') return `Esta conta possui ${count} registro(s) vinculado(s) em lanÃ§amentos e/ou saldos bancÃ¡rios. Exclua ou reclassifique esses registros antes de remover a conta.`;
-            if (type === 'DESTINATION') return `Este destino possui ${count} lanÃ§amento(s) vinculado(s). Reclassifique esses lanÃ§amentos antes de excluir o destino.`;
-            if (type === 'SUBCATEGORY') return `Esta subcategoria possui ${count} lanÃ§amento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lanÃ§amentos antes de excluir a subcategoria.`;
-            if (type === 'CATEGORY') return `Esta categoria possui ${count} lanÃ§amento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lanÃ§amentos antes de excluir a categoria.`;
+            if (type === 'ACCOUNT') return `Esta conta possui ${count} registro(s) vinculado(s) em lançamentos e/ou saldos bancários. Exclua ou reclassifique esses registros antes de remover a conta.`;
+            if (type === 'DESTINATION') return `Este destino possui ${count} lançamento(s) vinculado(s). Reclassifique esses lançamentos antes de excluir o destino.`;
+            if (type === 'SUBCATEGORY') return `Esta subcategoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a subcategoria.`;
+            if (type === 'CATEGORY') return `Esta categoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a categoria.`;
             return `Existem ${count} registro(s) vinculados a este item.`;
         }
 
@@ -8139,7 +8132,7 @@
                     const previousType = previousTypes.get(String(entry.id || ''));
                     if (previousType) entry.type = previousType;
                 });
-                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lanÃ§amentos da categoria.') };
+                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lançamentos da categoria.') };
             }
             return { ok: true, changed: affectedEntries.length, error: null };
         }
@@ -8228,14 +8221,14 @@
             const status = String(statusEl.value || '');
             const errors = {};
 
-            if (!date) errors['form-date'] = 'Informe a data do lanÃ§amento.';
-            if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) errors['form-date'] = 'Data invÃ¡lida.';
-            if (!Number.isFinite(amount)) errors['form-value'] = 'Informe um valor numÃ©rico.';
+            if (!date) errors['form-date'] = 'Informe a data do lançamento.';
+            if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) errors['form-date'] = 'Data inválida.';
+            if (!Number.isFinite(amount)) errors['form-value'] = 'Informe um valor numérico.';
             else if (amount <= 0) errors['form-value'] = 'O valor deve ser maior que zero.';
             if (!destinationId) errors['form-dst'] = 'Selecione um destino.';
             if (!accountId) errors['form-acc'] = 'Selecione uma conta.';
-            if (description.length > 180) errors['form-desc'] = 'ObservaÃ§Ã£o deve ter no mÃ¡ximo 180 caracteres.';
-            if (status !== 'REALIZADO' && status !== 'PENDENTE') errors['form-status'] = 'Escolha um status vÃ¡lido.';
+            if (description.length > 180) errors['form-desc'] = 'Observação deve ter no máximo 180 caracteres.';
+            if (status !== 'REALIZADO' && status !== 'PENDENTE') errors['form-status'] = 'Escolha um status válido.';
 
             if (showErrors) {
                 clearEntryFormErrors();
@@ -8288,7 +8281,7 @@
             };
             inputEl.onchange = () => {
                 hiddenEl.value = findDestinationIdByLabel(inputEl.value, sorted);
-                if (!hiddenEl.value) setEntryFieldError('form-dst', 'Selecione um destino vÃ¡lido da lista.');
+                if (!hiddenEl.value) setEntryFieldError('form-dst', 'Selecione um destino válido da lista.');
             };
             inputEl.onblur = () => {
                 const resolvedId = findDestinationIdByLabel(inputEl.value, sorted);
@@ -8368,8 +8361,8 @@
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
             const existing = id ? state.entries.find(x => x.id === id) : null;
             if (!(cat || {}).type) {
-                setEntryFieldError('form-dst', 'Destino sem categoria/tipo vÃ¡lido. Revise Categoria > Subcategoria > Destino.');
-                setEntryFormFeedback('NÃ£o foi possÃ­vel salvar: revise o destino selecionado.');
+                setEntryFieldError('form-dst', 'Destino sem categoria/tipo válido. Revise Categoria > Subcategoria > Destino.');
+                setEntryFormFeedback('Não foi possível salvar: revise o destino selecionado.');
                 document.getElementById('form-dst')?.focus();
                 return;
             }
@@ -8390,7 +8383,7 @@
             const saveResult = await cloudSave('entries', data);
             if (!saveResult?.ok) {
                 const msg = String(saveResult?.error?.message || 'Falha ao salvar no Supabase.');
-                alert(`NÃ£o foi possÃ­vel salvar o lanÃ§amento.\n\nDetalhe: ${msg}`);
+                alert(`Não foi possível salvar o lançamento.\n\nDetalhe: ${msg}`);
                 return;
             }
             
@@ -8422,7 +8415,7 @@
             };
             const saveResult = await cloudSave('storeDailyMovements', payload);
             if (!saveResult?.ok) {
-                alert(`NÃ£o foi possÃ­vel salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             if (existing) state.storeDailyMovements = state.storeDailyMovements.map(item => item.id === existing.id ? payload : item);
@@ -8448,7 +8441,7 @@
             };
             const saveResult = await cloudSave('dailyBalances', payload);
             if (!saveResult?.ok) {
-                alert(`NÃ£o foi possÃ­vel salvar o saldo.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível salvar o saldo.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
             if (existing) state.dailyBalances = state.dailyBalances.map(item => item.id === existing.id ? payload : item);
@@ -8471,7 +8464,7 @@
                 String(item.id || '') !== editId
             );
             if (duplicate) {
-                alert('JÃ¡ existe um fechamento para essa data e unidade. Edite o lanÃ§amento existente pelo histÃ³rico.');
+                alert('Já existe um fechamento para essa data e unidade. Edite o lançamento existente pelo histórico.');
                 return;
             }
 
@@ -8489,7 +8482,7 @@
             };
             const saveResult = await cloudSave('storeDailyMovements', payload);
             if (!saveResult?.ok) {
-                alert(`NÃ£o foi possÃ­vel salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                alert(`Não foi possível salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                 return;
             }
 
@@ -8521,16 +8514,16 @@
             };
             const typeLabel = typeLabelMap[type] || 'Item';
             if (titleEl) titleEl.innerText = editItem ? `Editar ${typeLabel}` : `Novo ${typeLabel}`;
-            if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alteraÃ§Ãµes.' : 'Cadastre rapidamente um novo item.';
+            if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÃDA">SaÃ­da</option><option value="ENTRADA">Entrada</option></select>`;
+                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
                 else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini" for="db-acc-balance">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
                 else exEl.innerHTML = '';
             }
             if (type === 'CATEGORY' && editItem) {
                 const catTypeEl = document.getElementById('db-cat-type');
-                if (catTypeEl) catTypeEl.value = editItem.type || 'SAÃDA';
+                if (catTypeEl) catTypeEl.value = editItem.type || 'SAÍDA';
             }
             document.getElementById('db-modal')?.classList.remove('hidden');
             window.setTimeout(() => {
@@ -8546,7 +8539,7 @@
             const name = document.getElementById('db-name').value.trim();
             const parent = document.getElementById('db-parent').value;
             const id = mode === 'EDIT' ? String(document.getElementById('db-id').value || '') : generateId();
-            if(!name) return alert('Informe um nome vÃ¡lido.');
+            if(!name) return alert('Informe um nome válido.');
             let data = null;
             let table = '';
             let previousItem = null;
@@ -8575,7 +8568,7 @@
             if (data) {
                 const saveResult = await cloudSave(table, data);
                 if (!saveResult?.ok) {
-                    alert(`NÃ£o foi possÃ­vel salvar no banco de dados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                    alert(`Não foi possível salvar no banco de dados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
                     return;
                 }
                 if (type === 'CATEGORY' && mode === 'EDIT') {
@@ -8587,7 +8580,7 @@
                             if (previousItem) {
                                 await cloudSave('categories', previousItem);
                             }
-                            alert(`A categoria foi revertida porque nÃ£o foi possÃ­vel sincronizar o fluxo dos lanÃ§amentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
+                            alert(`A categoria foi revertida porque não foi possível sincronizar o fluxo dos lançamentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
                             await refreshCloudState({ silent: false });
                             return;
                         }
@@ -8631,7 +8624,7 @@
                     await initCloud();
                 };
 
-                // Tenta exclusÃ£o atÃ´mica via RPC (transaÃ§Ã£o Ãºnica no Supabase).
+                // Tenta exclusão atômica via RPC (transação única no Supabase).
                 const atomicDelete = await cloudDeleteHierarchyItem(type, id);
                 if (atomicDelete?.ok) {
                     if(type==='CATEGORY') {
@@ -8650,7 +8643,7 @@
                     return;
                 }
                 if (atomicDelete && !atomicDelete.missingRpc) {
-                    await refreshAfterCloudMismatch(`NÃ£o foi possÃ­vel excluir com seguranÃ§a atÃ´mica na nuvem.\n\nDetalhe: ${String(atomicDelete?.error?.message || 'Erro desconhecido.')}`);
+                    await refreshAfterCloudMismatch(`Não foi possível excluir com segurança atômica na nuvem.\n\nDetalhe: ${String(atomicDelete?.error?.message || 'Erro desconhecido.')}`);
                     return;
                 }
 
@@ -8660,20 +8653,20 @@
                     if (dsts.length > 0) {
                         const dstDelete = await cloudDeleteMany('destinations', dsts);
                         if (!dstDelete?.ok) {
-                            await refreshAfterCloudMismatch(`NÃ£o foi possÃ­vel excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
+                            await refreshAfterCloudMismatch(`Não foi possível excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
                             return;
                         }
                     }
                     if (subs.length > 0) {
                         const subDelete = await cloudDeleteMany('subCategories', subs);
                         if (!subDelete?.ok) {
-                            await refreshAfterCloudMismatch(`NÃ£o foi possÃ­vel excluir as subcategorias vinculadas.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
+                            await refreshAfterCloudMismatch(`Não foi possível excluir as subcategorias vinculadas.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
                             return;
                         }
                     }
                     const categoryDelete = await cloudDelete('categories', id);
                     if (!categoryDelete?.ok) {
-                        await refreshAfterCloudMismatch(`NÃ£o foi possÃ­vel excluir a categoria.\n\nDetalhe: ${String(categoryDelete?.error?.message || 'Erro desconhecido.')}`);
+                        await refreshAfterCloudMismatch(`Não foi possível excluir a categoria.\n\nDetalhe: ${String(categoryDelete?.error?.message || 'Erro desconhecido.')}`);
                         return;
                     }
                     state.categories = state.categories.filter(x=>x.id!==id);
@@ -8688,13 +8681,13 @@
                     if (dsts.length > 0) {
                         const dstDelete = await cloudDeleteMany('destinations', dsts);
                         if (!dstDelete?.ok) {
-                            await refreshAfterCloudMismatch(`NÃ£o foi possÃ­vel excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
+                            await refreshAfterCloudMismatch(`Não foi possível excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
                             return;
                         }
                     }
                     const subDelete = await cloudDelete('subCategories', id);
                     if (!subDelete?.ok) {
-                        await refreshAfterCloudMismatch(`NÃ£o foi possÃ­vel excluir a subcategoria.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
+                        await refreshAfterCloudMismatch(`Não foi possível excluir a subcategoria.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
                         return;
                     }
                     state.subCategories = state.subCategories.filter(x=>x.id!==id);
@@ -8705,7 +8698,7 @@
 
                 const result = await cloudDelete(table, id);
                 if (!result?.ok) {
-                    alert(`NÃ£o foi possÃ­vel excluir.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                    alert(`Não foi possível excluir.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
                     return;
                 }
 
