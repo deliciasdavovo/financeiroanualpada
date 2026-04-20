@@ -2330,7 +2330,7 @@
 
     <div id="loading-overlay">
         <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="font-black text-xs uppercase tracking-widest text-slate-400">Atualizando seus dados...</p>
+        <p class="font-black text-xs uppercase tracking-widest text-slate-400">Aguardando o pãozinho crescer...</p>
     </div>
 
     <!-- SIDEBAR -->
@@ -3062,6 +3062,16 @@
             filteredOptions: [],
             highlightedIndex: -1,
             isOpen: false
+        };
+        let entryDestinationComboboxState = {
+            entryId: '',
+            inputId: '',
+            panelId: '',
+            options: [],
+            filteredOptions: [],
+            highlightedIndex: -1,
+            isOpen: false,
+            blurTimer: null
         };
         const ENTRY_TRANSFER_REVIEW_STORAGE_KEY = 'entryTransferReviewDecisions';
         let entryTransferReviewDecisions = loadEntryTransferReviewDecisions();
@@ -5749,15 +5759,23 @@
             const entry = state.entries.find(e => String(e.id || '') === String(entryId || ''));
             if (!entry) return;
             const dstInput = document.getElementById(`entry-dst-${entryId}`);
-            const dstList = document.getElementById(`entry-dst-list-${entryId}`);
+            const dstMeta = document.getElementById(`entry-dst-meta-${entryId}`);
             const valueEl = dstInput?.closest('tr')?.querySelector('.entry-value-main');
             const accountSelect = document.getElementById(`entry-acc-${entryId}`);
             const accountCaption = accountSelect?.closest('.entry-destination-panel')?.querySelector('.entry-destination-desc.entry-cell-sub');
 
             const dstOptionsByType = getValidDestinationsByFlow(entry.type);
             const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
-            if (dstInput) dstInput.value = getDestinationDisplayLabelById(entry.destinationId, dstOptions) || getDestinationDisplayLabelById(entry.destinationId);
-            if (dstList) dstList.innerHTML = buildDestinationOptionsMarkup(dstOptions, entry.destinationId);
+            const mainLabel = getDestinationLabelById(entry.destinationId, dstOptions) || getDestinationLabelById(entry.destinationId) || '-';
+            const displayLabel = getDestinationDisplayLabelById(entry.destinationId, dstOptions) || getDestinationDisplayLabelById(entry.destinationId) || mainLabel;
+            if (dstInput) {
+                dstInput.value = mainLabel;
+                dstInput.title = displayLabel;
+            }
+            if (dstMeta) {
+                dstMeta.innerText = getEntryDestinationMetaLabel(entry) || 'Sem classificação';
+                dstMeta.title = displayLabel;
+            }
 
             if (valueEl) {
                 const isEntrada = normalizeFlowType(entry.type) === 'ENTRADA';
@@ -5798,11 +5816,37 @@
 
         async function handleEntryDestinationKeydown(entryId, event) {
             if (!event) return;
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                event.stopPropagation();
+                moveEntryDestinationComboboxHighlight(entryId, 1);
+                return;
+            }
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                event.stopPropagation();
+                moveEntryDestinationComboboxHighlight(entryId, -1);
+                return;
+            }
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                event.stopPropagation();
+                closeEntryDestinationCombobox(entryId);
+                refreshEntryRowInlineUI(entryId);
+                return;
+            }
             const isEnter = event.key === 'Enter' || event.key === 'NumpadEnter';
             const isCtrlDown = event.key === 'ArrowDown' && event.ctrlKey;
             if (!isEnter && !isCtrlDown) return;
             event.preventDefault();
             event.stopPropagation();
+            if (entryDestinationComboboxState.isOpen && String(entryDestinationComboboxState.entryId || '') === String(entryId || '')) {
+                const active = entryDestinationComboboxState.filteredOptions[entryDestinationComboboxState.highlightedIndex];
+                if (active) {
+                    await selectEntryDestinationComboboxOption(entryId, active.id, { focusNext: true });
+                    return;
+                }
+            }
             const inputEl = document.getElementById(`entry-dst-${entryId}`);
             const saved = await commitEntryDestinationInlineInput(entryId, inputEl ? inputEl.value : '', { showAlert: true });
             if (!saved) return;
@@ -5895,6 +5939,129 @@
         }
         async function updateEntryDestinationInlineByLabel(id, label) {
             await commitEntryDestinationInlineInput(id, label, { showAlert: true });
+        }
+        function clearEntryDestinationComboboxBlurTimer() {
+            if (!entryDestinationComboboxState.blurTimer) return;
+            clearTimeout(entryDestinationComboboxState.blurTimer);
+            entryDestinationComboboxState.blurTimer = null;
+        }
+        function closeEntryDestinationCombobox(entryId = '') {
+            clearEntryDestinationComboboxBlurTimer();
+            if (entryId && String(entryDestinationComboboxState.entryId || '') !== String(entryId || '')) return;
+            const inputEl = document.getElementById(entryDestinationComboboxState.inputId);
+            const panelEl = document.getElementById(entryDestinationComboboxState.panelId);
+            entryDestinationComboboxState.filteredOptions = [];
+            entryDestinationComboboxState.highlightedIndex = -1;
+            entryDestinationComboboxState.isOpen = false;
+            if (panelEl) {
+                panelEl.innerHTML = '';
+                panelEl.classList.add('hidden');
+            }
+            if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
+            if (!entryId || String(entryDestinationComboboxState.entryId || '') === String(entryId || '')) {
+                entryDestinationComboboxState.entryId = '';
+                entryDestinationComboboxState.inputId = '';
+                entryDestinationComboboxState.panelId = '';
+                entryDestinationComboboxState.options = [];
+            }
+        }
+        function renderEntryDestinationComboboxOptions() {
+            const panelEl = document.getElementById(entryDestinationComboboxState.panelId);
+            const inputEl = document.getElementById(entryDestinationComboboxState.inputId);
+            if (!panelEl || !inputEl) return;
+            const filtered = entryDestinationComboboxState.filteredOptions || [];
+            if (!entryDestinationComboboxState.isOpen) {
+                panelEl.classList.add('hidden');
+                inputEl.setAttribute('aria-expanded', 'false');
+                return;
+            }
+            inputEl.setAttribute('aria-expanded', 'true');
+            panelEl.classList.remove('hidden');
+            if (!filtered.length) {
+                panelEl.innerHTML = '<div class="combobox-empty">Nenhum destino encontrado.</div>';
+                return;
+            }
+            const entryId = String(entryDestinationComboboxState.entryId || '');
+            panelEl.innerHTML = filtered.map((item, index) => {
+                const isActive = index === entryDestinationComboboxState.highlightedIndex;
+                return `<button type="button" class="combobox-option ${isActive ? 'is-active' : ''}" role="option" aria-selected="${isActive ? 'true' : 'false'}" onmousedown="event.preventDefault()" onclick="selectEntryDestinationComboboxOption('${entryId}', '${String(item.id || '')}')">
+                    <span class="combobox-option-title">${escapeHtml(getDestinationLabel(item))}</span>
+                    <span class="combobox-option-meta">${escapeHtml(getDestinationDisplayLabel(item))}</span>
+                </button>`;
+            }).join('');
+            const activeEl = panelEl.querySelector('.combobox-option.is-active');
+            if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+                activeEl.scrollIntoView({ block: 'nearest' });
+            }
+        }
+        function openEntryDestinationCombobox(entryId, query = '') {
+            const entry = state.entries.find(e => String(e.id || '') === String(entryId || ''));
+            if (!entry) return;
+            const options = getValidDestinationsForEntry(entry);
+            entryDestinationComboboxState.entryId = String(entryId || '');
+            entryDestinationComboboxState.inputId = `entry-dst-${entryId}`;
+            entryDestinationComboboxState.panelId = `entry-dst-panel-${entryId}`;
+            entryDestinationComboboxState.options = options;
+            entryDestinationComboboxState.filteredOptions = filterDestinationOptions(query, options);
+            entryDestinationComboboxState.highlightedIndex = entryDestinationComboboxState.filteredOptions.length ? 0 : -1;
+            entryDestinationComboboxState.isOpen = true;
+            renderEntryDestinationComboboxOptions();
+        }
+        function handleEntryDestinationInput(entryId) {
+            clearEntryDestinationComboboxBlurTimer();
+            const inputEl = document.getElementById(`entry-dst-${entryId}`);
+            openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+        }
+        function handleEntryDestinationFocus(entryId) {
+            clearEntryDestinationComboboxBlurTimer();
+            const inputEl = document.getElementById(`entry-dst-${entryId}`);
+            openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+        }
+        function handleEntryDestinationClick(entryId, event) {
+            if (event) event.stopPropagation();
+            clearEntryDestinationComboboxBlurTimer();
+            const inputEl = document.getElementById(`entry-dst-${entryId}`);
+            openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+        }
+        async function handleEntryDestinationBlur(entryId) {
+            clearEntryDestinationComboboxBlurTimer();
+            entryDestinationComboboxState.blurTimer = setTimeout(async () => {
+                const inputEl = document.getElementById(`entry-dst-${entryId}`);
+                await commitEntryDestinationInlineInput(entryId, inputEl ? inputEl.value : '', { showAlert: false });
+                closeEntryDestinationCombobox(entryId);
+            }, 120);
+        }
+        function moveEntryDestinationComboboxHighlight(entryId, step) {
+            const currentId = String(entryDestinationComboboxState.entryId || '');
+            if (!entryDestinationComboboxState.isOpen || currentId !== String(entryId || '')) {
+                const inputEl = document.getElementById(`entry-dst-${entryId}`);
+                openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+                return;
+            }
+            const total = entryDestinationComboboxState.filteredOptions.length;
+            if (!total) return;
+            const current = entryDestinationComboboxState.highlightedIndex < 0 ? 0 : entryDestinationComboboxState.highlightedIndex;
+            entryDestinationComboboxState.highlightedIndex = (current + step + total) % total;
+            renderEntryDestinationComboboxOptions();
+        }
+        async function selectEntryDestinationComboboxOption(entryId, destinationId, options = {}) {
+            clearEntryDestinationComboboxBlurTimer();
+            const inputEl = document.getElementById(`entry-dst-${entryId}`);
+            const selectedId = String(destinationId || '');
+            if (!inputEl || !selectedId) return false;
+            const validDestinations = entryDestinationComboboxState.options.length
+                ? entryDestinationComboboxState.options
+                : getValidDestinationsForEntry(state.entries.find(e => String(e.id || '') === String(entryId || '')));
+            const canonicalLabel = getDestinationLabelById(selectedId, validDestinations) || getDestinationLabelById(selectedId) || '';
+            inputEl.value = canonicalLabel;
+            const saved = await updateEntryDestinationInline(String(entryId || ''), selectedId);
+            closeEntryDestinationCombobox(entryId);
+            if (!saved) return false;
+            if (options.focusNext) {
+                const nextId = focusNextEntryDestination(entryId, { openPicker: false });
+                if (nextId) scheduleEntryDestinationFocus(nextId, false);
+            }
+            return true;
         }
         async function updateEntryAccountInline(id, accountId) {
             const entry = state.entries.find(e => e.id === id);
@@ -6288,6 +6455,7 @@
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
             if(!body) return;
+            closeEntryDestinationCombobox();
             const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
@@ -6596,20 +6764,25 @@
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
-                                <input
-                                    id="entry-dst-${e.id}"
-                                    list="entry-dst-list-${e.id}"
-                                    value="${escapeHtml(destinationMainLabel)}"
-                                    title="${escapeHtml(destinationDisplayLabel)}"
-                                    onclick="event.stopPropagation()"
-                                    onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
-                                    onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
-                                    onblur="event.stopPropagation(); commitEntryDestinationInlineInput('${e.id}', this.value, { showAlert: false })"
-                                    class="entry-destination-input ${isPossibleTransfer && transferReviewStatus !== 'dismissed' ? 'transfer-highlight' : ''}"
-                                    aria-label="Destino do lancamento">
-                                <datalist id="entry-dst-list-${e.id}">
-                                    ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
-                                </datalist>
+                                <div class="combobox-shell">
+                                    <input
+                                        id="entry-dst-${e.id}"
+                                        value="${escapeHtml(destinationMainLabel)}"
+                                        title="${escapeHtml(destinationDisplayLabel)}"
+                                        autocomplete="off"
+                                        role="combobox"
+                                        aria-autocomplete="list"
+                                        aria-expanded="false"
+                                        aria-haspopup="listbox"
+                                        onclick="handleEntryDestinationClick('${e.id}', event)"
+                                        onfocus="handleEntryDestinationFocus('${e.id}')"
+                                        oninput="event.stopPropagation(); handleEntryDestinationInput('${e.id}')"
+                                        onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
+                                        onblur="event.stopPropagation(); handleEntryDestinationBlur('${e.id}')"
+                                        class="entry-destination-input ${isPossibleTransfer && transferReviewStatus !== 'dismissed' ? 'transfer-highlight' : ''}"
+                                        aria-label="Destino do lancamento">
+                                    <div id="entry-dst-panel-${e.id}" class="combobox-panel custom-scrollbar hidden" role="listbox" aria-label="Sugestoes de destino"></div>
+                                </div>
                                 <div class="entry-badges">
                                     ${isPossibleTransfer ? `<span class="dup-icon transfer-indicator ${transferReviewStatus === 'confirmed' ? 'confirmed' : ''}" title="${transferIconTitle}"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>` : ''}
                                     ${isDuplicate ? '<span class="dup-icon" title="Possivel duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
@@ -6618,7 +6791,7 @@
                                     ...
                                 </button>
                             </div>
-                            <p class="entry-destination-desc entry-cell-sub" title="${escapeHtml(destinationDisplayLabel)}">${escapeHtml(destinationMetaLabel)}</p>
+                            <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(destinationDisplayLabel)}">${escapeHtml(destinationMetaLabel)}</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
