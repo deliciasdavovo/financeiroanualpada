@@ -730,6 +730,14 @@
             color: #64748B;
             line-height: 1.4;
         }
+        .recurrence-toggle {
+            margin-bottom: 10px;
+        }
+        .recurrence-toggle button {
+            text-transform: none;
+            font-size: 12px;
+            font-weight: 800;
+        }
         .modal-actions {
             display: flex;
             gap: 10px;
@@ -3065,7 +3073,11 @@
                 </div>
                 <div id="entry-recurrence-block">
                     <label class="label-mini" for="form-repeat-frequency">Repetição</label>
-                    <div class="recurrence-grid">
+                    <div class="status-toggle recurrence-toggle" role="group" aria-label="ConfiguraÃ§Ã£o de repetiÃ§Ã£o do lanÃ§amento">
+                        <button type="button" id="toggle-repeat-off" onclick="toggleEntryRecurrenceMode(false)" aria-pressed="true">NÃ£o repete</button>
+                        <button type="button" id="toggle-repeat-on" onclick="toggleEntryRecurrenceMode(true)" aria-pressed="false">Repete</button>
+                    </div>
+                    <div id="entry-recurrence-grid" class="recurrence-grid hidden">
                         <div>
                             <label for="form-repeat-frequency" class="label-mini">Período</label>
                             <select id="form-repeat-frequency" aria-describedby="form-repeat-frequency-help form-repeat-frequency-error">
@@ -7855,6 +7867,47 @@
             ].join(' ');
             return new Set(tokenizeReconText(base));
         }
+        function getDestinationAliasPhrases(destination) {
+            const dst = destination || {};
+            const rawName = String(dst.name || '').trim();
+            const rawNotes = String(dst.notes || '').trim();
+            const noteChunks = String(dst.notes || '')
+                .split(/[\n,;|]/)
+                .map(item => item.trim())
+                .filter(Boolean);
+            const noteTokens = tokenizeReconText(rawNotes);
+            const nameTokens = tokenizeReconText(rawName).filter(token => token.length >= 4);
+            const phrases = [rawName, ...noteChunks, ...noteTokens, ...nameTokens].filter(Boolean);
+            const seen = new Set();
+            return phrases
+                .map(item => normalizeReconText(item))
+                .filter(item => item.length >= 3 && !seen.has(item) && seen.add(item))
+                .sort((a, b) => b.length - a.length);
+        }
+        function hasReconTokenBoundary(text, token) {
+            const source = String(text || '').trim();
+            const target = String(token || '').trim();
+            if (!source || !target) return false;
+            return (` ${source} `).includes(` ${target} `);
+        }
+        function scoreDestinationAliasMatch(descNorm, descTokens, aliasPhrase) {
+            const phrase = String(aliasPhrase || '').trim();
+            if (!phrase) return 0;
+            if (descNorm === phrase) return 340 + phrase.length;
+            if (descNorm.includes(phrase)) return 220 + phrase.length;
+            if (!phrase.includes(' ') && hasReconTokenBoundary(descNorm, phrase)) return 190 + phrase.length;
+
+            const phraseTokens = tokenizeReconText(phrase);
+            if (!phraseTokens.length) return 0;
+
+            let overlap = 0;
+            phraseTokens.forEach(token => {
+                if (descTokens.has(token)) overlap++;
+            });
+            if (!overlap) return 0;
+            if (overlap === phraseTokens.length) return 120 + (phraseTokens.length * 18);
+            return overlap * 18;
+        }
 
         function findPreferredBankSalesDestination(validDestinations) {
             const list = Array.isArray(validDestinations) ? validDestinations : [];
@@ -7904,6 +7957,7 @@
             let bestDirectScore = 0;
             validDestinations.forEach(dst => {
                 const nameNorm = normalizeReconText(dst.name);
+                const aliasPhrases = getDestinationAliasPhrases(dst);
                 const keywordSet = getDestinationKeywordSet(dst.id);
                 let score = 0;
 
@@ -7911,6 +7965,10 @@
                     // Nome completo do destino dentro da descrição é um sinal muito forte.
                     score += 200 + nameNorm.length;
                 }
+
+                aliasPhrases.forEach(phrase => {
+                    score += scoreDestinationAliasMatch(descNorm, descTokens, phrase);
+                });
 
                 keywordSet.forEach(token => {
                     if (descTokens.has(token)) score += 22;
@@ -7922,6 +7980,7 @@
                 }
             });
 
+            if (bestDirectId && bestDirectScore >= 190) return bestDirectId;
             // 2) Score por similaridade com histórico (mesmo conjunto de destinos válidos)
             const validIds = new Set(validDestinations.map(d => d.id));
             const scoreByDestination = {};
@@ -8828,17 +8887,55 @@
             summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), repetindo a cada ${safeEvery} ${label}.`;
         }
 
+        function syncEntryRecurrenceToggleUI() {
+            const frequencyEl = document.getElementById('form-repeat-frequency');
+            const gridEl = document.getElementById('entry-recurrence-grid');
+            const offEl = document.getElementById('toggle-repeat-off');
+            const onEl = document.getElementById('toggle-repeat-on');
+            if (!frequencyEl || !gridEl || !offEl || !onEl) return;
+            const enabled = String(frequencyEl.value || 'NONE') !== 'NONE';
+            gridEl.classList.toggle('hidden', !enabled);
+            offEl.classList.toggle('active', !enabled);
+            onEl.classList.toggle('active', enabled);
+            offEl.setAttribute('aria-pressed', enabled ? 'false' : 'true');
+            onEl.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        }
+
+        function toggleEntryRecurrenceMode(enabled) {
+            const frequencyEl = document.getElementById('form-repeat-frequency');
+            const intervalEl = document.getElementById('form-repeat-interval');
+            const countEl = document.getElementById('form-repeat-count');
+            if (!frequencyEl || !intervalEl || !countEl) return;
+            const currentFrequency = String(frequencyEl.value || 'NONE');
+            if (enabled) {
+                const lastFrequency = String(frequencyEl.dataset.lastFrequency || 'MONTH');
+                frequencyEl.value = currentFrequency !== 'NONE' ? currentFrequency : lastFrequency;
+                if (!intervalEl.value || Number(intervalEl.value) <= 0) intervalEl.value = '1';
+                if (!countEl.value || Number(countEl.value) <= 0) countEl.value = '1';
+            } else {
+                if (currentFrequency !== 'NONE') frequencyEl.dataset.lastFrequency = currentFrequency;
+                frequencyEl.value = 'NONE';
+            }
+            syncEntryRecurrenceToggleUI();
+            updateEntryRecurrenceSummary();
+            setEntryFieldError('form-repeat-frequency', '');
+            setEntryFieldError('form-repeat-interval', '');
+            setEntryFieldError('form-repeat-count', '');
+        }
+
         function updateEntryRecurrenceVisibility(isEditing = false) {
             const blockEl = document.getElementById('entry-recurrence-block');
             const frequencyEl = document.getElementById('form-repeat-frequency');
             const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
             if (!blockEl || !frequencyEl || !intervalEl || !countEl) return;
-            blockEl.classList.toggle('hidden', isEditing);
-            frequencyEl.disabled = isEditing;
-            intervalEl.disabled = isEditing;
-            countEl.disabled = isEditing;
-            if (!isEditing) updateEntryRecurrenceSummary();
+            blockEl.classList.remove('hidden');
+            frequencyEl.disabled = false;
+            intervalEl.disabled = false;
+            countEl.disabled = false;
+            blockEl.dataset.editing = isEditing ? 'true' : 'false';
+            syncEntryRecurrenceToggleUI();
+            updateEntryRecurrenceSummary();
         }
 
         function addMonthsPreservingDay(date, monthOffset) {
@@ -8980,6 +9077,11 @@
                     setEntryFieldError(fieldId === 'form-dst-search' ? 'form-dst' : fieldId, '');
                     const silent = validateEntryForm(false);
                     if (fieldId === 'form-repeat-frequency' || fieldId === 'form-repeat-interval' || fieldId === 'form-repeat-count') {
+                        if (fieldId === 'form-repeat-frequency') {
+                            const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
+                            if (repeatFrequencyEl && repeatFrequencyEl.value !== 'NONE') repeatFrequencyEl.dataset.lastFrequency = repeatFrequencyEl.value;
+                            syncEntryRecurrenceToggleUI();
+                        }
                         updateEntryRecurrenceSummary();
                     }
                     if (silent.valid) setEntryFormFeedback('');
@@ -9057,7 +9159,10 @@
             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
             const repeatIntervalEl = document.getElementById('form-repeat-interval');
             const repeatCountEl = document.getElementById('form-repeat-count');
-            if (repeatFrequencyEl) repeatFrequencyEl.value = 'NONE';
+            if (repeatFrequencyEl) {
+                repeatFrequencyEl.value = 'NONE';
+                repeatFrequencyEl.dataset.lastFrequency = 'MONTH';
+            }
             if (repeatIntervalEl) repeatIntervalEl.value = '1';
             if (repeatCountEl) repeatCountEl.value = '1';
             populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations);
@@ -9133,9 +9238,13 @@
                 status: validation.values.status
             };
             
-            const entriesToSave = id
-                ? [data]
-                : [data, ...buildRecurringEntries(data, validation.values.repeatFrequency, validation.values.repeatInterval, validation.values.repeatCount)];
+            const recurringEntries = buildRecurringEntries(
+                data,
+                validation.values.repeatFrequency,
+                validation.values.repeatInterval,
+                validation.values.repeatCount
+            );
+            const entriesToSave = [data, ...recurringEntries];
             const saveResult = entriesToSave.length > 1
                 ? await cloudSaveBatched('entries', entriesToSave)
                 : await cloudSave('entries', data);
@@ -9148,6 +9257,7 @@
             if(id) {
                 const idx = state.entries.findIndex(x => x.id === id);
                 if(idx !== -1) state.entries[idx] = data;
+                if (recurringEntries.length) state.entries.push(...recurringEntries);
             } else state.entries.push(...entriesToSave);
             
             closeModal('entry-modal'); render();
