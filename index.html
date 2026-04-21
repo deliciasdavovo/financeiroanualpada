@@ -1539,10 +1539,20 @@
             background: #FFFFFF;
             color: #0F172A;
         }
-        #reconciliation,
+        #reconciliation {
+            scroll-margin-top: 24px;
+            min-height: max-content;
+            padding-top: 4px;
+            padding-bottom: 24px;
+        }
         #recon-preview {
             scroll-margin-top: 24px;
-            overflow: visible;
+            min-height: max-content;
+        }
+        #recon-preview:not(.hidden) {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
         #recon-preview .table-mobile-scroll {
             overflow-x: auto;
@@ -1551,7 +1561,31 @@
         }
         .recon-preview-card {
             display: block;
-            overflow: visible !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            border-radius: 20px;
+        }
+        .recon-preview-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #F8FAFC;
+        }
+        .recon-preview-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #334155;
+        }
+        .recon-preview-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748B;
         }
         .recon-preview-card .table-mobile-scroll {
             display: block;
@@ -2382,7 +2416,7 @@
                 min-width: 0;
             }
             #reconciliation .card-premium {
-                overflow: visible;
+                overflow: hidden;
             }
         }
         @media (min-width: 768px) {
@@ -2839,7 +2873,8 @@
                         </div>
                     </section>
                 </div>
-                    <section class="card-premium p-6 lg:p-8 space-y-6">
+
+                <section class="card-premium p-6 lg:p-8 space-y-6">
                         <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Análise de Vendas</h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
@@ -2879,15 +2914,14 @@
                                 <tbody id="treasury-sales-summary-body" class="divide-y divide-slate-50 bg-white"></tbody>
                             </table>
                         </div>
-                    </section>
-                </div>
+                </section>
             </div>
 
             <!-- CONCILIAÇÃO -->
-            <div id="reconciliation" class="tab-content space-y-8">
-                <div class="card-premium p-8 space-y-6">
+            <div id="reconciliation" class="tab-content space-y-5">
+                <div class="card-premium p-6 lg:p-7 space-y-5">
                     <div class="recon-toolbar">
-                        <div class="recon-toolbar-primary"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
+                        <div class="recon-toolbar-primary"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="8" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
                         <div class="w-72"><label class="label-mini" for="recon-account-select">Conta de Destino</label><select id="recon-account-select" onchange="renderReconPreview()"></select></div>
                         <div class="w-52">
                             <label class="label-mini" for="recon-batch-status">Status do Lote</label>
@@ -2905,7 +2939,13 @@
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
                         <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button id="recon-import-btn" onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
-                    <div class="card-premium recon-toolbar-preview recon-preview-card">
+                    <div class="card-premium recon-toolbar-preview recon-preview-card overflow-hidden">
+                        <div class="recon-preview-head">
+                            <div>
+                                <p class="recon-preview-title">Prévia para edição</p>
+                                <p class="recon-preview-sub">Revise descrição, destino e conferência antes de importar.</p>
+                            </div>
+                        </div>
                         <div class="table-mobile-scroll custom-scrollbar">
                             <table id="recon-preview-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
@@ -8025,6 +8065,9 @@
             if (!Array.isArray(tempRecon) || tempRecon.length === 0) return;
             tempRecon = tempRecon.map(item => ({ ...item, status }));
             renderReconPreview();
+            window.requestAnimationFrame(() => {
+                document.getElementById('recon-preview')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
         }
 
         function processPaste() {
