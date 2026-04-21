@@ -1530,10 +1530,22 @@
             background: #FFFFFF;
             color: #0F172A;
         }
+        #recon-preview {
+            scroll-margin-top: 24px;
+        }
         #recon-preview .table-mobile-scroll {
             overflow-x: auto;
-            overflow-y: hidden;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+        }
+        .recon-preview-card {
+            display: flex;
+            flex-direction: column;
+            max-height: min(68vh, 760px);
+        }
+        .recon-preview-card .table-mobile-scroll {
+            flex: 1;
+            min-height: 0;
         }
         .recon-toolbar {
             display: grid;
@@ -2359,6 +2371,9 @@
             .recon-toolbar-primary {
                 min-width: 0;
             }
+            .recon-preview-card {
+                max-height: none;
+            }
             #reconciliation .card-premium {
                 overflow: visible;
             }
@@ -2883,7 +2898,7 @@
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
                         <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button id="recon-import-btn" onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
-                    <div class="card-premium overflow-hidden recon-toolbar-preview">
+                    <div class="card-premium overflow-hidden recon-toolbar-preview recon-preview-card">
                         <div class="table-mobile-scroll custom-scrollbar">
                             <table id="recon-preview-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
@@ -8100,11 +8115,25 @@
                 }
             });
             renderReconPreview();
-                    if(tempRecon.length > 0) {
-                        area.value = '';
-                    } else {
-                        alert("Nenhum dado detectado.");
-                    }
+            if(tempRecon.length > 0) {
+                area.value = '';
+                window.requestAnimationFrame(scrollReconPreviewIntoView);
+            } else {
+                alert("Nenhum dado detectado.");
+            }
+        }
+
+        function scrollReconPreviewIntoView() {
+            const preview = document.getElementById('recon-preview');
+            const mainScroll = document.getElementById('main-scroll');
+            if (!preview || !mainScroll) return;
+            const mainRect = mainScroll.getBoundingClientRect();
+            const previewRect = preview.getBoundingClientRect();
+            const targetTop = mainScroll.scrollTop + (previewRect.top - mainRect.top) - 20;
+            mainScroll.scrollTo({
+                top: Math.max(0, targetTop),
+                behavior: 'smooth'
+            });
         }
 
         function updateReconDestination(index, value) {
