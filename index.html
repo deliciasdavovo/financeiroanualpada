@@ -1530,19 +1530,10 @@
             background: #FFFFFF;
             color: #0F172A;
         }
-        #reconciliation,
-        #recon-preview,
-        #recon-preview .recon-toolbar-preview {
-            overflow: visible;
-        }
         #recon-preview .table-mobile-scroll {
             overflow-x: auto;
-            overflow-y: visible;
-            max-height: none;
+            overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
-        }
-        #recon-preview-table {
-            min-width: 960px;
         }
         .recon-toolbar {
             display: grid;
@@ -8102,17 +8093,11 @@
                 }
             });
             renderReconPreview();
-            if(tempRecon.length > 0) {
-                const previewEl = document.getElementById('recon-preview');
-                if (previewEl) {
-                    window.requestAnimationFrame(() => {
-                        previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    });
-                }
-                area.value = '';
-            } else {
-                alert("Nenhum dado detectado.");
-            }
+                    if(tempRecon.length > 0) {
+                        area.value = '';
+                    } else {
+                        alert("Nenhum dado detectado.");
+                    }
         }
 
         function updateReconDestination(index, value) {
