@@ -160,7 +160,16 @@
             cursor: ns-resize !important;
         }
 
-        main { background: linear-gradient(180deg, #F6F7F9 0%, var(--bg-main) 100%) !important; }
+        main {
+            background: linear-gradient(180deg, #F6F7F9 0%, var(--bg-main) 100%) !important;
+            min-height: 0;
+        }
+
+        #main-scroll {
+            min-height: 0;
+            height: 100%;
+            overflow-y: auto;
+        }
 
         #sidebar {
             transition: width var(--dur-slow) var(--ease-premium);
@@ -1504,21 +1513,21 @@
         .recon-desc-input {
             min-width: 0;
             width: 100%;
-            height: 30px;
-            padding: 0 8px;
+            min-height: 44px;
+            padding: 8px 10px;
             font-size: 12px;
-            line-height: 1.2;
-            font-weight: 300;
+            line-height: 1.4;
+            font-weight: 500;
             letter-spacing: 0;
             border-radius: 9px;
             border: 1px solid transparent;
             background: #F8FAFC;
             color: #64748B;
             text-transform: none;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            resize: none;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            resize: vertical;
         }
         .recon-desc-input:hover {
             border-color: #E2E8F0;
@@ -1530,22 +1539,23 @@
             background: #FFFFFF;
             color: #0F172A;
         }
+        #reconciliation,
         #recon-preview {
             scroll-margin-top: 24px;
+            overflow: visible;
         }
         #recon-preview .table-mobile-scroll {
             overflow-x: auto;
-            overflow-y: auto;
+            overflow-y: visible;
             -webkit-overflow-scrolling: touch;
         }
         .recon-preview-card {
-            display: flex;
-            flex-direction: column;
-            max-height: min(68vh, 760px);
+            display: block;
+            overflow: visible !important;
         }
         .recon-preview-card .table-mobile-scroll {
-            flex: 1;
-            min-height: 0;
+            display: block;
+            min-height: max-content;
         }
         .recon-toolbar {
             display: grid;
@@ -2371,9 +2381,6 @@
             .recon-toolbar-primary {
                 min-width: 0;
             }
-            .recon-preview-card {
-                max-height: none;
-            }
             #reconciliation .card-premium {
                 overflow: visible;
             }
@@ -2898,7 +2905,7 @@
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
                         <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button id="recon-import-btn" onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
-                    <div class="card-premium overflow-hidden recon-toolbar-preview recon-preview-card">
+                    <div class="card-premium recon-toolbar-preview recon-preview-card">
                         <div class="table-mobile-scroll custom-scrollbar">
                             <table id="recon-preview-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
@@ -8346,13 +8353,12 @@
                     return `<tr class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
                         <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
                         <td class="px-4 py-3 w-[180px]">
-                            <input
-                                type="text"
+                            <textarea
                                 class="recon-desc-input custom-scrollbar"
-                                value="${escapeHtml(e.description)}"
                                 oninput="updateReconDescription(${i}, this.value)"
                                 placeholder="Descrição do lançamento"
-                            />
+                                rows="2"
+                            >${escapeHtml(e.description)}</textarea>
                         </td>
                         <td class="px-4 py-3 w-[320px]">
                             <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
