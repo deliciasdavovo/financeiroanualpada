@@ -1530,8 +1530,19 @@
             background: #FFFFFF;
             color: #0F172A;
         }
+        #reconciliation,
+        #recon-preview,
+        #recon-preview .recon-toolbar-preview {
+            overflow: visible;
+        }
         #recon-preview .table-mobile-scroll {
             overflow-x: auto;
+            overflow-y: visible;
+            max-height: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        #recon-preview-table {
+            min-width: 960px;
         }
         .recon-toolbar {
             display: grid;
@@ -3462,7 +3473,7 @@
 
         function refreshLucideIcons() {
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                refreshLucideIcons();
+                window.lucide.createIcons();
             }
         }
 
@@ -8092,6 +8103,12 @@
             });
             renderReconPreview();
             if(tempRecon.length > 0) {
+                const previewEl = document.getElementById('recon-preview');
+                if (previewEl) {
+                    window.requestAnimationFrame(() => {
+                        previewEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    });
+                }
                 area.value = '';
             } else {
                 alert("Nenhum dado detectado.");
