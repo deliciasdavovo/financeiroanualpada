@@ -1514,6 +1514,18 @@
         #recon-preview .table-mobile-scroll {
             overflow-x: auto;
         }
+        .recon-toolbar {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(220px, 280px) minmax(180px, 220px) auto;
+            gap: 18px;
+            align-items: end;
+        }
+        .recon-toolbar-primary {
+            min-width: 0;
+        }
+        .recon-toolbar-preview {
+            min-width: 0;
+        }
         .entry-destination-panel {
             border: 0;
             border-radius: 0;
@@ -1941,43 +1953,42 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             margin-top: 6px;
         }
         .transfer-review-btn,
         .transfer-review-badge {
-            min-height: 32px;
-            border-radius: 999px;
+            min-height: 38px;
+            border-radius: 10px;
             border: 1px solid #D8E1EC;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(246,249,252,0.96) 100%);
-            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
         }
         .transfer-review-btn {
-            min-width: 32px;
-            padding: 0 12px;
+            min-width: 38px;
+            padding: 0 14px;
             color: #334155;
             font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-            text-transform: none;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             line-height: 1;
             flex: 0 0 auto;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
             transition: background var(--dur-fast) var(--ease-premium), border-color var(--dur-fast) var(--ease-premium), color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium), box-shadow var(--dur-fast) var(--ease-premium);
         }
         .transfer-review-btn:hover {
-            background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFF 100%);
             border-color: #C6D3E3;
             color: #0F172A;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.10);
         }
         .transfer-review-btn:focus-visible {
             outline: none;
             border-color: #9DB4DA;
-            box-shadow: 0 0 0 4px rgba(47,79,157,0.12), 0 1px 2px rgba(15, 23, 42, 0.05);
+            box-shadow: 0 0 0 4px rgba(47,79,157,0.12), 0 12px 24px rgba(15, 23, 42, 0.10);
         }
         .transfer-review-btn i {
             width: 14px;
@@ -1985,24 +1996,30 @@
             flex: 0 0 auto;
         }
         .transfer-review-btn.confirm {
-            color: #1E3A8A;
-            border-color: #CFDAEC;
-            background: linear-gradient(180deg, #FFFFFF 0%, #F4F8FF 100%);
+            min-width: 116px;
+            color: #FFFFFF;
+            border-color: #32539C;
+            background: linear-gradient(180deg, #3E62AD 0%, #2E4F9D 100%);
+            box-shadow: 0 14px 24px rgba(47, 79, 157, 0.24);
         }
         .transfer-review-btn.confirm:hover {
-            border-color: #B7C8E3;
-            color: #172554;
-            background: linear-gradient(180deg, #FFFFFF 0%, #EEF4FF 100%);
+            border-color: #28458A;
+            color: #FFFFFF;
+            background: linear-gradient(180deg, #456AB8 0%, #274388 100%);
+            box-shadow: 0 16px 28px rgba(39, 67, 136, 0.28);
         }
         .transfer-review-btn.reject {
-            color: #526072;
+            color: #64748B;
+            border-color: #D7DFEA;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
         }
         .transfer-review-btn.reject:hover {
             color: #334155;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
         }
         .transfer-review-btn.icon-only {
-            width: 32px;
-            min-width: 32px;
+            width: 38px;
+            min-width: 38px;
             padding: 0;
         }
         .transfer-review-badge {
@@ -2010,10 +2027,10 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 0 12px;
+            padding: 0 14px;
             font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.04em;
+            font-weight: 900;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
             white-space: nowrap;
             line-height: 1;
@@ -2030,14 +2047,15 @@
         }
         .transfer-review-badge.confirmed {
             color: #FFFFFF;
-            border-color: #274388;
-            background: linear-gradient(180deg, #3B61B3 0%, #274388 100%);
-            box-shadow: 0 8px 18px rgba(39, 67, 136, 0.20);
+            border-color: #32539C;
+            background: linear-gradient(180deg, #3E62AD 0%, #2E4F9D 100%);
+            box-shadow: 0 14px 24px rgba(47, 79, 157, 0.24);
         }
         .transfer-review-badge.dismissed {
             color: #5B6778;
-            border-color: #D7E0EB;
-            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(247,249,252,0.96) 100%);
+            border-color: #D7DFEA;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
         }
         .table-row[role="button"] {
             outline: none;
@@ -2307,6 +2325,20 @@
             #treasury-bal-main-table th:nth-child(4),
             #treasury-bal-main-table td:nth-child(4) {
                 display: none;
+            }
+            .recon-toolbar {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .recon-toolbar .w-72,
+            .recon-toolbar .w-52 {
+                width: 100%;
+            }
+            .recon-toolbar-primary {
+                min-width: 0;
+            }
+            #reconciliation .card-premium {
+                overflow: visible;
             }
         }
         @media (min-width: 768px) {
@@ -2810,8 +2842,8 @@
             <!-- CONCILIAÇÃO -->
             <div id="reconciliation" class="tab-content space-y-8">
                 <div class="card-premium p-8 space-y-6">
-                    <div class="flex flex-wrap gap-8 items-end">
-                        <div class="flex-1 min-w-[400px]"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
+                    <div class="recon-toolbar">
+                        <div class="recon-toolbar-primary"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="10" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
                         <div class="w-72"><label class="label-mini" for="recon-account-select">Conta de Destino</label><select id="recon-account-select" onchange="renderReconPreview()"></select></div>
                         <div class="w-52">
                             <label class="label-mini" for="recon-batch-status">Status do Lote</label>
@@ -2829,7 +2861,7 @@
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
                         <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button id="recon-import-btn" onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
                     </div>
-                    <div class="card-premium overflow-hidden">
+                    <div class="card-premium overflow-hidden recon-toolbar-preview">
                         <div class="table-mobile-scroll custom-scrollbar">
                             <table id="recon-preview-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
@@ -6336,13 +6368,11 @@
                 </div>`;
             }
             return `<div class="transfer-review-group">
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn confirm" title="Confirmar transferencia" aria-label="Confirmar transferencia">
-                    <i data-lucide="check"></i>
-                    <span>Confirmar</span>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn confirm" title="Analisar transferencia" aria-label="Analisar transferencia">
+                    <span>Analisar</span>
                 </button>
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject" title="Descartar transferencia" aria-label="Descartar transferencia">
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject icon-only" title="Descartar transferencia" aria-label="Descartar transferencia">
                     <i data-lucide="x"></i>
-                    <span>Ignorar</span>
                 </button>
             </div>`;
         }
@@ -6441,13 +6471,11 @@
                 </div>`;
             }
             return `<div class="transfer-review-group">
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn confirm" title="Confirmar transferencia" aria-label="Confirmar transferencia">
-                    <i data-lucide="check"></i>
-                    <span>Confirmar</span>
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'confirmed')" class="transfer-review-btn confirm" title="Analisar transferencia" aria-label="Analisar transferencia">
+                    <span>Analisar</span>
                 </button>
-                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject" title="Descartar transferencia" aria-label="Descartar transferencia">
+                <button type="button" onclick="event.stopPropagation(); setEntryTransferReviewStatus('${entryId}', 'dismissed')" class="transfer-review-btn reject icon-only" title="Descartar transferencia" aria-label="Descartar transferencia">
                     <i data-lucide="x"></i>
-                    <span>Ignorar</span>
                 </button>
             </div>`;
         }
@@ -7725,1493 +7753,3 @@
                 }
             });
             const preferredId = findPreferredBankSalesDestination(validDestinations);
-            if (preferredId) return preferredId;
-            return bestId || ((validDestinations[0] || {}).id || '');
-        }
-
-        function inferDestinationFromDescription(description, validDestinations) {
-            if(!validDestinations || validDestinations.length === 0) return '';
-            const descNorm = normalizeReconText(description);
-            const preferredId = findPreferredBankSalesDestination(validDestinations);
-            if(!descNorm) return getMostFrequentDestination(validDestinations);
-
-            const descTokens = new Set(tokenizeReconText(descNorm));
-            const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
-
-            // 1) Score direto por nome/keywords de destino
-            let bestDirectId = '';
-            let bestDirectScore = 0;
-            validDestinations.forEach(dst => {
-                const nameNorm = normalizeReconText(dst.name);
-                const keywordSet = getDestinationKeywordSet(dst.id);
-                let score = 0;
-
-                if (nameNorm && descNorm.includes(nameNorm)) {
-                    // Nome completo do destino dentro da descrição é um sinal muito forte.
-                    score += 200 + nameNorm.length;
-                }
-
-                keywordSet.forEach(token => {
-                    if (descTokens.has(token)) score += 22;
-                });
-
-                if (score > bestDirectScore) {
-                    bestDirectScore = score;
-                    bestDirectId = dst.id;
-                }
-            });
-
-            // 2) Score por similaridade com histórico (mesmo conjunto de destinos válidos)
-            const validIds = new Set(validDestinations.map(d => d.id));
-            const scoreByDestination = {};
-            state.entries.forEach(entry => {
-                if(!entry || !validIds.has(entry.destinationId)) return;
-                const dst = state.destinations.find(d => d.id === entry.destinationId);
-                const entryText = `${entry.description || ''} ${(dst || {}).name || ''}`;
-                const entryDescNorm = normalizeReconText(entryText);
-                if(!entryDescNorm) return;
-                const entryTokens = tokenizeReconText(entryDescNorm);
-                let overlap = 0;
-                entryTokens.forEach(token => { if(descTokens.has(token)) overlap++; });
-                if(overlap <= 0) return;
-                const ym = Number(String(entry.date || '').slice(0, 7).replace('-', '')) || 0;
-                const monthDistance = ym > 0 ? Math.max(0, nowYearMonth - ym) : 999;
-                const recencyWeight = monthDistance <= 1 ? 1.25 : monthDistance <= 6 ? 1.1 : 0.95;
-                const statusWeight = entry.status === 'REALIZADO' ? 1.2 : 1;
-                scoreByDestination[entry.destinationId] = (scoreByDestination[entry.destinationId] || 0) + (overlap * statusWeight * recencyWeight * 12);
-            });
-
-            let bestHistoryId = '';
-            let bestHistoryScore = 0;
-            Object.entries(scoreByDestination).forEach(([destinationId, score]) => {
-                if(score > bestHistoryScore) {
-                    bestHistoryScore = score;
-                    bestHistoryId = destinationId;
-                }
-            });
-            // Combinação final priorizando evidência direta, mas aproveitando o histórico.
-            const combined = {};
-            if (bestDirectId) combined[bestDirectId] = (combined[bestDirectId] || 0) + bestDirectScore;
-            if (bestHistoryId) combined[bestHistoryId] = (combined[bestHistoryId] || 0) + bestHistoryScore;
-            Object.entries(scoreByDestination).forEach(([destinationId, score]) => {
-                combined[destinationId] = (combined[destinationId] || 0) + score;
-            });
-
-            let bestId = '';
-            let bestScore = 0;
-            Object.entries(combined).forEach(([destinationId, score]) => {
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestId = destinationId;
-                }
-            });
-            if (bestId) return bestId;
-
-            if (preferredId) return preferredId;
-            return getMostFrequentDestination(validDestinations);
-        }
-
-        function isReconDateStart(value) {
-            return /^(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?|\d{4}-\d{1,2}-\d{1,2})\b/.test(String(value || '').trim());
-        }
-
-        function mergeReconLineFragments(baseLine, nextLine) {
-            const left = String(baseLine || '').trim();
-            const right = String(nextLine || '').trim();
-            if (!left) return right;
-            if (!right) return left;
-
-            const leftMatch = left.match(/([A-Za-zÀ-ÿ]{1,6})$/);
-            const rightMatch = right.match(/^([a-zà-ÿ]{1,6})(\b.*)?$/);
-            if (leftMatch && rightMatch) {
-                const leftToken = leftMatch[1];
-                const rightToken = rightMatch[1];
-                const rightRest = right.slice(rightToken.length);
-                return `${left.slice(0, -leftToken.length)}${leftToken}${rightToken}${rightRest}`.replace(/\s+/g, ' ').trim();
-            }
-
-            return `${left} ${right}`.replace(/\s+/g, ' ').trim();
-        }
-
-        function normalizeReconLines(rawText) {
-            const lines = String(rawText || '')
-                .split(/\r?\n/)
-                .map(l => l.replace(/\u00a0/g, ' ').trim())
-                .filter(l => l.length > 0)
-                .filter(l => !/^(data|hist[oó]rico|valor|documento)\b/i.test(l));
-
-            const merged = [];
-            lines.forEach(line => {
-                if (merged.length === 0) {
-                    merged.push(line);
-                    return;
-                }
-
-                if (/^[CD]$/i.test(line)) {
-                    merged[merged.length - 1] = `${merged[merged.length - 1]} ${line.toUpperCase()}`.trim();
-                    return;
-                }
-
-                if (isReconDateStart(line)) {
-                    merged.push(line);
-                    return;
-                }
-
-                merged[merged.length - 1] = mergeReconLineFragments(merged[merged.length - 1], line);
-            });
-            return merged.map(line => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
-        }
-
-        function parseBankTableRow(rawLine) {
-            const line = String(rawLine || '').replace(/\s+/g, ' ').trim();
-            if(!line) return null;
-            if (/^(agencia|conta|data|histórico|histórico|documento|valor|saldo)\b/i.test(line)) return null;
-
-            const dateStart = line.match(/^(\d{1,2}\/\d{1,2}\/\d{2,4})\b/);
-            if(!dateStart) return null;
-
-            const moneyMatches = [...line.matchAll(/-?\s*R\$\s*\d{1,3}(?:\.\d{3})*,\d{2}/gi)];
-            if(moneyMatches.length === 0) return null;
-
-            // No extrato tabular com coluna Saldo, o valor do lançamento é o penúltimo monetário.
-            const amountMatch = moneyMatches.length >= 2 ? moneyMatches[moneyMatches.length - 2] : moneyMatches[0];
-            const amount = parseValueRobust(amountMatch[0]);
-            if (isNaN(amount) || amount === 0) return null;
-
-            let description = line.slice(dateStart[0].length, amountMatch.index || line.length).trim();
-            description = description.replace(/\s+\d{6,}\s*$/, '').trim(); // remove possível documento no final
-            if (!description || /^\s*saldo\b/i.test(description)) return null;
-
-            const [d, m, yRaw] = dateStart[1].split('/');
-            const y = yRaw.length === 2 ? `20${yRaw}` : yRaw;
-            const isoDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-
-            return {
-                date: isoDate,
-                amountAbs: Math.abs(amount),
-                type: amount >= 0 ? 'ENTRADA' : 'SAÍDA',
-                description
-            };
-        }
-
-        function getReconBatchStatus() {
-            const value = String(document.getElementById('recon-batch-status')?.value || 'REALIZADO').toUpperCase();
-            return value === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO';
-        }
-
-        function applyReconBatchStatus(statusValue) {
-            const status = String(statusValue || '').toUpperCase() === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO';
-            if (!Array.isArray(tempRecon) || tempRecon.length === 0) return;
-            tempRecon = tempRecon.map(item => ({ ...item, status }));
-            renderReconPreview();
-        }
-
-        function processPaste() {
-            const area = document.getElementById('recon-paste-area');
-            if(!area) return;
-            const batchStatus = getReconBatchStatus();
-            const validDestinations = getValidDestinations();
-            if(validDestinations.length === 0) {
-                alert("Cadastre pelo menos 1 destino valido no Banco de Dados antes de analisar.");
-                return;
-            }
-            const lines = normalizeReconLines(area.value);
-            tempRecon = [];
-            lines.forEach(l => {
-                const raw = l.trim();
-
-                const parsedTableRow = parseBankTableRow(raw);
-                if(parsedTableRow) {
-                    const typeDestinations = getValidDestinationsByFlow(parsedTableRow.type);
-                    const inferredDestinationId = inferDestinationFromDescription(parsedTableRow.description, typeDestinations.length ? typeDestinations : validDestinations);
-                    tempRecon.push({
-                        id: generateId(),
-                        date: parsedTableRow.date,
-                        amount: parsedTableRow.amountAbs,
-                        type: parsedTableRow.type,
-                        status: batchStatus,
-                        description: String(parsedTableRow.description || '').trim(),
-                        destinationId: inferredDestinationId,
-                    });
-                    return;
-                }
-
-                let segments = [];
-                if (raw.includes('\t')) {
-                    segments = raw.split(/\t/);
-                } else if (raw.includes(';')) {
-                    segments = raw.split(';');
-                } else if ((raw.match(/,/g) || []).length >= 3) {
-                    segments = raw.split(',');
-                } else {
-                    segments = raw.split(/\s+/);
-                }
-                segments = segments.map(s => s.trim()).filter(s => s.length > 0);
-
-                const dateRegex = /(\d{1,2}[\/-]\d{1,2}([\/-]\d{2,4})?)|(\d{4}[\/-]\d{1,2}[\/-]\d{1,2})/;
-                let dateIdx = segments.findIndex(s => dateRegex.test(s));
-                const { amountIdx, ignoredIdx } = pickAmountIndex(segments, dateIdx);
-                if(dateIdx !== -1 && amountIdx !== -1) {
-                    let rawDate = segments[dateIdx].match(dateRegex)[0];
-                    const normalized = rawDate.replace(/\//g, '-');
-                    let y, m, d;
-                    if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(normalized)) {
-                        [y, m, d] = normalized.split('-');
-                    } else {
-                        [d, m, y] = normalized.split('-');
-                    }
-                    if(!y) y = new Date().getFullYear().toString();
-                    if(y.length === 2) y = "20" + y;
-                    rawDate = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
-                    const signRight = (segments[amountIdx + 1] || '').toUpperCase();
-                    const signLeft = (segments[amountIdx - 1] || '').toUpperCase();
-                    const signToken = signRight === 'C' || signRight === 'D'
-                        ? signRight
-                        : (signLeft === 'C' || signLeft === 'D' ? signLeft : '');
-
-                    let val = parseValueRobust(segments[amountIdx]);
-                    if(signToken === 'D') val = -Math.abs(val);
-                    if(signToken === 'C') val = Math.abs(val);
-
-                    const desc = segments
-                        .filter((_, idx) =>
-                            idx !== dateIdx &&
-                            idx !== amountIdx &&
-                            idx !== ignoredIdx &&
-                            idx !== (amountIdx + 1) &&
-                            idx !== (amountIdx - 1)
-                        )
-                        .join(' ');
-
-                    // Não importa linhas de saldo (são posição de conta, não lançamento).
-                    if (/^\s*saldo\b/i.test(desc)) return;
-
-                    const flowType = val >= 0 ? 'ENTRADA' : 'SAÍDA';
-                    const typeDestinations = getValidDestinationsByFlow(flowType);
-                    const inferredDestinationId = inferDestinationFromDescription(desc, typeDestinations.length ? typeDestinations : validDestinations);
-                    tempRecon.push({ 
-                        id: generateId(), 
-                        date: rawDate, 
-                        amount: Math.abs(val), 
-                        type: flowType, 
-                        status: batchStatus,
-                        description: String(desc || '').trim(), 
-                        destinationId: inferredDestinationId,
-                    });
-                }
-            });
-            renderReconPreview();
-            if(tempRecon.length > 0) {
-                area.value = '';
-            } else {
-                alert("Nenhum dado detectado.");
-            }
-        }
-
-        function updateReconDestination(index, value) {
-            if (!tempRecon[index]) return;
-            tempRecon[index].destinationId = value;
-        }
-        function updateReconDescription(index, value) {
-            if (!tempRecon[index]) return;
-            tempRecon[index].description = String(value || '');
-        }
-
-        function startReconFill(index, event) {
-            event.preventDefault();
-            if (!tempRecon[index]) return;
-            reconFillState.active = true;
-            reconFillState.sourceIndex = index;
-            reconFillState.value = tempRecon[index].destinationId;
-        }
-
-        function stopReconFill() {
-            const wasActive = reconFillState.active;
-            reconFillState.active = false;
-            reconFillState.sourceIndex = -1;
-            reconFillState.value = '';
-            if (wasActive && tempRecon.length > 0) renderReconPreview();
-        }
-
-        function applyReconFillTo(index) {
-            if (!reconFillState.active) return;
-            if (reconFillState.sourceIndex < 0) return;
-            if (!reconFillState.value) return;
-
-            const start = Math.min(reconFillState.sourceIndex, index);
-            const end = Math.max(reconFillState.sourceIndex, index);
-            for (let i = start; i <= end; i++) {
-                if (!tempRecon[i]) continue;
-                tempRecon[i].destinationId = reconFillState.value;
-                const el = document.getElementById(`recon-dst-${i}`);
-                if (el) el.value = reconFillState.value;
-            }
-        }
-
-        function getReconAllowedDestinations(item, fallbackList = null) {
-            const baseList = Array.isArray(fallbackList) ? fallbackList : getValidDestinations();
-            const allowed = getValidDestinationsByFlow((item || {}).type);
-            return allowed.length ? allowed : baseList;
-        }
-
-        function hasReconValidDestination(item, fallbackList = null) {
-            const destinationId = String((item || {}).destinationId || '');
-            if (!destinationId) return false;
-            return getReconAllowedDestinations(item, fallbackList).some(d => String(d.id || '') === destinationId);
-        }
-
-        function normalizeDuplicateDescription(value) {
-            return normalizeReconText(value).slice(0, 140);
-        }
-
-        function buildEntryDuplicateKey(entry, accountIdOverride = '') {
-            const accountId = String(accountIdOverride || (entry.accountId ?? entry.account_id) || '');
-            const destinationId = String((entry.destinationId ?? entry.destination_id) || '');
-            const date = String(entry.date || '');
-            const type = normalizeFlowType(entry.type);
-            const amount = Number(entry.amount ?? 0).toFixed(2);
-            const description = normalizeDuplicateDescription(entry.description || '');
-            return [date, type, amount, destinationId, accountId, description].join('|');
-        }
-
-        function buildEntryReconMatchKey(entry, accountIdOverride = '', includeDestination = false) {
-            const accountId = String(accountIdOverride || (entry.accountId ?? entry.account_id) || '');
-            const destinationId = String((entry.destinationId ?? entry.destination_id) || '');
-            const date = String(entry.date || '');
-            const type = normalizeFlowType(entry.type);
-            const amount = Number(entry.amount ?? 0).toFixed(2);
-            const parts = [date, type, amount, accountId];
-            if (includeDestination) parts.push(destinationId);
-            return parts.join('|');
-        }
-
-        function getReconSelectedAccountId() {
-            return String(document.getElementById('recon-account-select')?.value || '');
-        }
-
-        function getReconExistingMatchMeta(entry, accountIdOverride = '') {
-            const accountId = String(accountIdOverride || getReconSelectedAccountId() || '');
-            if (!accountId) {
-                return {
-                    strictMatches: 0,
-                    sameDestinationMatches: 0,
-                    otherDestinationMatches: 0,
-                    otherDestinationLabels: [],
-                    status: 'select-account'
-                };
-            }
-
-            const strictKey = buildEntryDuplicateKey(entry, accountId);
-            const movementKey = buildEntryReconMatchKey(entry, accountId, false);
-            const movementWithDestinationKey = buildEntryReconMatchKey(entry, accountId, true);
-            const relatedEntries = state.entries.filter(existing => buildEntryReconMatchKey(existing, accountId, false) === movementKey);
-            const strictMatches = relatedEntries.filter(existing => buildEntryDuplicateKey(existing, accountId) === strictKey).length;
-            const sameDestinationEntries = relatedEntries.filter(existing => buildEntryReconMatchKey(existing, accountId, true) === movementWithDestinationKey);
-            const otherDestinationEntries = relatedEntries.filter(existing => buildEntryReconMatchKey(existing, accountId, true) !== movementWithDestinationKey);
-            const otherDestinationLabels = Array.from(new Set(otherDestinationEntries
-                .map(existing => getDestinationDisplayLabelById(existing.destinationId))
-                .filter(Boolean)));
-
-            let status = 'new';
-            if (strictMatches > 0) status = 'exact';
-            else if (otherDestinationEntries.length > 0) status = 'conflict';
-            else if (sameDestinationEntries.length > 0) status = 'similar';
-
-            return {
-                strictMatches,
-                sameDestinationMatches: sameDestinationEntries.length,
-                otherDestinationMatches: otherDestinationEntries.length,
-                otherDestinationLabels,
-                status
-            };
-        }
-
-        function getReconReviewBadge(meta, invalidDestination) {
-            if (invalidDestination) {
-                return {
-                    badgeClass: 'bg-red-50 text-red-700 border border-red-200',
-                    badgeText: 'Revisar destino',
-                    note: 'Escolha um destino válido antes de importar.'
-                };
-            }
-            if (meta.status === 'select-account') {
-                return {
-                    badgeClass: 'bg-slate-50 text-slate-600 border border-slate-200',
-                    badgeText: 'Escolha a conta',
-                    note: 'Selecione a conta para comparar com os lançamentos já cadastrados.'
-                };
-            }
-            if (meta.status === 'exact') {
-                return {
-                    badgeClass: 'bg-green-50 text-green-700 border border-green-200',
-                    badgeText: 'Já lançado',
-                    note: 'Esse lançamento já existe com a mesma conta, destino e descrição.'
-                };
-            }
-            if (meta.status === 'conflict') {
-                const firstConflict = meta.otherDestinationLabels[0] || 'outro destino';
-                const suffix = meta.otherDestinationLabels.length > 1 ? ` e mais ${meta.otherDestinationLabels.length - 1}` : '';
-                return {
-                    badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
-                    badgeText: 'Conferir destino',
-                    note: `Há lançamento parecido em ${firstConflict}${suffix}.`
-                };
-            }
-            if (meta.status === 'similar') {
-                return {
-                    badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-                    badgeText: 'Destino confere',
-                    note: 'Já existe lançamento parecido com este mesmo destino.'
-                };
-            }
-            return {
-                badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',
-                badgeText: 'Novo lançamento',
-                note: 'Não encontrei registro parecido nesta conta.'
-            };
-        }
-        function renderReconPreview() {
-            const preview = document.getElementById('recon-preview');
-            const summary = document.getElementById('recon-summary-count');
-            const body = document.getElementById('recon-preview-body');
-            const validDestinations = getValidDestinations();
-            const selectedAccountId = getReconSelectedAccountId();
-            if(tempRecon.length > 0) {
-                if(validDestinations.length === 0) {
-                    if(summary) summary.innerText = 'Nenhum destino válido no Banco de Dados';
-                    if(preview) preview.classList.add('hidden');
-                    return;
-                }
-                tempRecon = tempRecon.map(item => ({
-                    ...item,
-                    destinationId: hasReconValidDestination(item, validDestinations) ? String(item.destinationId || '') : ''
-                }));
-                const reconStats = tempRecon.reduce((acc, item) => {
-                    const invalidDestination = !hasReconValidDestination(item, validDestinations);
-                    const meta = getReconExistingMatchMeta(item, selectedAccountId);
-                    if (invalidDestination) acc.invalid += 1;
-                    else if (meta.status === 'exact') acc.exact += 1;
-                    else if (meta.status === 'conflict') acc.conflict += 1;
-                    else if (meta.status === 'similar') acc.similar += 1;
-                    else if (meta.status === 'new') acc.newItems += 1;
-                    return acc;
-                }, { invalid: 0, exact: 0, conflict: 0, similar: 0, newItems: 0 });
-                if(summary) {
-                    const summaryParts = [`${tempRecon.length} registro(s) extraído(s)`];
-                    if (selectedAccountId) {
-                        if (reconStats.exact > 0) summaryParts.push(`${reconStats.exact} já lançado(s)`);
-                        if (reconStats.similar > 0) summaryParts.push(`${reconStats.similar} com destino coerente`);
-                        if (reconStats.conflict > 0) summaryParts.push(`${reconStats.conflict} para conferir destino`);
-                        if (reconStats.newItems > 0) summaryParts.push(`${reconStats.newItems} novo(s)`);
-                    } else {
-                        summaryParts.push('selecione a conta para comparar com o histórico');
-                    }
-                    if (reconStats.invalid > 0) summaryParts.push(`${reconStats.invalid} sem destino confirmado`);
-                    summary.innerText = summaryParts.join(' • ');
-                }
-                if(preview) preview.classList.remove('hidden');
-                if(body) body.innerHTML = tempRecon.map((e,i) => {
-                    const destinationSource = getReconAllowedDestinations(e, validDestinations);
-                    const invalidDestination = !hasReconValidDestination(e, validDestinations);
-                    const matchMeta = getReconExistingMatchMeta(e, selectedAccountId);
-                    const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
-                    return `<tr class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
-                        <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
-                        <td class="px-4 py-3 w-[180px]">
-                            <input
-                                type="text"
-                                class="recon-desc-input custom-scrollbar"
-                                value="${escapeHtml(e.description)}"
-                                oninput="updateReconDescription(${i}, this.value)"
-                                placeholder="Descrição do lançamento"
-                            />
-                        </td>
-                        <td class="px-4 py-3 w-[320px]">
-                            <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
-                                <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value); renderReconPreview();" class="recon-destination-select ${invalidDestination ? 'border-red-300 bg-red-50 text-red-700' : ''}">
-                                    <option value="" ${invalidDestination ? 'selected' : ''}>Selecionar destino...</option>
-                                    ${destinationSource.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
-                                </select>
-                                <button type="button" class="recon-fill-handle" onmousedown="startReconFill(${i}, event)" title="Arraste para baixo para copiar o destino">
-                                    ...
-                                </button>
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}">${reviewBadge.badgeText}</div>
-                            <p class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </td>
-                        <td class="px-4 py-3 text-right text-[11px] font-black whitespace-nowrap ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
-                    </tr>`;
-                }).join('');
-                lucide.createIcons();
-            } else {
-                if(preview) preview.classList.add('hidden');
-                if(summary) summary.innerText = 'Processando...';
-                if(body) body.innerHTML = '';
-            }
-        }
-        function removeRecon(index) {
-            tempRecon.splice(index, 1);
-            renderReconPreview();
-        }
-
-        async function finalizeRecon() {
-            if (reconImportInFlight) return;
-            const importBtn = document.getElementById('recon-import-btn');
-            const summaryEl = document.getElementById('recon-summary-count');
-            reconImportInFlight = true;
-            if (importBtn) {
-                importBtn.disabled = true;
-                importBtn.classList.add('opacity-60', 'cursor-not-allowed');
-                importBtn.innerText = 'Importando...';
-            }
-            try {
-                const accId = String(document.getElementById('recon-account-select')?.value || '');
-                const batchStatus = getReconBatchStatus();
-                const accountExists = state.accounts.some(a => String(a.id || '') === accId);
-                if(!accountExists) {
-                    alert('Selecione uma conta válida cadastrada no Banco de Dados.');
-                    return;
-                }
-                if (!Array.isArray(tempRecon) || tempRecon.length === 0) {
-                    alert('Não há registros para importar.');
-                    return;
-                }
-                const allValidDestinations = getValidDestinations();
-                const hasInvalidDestination = tempRecon.some(t => {
-                    const allowed = getValidDestinationsByFlow(t.type);
-                    const source = allowed.length > 0 ? allowed : allValidDestinations;
-                    return !source.some(d => d.id === t.destinationId);
-                });
-                if(hasInvalidDestination) {
-                    alert('Existem registros com destino sem vínculo válido no Banco de Dados.');
-                    return;
-                }
-                const newEntries = tempRecon.map((temp) => {
-                    const dst = state.destinations.find(d => d.id === temp.destinationId);
-                    const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-                    const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                    return {
-                        ...temp,
-                        accountId: accId,
-                        categoryId: String((cat || {}).id || ''),
-                        subCategoryId: String((sub || {}).id || ''),
-                        status: batchStatus,
-                    };
-                });
-                const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
-                const entriesToImport = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches === 0);
-                if (entriesToImport.length === 0) {
-                    alert(`Nenhum novo lançamento para importar.\n\n${duplicateAgainstExisting.length} item(ns) da prévia já existem nesta conta com a mesma data, tipo, valor, destino e descrição.`);
-                    return;
-                }
-                const batchSeen = new Set();
-                const duplicateInsideBatch = [];
-                entriesToImport.forEach((entry) => {
-                    const key = buildEntryDuplicateKey(entry, accId);
-                    if (batchSeen.has(key)) duplicateInsideBatch.push(entry);
-                    else batchSeen.add(key);
-                });
-                if (duplicateInsideBatch.length > 0) {
-                    alert(`A importação foi bloqueada porque o lote contém ${duplicateInsideBatch.length} lançamento(s) duplicado(s). Revise a prévia antes de importar.`);
-                    return;
-                }
-                if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
-                const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
-                    if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
-                });
-                if (!saveResult?.ok) {
-                    if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
-                    await refreshCloudState({ silent: false });
-                    alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                    return;
-                }
-                const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
-                const validation = await validateImportedEntryIds(importedIds);
-                if (!validation.ok) {
-                    alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
-                } else {
-                    const importedNow = Number(validation.imported || 0);
-                    if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
-                    if (importedNow !== entriesToImport.length) {
-                        alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
-                    } else {
-                        const skippedCount = duplicateAgainstExisting.length;
-                        const skippedNote = skippedCount > 0 ? `\nIgnorados por já existirem: ${skippedCount}.` : '';
-                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${skippedNote}`);
-                    }
-                }
-                await refreshCloudState({ silent: false });
-                cancelRecon(); render(); switchTab('entries');
-            } finally {
-                reconImportInFlight = false;
-                if (importBtn) {
-                    importBtn.disabled = false;
-                    importBtn.classList.remove('opacity-60', 'cursor-not-allowed');
-                    importBtn.innerText = 'Importar';
-                }
-            }
-        }
-        function cancelRecon() { tempRecon = []; document.getElementById('recon-preview')?.classList.add('hidden'); }
-
-        function renderDatabase() {
-            const list = document.getElementById('db-list');
-            if(!list) return;
-            const search = normalizeReconText(document.getElementById('db-search')?.value || '');
-            const matches = (...parts) => !search || normalizeReconText(parts.join(' ')).includes(search);
-
-            const filteredCategories = state.categories.filter(c => {
-                const subs = state.subCategories.filter(s => s.categoryId === c.id);
-                const subMatch = subs.some(s => {
-                    const subDest = state.destinations.filter(d => d.subCategoryId === s.id);
-                    return matches(s.name) || subDest.some(d => matches(d.name));
-                });
-                return matches(c.name, c.type) || subMatch;
-            });
-
-            if (dbSelectedCategoryId && !filteredCategories.some(c => c.id === dbSelectedCategoryId)) dbSelectedCategoryId = '';
-            if (!dbSelectedCategoryId && filteredCategories[0]) dbSelectedCategoryId = filteredCategories[0].id;
-
-            const selectedCategory = filteredCategories.find(c => c.id === dbSelectedCategoryId) || null;
-            const subCandidates = selectedCategory
-                ? state.subCategories.filter(s => s.categoryId === selectedCategory.id)
-                : [];
-            const filteredSubCategories = subCandidates.filter(s => {
-                const subDest = state.destinations.filter(d => d.subCategoryId === s.id);
-                return !search || matches(selectedCategory?.name || '', s.name) || subDest.some(d => matches(d.name));
-            });
-            if (dbSelectedSubCategoryId && !filteredSubCategories.some(s => s.id === dbSelectedSubCategoryId)) dbSelectedSubCategoryId = '';
-            if (!dbSelectedSubCategoryId && filteredSubCategories[0]) dbSelectedSubCategoryId = filteredSubCategories[0].id;
-
-            const selectedSub = filteredSubCategories.find(s => s.id === dbSelectedSubCategoryId) || null;
-            const filteredDestinations = selectedSub
-                ? state.destinations.filter(d => d.subCategoryId === selectedSub.id).filter(d => !search || matches(selectedCategory?.name || '', selectedSub.name, d.name))
-                : [];
-
-            list.innerHTML = `
-                <div class="db-explorer">
-                    <div class="db-col">
-                        <div class="db-col-head">
-                            <div>
-                                <div class="db-col-title">Categorias</div>
-                                <div class="db-col-count">${filteredCategories.length} item(ns)</div>
-                            </div>
-                        </div>
-                        <div class="db-list-scroll custom-scrollbar">
-                            ${filteredCategories.map(c => `
-                                <div class="db-item-row ${c.id === dbSelectedCategoryId ? 'active' : ''}" onclick="selectDbCategory('${c.id}')">
-                                    <div class="min-w-0">
-                                        <div class="db-item-name">${c.name}</div>
-                                        <div class="db-item-meta">${c.type}</div>
-                                    </div>
-                                    <div class="db-item-actions">
-                                        <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('CATEGORY', '${c.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                                        <button class="db-action-btn danger" onclick="event.stopPropagation(); deleteDb('CATEGORY', '${c.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                                    </div>
-                                </div>
-                            `).join('') || '<div class="db-empty">Nenhuma categoria encontrada.</div>'}
-                        </div>
-                    </div>
-                    <div class="db-col">
-                        <div class="db-col-head">
-                            <div>
-                                <div class="db-col-title">Subcategorias</div>
-                                <div class="db-col-count">${filteredSubCategories.length} item(ns)</div>
-                            </div>
-                            ${selectedCategory ? `<button class="db-inline-btn" onclick="openDbModal('SUBCATEGORY', '${selectedCategory.id}')">+ Subcategoria</button>` : ''}
-                        </div>
-                        <div class="db-list-scroll custom-scrollbar">
-                            ${selectedCategory ? (filteredSubCategories.map(s => `
-                                <div class="db-item-row ${s.id === dbSelectedSubCategoryId ? 'active' : ''}" onclick="selectDbSubCategory('${s.id}')">
-                                    <div class="min-w-0">
-                                        <div class="db-item-name">${s.name}</div>
-                                        <div class="db-item-meta">${selectedCategory.name}</div>
-                                    </div>
-                                    <div class="db-item-actions">
-                                        <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('SUBCATEGORY', '${s.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                                        <button class="db-action-btn danger" onclick="event.stopPropagation(); deleteDb('SUBCATEGORY', '${s.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                                    </div>
-                                </div>
-                            `).join('') || '<div class="db-empty">Nenhuma subcategoria para esta categoria.</div>') : '<div class="db-empty">Selecione uma categoria.</div>'}
-                        </div>
-                    </div>
-                    <div class="db-col">
-                        <div class="db-col-head">
-                            <div>
-                                <div class="db-col-title">Destinos</div>
-                                <div class="db-col-count">${filteredDestinations.length} item(ns)</div>
-                            </div>
-                            ${selectedSub ? `<button class="db-inline-btn" onclick="openDbModal('DESTINATION', '${selectedSub.id}')">+ Destino</button>` : ''}
-                        </div>
-                        <div class="db-list-scroll custom-scrollbar">
-                            ${selectedSub ? (filteredDestinations.map(d => `
-                                <div class="db-item-row">
-                                    <div class="min-w-0">
-                                        <div class="db-item-name">${d.name}</div>
-                                        <div class="db-item-meta">${selectedSub.name}</div>
-                                    </div>
-                                    <div class="db-item-actions">
-                                        <button class="db-action-btn" onclick="openDbEdit('DESTINATION', '${d.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                                        <button class="db-action-btn danger" onclick="deleteDb('DESTINATION', '${d.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                                    </div>
-                                </div>
-                            `).join('') || '<div class="db-empty">Nenhum destino para esta subcategoria.</div>') : '<div class="db-empty">Selecione uma subcategoria.</div>'}
-                        </div>
-                    </div>
-                </div>
-            `;
-            const accList = document.getElementById('account-list');
-            if(accList) {
-                const filteredAccounts = state.accounts.filter(a => !search || matches(a.name));
-                accList.innerHTML = filteredAccounts.length
-                    ? `<div class="db-account-list">${filteredAccounts.map(a => `
-                        <div class="db-account-row">
-                            <div>
-                                <div class="db-tree-title">${a.name}</div>
-                                <div class="db-tree-meta">Saldo inicial: ${formatBRL(a.initialBalance)}</div>
-                            </div>
-                            <div class="db-tree-actions">
-                                <button class="db-inline-btn" onclick="openDbEdit('ACCOUNT', '${a.id}')">Editar</button>
-                                <button class="db-inline-btn danger" onclick="deleteDb('ACCOUNT', '${a.id}')">Excluir</button>
-                            </div>
-                        </div>
-                    `).join('')}</div>`
-                    : '<div class="db-empty">Nenhuma conta encontrada para o filtro aplicado.</div>';
-            }
-            lucide.createIcons();
-        }
-
-        function selectDbCategory(id) {
-            if (!id) return;
-            dbSelectedCategoryId = id;
-            dbSelectedSubCategoryId = '';
-            renderDatabase();
-        }
-
-        function selectDbSubCategory(id) {
-            if (!id) return;
-            dbSelectedSubCategoryId = id;
-            renderDatabase();
-        }
-
-        function openDbEdit(type, id) {
-            if (!id) return;
-            if (type === 'CATEGORY') {
-                const item = state.categories.find(c => c.id === id);
-                if (!item) return;
-                openDbModal('CATEGORY', '', item);
-                return;
-            }
-            if (type === 'SUBCATEGORY') {
-                const item = state.subCategories.find(s => s.id === id);
-                if (!item) return;
-                openDbModal('SUBCATEGORY', item.categoryId, item);
-                return;
-            }
-            if (type === 'DESTINATION') {
-                const item = state.destinations.find(d => d.id === id);
-                if (!item) return;
-                openDbModal('DESTINATION', item.subCategoryId, item);
-                return;
-            }
-            if (type === 'ACCOUNT') {
-                const item = state.accounts.find(a => a.id === id);
-                if (!item) return;
-                openDbModal('ACCOUNT', '', item);
-            }
-        }
-
-        function getDbUsageCount(type, id) {
-            const targetId = String(id || '');
-            if (!targetId) return 0;
-            if (type === 'ACCOUNT') {
-                const entryCount = state.entries.filter(e => String((e.accountId ?? e.account_id) || '') === targetId).length;
-                const balanceCount = (state.dailyBalances || []).filter(item => String(item.accountId || '') === targetId).length;
-                return entryCount + balanceCount;
-            }
-            if (type === 'DESTINATION') {
-                return state.entries.filter(e => String((e.destinationId ?? e.destination_id) || '') === targetId).length;
-            }
-            if (type === 'SUBCATEGORY') {
-                const destinationIds = new Set(state.destinations.filter(d => String(d.subCategoryId || '') === targetId).map(d => String(d.id || '')));
-                return state.entries.filter(e => {
-                    const entrySubId = String((e.subCategoryId ?? e.sub_category_id) || '');
-                    const entryDstId = String((e.destinationId ?? e.destination_id) || '');
-                    return entrySubId === targetId || destinationIds.has(entryDstId);
-                }).length;
-            }
-            if (type === 'CATEGORY') {
-                const subCategoryIds = new Set(state.subCategories.filter(s => String(s.categoryId || '') === targetId).map(s => String(s.id || '')));
-                const destinationIds = new Set(state.destinations.filter(d => subCategoryIds.has(String(d.subCategoryId || ''))).map(d => String(d.id || '')));
-                return state.entries.filter(e => {
-                    const entryCategoryId = String((e.categoryId ?? e.category_id) || '');
-                    const entrySubId = String((e.subCategoryId ?? e.sub_category_id) || '');
-                    const entryDstId = String((e.destinationId ?? e.destination_id) || '');
-                    return entryCategoryId === targetId || subCategoryIds.has(entrySubId) || destinationIds.has(entryDstId);
-                }).length;
-            }
-            return 0;
-        }
-
-        function getDbUsageDeleteMessage(type, count) {
-            if (count <= 0) return '';
-            if (type === 'ACCOUNT') return `Esta conta possui ${count} registro(s) vinculado(s) em lançamentos e/ou saldos bancários. Exclua ou reclassifique esses registros antes de remover a conta.`;
-            if (type === 'DESTINATION') return `Este destino possui ${count} lançamento(s) vinculado(s). Reclassifique esses lançamentos antes de excluir o destino.`;
-            if (type === 'SUBCATEGORY') return `Esta subcategoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a subcategoria.`;
-            if (type === 'CATEGORY') return `Esta categoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a categoria.`;
-            return `Existem ${count} registro(s) vinculados a este item.`;
-        }
-
-        async function syncEntriesWithCategoryType(categoryId, nextType) {
-            const categoryIdStr = String(categoryId || '');
-            const normalizedType = normalizeFlowType(nextType);
-            const affectedEntries = state.entries.filter(e => String((e.categoryId ?? e.category_id) || '') === categoryIdStr);
-            if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
-            const previousTypes = new Map();
-            affectedEntries.forEach(entry => {
-                previousTypes.set(String(entry.id || ''), entry.type);
-                entry.type = normalizedType;
-            });
-            const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
-            if (!saveResult?.ok) {
-                affectedEntries.forEach(entry => {
-                    const previousType = previousTypes.get(String(entry.id || ''));
-                    if (previousType) entry.type = previousType;
-                });
-                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lançamentos da categoria.') };
-            }
-            return { ok: true, changed: affectedEntries.length, error: null };
-        }
-
-        function setEntryFormFeedback(message = '') {
-            const feedbackEl = document.getElementById('entry-form-feedback');
-            if (!feedbackEl) return;
-            if (!message) {
-                feedbackEl.classList.add('hidden');
-                feedbackEl.innerText = '';
-                return;
-            }
-            feedbackEl.classList.remove('hidden');
-            feedbackEl.innerText = message;
-        }
-
-        function setEntryFieldError(fieldId, message = '') {
-            const fieldEl = document.getElementById(fieldId);
-            const errorEl = document.getElementById(`${fieldId}-error`);
-            if (!fieldEl || !errorEl) return;
-            if (!message) {
-                fieldEl.classList.remove('field-invalid');
-                fieldEl.setAttribute('aria-invalid', 'false');
-                errorEl.classList.add('hidden');
-                errorEl.innerText = '';
-                return;
-            }
-            fieldEl.classList.add('field-invalid');
-            fieldEl.setAttribute('aria-invalid', 'true');
-            errorEl.classList.remove('hidden');
-            errorEl.innerText = message;
-        }
-
-        function clearEntryFormErrors() {
-            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status'].forEach((id) => setEntryFieldError(id, ''));
-            setEntryFormFeedback('');
-        }
-
-        function formatAmountFromDigits(digitsRaw) {
-            const digits = String(digitsRaw || '').replace(/\D/g, '');
-            if (!digits) return '';
-            const cents = Number(digits);
-            if (!Number.isFinite(cents)) return '';
-            const value = cents / 100;
-            return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function parseAmountBRL(raw) {
-            const text = String(raw || '').trim();
-            if (!text) return NaN;
-            const normalized = text.replace(/\./g, '').replace(',', '.').replace(/[^\d.-]/g, '');
-            const parsed = Number(normalized);
-            return Number.isFinite(parsed) ? parsed : NaN;
-        }
-
-        function bindEntryValueMask() {
-            const valueEl = document.getElementById('form-value');
-            if (!valueEl || valueEl.dataset.maskBound === '1') return;
-            valueEl.dataset.maskBound = '1';
-            valueEl.addEventListener('input', () => {
-                valueEl.value = formatAmountFromDigits(valueEl.value);
-            });
-            valueEl.addEventListener('paste', () => {
-                requestAnimationFrame(() => {
-                    valueEl.value = formatAmountFromDigits(valueEl.value);
-                });
-            });
-        }
-
-        function validateEntryForm(showErrors = true) {
-            const dateEl = document.getElementById('form-date');
-            const valueEl = document.getElementById('form-value');
-            const dstEl = document.getElementById('form-dst');
-            const accEl = document.getElementById('form-acc');
-            const descEl = document.getElementById('form-desc');
-            const statusEl = document.getElementById('form-status');
-            if (!dateEl || !valueEl || !dstEl || !accEl || !descEl || !statusEl) {
-                return { valid: false, firstInvalidId: null };
-            }
-
-            const date = String(dateEl.value || '');
-            const amount = parseAmountBRL(valueEl.value);
-            const destinationId = String(dstEl.value || '');
-            const accountId = String(accEl.value || '');
-            const description = String(descEl.value || '').trim();
-            const status = String(statusEl.value || '');
-            const errors = {};
-
-            if (!date) errors['form-date'] = 'Informe a data do lançamento.';
-            if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) errors['form-date'] = 'Data inválida.';
-            if (!Number.isFinite(amount)) errors['form-value'] = 'Informe um valor numérico.';
-            else if (amount <= 0) errors['form-value'] = 'O valor deve ser maior que zero.';
-            if (!destinationId) errors['form-dst'] = 'Selecione um destino.';
-            if (!accountId) errors['form-acc'] = 'Selecione uma conta.';
-            if (description.length > 180) errors['form-desc'] = 'Observação deve ter no máximo 180 caracteres.';
-            if (status !== 'REALIZADO' && status !== 'PENDENTE') errors['form-status'] = 'Escolha um status válido.';
-
-            if (showErrors) {
-                clearEntryFormErrors();
-                Object.entries(errors).forEach(([fieldId, message]) => setEntryFieldError(fieldId, message));
-                if (Object.keys(errors).length > 0) {
-                    setEntryFormFeedback('Revise os campos destacados antes de salvar.');
-                }
-            }
-
-            return {
-                valid: Object.keys(errors).length === 0,
-                firstInvalidId: Object.keys(errors)[0] || null,
-                values: { date, amount, destinationId, accountId, description, status }
-            };
-        }
-
-        function initEntryFormValidationBindings() {
-            const form = document.getElementById('entry-form');
-            if (!form || form.dataset.validationBound === '1') return;
-            form.dataset.validationBound = '1';
-            bindEntryValueMask();
-
-            ['form-date', 'form-value', 'form-dst', 'form-dst-search', 'form-acc', 'form-desc'].forEach((fieldId) => {
-                const el = document.getElementById(fieldId);
-                if (!el) return;
-                const eventName = (el.tagName === 'SELECT' || el.type === 'date') ? 'change' : 'input';
-                el.addEventListener(eventName, () => {
-                    setEntryFieldError(fieldId === 'form-dst-search' ? 'form-dst' : fieldId, '');
-                    const silent = validateEntryForm(false);
-                    if (silent.valid) setEntryFormFeedback('');
-                });
-                el.addEventListener('blur', () => {
-                    const result = validateEntryForm(true);
-                    if (result.valid) clearEntryFormErrors();
-                });
-            });
-        }
-        function populateDestinationCombobox(inputId, hiddenId, listId, list, selectedId = '') {
-            const inputEl = document.getElementById(inputId);
-            const hiddenEl = document.getElementById(hiddenId);
-            const listEl = document.getElementById(listId);
-            if (!inputEl || !hiddenEl || !listEl) return;
-            const sorted = getSortedDestinationOptions(list);
-            destinationComboboxState.inputId = inputId;
-            destinationComboboxState.hiddenId = hiddenId;
-            destinationComboboxState.panelId = listId;
-            destinationComboboxState.options = sorted;
-            destinationComboboxState.filteredOptions = [];
-            destinationComboboxState.highlightedIndex = -1;
-            destinationComboboxState.isOpen = false;
-            hiddenEl.value = String(selectedId || '');
-            inputEl.value = getDestinationDisplayLabelById(selectedId, sorted);
-            inputEl.oninput = () => {
-                hiddenEl.value = findDestinationIdByLabel(inputEl.value, sorted);
-                setEntryFieldError('form-dst', '');
-                openDestinationCombobox(inputEl.value);
-            };
-            inputEl.onfocus = () => {
-                openDestinationCombobox(inputEl.value);
-            };
-            inputEl.onclick = () => {
-                openDestinationCombobox(inputEl.value);
-            };
-            inputEl.onkeydown = (event) => {
-                handleDestinationComboboxKeydown(event);
-            };
-            inputEl.onblur = () => {
-                window.setTimeout(() => {
-                    const resolvedId = findDestinationIdByLabel(inputEl.value, sorted);
-                    hiddenEl.value = resolvedId;
-                    if (resolvedId) {
-                        inputEl.value = getDestinationDisplayLabelById(resolvedId, sorted);
-                        setEntryFieldError('form-dst', '');
-                    }
-                    closeDestinationCombobox();
-                }, 120);
-            };
-            closeDestinationCombobox();
-        }
-
-        function toggleStatus(val) {
-            const statusEl = document.getElementById('form-status');
-            const tr = document.getElementById('toggle-realized');
-            const tp = document.getElementById('toggle-pending');
-            if(statusEl) statusEl.value = val;
-            if(tr) tr.classList.toggle('active', val === 'REALIZADO');
-            if(tp) tp.classList.toggle('active', val === 'PENDENTE');
-            if(tr) tr.setAttribute('aria-pressed', val === 'REALIZADO' ? 'true' : 'false');
-            if(tp) tp.setAttribute('aria-pressed', val === 'PENDENTE' ? 'true' : 'false');
-            setEntryFieldError('form-status', '');
-        }
-
-        function openEntryModal(id = null) {
-            lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-            const form = document.getElementById('entry-form');
-            if(form) form.reset();
-            clearEntryFormErrors();
-            initEntryFormValidationBindings();
-            const idEl = document.getElementById('entry-id');
-            if(idEl) idEl.value = id || '';
-            document.getElementById('delete-btn-modal')?.classList.toggle('hidden', !id);
-            populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations);
-            populateDropdown('form-acc', state.accounts);
-            if(id) {
-                const e = state.entries.find(x => x.id === id);
-                if(e) {
-                    document.getElementById('form-date').value = e.date;
-                    document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    document.getElementById('form-desc').value = e.description || "";
-                    populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, e.destinationId);
-                    document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
-                    toggleStatus(e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO');
-                }
-            } else { 
-                document.getElementById('form-date').value = formatLocalDate(new Date());
-                toggleStatus('REALIZADO');
-            }
-            document.getElementById('entry-modal')?.classList.remove('hidden');
-            window.setTimeout(() => {
-                document.getElementById('form-date')?.focus();
-            }, 0);
-            lucide.createIcons();
-        }
-
-        function closeModal(id) {
-            document.getElementById(id)?.classList.add('hidden');
-            closeDestinationCombobox();
-            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
-                lastFocusedElement.focus();
-            }
-        }
-        function populateDropdown(id, list) {
-            const el = document.getElementById(id);
-            if(!el) return;
-            const sorted = (Array.isArray(list) ? [...list] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
-            el.innerHTML = sorted.map(item => `<option value="${String(item.id || '')}">${item.name}</option>`).join('');
-        }
-
-        document.getElementById('entry-form').onsubmit = async (event) => {
-            event.preventDefault();
-            const id = document.getElementById('entry-id').value;
-            const validation = validateEntryForm(true);
-            if (!validation.valid) {
-                if (validation.firstInvalidId) {
-                    const invalidFocusId = validation.firstInvalidId === 'form-dst' ? 'form-dst-search' : validation.firstInvalidId;
-                    document.getElementById(invalidFocusId)?.focus();
-                }
-                return;
-            }
-            const dstId = validation.values.destinationId;
-            const dst = state.destinations.find(d => d.id === dstId);
-            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-            const existing = id ? state.entries.find(x => x.id === id) : null;
-            if (!(cat || {}).type) {
-                setEntryFieldError('form-dst', 'Destino sem categoria/tipo v�lido. Revise Categoria > Subcategoria > Destino.');
-                setEntryFormFeedback('N�o foi poss�vel salvar: revise o destino selecionado.');
-                document.getElementById('form-dst-search')?.focus();
-                return;
-            }
-            clearEntryFormErrors();
-            const data = {
-                id: id || generateId(),
-                date: validation.values.date,
-                amount: validation.values.amount,
-                type: (cat || {}).type,
-                categoryId: (cat || {}).id,
-                subCategoryId: (sub || {}).id,
-                destinationId: dstId,
-                accountId: validation.values.accountId,
-                description: validation.values.description,
-                status: validation.values.status
-            };
-            
-            const saveResult = await cloudSave('entries', data);
-            if (!saveResult?.ok) {
-                const msg = String(saveResult?.error?.message || 'Falha ao salvar no Supabase.');
-                alert(`Não foi possível salvar o lançamento.\n\nDetalhe: ${msg}`);
-                return;
-            }
-            
-            if(id) {
-                const idx = state.entries.findIndex(x => x.id === id);
-                if(idx !== -1) state.entries[idx] = data;
-            } else state.entries.push(data);
-            
-            closeModal('entry-modal'); render();
-        };
-        const treasuryMovementFormEl = document.getElementById('treasury-movement-form');
-        if (treasuryMovementFormEl) treasuryMovementFormEl.onsubmit = async (event) => {
-            event.preventDefault();
-            const date = String(document.getElementById('treasury-mv-date')?.value || '');
-            const unit = String(document.getElementById('treasury-mv-unit')?.value || '');
-            if (!date || !unit) {
-                alert('Informe data e unidade.');
-                return;
-            }
-            const existing = (state.storeDailyMovements || []).find(item => item.date === date && item.unit === unit);
-            const payload = {
-                id: existing ? existing.id : generateId(),
-                date,
-                unit,
-                cashIn: toMoneyNumber(document.getElementById('treasury-mv-cash')?.value),
-                cardIn: toMoneyNumber(document.getElementById('treasury-mv-card')?.value),
-                paymentsOut: toMoneyNumber(document.getElementById('treasury-mv-payments')?.value),
-                notes: String(document.getElementById('treasury-mv-notes')?.value || '').trim()
-            };
-            const saveResult = await cloudSave('storeDailyMovements', payload);
-            if (!saveResult?.ok) {
-                alert(`Não foi possível salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                return;
-            }
-            if (existing) state.storeDailyMovements = state.storeDailyMovements.map(item => item.id === existing.id ? payload : item);
-            else state.storeDailyMovements.push(payload);
-            renderTreasury();
-        };
-        const treasuryBalanceFormEl = document.getElementById('treasury-balance-form');
-        if (treasuryBalanceFormEl) treasuryBalanceFormEl.onsubmit = async (event) => {
-            event.preventDefault();
-            const date = String(document.getElementById('treasury-bal-date')?.value || '');
-            const accountId = String(document.getElementById('treasury-bal-account')?.value || '');
-            if (!date || !accountId) {
-                alert('Informe data e conta.');
-                return;
-            }
-            const existing = (state.dailyBalances || []).find(item => item.date === date && item.accountId === accountId);
-            const payload = {
-                id: existing ? existing.id : generateId(),
-                date,
-                accountId,
-                balance: toMoneyNumber(document.getElementById('treasury-bal-value')?.value),
-                notes: String(document.getElementById('treasury-bal-notes')?.value || '').trim()
-            };
-            const saveResult = await cloudSave('dailyBalances', payload);
-            if (!saveResult?.ok) {
-                alert(`Não foi possível salvar o saldo.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                return;
-            }
-            if (existing) state.dailyBalances = state.dailyBalances.map(item => item.id === existing.id ? payload : item);
-            else state.dailyBalances.push(payload);
-            renderTreasury();
-        };
-        if (treasuryMovementFormEl) treasuryMovementFormEl.onsubmit = async (event) => {
-            event.preventDefault();
-            const editId = String(document.getElementById('treasury-mv-edit-id')?.value || '');
-            const date = String(document.getElementById('treasury-mv-date')?.value || '');
-            const unit = String(document.getElementById('treasury-mv-unit')?.value || '');
-            if (!date || !unit) {
-                alert('Informe data e unidade.');
-                return;
-            }
-
-            const duplicate = (state.storeDailyMovements || []).find(item =>
-                item.date === date &&
-                item.unit === unit &&
-                String(item.id || '') !== editId
-            );
-            if (duplicate) {
-                alert('Já existe um fechamento para essa data e unidade. Edite o lançamento existente pelo histórico.');
-                return;
-            }
-
-            const existing = editId
-                ? (state.storeDailyMovements || []).find(item => String(item.id || '') === editId)
-                : null;
-            const payload = {
-                id: existing ? existing.id : generateId(),
-                date,
-                unit,
-                cashIn: toMoneyNumber(document.getElementById('treasury-mv-cash')?.value),
-                cardIn: toMoneyNumber(document.getElementById('treasury-mv-card')?.value),
-                paymentsOut: toMoneyNumber(document.getElementById('treasury-mv-payments')?.value),
-                notes: String(document.getElementById('treasury-mv-notes')?.value || '').trim()
-            };
-            const saveResult = await cloudSave('storeDailyMovements', payload);
-            if (!saveResult?.ok) {
-                alert(`Não foi possível salvar o fechamento.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                return;
-            }
-
-            if (existing) {
-                state.storeDailyMovements = state.storeDailyMovements.map(item => String(item.id || '') === String(existing.id || '') ? payload : item);
-            } else {
-                state.storeDailyMovements.push(payload);
-            }
-            resetTreasuryMovementForm({ keepDate: false });
-            renderTreasuryMovements();
-            renderTreasuryFinancialPosition();
-            renderTreasurySalesAnalytics();
-        };
-
-        function openDbModal(type, parentId = '', editItem = null) {
-            lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-            document.getElementById('db-type').value = type;
-            document.getElementById('db-parent').value = parentId;
-            document.getElementById('db-id').value = editItem ? String(editItem.id || '') : '';
-            document.getElementById('db-mode').value = editItem ? 'EDIT' : 'CREATE';
-            document.getElementById('db-name').value = editItem ? String(editItem.name || '') : '';
-            const titleEl = document.getElementById('db-modal-title');
-            const subtitleEl = document.getElementById('db-modal-subtitle');
-            const typeLabelMap = {
-                CATEGORY: 'Categoria',
-                SUBCATEGORY: 'Subcategoria',
-                DESTINATION: 'Destino',
-                ACCOUNT: 'Conta'
-            };
-            const typeLabel = typeLabelMap[type] || 'Item';
-            if (titleEl) titleEl.innerText = editItem ? `Editar ${typeLabel}` : `Novo ${typeLabel}`;
-            if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
-            const exEl = document.getElementById('db-extra');
-            if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
-                else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini" for="db-acc-balance">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
-                else exEl.innerHTML = '';
-            }
-            if (type === 'CATEGORY' && editItem) {
-                const catTypeEl = document.getElementById('db-cat-type');
-                if (catTypeEl) catTypeEl.value = editItem.type || 'SAÍDA';
-            }
-            document.getElementById('db-modal')?.classList.remove('hidden');
-            window.setTimeout(() => {
-                document.getElementById('db-name')?.focus();
-            }, 0);
-            lucide.createIcons();
-        }
-
-        document.getElementById('db-form').onsubmit = async (event) => {
-            event.preventDefault();
-            const type = document.getElementById('db-type').value;
-            const mode = document.getElementById('db-mode').value || 'CREATE';
-            const name = document.getElementById('db-name').value.trim();
-            const parent = document.getElementById('db-parent').value;
-            const id = mode === 'EDIT' ? String(document.getElementById('db-id').value || '') : generateId();
-            if(!name) return alert('Informe um nome válido.');
-            let data = null;
-            let table = '';
-            let previousItem = null;
-
-            if(type==='CATEGORY') {
-                table = 'categories';
-                previousItem = state.categories.find(item => item.id === id) || null;
-                data = {id, name, type: document.getElementById('db-cat-type').value };
-            }
-            if(type==='SUBCATEGORY') {
-                table = 'subCategories';
-                previousItem = state.subCategories.find(item => item.id === id) || null;
-                data = {id, categoryId: parent, name};
-            }
-            if(type==='DESTINATION') {
-                table = 'destinations';
-                previousItem = state.destinations.find(item => item.id === id) || null;
-                data = {id, subCategoryId: parent, name};
-            }
-            if(type==='ACCOUNT') {
-                table = 'accounts';
-                previousItem = state.accounts.find(item => item.id === id) || null;
-                data = {id, name, initialBalance: Number(document.getElementById('db-acc-balance').value) || 0};
-            }
-            
-            if (data) {
-                const saveResult = await cloudSave(table, data);
-                if (!saveResult?.ok) {
-                    alert(`Não foi possível salvar no banco de dados.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                    return;
-                }
-                if (type === 'CATEGORY' && mode === 'EDIT') {
-                    const previousType = normalizeFlowType((previousItem || {}).type);
-                    const nextType = normalizeFlowType(data.type);
-                    if (previousType && nextType && previousType !== nextType) {
-                        const syncResult = await syncEntriesWithCategoryType(id, nextType);
-                        if (!syncResult?.ok) {
-                            if (previousItem) {
-                                await cloudSave('categories', previousItem);
-                            }
-                            alert(`A categoria foi revertida porque não foi possível sincronizar o fluxo dos lançamentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
-                            await refreshCloudState({ silent: false });
-                            return;
-                        }
-                    }
-                }
-                if(type==='CATEGORY') {
-                    if (mode === 'EDIT') state.categories = state.categories.map(item => item.id === id ? data : item);
-                    else state.categories.push(data);
-                }
-                if(type==='SUBCATEGORY') {
-                    if (mode === 'EDIT') state.subCategories = state.subCategories.map(item => item.id === id ? data : item);
-                    else state.subCategories.push(data);
-                }
-                if(type==='DESTINATION') {
-                    if (mode === 'EDIT') state.destinations = state.destinations.map(item => item.id === id ? data : item);
-                    else state.destinations.push(data);
-                }
-                if(type==='ACCOUNT') {
-                    if (mode === 'EDIT') state.accounts = state.accounts.map(item => item.id === id ? data : item);
-                    else state.accounts.push(data);
-                }
-            }
-            closeModal('db-modal'); render();
-        };
-
-        async function deleteDb(type, id) {
-            if(confirm("Deseja apagar este item?")) {
-                const usageCount = getDbUsageCount(type, id);
-                if (usageCount > 0) {
-                    alert(getDbUsageDeleteMessage(type, usageCount));
-                    return;
-                }
-                let table = '';
-                if(type==='CATEGORY') table = 'categories';
-                if(type==='SUBCATEGORY') table = 'subCategories';
-                if(type==='DESTINATION') table = 'destinations';
-                if(type==='ACCOUNT') table = 'accounts';
-
-                const refreshAfterCloudMismatch = async (msg) => {
-                    alert(msg);
-                    await initCloud();
-                };
-
-                // Tenta exclusão atômica via RPC (transação única no Supabase).
-                const atomicDelete = await cloudDeleteHierarchyItem(type, id);
-                if (atomicDelete?.ok) {
-                    if(type==='CATEGORY') {
-                        const subs = state.subCategories.filter(s => s.categoryId === id).map(s => s.id);
-                        state.categories = state.categories.filter(x=>x.id!==id);
-                        state.subCategories = state.subCategories.filter(x=>x.categoryId!==id);
-                        state.destinations = state.destinations.filter(x=>!subs.includes(x.subCategoryId));
-                    }
-                    if(type==='SUBCATEGORY') {
-                        state.subCategories = state.subCategories.filter(x=>x.id!==id);
-                        state.destinations = state.destinations.filter(x=>x.subCategoryId!==id);
-                    }
-                    if(type==='DESTINATION') { state.destinations = state.destinations.filter(x=>x.id!==id); }
-                    if(type==='ACCOUNT') { state.accounts = state.accounts.filter(x=>x.id!==id); }
-                    render();
-                    return;
-                }
-                if (atomicDelete && !atomicDelete.missingRpc) {
-                    await refreshAfterCloudMismatch(`Não foi possível excluir com segurança atômica na nuvem.\n\nDetalhe: ${String(atomicDelete?.error?.message || 'Erro desconhecido.')}`);
-                    return;
-                }
-
-                if(type === 'CATEGORY') {
-                    const subs = state.subCategories.filter(s => s.categoryId === id).map(s => s.id);
-                    const dsts = state.destinations.filter(d => subs.includes(d.subCategoryId)).map(d => d.id);
-                    if (dsts.length > 0) {
-                        const dstDelete = await cloudDeleteMany('destinations', dsts);
-                        if (!dstDelete?.ok) {
-                            await refreshAfterCloudMismatch(`Não foi possível excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
-                            return;
-                        }
-                    }
-                    if (subs.length > 0) {
-                        const subDelete = await cloudDeleteMany('subCategories', subs);
-                        if (!subDelete?.ok) {
-                            await refreshAfterCloudMismatch(`Não foi possível excluir as subcategorias vinculadas.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
-                            return;
-                        }
-                    }
-                    const categoryDelete = await cloudDelete('categories', id);
-                    if (!categoryDelete?.ok) {
-                        await refreshAfterCloudMismatch(`Não foi possível excluir a categoria.\n\nDetalhe: ${String(categoryDelete?.error?.message || 'Erro desconhecido.')}`);
-                        return;
-                    }
-                    state.categories = state.categories.filter(x=>x.id!==id);
-                    state.subCategories = state.subCategories.filter(x=>x.categoryId!==id);
-                    state.destinations = state.destinations.filter(x=>!subs.includes(x.subCategoryId));
-                    render();
-                    return;
-                }
-
-                if(type === 'SUBCATEGORY') {
-                    const dsts = state.destinations.filter(d => d.subCategoryId === id).map(d => d.id);
-                    if (dsts.length > 0) {
-                        const dstDelete = await cloudDeleteMany('destinations', dsts);
-                        if (!dstDelete?.ok) {
-                            await refreshAfterCloudMismatch(`Não foi possível excluir os destinos vinculados.\n\nDetalhe: ${String(dstDelete?.error?.message || 'Erro desconhecido.')}`);
-                            return;
-                        }
-                    }
-                    const subDelete = await cloudDelete('subCategories', id);
-                    if (!subDelete?.ok) {
-                        await refreshAfterCloudMismatch(`Não foi possível excluir a subcategoria.\n\nDetalhe: ${String(subDelete?.error?.message || 'Erro desconhecido.')}`);
-                        return;
-                    }
-                    state.subCategories = state.subCategories.filter(x=>x.id!==id);
-                    state.destinations = state.destinations.filter(x=>x.subCategoryId!==id);
-                    render();
-                    return;
-                }
-
-                const result = await cloudDelete(table, id);
-                if (!result?.ok) {
-                    alert(`Não foi possível excluir.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
-                    return;
-                }
-
-                if(type==='DESTINATION') { state.destinations = state.destinations.filter(x=>x.id!==id); }
-                if(type==='ACCOUNT') { state.accounts = state.accounts.filter(x=>x.id!==id); }
-
-                render();
-            }
-        }
-
-        const mf = document.getElementById('monthly-filter');
-        if(mf) mf.value = getCurrentMonthIso();
-        window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
-        window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
-        document.addEventListener('keydown', (event) => {
-            if (event.key !== 'Escape') return;
-            if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
-            if (!document.getElementById('db-modal')?.classList.contains('hidden')) closeModal('db-modal');
-        });
-        document.addEventListener('mousedown', (event) => {
-            const shell = document.querySelector('#entry-modal .combobox-shell');
-            if (!shell || shell.contains(event.target)) return;
-            closeDestinationCombobox();
-        });
-        window.addEventListener('load', initPiggyMicroInteractions);
-        window.addEventListener('focus', () => { refreshCloudState({ silent: true }); });
-        window.addEventListener('online', () => { refreshCloudState({ silent: true }); });
-        window.onload = async () => {
-            initCustomDatePickers();
-            await initCloud();
-            if (cloudRefreshTimer) clearInterval(cloudRefreshTimer);
-            cloudRefreshTimer = window.setInterval(() => {
-                refreshCloudState({ silent: true });
-            }, 30000);
-        };
-    </script>
-</body>
-</html>
-
-
-
