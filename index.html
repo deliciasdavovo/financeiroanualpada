@@ -2761,6 +2761,7 @@
                             </div>
                         </div>
                     </div>
+                    <div id="annual-hierarchy-detail"></div>
                 </div>
             </div>
 
@@ -3089,6 +3090,12 @@
                             </select>
                             <p id="form-repeat-frequency-help" class="field-help">Define o tipo de intervalo para os próximos lançamentos.</p>
                             <p id="form-repeat-frequency-error" class="field-error hidden" role="alert"></p>
+                        </div>
+                        <div>
+                            <label for="form-repeat-interval" class="label-mini">A cada</label>
+                            <input type="number" id="form-repeat-interval" min="1" max="120" step="1" value="1" aria-describedby="form-repeat-interval-help form-repeat-interval-error">
+                            <p id="form-repeat-interval-help" class="field-help">Ex.: 2 mensalmente cria repetição a cada 2 meses.</p>
+                            <p id="form-repeat-interval-error" class="field-error hidden" role="alert"></p>
                         </div>
                         <div>
                             <label for="form-repeat-count" class="label-mini">Quantas vezes</label>
@@ -4463,6 +4470,10 @@
             const meta = getEntryDestinationMeta(entry);
             return [meta.category, meta.subCategory].filter(Boolean).join(' • ');
         }
+        function getAccountNameById(accountId) {
+            const account = state.accounts.find(a => String((a || {}).id || '') === String(accountId || ''));
+            return String((account || {}).name || '').trim() || 'Sem conta';
+        }
         function isCapitalContributionEntry(entry) {
             return getEntryHierarchyNames(entry).some(isCapitalContributionName);
         }
@@ -4507,9 +4518,137 @@
                     valor: Number(e.amount) || 0,
                     data: e.date || '',
                     status: e.status || 'REALIZADO',
-                    descricao: e.description || ''
+                    descricao: e.description || '',
+                    conta: getAccountNameById(e.accountId)
                 };
             });
+        }
+        function buildHierarchicalLaunchList(items, totalBase = 0, options = {}) {
+            const safeItems = Array.isArray(items) ? items : [];
+            const total = Number(totalBase) || safeItems.reduce((acc, item) => acc + (Number(item.valor) || 0), 0);
+            if(!safeItems.length) {
+                return `<div class="hm-empty">${escapeHtml(options.emptyMessage || 'Nenhum lançamento encontrado.')}</div>`;
+            }
+            return `<div class="hm-launch-list">
+                ${safeItems.map(item => {
+                    const percentual = total > 0 ? ((Number(item.valor) || 0) / total) * 100 : 0;
+                    const cor = item.tipo === 'saida' ? 'hm-flow-saida' : 'hm-flow-entrada';
+                    const corBg = item.tipo === 'saida' ? 'hm-flow-saida-bg' : 'hm-flow-entrada-bg';
+                    return `
+                        <div class="hm-launch-item">
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div>
+                                    <p class="text-[11px] font-black text-slate-900 uppercase">${escapeHtml(item.destino || options.defaultDestination || 'Sem destino')}</p>
+                                    <p class="text-[11px] text-slate-500">${formatDateBRV2(item.data)}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[11px] font-black ${cor}">${formatBRL(item.valor)}</p>
+                                    <p class="text-[10px] text-slate-500">${item.tipo === 'entrada' ? 'Entrada' : 'Saída'} • ${escapeHtml(item.status || 'REALIZADO')}</p>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-slate-600">${escapeHtml(item.descricao || '-')}</p>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.04em]">Banco / Conta: ${escapeHtml(item.conta || 'Sem conta')}</p>
+                            <div class="flex items-center justify-between text-[11px] mb-2 mt-3">
+                                <span class="text-slate-500">Participação no total</span>
+                                <span class="font-bold text-slate-700">${formatPercentual(percentual)}</span>
+                            </div>
+                            <div class="hm-progress-track">
+                                <div class="hm-progress-fill ${corBg}" style="width:${Math.min(percentual, 100)}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>`;
+        }
+        function renderAnnualHierarchyDetail(entries) {
+            const host = document.getElementById('annual-hierarchy-detail');
+            if(!host) return;
+            const baseEntries = (Array.isArray(entries) ? entries : []).map(e => {
+                const dst = state.destinations.find(d => String((d || {}).id || '') === String((e || {}).destinationId || ''));
+                const sub = state.subCategories.find(s => String((s || {}).id || '') === String((dst || {}).subCategoryId || (e || {}).subCategoryId || ''));
+                const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || (e || {}).categoryId || ''));
+                return {
+                    categoria: String((cat || {}).name || 'Sem categoria'),
+                    subcategoria: String((sub || {}).name || 'Sem subcategoria'),
+                    destino: String((dst || {}).name || 'Sem destino'),
+                    valor: Number((e || {}).amount || 0) || 0,
+                    data: String((e || {}).date || ''),
+                    descricao: String((e || {}).description || ''),
+                    status: String((e || {}).status || 'REALIZADO'),
+                    tipo: normalizeFlowType((e || {}).type) === 'ENTRADA' ? 'entrada' : 'saida',
+                    conta: getAccountNameById((e || {}).accountId)
+                };
+            });
+            if(!baseEntries.length) {
+                host.innerHTML = `<div class="hm-empty">Nenhum lançamento encontrado para o detalhamento atual.</div>`;
+                return;
+            }
+            const grouped = new Map();
+            baseEntries.forEach((item) => {
+                if(!grouped.has(item.categoria)) grouped.set(item.categoria, { total: 0, count: 0, subs: new Map() });
+                const catRef = grouped.get(item.categoria);
+                catRef.total += item.valor;
+                catRef.count += 1;
+                if(!catRef.subs.has(item.subcategoria)) catRef.subs.set(item.subcategoria, { total: 0, count: 0, destinos: new Map() });
+                const subRef = catRef.subs.get(item.subcategoria);
+                subRef.total += item.valor;
+                subRef.count += 1;
+                if(!subRef.destinos.has(item.destino)) subRef.destinos.set(item.destino, { total: 0, count: 0, items: [] });
+                const dstRef = subRef.destinos.get(item.destino);
+                dstRef.total += item.valor;
+                dstRef.count += 1;
+                dstRef.items.push(item);
+            });
+            const detailsHtml = Array.from(grouped.entries()).sort((a, b) => b[1].total - a[1].total).map(([categoria, catData]) => {
+                const subsHtml = Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total).map(([subcategoria, subData]) => {
+                    const destinosHtml = Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total).map(([destino, dstData]) => {
+                        const launchItems = [...dstData.items].sort((a, b) => (b.data || '').localeCompare(a.data || '') || ((Number(b.valor) || 0) - (Number(a.valor) || 0)));
+                        return `<details class="mdetails-level mdetails-l3">
+                            <summary>
+                                <span class="mdetails-title">${escapeHtml(destino)}</span>
+                                <span class="mdetails-meta">${formatBRL(dstData.total)} • ${dstData.count} lanç.</span>
+                            </summary>
+                            <div class="mdetails-inner">
+                                <div class="mdetails-launches">
+                                    ${launchItems.map(item => `
+                                        <div class="mdetails-launch-item">
+                                            <div class="mdetails-launch-date">${formatDateBRV2(item.data)}</div>
+                                            <div>
+                                                <div class="mdetails-launch-desc">${escapeHtml(item.descricao || '-')}</div>
+                                                <div class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.04em]">${escapeHtml(item.conta || 'Sem conta')}</div>
+                                            </div>
+                                            <div class="mdetails-launch-value ${item.tipo === 'saida' ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(item.valor)}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </details>`;
+                    }).join('');
+                    return `<details class="mdetails-level mdetails-l2">
+                        <summary>
+                            <span class="mdetails-title">${escapeHtml(subcategoria)}</span>
+                            <span class="mdetails-meta">${formatBRL(subData.total)} • ${subData.count} lanç.</span>
+                        </summary>
+                        <div class="mdetails-inner">${destinosHtml}</div>
+                    </details>`;
+                }).join('');
+                return `<details class="mdetails-level">
+                    <summary>
+                        <span class="mdetails-title">${escapeHtml(categoria)}</span>
+                        <span class="mdetails-meta">${formatBRL(catData.total)} • ${catData.count} lanç.</span>
+                    </summary>
+                    <div class="mdetails-inner">${subsHtml}</div>
+                </details>`;
+            }).join('');
+            host.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-sm font-black text-slate-900">Detalhamento Hierárquico</h4>
+                        <p class="text-[11px] text-slate-500 mt-1">Abra categoria, subcategoria e destino para ver descrição e banco/conta no último nível.</p>
+                    </div>
+                    <div class="mdetails-wrap">${detailsHtml}</div>
+                </div>
+            `;
         }
         function applyMonthlySelectionFiltersToEntries(entries) {
             return (entries || []).filter(e => {
@@ -4642,6 +4781,11 @@
                 .filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada && d.destino === destinoSelecionado)
                 .sort((a, b) => (b.data || '').localeCompare(a.data || '') || b.valor - a.valor);
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
+            content.innerHTML = buildHierarchicalLaunchList(filtrado, totalMes, {
+                emptyMessage: 'Nenhum lançamento encontrado para este destino.',
+                defaultDestination: destinoSelecionado || 'Sem destino'
+            });
+            return;
             if(filtrado.length === 0) {
                 content.innerHTML = `<div class="hm-empty">Nenhum lançamento encontrado para este destino.</div>`;
                 return;
@@ -7497,6 +7641,7 @@
             );
             if(navParts.length) summaryEl.innerText += ` Filtro: ${navParts.filter(Boolean).join(' > ')}.`;
             if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
+            renderAnnualHierarchyDetail(filtered);
 
             if(values.every(v => v === 0)) {
                 tableBody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
@@ -9013,7 +9158,7 @@
         }
 
         function clearEntryFormErrors() {
-            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status', 'form-repeat-frequency', 'form-repeat-count'].forEach((id) => setEntryFieldError(id, ''));
+            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status', 'form-repeat-frequency', 'form-repeat-interval', 'form-repeat-count'].forEach((id) => setEntryFieldError(id, ''));
             setEntryFormFeedback('');
         }
 
@@ -9029,17 +9174,20 @@
         function updateEntryRecurrenceSummary() {
             const summaryEl = document.getElementById('entry-recurrence-summary');
             const frequencyEl = document.getElementById('form-repeat-frequency');
+            const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
-            if (!summaryEl || !frequencyEl || !countEl) return;
+            if (!summaryEl || !frequencyEl || !intervalEl || !countEl) return;
             const frequency = String(frequencyEl.value || 'NONE');
+            const interval = Number.parseInt(intervalEl.value, 10);
             const count = Number.parseInt(countEl.value, 10);
             if (frequency === 'NONE') {
                 summaryEl.innerText = 'Sem recorrência. Apenas este lançamento será salvo.';
                 return;
             }
             const label = getRecurringFrequencyLabel(frequency);
+            const safeInterval = Number.isFinite(interval) && interval > 0 ? interval : 1;
             const safeCount = Number.isFinite(count) && count > 0 ? count : 1;
-            summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), com repetição em ${label}.`;
+            summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), repetindo a cada ${safeInterval} ${label}.`;
         }
 
         function syncEntryRecurrenceToggleUI() {
@@ -9058,12 +9206,14 @@
 
         function toggleEntryRecurrenceMode(enabled) {
             const frequencyEl = document.getElementById('form-repeat-frequency');
+            const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
-            if (!frequencyEl || !countEl) return;
+            if (!frequencyEl || !intervalEl || !countEl) return;
             const currentFrequency = String(frequencyEl.value || 'NONE');
             if (enabled) {
                 const lastFrequency = String(frequencyEl.dataset.lastFrequency || 'MONTH');
                 frequencyEl.value = currentFrequency !== 'NONE' ? currentFrequency : lastFrequency;
+                if (!intervalEl.value || Number(intervalEl.value) <= 0) intervalEl.value = '1';
                 if (!countEl.value || Number(countEl.value) <= 0) countEl.value = '1';
             } else {
                 if (currentFrequency !== 'NONE') frequencyEl.dataset.lastFrequency = currentFrequency;
@@ -9072,16 +9222,19 @@
             syncEntryRecurrenceToggleUI();
             updateEntryRecurrenceSummary();
             setEntryFieldError('form-repeat-frequency', '');
+            setEntryFieldError('form-repeat-interval', '');
             setEntryFieldError('form-repeat-count', '');
         }
 
         function updateEntryRecurrenceVisibility(isEditing = false) {
             const blockEl = document.getElementById('entry-recurrence-block');
             const frequencyEl = document.getElementById('form-repeat-frequency');
+            const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
-            if (!blockEl || !frequencyEl || !countEl) return;
+            if (!blockEl || !frequencyEl || !intervalEl || !countEl) return;
             blockEl.classList.remove('hidden');
             frequencyEl.disabled = false;
+            intervalEl.disabled = false;
             countEl.disabled = false;
             blockEl.dataset.editing = isEditing ? 'true' : 'false';
             syncEntryRecurrenceToggleUI();
@@ -9111,15 +9264,16 @@
             return formatLocalDate(nextDate);
         }
 
-        function buildRecurringEntries(baseEntry, frequency, count) {
+        function buildRecurringEntries(baseEntry, frequency, interval, count) {
             const items = [];
+            const safeInterval = Number.parseInt(interval, 10);
             const safeCount = Number.parseInt(count, 10);
-            if (!baseEntry || frequency === 'NONE' || !Number.isFinite(safeCount) || safeCount <= 0) return items;
+            if (!baseEntry || frequency === 'NONE' || !Number.isFinite(safeInterval) || safeInterval <= 0 || !Number.isFinite(safeCount) || safeCount <= 0) return items;
             for (let i = 1; i <= safeCount; i += 1) {
                 items.push({
                     ...baseEntry,
                     id: generateId(),
-                    date: shiftRecurringDate(baseEntry.date, frequency, i),
+                    date: shiftRecurringDate(baseEntry.date, frequency, i * safeInterval),
                     status: 'PENDENTE'
                 });
             }
@@ -9165,8 +9319,9 @@
             const descEl = document.getElementById('form-desc');
             const statusEl = document.getElementById('form-status');
             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
+            const repeatIntervalEl = document.getElementById('form-repeat-interval');
             const repeatCountEl = document.getElementById('form-repeat-count');
-            if (!dateEl || !valueEl || !dstEl || !accEl || !descEl || !statusEl || !repeatFrequencyEl || !repeatCountEl) {
+            if (!dateEl || !valueEl || !dstEl || !accEl || !descEl || !statusEl || !repeatFrequencyEl || !repeatIntervalEl || !repeatCountEl) {
                 return { valid: false, firstInvalidId: null };
             }
 
@@ -9177,6 +9332,7 @@
             const description = String(descEl.value || '').trim();
             const status = String(statusEl.value || '');
             const repeatFrequency = String(repeatFrequencyEl.value || 'NONE');
+            const repeatInterval = Number.parseInt(repeatIntervalEl.value, 10);
             const repeatCount = Number.parseInt(repeatCountEl.value, 10);
             const errors = {};
 
@@ -9190,6 +9346,8 @@
             if (status !== 'REALIZADO' && status !== 'PENDENTE') errors['form-status'] = 'Escolha um status válido.';
             if (!['NONE', 'DAY', 'WEEK', 'MONTH', 'YEAR'].includes(repeatFrequency)) errors['form-repeat-frequency'] = 'Escolha um período de repetição válido.';
             if (repeatFrequency !== 'NONE') {
+                if (!Number.isFinite(repeatInterval) || repeatInterval <= 0) errors['form-repeat-interval'] = 'Informe de quanto em quanto o lançamento deve se repetir.';
+                else if (repeatInterval > 120) errors['form-repeat-interval'] = 'Limite de 120 períodos por repetição.';
                 if (!Number.isFinite(repeatCount) || repeatCount <= 0) errors['form-repeat-count'] = 'Informe quantos lançamentos futuros devem ser criados.';
                 else if (repeatCount > 120) errors['form-repeat-count'] = 'Limite de 120 lançamentos futuros por vez.';
             }
@@ -9205,7 +9363,7 @@
             return {
                 valid: Object.keys(errors).length === 0,
                 firstInvalidId: Object.keys(errors)[0] || null,
-                values: { date, amount, destinationId, accountId, description, status, repeatFrequency, repeatCount }
+                values: { date, amount, destinationId, accountId, description, status, repeatFrequency, repeatInterval, repeatCount }
             };
         }
 
@@ -9215,14 +9373,14 @@
             form.dataset.validationBound = '1';
             bindEntryValueMask();
 
-            ['form-date', 'form-value', 'form-dst', 'form-dst-search', 'form-acc', 'form-desc', 'form-repeat-frequency', 'form-repeat-count'].forEach((fieldId) => {
+            ['form-date', 'form-value', 'form-dst', 'form-dst-search', 'form-acc', 'form-desc', 'form-repeat-frequency', 'form-repeat-interval', 'form-repeat-count'].forEach((fieldId) => {
                 const el = document.getElementById(fieldId);
                 if (!el) return;
                 const eventName = (el.tagName === 'SELECT' || el.type === 'date') ? 'change' : 'input';
                 el.addEventListener(eventName, () => {
                     setEntryFieldError(fieldId === 'form-dst-search' ? 'form-dst' : fieldId, '');
                     const silent = validateEntryForm(false);
-                    if (fieldId === 'form-repeat-frequency' || fieldId === 'form-repeat-count') {
+                    if (fieldId === 'form-repeat-frequency' || fieldId === 'form-repeat-interval' || fieldId === 'form-repeat-count') {
                         if (fieldId === 'form-repeat-frequency') {
                             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
                             if (repeatFrequencyEl && repeatFrequencyEl.value !== 'NONE') repeatFrequencyEl.dataset.lastFrequency = repeatFrequencyEl.value;
@@ -9303,11 +9461,13 @@
             if(idEl) idEl.value = id || '';
             document.getElementById('delete-btn-modal')?.classList.toggle('hidden', !id);
             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
+            const repeatIntervalEl = document.getElementById('form-repeat-interval');
             const repeatCountEl = document.getElementById('form-repeat-count');
             if (repeatFrequencyEl) {
                 repeatFrequencyEl.value = 'NONE';
                 repeatFrequencyEl.dataset.lastFrequency = 'MONTH';
             }
+            if (repeatIntervalEl) repeatIntervalEl.value = '1';
             if (repeatCountEl) repeatCountEl.value = '1';
             populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations);
             populateDropdown('form-acc', state.accounts);
@@ -9385,6 +9545,7 @@
             const recurringEntries = buildRecurringEntries(
                 data,
                 validation.values.repeatFrequency,
+                validation.values.repeatInterval,
                 validation.values.repeatCount
             );
             const entriesToSave = [data, ...recurringEntries];
