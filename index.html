@@ -3091,15 +3091,9 @@
                             <p id="form-repeat-frequency-error" class="field-error hidden" role="alert"></p>
                         </div>
                         <div>
-                            <label for="form-repeat-interval" class="label-mini">A cada X</label>
-                            <input type="number" id="form-repeat-interval" min="1" max="120" step="1" value="1" aria-describedby="form-repeat-interval-help form-repeat-interval-error">
-                            <p id="form-repeat-interval-help" class="field-help">Ex.: 2 para repetir a cada 2 semanas ou 2 meses.</p>
-                            <p id="form-repeat-interval-error" class="field-error hidden" role="alert"></p>
-                        </div>
-                        <div>
-                            <label for="form-repeat-count" class="label-mini">Próximos pendentes</label>
+                            <label for="form-repeat-count" class="label-mini">Quantas vezes</label>
                             <input type="number" id="form-repeat-count" min="1" max="120" step="1" value="1" aria-describedby="form-repeat-count-help form-repeat-count-error">
-                            <p id="form-repeat-count-help" class="field-help">Quantidade de lançamentos futuros criados como pendentes.</p>
+                            <p id="form-repeat-count-help" class="field-help">Quantidade de lançamentos futuros que serão criados como pendentes.</p>
                             <p id="form-repeat-count-error" class="field-error hidden" role="alert"></p>
                         </div>
                     </div>
@@ -5922,6 +5916,44 @@
             );
         }
 
+        function getStableEntryIndex(entryId) {
+            const safeId = String(entryId || '');
+            if (!safeId) return Number.MAX_SAFE_INTEGER;
+            const index = (state.entries || []).findIndex((entry) => String((entry || {}).id || '') === safeId);
+            return index >= 0 ? index : Number.MAX_SAFE_INTEGER;
+        }
+
+        function compareEntries(a, b) {
+            if (!a || !b) return 0;
+            const field = String(currentSort.field || 'date');
+            const order = currentSort.order === 'asc' ? 'asc' : 'desc';
+            const multiplier = order === 'asc' ? 1 : -1;
+            let primary = 0;
+
+            if (field === 'date') {
+                primary = String(a.date || '').localeCompare(String(b.date || ''));
+            } else if (field === 'amount') {
+                primary = (Number(a.amount) || 0) - (Number(b.amount) || 0);
+            } else {
+                primary = String(a[field] || '').localeCompare(String(b[field] || ''));
+            }
+
+            if (primary !== 0) return primary * multiplier;
+
+            const stableIndexDiff = getStableEntryIndex(a.id) - getStableEntryIndex(b.id);
+            if (stableIndexDiff !== 0) return stableIndexDiff;
+
+            return String(a.id || '').localeCompare(String(b.id || ''));
+        }
+
+        function selectEntryDestinationText(entryId) {
+            const inputEl = document.getElementById(`entry-dst-${entryId}`);
+            if (!inputEl || typeof inputEl.select !== 'function') return;
+            window.requestAnimationFrame(() => {
+                inputEl.select();
+            });
+        }
+
         function refreshEntryRowInlineUI(entryId) {
             const entry = state.entries.find(e => String(e.id || '') === String(entryId || ''));
             if (!entry) return;
@@ -6183,12 +6215,21 @@
             clearEntryDestinationComboboxBlurTimer();
             const inputEl = document.getElementById(`entry-dst-${entryId}`);
             openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+            selectEntryDestinationText(entryId);
         }
         function handleEntryDestinationClick(entryId, event) {
             if (event) event.stopPropagation();
             clearEntryDestinationComboboxBlurTimer();
             const inputEl = document.getElementById(`entry-dst-${entryId}`);
             openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+            selectEntryDestinationText(entryId);
+        }
+        function handleEntryDestinationMouseUp(entryId, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            selectEntryDestinationText(entryId);
         }
         async function handleEntryDestinationBlur(entryId) {
             clearEntryDestinationComboboxBlurTimer();
@@ -6867,12 +6908,7 @@
                 }
             }
 
-            filtered.sort((a, b) => {
-                const vA = a[currentSort.field];
-                const vB = b[currentSort.field];
-                if (currentSort.field === 'date') return currentSort.order === 'asc' ? (vA || '').localeCompare(vB || '') : (vB || '').localeCompare(vA || '');
-                return currentSort.order === 'asc' ? (vA || 0) - (vB || 0) : (vB || 0) - (vA || 0);
-            });
+            filtered.sort(compareEntries);
 
             const sortDateEl = document.getElementById('entries-sort-date');
             const sortAmountEl = document.getElementById('entries-sort-amount');
@@ -6939,6 +6975,7 @@
                                         aria-haspopup="listbox"
                                         onclick="handleEntryDestinationClick('${e.id}', event)"
                                         onfocus="handleEntryDestinationFocus('${e.id}')"
+                                        onmouseup="handleEntryDestinationMouseUp('${e.id}', event)"
                                         oninput="event.stopPropagation(); handleEntryDestinationInput('${e.id}')"
                                         onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
                                         onblur="event.stopPropagation(); handleEntryDestinationBlur('${e.id}')"
@@ -8825,6 +8862,127 @@
             return { ok: true, changed: affectedEntries.length, error: null };
         }
 
+        function buildDbCategoryOptions(selectedId = '') {
+            const safeSelectedId = String(selectedId || '');
+            const sorted = [...(state.categories || [])].sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+            return sorted.map((item) => `<option value="${String(item.id || '')}" ${String(item.id || '') === safeSelectedId ? 'selected' : ''}>${escapeHtml(String(item.name || ''))}</option>`).join('');
+        }
+
+        function buildDbSubCategoryOptions(categoryId = '', selectedId = '') {
+            const safeCategoryId = String(categoryId || '');
+            const safeSelectedId = String(selectedId || '');
+            const sorted = [...(state.subCategories || [])]
+                .filter((item) => !safeCategoryId || String((item || {}).categoryId || '') === safeCategoryId)
+                .sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+            return sorted.map((item) => `<option value="${String(item.id || '')}" ${String(item.id || '') === safeSelectedId ? 'selected' : ''}>${escapeHtml(String(item.name || ''))}</option>`).join('');
+        }
+
+        function syncDbSubCategoryParentField() {
+            const categoryEl = document.getElementById('db-subcategory-category');
+            const parentEl = document.getElementById('db-parent');
+            if (!categoryEl || !parentEl) return;
+            parentEl.value = String(categoryEl.value || '');
+        }
+
+        function syncDbDestinationParentField() {
+            const categoryEl = document.getElementById('db-destination-category');
+            const subCategoryEl = document.getElementById('db-destination-subcategory');
+            const parentEl = document.getElementById('db-parent');
+            if (!subCategoryEl || !parentEl) return;
+
+            const requestedCategoryId = String(categoryEl?.value || '');
+            const previousSubCategoryId = String(subCategoryEl.value || '');
+            const optionsMarkup = buildDbSubCategoryOptions(requestedCategoryId, previousSubCategoryId);
+            subCategoryEl.innerHTML = optionsMarkup || '<option value="">Nenhuma subcategoria disponível</option>';
+
+            const availableValues = Array.from(subCategoryEl.options || []).map((option) => String(option.value || ''));
+            if (!availableValues.includes(previousSubCategoryId)) {
+                subCategoryEl.value = availableValues[0] || '';
+            }
+            parentEl.value = String(subCategoryEl.value || '');
+        }
+
+        async function syncEntriesWithSubCategoryMove(subCategoryId, nextCategoryId) {
+            const subCategoryIdStr = String(subCategoryId || '');
+            const categoryIdStr = String(nextCategoryId || '');
+            if (!subCategoryIdStr || !categoryIdStr) return { ok: true, changed: 0, error: null };
+            const nextCategory = state.categories.find((item) => String((item || {}).id || '') === categoryIdStr);
+            if (!nextCategory) return { ok: false, changed: 0, error: new Error('Categoria de destino não encontrada.') };
+
+            const destinationIds = new Set(
+                (state.destinations || [])
+                    .filter((item) => String((item || {}).subCategoryId || '') === subCategoryIdStr)
+                    .map((item) => String((item || {}).id || ''))
+            );
+            const normalizedType = normalizeFlowType(nextCategory.type);
+            const affectedEntries = (state.entries || []).filter((entry) => {
+                const entrySubId = String((entry.subCategoryId ?? entry.sub_category_id) || '');
+                const entryDestinationId = String((entry.destinationId ?? entry.destination_id) || '');
+                return entrySubId === subCategoryIdStr || destinationIds.has(entryDestinationId);
+            });
+            if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
+
+            const previousValues = new Map();
+            affectedEntries.forEach((entry) => {
+                previousValues.set(String(entry.id || ''), {
+                    categoryId: entry.categoryId,
+                    type: entry.type
+                });
+                entry.categoryId = categoryIdStr;
+                if (normalizedType) entry.type = normalizedType;
+            });
+
+            const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
+            if (!saveResult?.ok) {
+                affectedEntries.forEach((entry) => {
+                    const previous = previousValues.get(String(entry.id || ''));
+                    if (!previous) return;
+                    entry.categoryId = previous.categoryId;
+                    entry.type = previous.type;
+                });
+                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao sincronizar lançamentos da subcategoria.') };
+            }
+            return { ok: true, changed: affectedEntries.length, error: null };
+        }
+
+        async function syncEntriesWithDestinationMove(destinationId, nextSubCategoryId) {
+            const destinationIdStr = String(destinationId || '');
+            const nextSubCategoryIdStr = String(nextSubCategoryId || '');
+            if (!destinationIdStr || !nextSubCategoryIdStr) return { ok: true, changed: 0, error: null };
+            const nextSubCategory = state.subCategories.find((item) => String((item || {}).id || '') === nextSubCategoryIdStr);
+            const nextCategory = state.categories.find((item) => String((item || {}).id || '') === String((nextSubCategory || {}).categoryId || ''));
+            if (!nextSubCategory || !nextCategory) return { ok: false, changed: 0, error: new Error('Subcategoria/categoria de destino não encontrada.') };
+
+            const normalizedType = normalizeFlowType(nextCategory.type);
+            const affectedEntries = (state.entries || []).filter((entry) => String((entry.destinationId ?? entry.destination_id) || '') === destinationIdStr);
+            if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
+
+            const previousValues = new Map();
+            affectedEntries.forEach((entry) => {
+                previousValues.set(String(entry.id || ''), {
+                    subCategoryId: entry.subCategoryId,
+                    categoryId: entry.categoryId,
+                    type: entry.type
+                });
+                entry.subCategoryId = nextSubCategoryIdStr;
+                entry.categoryId = String((nextCategory || {}).id || '');
+                if (normalizedType) entry.type = normalizedType;
+            });
+
+            const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
+            if (!saveResult?.ok) {
+                affectedEntries.forEach((entry) => {
+                    const previous = previousValues.get(String(entry.id || ''));
+                    if (!previous) return;
+                    entry.subCategoryId = previous.subCategoryId;
+                    entry.categoryId = previous.categoryId;
+                    entry.type = previous.type;
+                });
+                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao sincronizar lançamentos do destino.') };
+            }
+            return { ok: true, changed: affectedEntries.length, error: null };
+        }
+
         function setEntryFormFeedback(message = '') {
             const feedbackEl = document.getElementById('entry-form-feedback');
             if (!feedbackEl) return;
@@ -8855,7 +9013,7 @@
         }
 
         function clearEntryFormErrors() {
-            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status', 'form-repeat-frequency', 'form-repeat-interval', 'form-repeat-count'].forEach((id) => setEntryFieldError(id, ''));
+            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status', 'form-repeat-frequency', 'form-repeat-count'].forEach((id) => setEntryFieldError(id, ''));
             setEntryFormFeedback('');
         }
 
@@ -8871,20 +9029,17 @@
         function updateEntryRecurrenceSummary() {
             const summaryEl = document.getElementById('entry-recurrence-summary');
             const frequencyEl = document.getElementById('form-repeat-frequency');
-            const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
-            if (!summaryEl || !frequencyEl || !intervalEl || !countEl) return;
+            if (!summaryEl || !frequencyEl || !countEl) return;
             const frequency = String(frequencyEl.value || 'NONE');
-            const every = Number.parseInt(intervalEl.value, 10);
             const count = Number.parseInt(countEl.value, 10);
             if (frequency === 'NONE') {
                 summaryEl.innerText = 'Sem recorrência. Apenas este lançamento será salvo.';
                 return;
             }
             const label = getRecurringFrequencyLabel(frequency);
-            const safeEvery = Number.isFinite(every) && every > 0 ? every : 1;
             const safeCount = Number.isFinite(count) && count > 0 ? count : 1;
-            summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), repetindo a cada ${safeEvery} ${label}.`;
+            summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), com repetição em ${label}.`;
         }
 
         function syncEntryRecurrenceToggleUI() {
@@ -8903,14 +9058,12 @@
 
         function toggleEntryRecurrenceMode(enabled) {
             const frequencyEl = document.getElementById('form-repeat-frequency');
-            const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
-            if (!frequencyEl || !intervalEl || !countEl) return;
+            if (!frequencyEl || !countEl) return;
             const currentFrequency = String(frequencyEl.value || 'NONE');
             if (enabled) {
                 const lastFrequency = String(frequencyEl.dataset.lastFrequency || 'MONTH');
                 frequencyEl.value = currentFrequency !== 'NONE' ? currentFrequency : lastFrequency;
-                if (!intervalEl.value || Number(intervalEl.value) <= 0) intervalEl.value = '1';
                 if (!countEl.value || Number(countEl.value) <= 0) countEl.value = '1';
             } else {
                 if (currentFrequency !== 'NONE') frequencyEl.dataset.lastFrequency = currentFrequency;
@@ -8919,19 +9072,16 @@
             syncEntryRecurrenceToggleUI();
             updateEntryRecurrenceSummary();
             setEntryFieldError('form-repeat-frequency', '');
-            setEntryFieldError('form-repeat-interval', '');
             setEntryFieldError('form-repeat-count', '');
         }
 
         function updateEntryRecurrenceVisibility(isEditing = false) {
             const blockEl = document.getElementById('entry-recurrence-block');
             const frequencyEl = document.getElementById('form-repeat-frequency');
-            const intervalEl = document.getElementById('form-repeat-interval');
             const countEl = document.getElementById('form-repeat-count');
-            if (!blockEl || !frequencyEl || !intervalEl || !countEl) return;
+            if (!blockEl || !frequencyEl || !countEl) return;
             blockEl.classList.remove('hidden');
             frequencyEl.disabled = false;
-            intervalEl.disabled = false;
             countEl.disabled = false;
             blockEl.dataset.editing = isEditing ? 'true' : 'false';
             syncEntryRecurrenceToggleUI();
@@ -8961,16 +9111,15 @@
             return formatLocalDate(nextDate);
         }
 
-        function buildRecurringEntries(baseEntry, frequency, interval, count) {
+        function buildRecurringEntries(baseEntry, frequency, count) {
             const items = [];
             const safeCount = Number.parseInt(count, 10);
-            const safeInterval = Number.parseInt(interval, 10);
-            if (!baseEntry || frequency === 'NONE' || !Number.isFinite(safeCount) || safeCount <= 0 || !Number.isFinite(safeInterval) || safeInterval <= 0) return items;
+            if (!baseEntry || frequency === 'NONE' || !Number.isFinite(safeCount) || safeCount <= 0) return items;
             for (let i = 1; i <= safeCount; i += 1) {
                 items.push({
                     ...baseEntry,
                     id: generateId(),
-                    date: shiftRecurringDate(baseEntry.date, frequency, safeInterval * i),
+                    date: shiftRecurringDate(baseEntry.date, frequency, i),
                     status: 'PENDENTE'
                 });
             }
@@ -9016,9 +9165,8 @@
             const descEl = document.getElementById('form-desc');
             const statusEl = document.getElementById('form-status');
             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
-            const repeatIntervalEl = document.getElementById('form-repeat-interval');
             const repeatCountEl = document.getElementById('form-repeat-count');
-            if (!dateEl || !valueEl || !dstEl || !accEl || !descEl || !statusEl || !repeatFrequencyEl || !repeatIntervalEl || !repeatCountEl) {
+            if (!dateEl || !valueEl || !dstEl || !accEl || !descEl || !statusEl || !repeatFrequencyEl || !repeatCountEl) {
                 return { valid: false, firstInvalidId: null };
             }
 
@@ -9029,7 +9177,6 @@
             const description = String(descEl.value || '').trim();
             const status = String(statusEl.value || '');
             const repeatFrequency = String(repeatFrequencyEl.value || 'NONE');
-            const repeatInterval = Number.parseInt(repeatIntervalEl.value, 10);
             const repeatCount = Number.parseInt(repeatCountEl.value, 10);
             const errors = {};
 
@@ -9043,7 +9190,6 @@
             if (status !== 'REALIZADO' && status !== 'PENDENTE') errors['form-status'] = 'Escolha um status válido.';
             if (!['NONE', 'DAY', 'WEEK', 'MONTH', 'YEAR'].includes(repeatFrequency)) errors['form-repeat-frequency'] = 'Escolha um período de repetição válido.';
             if (repeatFrequency !== 'NONE') {
-                if (!Number.isFinite(repeatInterval) || repeatInterval <= 0) errors['form-repeat-interval'] = 'Informe um intervalo maior que zero.';
                 if (!Number.isFinite(repeatCount) || repeatCount <= 0) errors['form-repeat-count'] = 'Informe quantos lançamentos futuros devem ser criados.';
                 else if (repeatCount > 120) errors['form-repeat-count'] = 'Limite de 120 lançamentos futuros por vez.';
             }
@@ -9059,7 +9205,7 @@
             return {
                 valid: Object.keys(errors).length === 0,
                 firstInvalidId: Object.keys(errors)[0] || null,
-                values: { date, amount, destinationId, accountId, description, status, repeatFrequency, repeatInterval, repeatCount }
+                values: { date, amount, destinationId, accountId, description, status, repeatFrequency, repeatCount }
             };
         }
 
@@ -9069,14 +9215,14 @@
             form.dataset.validationBound = '1';
             bindEntryValueMask();
 
-            ['form-date', 'form-value', 'form-dst', 'form-dst-search', 'form-acc', 'form-desc', 'form-repeat-frequency', 'form-repeat-interval', 'form-repeat-count'].forEach((fieldId) => {
+            ['form-date', 'form-value', 'form-dst', 'form-dst-search', 'form-acc', 'form-desc', 'form-repeat-frequency', 'form-repeat-count'].forEach((fieldId) => {
                 const el = document.getElementById(fieldId);
                 if (!el) return;
                 const eventName = (el.tagName === 'SELECT' || el.type === 'date') ? 'change' : 'input';
                 el.addEventListener(eventName, () => {
                     setEntryFieldError(fieldId === 'form-dst-search' ? 'form-dst' : fieldId, '');
                     const silent = validateEntryForm(false);
-                    if (fieldId === 'form-repeat-frequency' || fieldId === 'form-repeat-interval' || fieldId === 'form-repeat-count') {
+                    if (fieldId === 'form-repeat-frequency' || fieldId === 'form-repeat-count') {
                         if (fieldId === 'form-repeat-frequency') {
                             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
                             if (repeatFrequencyEl && repeatFrequencyEl.value !== 'NONE') repeatFrequencyEl.dataset.lastFrequency = repeatFrequencyEl.value;
@@ -9157,13 +9303,11 @@
             if(idEl) idEl.value = id || '';
             document.getElementById('delete-btn-modal')?.classList.toggle('hidden', !id);
             const repeatFrequencyEl = document.getElementById('form-repeat-frequency');
-            const repeatIntervalEl = document.getElementById('form-repeat-interval');
             const repeatCountEl = document.getElementById('form-repeat-count');
             if (repeatFrequencyEl) {
                 repeatFrequencyEl.value = 'NONE';
                 repeatFrequencyEl.dataset.lastFrequency = 'MONTH';
             }
-            if (repeatIntervalEl) repeatIntervalEl.value = '1';
             if (repeatCountEl) repeatCountEl.value = '1';
             populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations);
             populateDropdown('form-acc', state.accounts);
@@ -9241,7 +9385,6 @@
             const recurringEntries = buildRecurringEntries(
                 data,
                 validation.values.repeatFrequency,
-                validation.values.repeatInterval,
                 validation.values.repeatCount
             );
             const entriesToSave = [data, ...recurringEntries];
@@ -9386,7 +9529,28 @@
             const exEl = document.getElementById('db-extra');
             if(exEl) {
                 if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
-                else if(type === 'DESTINATION') exEl.innerHTML = `<div><label class="label-mini" for="db-destination-notes">Notas / palavras-chave</label><textarea id="db-destination-notes" rows="4" placeholder="Ex.: ifood, uber, fornecedor x, apelidos, descricoes comuns...">${escapeHtml(editItem ? String(editItem.notes || '') : '')}</textarea><p class="field-help">Opcional. Use apelidos, palavras-chave e descricoes comuns para melhorar a sugestao de destino na conciliacao.</p></div>`;
+                else if(type === 'SUBCATEGORY') exEl.innerHTML = `<div><label class="label-mini" for="db-subcategory-category">Categoria</label><select id="db-subcategory-category" onchange="syncDbSubCategoryParentField()">${buildDbCategoryOptions(parentId)}</select><p class="field-help">Ao mover a subcategoria, os lançamentos vinculados continuam ligados e têm a categoria atualizada automaticamente.</p></div>`;
+                else if(type === 'DESTINATION') {
+                    const initialSubCategoryId = String((editItem || {}).subCategoryId || parentId || '');
+                    const initialSubCategory = state.subCategories.find((item) => String((item || {}).id || '') === initialSubCategoryId);
+                    const initialCategoryId = String((initialSubCategory || {}).categoryId || '');
+                    exEl.innerHTML = `<div class="space-y-4">
+                        <div>
+                            <label class="label-mini" for="db-destination-category">Categoria</label>
+                            <select id="db-destination-category" onchange="syncDbDestinationParentField()">${buildDbCategoryOptions(initialCategoryId)}</select>
+                        </div>
+                        <div>
+                            <label class="label-mini" for="db-destination-subcategory">Subcategoria</label>
+                            <select id="db-destination-subcategory" onchange="syncDbDestinationParentField()">${buildDbSubCategoryOptions(initialCategoryId, initialSubCategoryId)}</select>
+                            <p class="field-help">Você pode mover o destino sem perder os lançamentos já vinculados.</p>
+                        </div>
+                        <div>
+                            <label class="label-mini" for="db-destination-notes">Notas / palavras-chave</label>
+                            <textarea id="db-destination-notes" rows="4" placeholder="Ex.: ifood, uber, fornecedor x, apelidos, descricoes comuns...">${escapeHtml(editItem ? String(editItem.notes || '') : '')}</textarea>
+                            <p class="field-help">Opcional. Use apelidos, palavras-chave e descricoes comuns para melhorar a sugestao de destino na conciliacao.</p>
+                        </div>
+                    </div>`;
+                }
                 else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini" for="db-acc-balance">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
                 else exEl.innerHTML = '';
             }
@@ -9394,6 +9558,8 @@
                 const catTypeEl = document.getElementById('db-cat-type');
                 if (catTypeEl) catTypeEl.value = editItem.type || 'SAÍDA';
             }
+            if (type === 'SUBCATEGORY') syncDbSubCategoryParentField();
+            if (type === 'DESTINATION') syncDbDestinationParentField();
             document.getElementById('db-modal')?.classList.remove('hidden');
             window.setTimeout(() => {
                 document.getElementById('db-name')?.focus();
@@ -9450,6 +9616,36 @@
                                 await cloudSave('categories', previousItem);
                             }
                             alert(`A categoria foi revertida porque não foi possível sincronizar o fluxo dos lançamentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
+                            await refreshCloudState({ silent: false });
+                            return;
+                        }
+                    }
+                }
+                if (type === 'SUBCATEGORY' && mode === 'EDIT') {
+                    const previousCategoryId = String((previousItem || {}).categoryId || '');
+                    const nextCategoryId = String(data.categoryId || '');
+                    if (previousCategoryId && nextCategoryId && previousCategoryId !== nextCategoryId) {
+                        const syncResult = await syncEntriesWithSubCategoryMove(id, nextCategoryId);
+                        if (!syncResult?.ok) {
+                            if (previousItem) {
+                                await cloudSave('subCategories', previousItem);
+                            }
+                            alert(`A subcategoria foi revertida porque nÃ£o foi possÃ­vel sincronizar os lanÃ§amentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
+                            await refreshCloudState({ silent: false });
+                            return;
+                        }
+                    }
+                }
+                if (type === 'DESTINATION' && mode === 'EDIT') {
+                    const previousSubCategoryId = String((previousItem || {}).subCategoryId || '');
+                    const nextSubCategoryId = String(data.subCategoryId || '');
+                    if (previousSubCategoryId && nextSubCategoryId && previousSubCategoryId !== nextSubCategoryId) {
+                        const syncResult = await syncEntriesWithDestinationMove(id, nextSubCategoryId);
+                        if (!syncResult?.ok) {
+                            if (previousItem) {
+                                await cloudSave('destinations', previousItem);
+                            }
+                            alert(`O destino foi revertido porque nÃ£o foi possÃ­vel sincronizar os lanÃ§amentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
                             await refreshCloudState({ silent: false });
                             return;
                         }
