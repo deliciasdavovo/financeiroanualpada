@@ -6378,9 +6378,8 @@
         async function handleEntryDestinationBlur(entryId) {
             clearEntryDestinationComboboxBlurTimer();
             entryDestinationComboboxState.blurTimer = setTimeout(async () => {
-                const inputEl = document.getElementById(`entry-dst-${entryId}`);
-                await commitEntryDestinationInlineInput(entryId, inputEl ? inputEl.value : '', { showAlert: false });
                 closeEntryDestinationCombobox(entryId);
+                refreshEntryRowInlineUI(entryId);
             }, 120);
         }
         function moveEntryDestinationComboboxHighlight(entryId, step) {
@@ -8025,6 +8024,11 @@
             return String(value || '').replace(/\D/g, '');
         }
 
+        function getReconDocumentDigits(value) {
+            const digits = onlyDigits(value);
+            return digits.length >= 8 ? digits : '';
+        }
+
         const RECON_STOPWORDS = new Set([
             'de', 'da', 'do', 'das', 'dos', 'para', 'por', 'com', 'sem', 'em', 'no', 'na', 'nos', 'nas',
             'pix', 'ted', 'doc', 'pagamento', 'pgto', 'transferencia', 'transfer', 'compra', 'debito', 'credito'
@@ -8065,6 +8069,23 @@
                 .map(item => normalizeReconText(item))
                 .filter(item => item.length >= 3 && !seen.has(item) && seen.add(item))
                 .sort((a, b) => b.length - a.length);
+        }
+        function getDestinationDocumentDigits(destination) {
+            const dst = destination || {};
+            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+            const candidates = [
+                (dst || {}).name || '',
+                (dst || {}).notes || '',
+                (sub || {}).name || '',
+                (cat || {}).name || ''
+            ];
+            const docs = [];
+            candidates.forEach((value) => {
+                const digits = getReconDocumentDigits(value);
+                if (digits && !docs.includes(digits)) docs.push(digits);
+            });
+            return docs;
         }
         function hasReconTokenBoundary(text, token) {
             const source = String(text || '').trim();
@@ -8125,11 +8146,29 @@
             return bestId || ((validDestinations[0] || {}).id || '');
         }
 
-        function inferDestinationFromDescription(description, validDestinations) {
+        function findConsultationDestinationId(flowType, validDestinations) {
+            const targetFlow = normalizeFlowType(flowType);
+            const list = Array.isArray(validDestinations) && validDestinations.length
+                ? validDestinations
+                : getValidDestinationsByFlow(targetFlow);
+            if (!list.length) return '';
+            const match = list.find((destination) => {
+                const nameNorm = normalizeReconText((destination || {}).name || '');
+                return nameNorm.includes('consultar') && nameNorm.includes(targetFlow === 'SAÍDA' ? 'saida' : 'entrada');
+            });
+            return String((match || {}).id || '');
+        }
+
+        function inferDestinationFromDescription(description, validDestinations, flowType = '') {
             if(!validDestinations || validDestinations.length === 0) return '';
             const descNorm = normalizeReconText(description);
+            const descDigits = getReconDocumentDigits(description);
+            const normalizedFlow = normalizeFlowType(flowType || getDestinationFlowType((validDestinations[0] || {}).id || ''));
             const preferredId = findPreferredBankSalesDestination(validDestinations);
-            if(!descNorm) return getMostFrequentDestination(validDestinations);
+            const consultationId = normalizedFlow === 'SAÍDA'
+                ? findConsultationDestinationId(normalizedFlow, validDestinations)
+                : '';
+            if(!descNorm) return consultationId || getMostFrequentDestination(validDestinations);
 
             const descTokens = new Set(tokenizeReconText(descNorm));
             const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
@@ -8141,11 +8180,19 @@
                 const nameNorm = normalizeReconText(dst.name);
                 const aliasPhrases = getDestinationAliasPhrases(dst);
                 const keywordSet = getDestinationKeywordSet(dst.id);
+                const documentDigits = getDestinationDocumentDigits(dst);
                 let score = 0;
 
                 if (nameNorm && descNorm.includes(nameNorm)) {
                     // Nome completo do destino dentro da descrição é um sinal muito forte.
                     score += 200 + nameNorm.length;
+                }
+
+                if (descDigits && documentDigits.length) {
+                    documentDigits.forEach((docDigits) => {
+                        if (descDigits === docDigits) score += 420;
+                        else if (descDigits.includes(docDigits) || docDigits.includes(descDigits)) score += 260;
+                    });
                 }
 
                 aliasPhrases.forEach(phrase => {
@@ -8201,14 +8248,27 @@
 
             let bestId = '';
             let bestScore = 0;
+            let secondBestScore = 0;
             Object.entries(combined).forEach(([destinationId, score]) => {
                 if (score > bestScore) {
+                    secondBestScore = bestScore;
                     bestScore = score;
                     bestId = destinationId;
+                } else if (score > secondBestScore) {
+                    secondBestScore = score;
                 }
             });
-            if (bestId) return bestId;
+            if (bestId) {
+                if (normalizedFlow === 'SAÍDA' && consultationId) {
+                    const scoreGap = bestScore - secondBestScore;
+                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
+                    const hasStrongCombinedEvidence = bestScore >= 140 && scoreGap >= 35;
+                    if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return consultationId;
+                }
+                return bestId;
+            }
 
+            if (consultationId) return consultationId;
             if (preferredId) return preferredId;
             return getMostFrequentDestination(validDestinations);
         }
@@ -8282,6 +8342,7 @@
 
             let description = line.slice(dateStart[0].length, amountMatch.index || line.length).trim();
             description = description.replace(/\s+\d{6,}\s*$/, '').trim(); // remove possível documento no final
+            description = line.slice(dateStart[0].length, amountMatch.index || line.length).trim();
             if (!description || /^\s*saldo\b/i.test(description)) return null;
 
             const [d, m, yRaw] = dateStart[1].split('/');
@@ -8328,7 +8389,11 @@
                 const parsedTableRow = parseBankTableRow(raw);
                 if(parsedTableRow) {
                     const typeDestinations = getValidDestinationsByFlow(parsedTableRow.type);
-                    const inferredDestinationId = inferDestinationFromDescription(parsedTableRow.description, typeDestinations.length ? typeDestinations : validDestinations);
+                    const inferredDestinationId = inferDestinationFromDescription(
+                        parsedTableRow.description,
+                        typeDestinations.length ? typeDestinations : validDestinations,
+                        parsedTableRow.type
+                    );
                     tempRecon.push({
                         id: generateId(),
                         date: parsedTableRow.date,
@@ -8393,7 +8458,11 @@
 
                     const flowType = val >= 0 ? 'ENTRADA' : 'SAÍDA';
                     const typeDestinations = getValidDestinationsByFlow(flowType);
-                    const inferredDestinationId = inferDestinationFromDescription(desc, typeDestinations.length ? typeDestinations : validDestinations);
+                    const inferredDestinationId = inferDestinationFromDescription(
+                        desc,
+                        typeDestinations.length ? typeDestinations : validDestinations,
+                        flowType
+                    );
                     tempRecon.push({ 
                         id: generateId(), 
                         date: rawDate, 
