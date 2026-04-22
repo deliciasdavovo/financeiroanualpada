@@ -3335,6 +3335,84 @@
             }));
         }
 
+        let stateLookupCache = {
+            destinationsRef: null,
+            destinationsLen: -1,
+            subCategoriesRef: null,
+            subCategoriesLen: -1,
+            categoriesRef: null,
+            categoriesLen: -1,
+            accountsRef: null,
+            accountsLen: -1,
+            maps: {
+                destinations: new Map(),
+                subCategories: new Map(),
+                categories: new Map(),
+                accounts: new Map()
+            }
+        };
+
+        function buildStateIdMap(list) {
+            return new Map((Array.isArray(list) ? list : []).map((item) => [String((item || {}).id || ''), item]));
+        }
+
+        function getStateLookupMaps() {
+            const sameRefs =
+                stateLookupCache.destinationsRef === state.destinations &&
+                stateLookupCache.subCategoriesRef === state.subCategories &&
+                stateLookupCache.categoriesRef === state.categories &&
+                stateLookupCache.accountsRef === state.accounts;
+            const sameLengths =
+                stateLookupCache.destinationsLen === (state.destinations || []).length &&
+                stateLookupCache.subCategoriesLen === (state.subCategories || []).length &&
+                stateLookupCache.categoriesLen === (state.categories || []).length &&
+                stateLookupCache.accountsLen === (state.accounts || []).length;
+
+            if (sameRefs && sameLengths) return stateLookupCache.maps;
+
+            stateLookupCache = {
+                destinationsRef: state.destinations,
+                destinationsLen: (state.destinations || []).length,
+                subCategoriesRef: state.subCategories,
+                subCategoriesLen: (state.subCategories || []).length,
+                categoriesRef: state.categories,
+                categoriesLen: (state.categories || []).length,
+                accountsRef: state.accounts,
+                accountsLen: (state.accounts || []).length,
+                maps: {
+                    destinations: buildStateIdMap(state.destinations),
+                    subCategories: buildStateIdMap(state.subCategories),
+                    categories: buildStateIdMap(state.categories),
+                    accounts: buildStateIdMap(state.accounts)
+                }
+            };
+
+            return stateLookupCache.maps;
+        }
+
+        function getDestinationById(destinationId) {
+            return getStateLookupMaps().destinations.get(String(destinationId || '')) || null;
+        }
+
+        function getSubCategoryById(subCategoryId) {
+            return getStateLookupMaps().subCategories.get(String(subCategoryId || '')) || null;
+        }
+
+        function getCategoryById(categoryId) {
+            return getStateLookupMaps().categories.get(String(categoryId || '')) || null;
+        }
+
+        function getAccountById(accountId) {
+            return getStateLookupMaps().accounts.get(String(accountId || '')) || null;
+        }
+
+        function getDestinationHierarchyById(destinationId, fallback = {}) {
+            const destination = getDestinationById(destinationId);
+            const subCategory = getSubCategoryById((destination || {}).subCategoryId || fallback.subCategoryId || fallback.sub_category_id || '');
+            const category = getCategoryById((subCategory || {}).categoryId || fallback.categoryId || fallback.category_id || '');
+            return { destination, subCategory, category };
+        }
+
         function queueRenderEntries() {
             if (entriesSearchTimer) clearTimeout(entriesSearchTimer);
             entriesSearchTimer = setTimeout(() => {
@@ -4446,9 +4524,7 @@
             return normalized.includes('aporte') && normalized.includes('capital');
         }
         function getEntryHierarchyNames(entry) {
-            const dst = state.destinations.find(d => String((d || {}).id || '') === String((entry || {}).destinationId || ''));
-            const sub = state.subCategories.find(s => String((s || {}).id || '') === String((dst || {}).subCategoryId || (entry || {}).subCategoryId || ''));
-            const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || (entry || {}).categoryId || ''));
+            const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((entry || {}).destinationId, entry || {});
             return [
                 String((cat || {}).name || ''),
                 String((sub || {}).name || ''),
@@ -4457,9 +4533,7 @@
             ].filter(Boolean);
         }
         function getEntryDestinationMeta(entry) {
-            const dst = state.destinations.find(d => String((d || {}).id || '') === String((entry || {}).destinationId || ''));
-            const sub = state.subCategories.find(s => String((s || {}).id || '') === String((dst || {}).subCategoryId || (entry || {}).subCategoryId || ''));
-            const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || (entry || {}).categoryId || ''));
+            const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((entry || {}).destinationId, entry || {});
             return {
                 destination: String((dst || {}).name || '').trim(),
                 subCategory: String((sub || {}).name || '').trim(),
@@ -4471,7 +4545,7 @@
             return [meta.category, meta.subCategory].filter(Boolean).join(' • ');
         }
         function getAccountNameById(accountId) {
-            const account = state.accounts.find(a => String((a || {}).id || '') === String(accountId || ''));
+            const account = getAccountById(accountId);
             return String((account || {}).name || '').trim() || 'Sem conta';
         }
         function isCapitalContributionEntry(entry) {
@@ -4506,9 +4580,7 @@
 
         function getMonthlyHierarchyData(entries) {
             return entries.map(e => {
-                const dst = state.destinations.find(d => d.id === e.destinationId);
-                const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-                const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+                const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((e || {}).destinationId, e || {});
                 return {
                     tipo: normalizeFlowType(e.type) === 'ENTRADA' ? 'entrada' : 'saida',
                     categoria: (cat || {}).name || 'Sem categoria',
@@ -4564,9 +4636,7 @@
             const host = document.getElementById('annual-hierarchy-detail');
             if(!host) return;
             const baseEntries = (Array.isArray(entries) ? entries : []).map(e => {
-                const dst = state.destinations.find(d => String((d || {}).id || '') === String((e || {}).destinationId || ''));
-                const sub = state.subCategories.find(s => String((s || {}).id || '') === String((dst || {}).subCategoryId || (e || {}).subCategoryId || ''));
-                const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || (e || {}).categoryId || ''));
+                const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((e || {}).destinationId, e || {});
                 return {
                     categoria: String((cat || {}).name || 'Sem categoria'),
                     subcategoria: String((sub || {}).name || 'Sem subcategoria'),
@@ -6037,7 +6107,7 @@
         }
 
         function getEntrySearchHaystack(entry) {
-            const destination = state.destinations.find(d => String((d || {}).id || '') === String((entry || {}).destinationId || ''));
+            const destination = getDestinationById((entry || {}).destinationId);
             return [
                 String((entry || {}).date || ''),
                 String((entry || {}).description || ''),
@@ -6991,6 +7061,7 @@
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
             if (!body) return;
+            closeEntryDestinationCombobox();
             const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
@@ -7063,16 +7134,27 @@
             if (entriesPage > totalPages) entriesPage = totalPages;
             const startIdx = (entriesPage - 1) * entriesPageSize;
             const pageItems = filtered.slice(startIdx, startIdx + entriesPageSize);
+            const allEntryIds = new Set((state.entries || []).map((entry) => String((entry || {}).id || '')));
+            const fallbackDestinationOptions = getValidDestinations();
+            const destinationOptionsCache = new Map();
+            const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+
+            const getDestinationOptionsForFlow = (flowType) => {
+                const normalizedFlow = normalizeFlowType(flowType);
+                if (destinationOptionsCache.has(normalizedFlow)) return destinationOptionsCache.get(normalizedFlow);
+                const byFlow = getValidDestinationsByFlow(normalizedFlow);
+                const options = byFlow.length ? byFlow : fallbackDestinationOptions;
+                destinationOptionsCache.set(normalizedFlow, options);
+                return options;
+            };
 
             updateEntriesFilterReport(filtered);
-            selectedEntryIds = new Set(Array.from(selectedEntryIds).filter((id) => state.entries.some((e) => e.id === id)));
+            selectedEntryIds = new Set(Array.from(selectedEntryIds).filter((id) => allEntryIds.has(String(id || ''))));
             updateEntriesSummaryAndSelection(pageItems);
             renderEntriesPagination(totalRecords, totalPages, pageItems.length);
 
             body.innerHTML = pageItems.map((e, i) => {
-                const dstOptionsByType = getValidDestinationsByFlow(e.type);
-                const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
-                const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
+                const dstOptions = getDestinationOptionsForFlow(e.type);
                 const destinationMainLabel = getDestinationLabelById(e.destinationId, dstOptions) || getDestinationLabelById(e.destinationId) || '-';
                 const destinationDisplayLabel = getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId) || destinationMainLabel;
                 const destinationMetaLabel = getEntryDestinationMetaLabel(e) || 'Sem classificação';
@@ -7777,17 +7859,15 @@
         function getValidDestinations() {
             return state.destinations
                 .filter(d => {
-                    const sub = state.subCategories.find(s => s.id === d.subCategoryId);
+                    const sub = getSubCategoryById(d.subCategoryId);
                     if(!sub) return false;
-                    const cat = state.categories.find(c => c.id === sub.categoryId);
+                    const cat = getCategoryById(sub.categoryId);
                     return !!cat;
                 })
                 .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
         }
         function getDestinationFlowType(destinationId) {
-            const dst = state.destinations.find(d => d.id === destinationId);
-            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+            const { category: cat } = getDestinationHierarchyById(destinationId);
             return (cat || {}).type || '';
         }
         function getValidDestinationsByFlow(flowType) {
@@ -7812,8 +7892,7 @@
         }
         function getDestinationDisplayLabel(destination) {
             const dst = destination || {};
-            const sub = state.subCategories.find(s => String((s || {}).id || '') === String(dst.subCategoryId || ''));
-            const cat = state.categories.find(c => String((c || {}).id || '') === String((sub || {}).categoryId || ''));
+            const { subCategory: sub, category: cat } = getDestinationHierarchyById(dst.subCategoryId ? dst.id : '', { subCategoryId: dst.subCategoryId });
             const parts = [
                 String((dst || {}).name || '').trim(),
                 String((sub || {}).name || '').trim(),
@@ -7862,11 +7941,15 @@
             return '';
         }
         function getDestinationLabelById(id, list = state.destinations) {
-            const match = (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
+            const match = Array.isArray(list) && list === state.destinations
+                ? getDestinationById(id)
+                : (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
             return getDestinationLabel(match);
         }
         function getDestinationDisplayLabelById(id, list = state.destinations) {
-            const match = (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
+            const match = Array.isArray(list) && list === state.destinations
+                ? getDestinationById(id)
+                : (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
             return getDestinationDisplayLabel(match);
         }
         function getSortedDestinationOptions(list = state.destinations) {
@@ -8041,17 +8124,86 @@
                 .filter(t => t.length >= 3 && !RECON_STOPWORDS.has(t));
         }
 
+        let reconDestinationMetaCache = {
+            destinationsRef: null,
+            destinationsLen: -1,
+            subCategoriesRef: null,
+            subCategoriesLen: -1,
+            categoriesRef: null,
+            categoriesLen: -1,
+            items: new Map()
+        };
+
+        function getReconDestinationMeta(destination) {
+            const dst = destination || {};
+            const destinationId = String((dst || {}).id || '');
+            if (!destinationId) {
+                const { subCategory, category } = getDestinationHierarchyById('', { subCategoryId: (dst || {}).subCategoryId });
+                const candidates = [
+                    String((dst || {}).name || ''),
+                    String((dst || {}).notes || ''),
+                    String((subCategory || {}).name || ''),
+                    String((category || {}).name || '')
+                ];
+                const docs = [];
+                candidates.forEach((value) => {
+                    const digits = getReconDocumentDigits(value);
+                    if (digits && !docs.includes(digits)) docs.push(digits);
+                });
+                return {
+                    keywordSet: new Set(tokenizeReconText(candidates.join(' '))),
+                    documentDigits: docs
+                };
+            }
+
+            const shouldReset =
+                reconDestinationMetaCache.destinationsRef !== state.destinations ||
+                reconDestinationMetaCache.destinationsLen !== (state.destinations || []).length ||
+                reconDestinationMetaCache.subCategoriesRef !== state.subCategories ||
+                reconDestinationMetaCache.subCategoriesLen !== (state.subCategories || []).length ||
+                reconDestinationMetaCache.categoriesRef !== state.categories ||
+                reconDestinationMetaCache.categoriesLen !== (state.categories || []).length;
+
+            if (shouldReset) {
+                reconDestinationMetaCache = {
+                    destinationsRef: state.destinations,
+                    destinationsLen: (state.destinations || []).length,
+                    subCategoriesRef: state.subCategories,
+                    subCategoriesLen: (state.subCategories || []).length,
+                    categoriesRef: state.categories,
+                    categoriesLen: (state.categories || []).length,
+                    items: new Map()
+                };
+            }
+
+            if (reconDestinationMetaCache.items.has(destinationId)) {
+                return reconDestinationMetaCache.items.get(destinationId);
+            }
+
+            const { subCategory, category } = getDestinationHierarchyById(destinationId, { subCategoryId: (dst || {}).subCategoryId });
+            const baseParts = [
+                String((dst || {}).name || ''),
+                String((dst || {}).notes || ''),
+                String((subCategory || {}).name || ''),
+                String((category || {}).name || '')
+            ];
+            const documentDigits = [];
+            baseParts.forEach((value) => {
+                const digits = getReconDocumentDigits(value);
+                if (digits && !documentDigits.includes(digits)) documentDigits.push(digits);
+            });
+
+            const meta = {
+                keywordSet: new Set(tokenizeReconText(baseParts.join(' '))),
+                documentDigits
+            };
+            reconDestinationMetaCache.items.set(destinationId, meta);
+            return meta;
+        }
+
         function getDestinationKeywordSet(destinationId) {
-            const dst = state.destinations.find(d => d.id === destinationId);
-            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-            const base = [
-                (dst || {}).name || '',
-                (dst || {}).notes || '',
-                (sub || {}).name || '',
-                (cat || {}).name || ''
-            ].join(' ');
-            return new Set(tokenizeReconText(base));
+            const destination = getDestinationById(destinationId);
+            return new Set(getReconDestinationMeta(destination).keywordSet);
         }
         function getDestinationAliasPhrases(destination) {
             const dst = destination || {};
@@ -8071,21 +8223,7 @@
                 .sort((a, b) => b.length - a.length);
         }
         function getDestinationDocumentDigits(destination) {
-            const dst = destination || {};
-            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
-            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-            const candidates = [
-                (dst || {}).name || '',
-                (dst || {}).notes || '',
-                (sub || {}).name || '',
-                (cat || {}).name || ''
-            ];
-            const docs = [];
-            candidates.forEach((value) => {
-                const digits = getReconDocumentDigits(value);
-                if (digits && !docs.includes(digits)) docs.push(digits);
-            });
-            return docs;
+            return [...getReconDestinationMeta(destination).documentDigits];
         }
         function hasReconTokenBoundary(text, token) {
             const source = String(text || '').trim();
@@ -8179,8 +8317,9 @@
             validDestinations.forEach(dst => {
                 const nameNorm = normalizeReconText(dst.name);
                 const aliasPhrases = getDestinationAliasPhrases(dst);
-                const keywordSet = getDestinationKeywordSet(dst.id);
-                const documentDigits = getDestinationDocumentDigits(dst);
+                const destinationMeta = getReconDestinationMeta(dst);
+                const keywordSet = destinationMeta.keywordSet;
+                const documentDigits = destinationMeta.documentDigits;
                 let score = 0;
 
                 if (nameNorm && descNorm.includes(nameNorm)) {
@@ -8215,7 +8354,7 @@
             const scoreByDestination = {};
             state.entries.forEach(entry => {
                 if(!entry || !validIds.has(entry.destinationId)) return;
-                const dst = state.destinations.find(d => d.id === entry.destinationId);
+                const dst = getDestinationById(entry.destinationId);
                 const entryText = `${entry.description || ''} ${(dst || {}).name || ''} ${(dst || {}).notes || ''}`;
                 const entryDescNorm = normalizeReconText(entryText);
                 if(!entryDescNorm) return;
