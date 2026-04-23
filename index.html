@@ -8107,9 +8107,28 @@
             return String(value || '').replace(/\D/g, '');
         }
 
-        function getReconDocumentDigits(value) {
-            const digits = onlyDigits(value);
-            return digits.length >= 8 ? digits : '';
+        function getReconDocumentDigitsList(value) {
+            const source = String(value || '');
+            if (!source) return [];
+            const docs = [];
+            const seen = new Set();
+            const pushDoc = (raw) => {
+                const digits = onlyDigits(raw);
+                if (digits.length < 11 || digits.length > 18) return;
+                if (seen.has(digits)) return;
+                seen.add(digits);
+                docs.push(digits);
+            };
+
+            // Captura blocos comuns de documentos (ex.: CPF/CNPJ com pontuação).
+            const punctuated = source.match(/\d[\d.\-\/\s]{9,}\d/g) || [];
+            punctuated.forEach(pushDoc);
+
+            // Captura sequências contínuas longas (ex.: CNPJ sem máscara).
+            const continuous = source.match(/\b\d{11,18}\b/g) || [];
+            continuous.forEach(pushDoc);
+
+            return docs;
         }
 
         const RECON_STOPWORDS = new Set([
@@ -8121,7 +8140,8 @@
             return normalizeReconText(value)
                 .split(' ')
                 .map(t => t.trim())
-                .filter(t => t.length >= 3 && !RECON_STOPWORDS.has(t));
+                .filter(t => t.length >= 3 && !RECON_STOPWORDS.has(t))
+                .filter(t => !/^\d+$/.test(t));
         }
 
         let reconDestinationMetaCache = {
@@ -8147,8 +8167,9 @@
                 ];
                 const docs = [];
                 candidates.forEach((value) => {
-                    const digits = getReconDocumentDigits(value);
-                    if (digits && !docs.includes(digits)) docs.push(digits);
+                    getReconDocumentDigitsList(value).forEach((digits) => {
+                        if (!docs.includes(digits)) docs.push(digits);
+                    });
                 });
                 return {
                     keywordSet: new Set(tokenizeReconText(candidates.join(' '))),
@@ -8189,8 +8210,9 @@
             ];
             const documentDigits = [];
             baseParts.forEach((value) => {
-                const digits = getReconDocumentDigits(value);
-                if (digits && !documentDigits.includes(digits)) documentDigits.push(digits);
+                getReconDocumentDigitsList(value).forEach((digits) => {
+                    if (!documentDigits.includes(digits)) documentDigits.push(digits);
+                });
             });
 
             const meta = {
@@ -8249,6 +8271,23 @@
             if (overlap === phraseTokens.length) return 120 + (phraseTokens.length * 18);
             return overlap * 18;
         }
+        function isInternalTransferDestination(destination) {
+            const dst = destination || {};
+            const text = normalizeReconText(`${String(dst.name || '')} ${String(dst.notes || '')}`);
+            if (!text) return false;
+            return text.includes('transferencia interna')
+                || text.includes('transferencia entre contas')
+                || text.includes('transf interna')
+                || (text.includes('transferencia') && text.includes('interna'));
+        }
+        function hasReconTransferEvidence(descNorm, descTokens) {
+            const text = String(descNorm || '');
+            if (!text) return false;
+            if (text.includes('transferencia') || text.includes('transf') || text.includes('ted') || text.includes('doc')) return true;
+            if (text.includes('entre contas') || text.includes('mesma titularidade') || text.includes('conta destino')) return true;
+            const tokenSet = descTokens instanceof Set ? descTokens : new Set(tokenizeReconText(text));
+            return tokenSet.has('transferencia') || tokenSet.has('transf') || tokenSet.has('ted') || tokenSet.has('doc');
+        }
 
         function findPreferredBankSalesDestination(validDestinations) {
             const list = Array.isArray(validDestinations) ? validDestinations : [];
@@ -8264,7 +8303,8 @@
             return String((preferred || {}).id || '');
         }
 
-        function getMostFrequentDestination(validDestinations) {
+        function getMostFrequentDestination(validDestinations, options = {}) {
+            const { avoidInternalTransfer = false } = options || {};
             const validIds = new Set((validDestinations || []).map(d => d.id));
             const counts = {};
             state.entries.forEach(entry => {
@@ -8281,6 +8321,10 @@
             });
             const preferredId = findPreferredBankSalesDestination(validDestinations);
             if (preferredId) return preferredId;
+            if (avoidInternalTransfer) {
+                const nonTransfer = (validDestinations || []).find((dst) => !isInternalTransferDestination(dst));
+                if (nonTransfer) return String(nonTransfer.id || '');
+            }
             return bestId || ((validDestinations[0] || {}).id || '');
         }
 
@@ -8300,15 +8344,16 @@
         function inferDestinationFromDescription(description, validDestinations, flowType = '') {
             if(!validDestinations || validDestinations.length === 0) return '';
             const descNorm = normalizeReconText(description);
-            const descDigits = getReconDocumentDigits(description);
+            const descDocumentDigits = getReconDocumentDigitsList(description);
             const normalizedFlow = normalizeFlowType(flowType || getDestinationFlowType((validDestinations[0] || {}).id || ''));
             const preferredId = findPreferredBankSalesDestination(validDestinations);
             const consultationId = normalizedFlow === 'SAÍDA'
                 ? findConsultationDestinationId(normalizedFlow, validDestinations)
                 : '';
-            if(!descNorm) return consultationId || getMostFrequentDestination(validDestinations);
+            if(!descNorm) return consultationId || getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true });
 
             const descTokens = new Set(tokenizeReconText(descNorm));
+            const hasTransferEvidence = hasReconTransferEvidence(descNorm, descTokens);
             const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
 
             // 1) Score direto por nome/keywords de destino
@@ -8320,6 +8365,7 @@
                 const destinationMeta = getReconDestinationMeta(dst);
                 const keywordSet = destinationMeta.keywordSet;
                 const documentDigits = destinationMeta.documentDigits;
+                const isInternalTransfer = isInternalTransferDestination(dst);
                 let score = 0;
 
                 if (nameNorm && descNorm.includes(nameNorm)) {
@@ -8327,10 +8373,16 @@
                     score += 200 + nameNorm.length;
                 }
 
-                if (descDigits && documentDigits.length) {
+                if (descDocumentDigits.length && documentDigits.length) {
                     documentDigits.forEach((docDigits) => {
-                        if (descDigits === docDigits) score += 420;
-                        else if (descDigits.includes(docDigits) || docDigits.includes(descDigits)) score += 260;
+                        descDocumentDigits.forEach((descDigits) => {
+                            if (descDigits === docDigits) score += 420;
+                            else if (
+                                descDigits.length >= 14 &&
+                                docDigits.length >= 14 &&
+                                (descDigits.endsWith(docDigits) || docDigits.endsWith(descDigits))
+                            ) score += 260;
+                        });
                     });
                 }
 
@@ -8341,6 +8393,7 @@
                 keywordSet.forEach(token => {
                     if (descTokens.has(token)) score += 22;
                 });
+                if (isInternalTransfer && !hasTransferEvidence) score -= 260;
 
                 if (score > bestDirectScore) {
                     bestDirectScore = score;
@@ -8348,7 +8401,10 @@
                 }
             });
 
-            if (bestDirectId && bestDirectScore >= 190) return bestDirectId;
+            if (bestDirectId && bestDirectScore >= 190) {
+                const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
+                if (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence) return bestDirectId;
+            }
             // 2) Score por similaridade com histórico (mesmo conjunto de destinos válidos)
             const validIds = new Set(validDestinations.map(d => d.id));
             const scoreByDestination = {};
@@ -8385,18 +8441,20 @@
                 combined[destinationId] = (combined[destinationId] || 0) + score;
             });
 
-            let bestId = '';
-            let bestScore = 0;
-            let secondBestScore = 0;
-            Object.entries(combined).forEach(([destinationId, score]) => {
-                if (score > bestScore) {
-                    secondBestScore = bestScore;
-                    bestScore = score;
-                    bestId = destinationId;
-                } else if (score > secondBestScore) {
-                    secondBestScore = score;
-                }
-            });
+            const sortedCombined = Object.entries(combined)
+                .sort((a, b) => Number(b[1]) - Number(a[1]));
+            const filteredCombined = hasTransferEvidence
+                ? sortedCombined
+                : sortedCombined.filter(([destinationId]) => {
+                    const dst = validDestinations.find(d => d.id === destinationId) || getDestinationById(destinationId);
+                    return !isInternalTransferDestination(dst);
+                });
+
+            const bestPair = filteredCombined[0] || null;
+            const secondPair = filteredCombined[1] || null;
+            const bestId = bestPair ? String(bestPair[0]) : '';
+            const bestScore = bestPair ? Number(bestPair[1]) : 0;
+            const secondBestScore = secondPair ? Number(secondPair[1]) : 0;
             if (bestId) {
                 if (normalizedFlow === 'SAÍDA' && consultationId) {
                     const scoreGap = bestScore - secondBestScore;
@@ -8409,7 +8467,7 @@
 
             if (consultationId) return consultationId;
             if (preferredId) return preferredId;
-            return getMostFrequentDestination(validDestinations);
+            return getMostFrequentDestination(validDestinations, { avoidInternalTransfer: !hasTransferEvidence });
         }
 
         function isReconDateStart(value) {
