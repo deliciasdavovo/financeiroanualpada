@@ -8280,6 +8280,20 @@
                 || text.includes('transf interna')
                 || (text.includes('transferencia') && text.includes('interna'));
         }
+        function findInternalTransferDestinationByExactDocument(description, validDestinations) {
+            const descDocuments = getReconDocumentDigitsList(description).filter((digits) => digits.length === 14);
+            if (!descDocuments.length) return '';
+            const list = Array.isArray(validDestinations) ? validDestinations : [];
+            for (const destination of list) {
+                if (!isInternalTransferDestination(destination)) continue;
+                const noteDocuments = getReconDocumentDigitsList(String((destination || {}).notes || ''))
+                    .filter((digits) => digits.length === 14);
+                if (noteDocuments.some((digits) => descDocuments.includes(digits))) {
+                    return String((destination || {}).id || '');
+                }
+            }
+            return '';
+        }
         function hasReconTransferEvidence(descNorm, descTokens) {
             const text = String(descNorm || '');
             if (!text) return false;
@@ -8350,6 +8364,8 @@
             const consultationId = normalizedFlow === 'SAÍDA'
                 ? findConsultationDestinationId(normalizedFlow, validDestinations)
                 : '';
+            const exactInternalTransferId = findInternalTransferDestinationByExactDocument(description, validDestinations);
+            if (exactInternalTransferId) return exactInternalTransferId;
             if(!descNorm) return consultationId || getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true });
 
             const descTokens = new Set(tokenizeReconText(descNorm));
