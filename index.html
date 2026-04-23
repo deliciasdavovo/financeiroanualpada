@@ -8297,10 +8297,11 @@
         function hasReconTransferEvidence(descNorm, descTokens) {
             const text = String(descNorm || '');
             if (!text) return false;
-            if (text.includes('transferencia') || text.includes('transf') || text.includes('ted') || text.includes('doc')) return true;
+            if (text.includes('transferencia') || text.includes('transf')) return true;
             if (text.includes('entre contas') || text.includes('mesma titularidade') || text.includes('conta destino')) return true;
+            if (text.includes('conta origem') || text.includes('conta de mesma titularidade')) return true;
             const tokenSet = descTokens instanceof Set ? descTokens : new Set(tokenizeReconText(text));
-            return tokenSet.has('transferencia') || tokenSet.has('transf') || tokenSet.has('ted') || tokenSet.has('doc');
+            return tokenSet.has('transferencia') || tokenSet.has('transf');
         }
 
         function findPreferredBankSalesDestination(validDestinations) {
