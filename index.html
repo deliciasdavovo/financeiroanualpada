@@ -3074,8 +3074,8 @@
                 </div>
                 <div id="entry-recurrence-block">
                     <label class="label-mini" for="form-repeat-frequency">Repetição</label>
-                    <div class="status-toggle recurrence-toggle" role="group" aria-label="ConfiguraÃ§Ã£o de repetiÃ§Ã£o do lanÃ§amento">
-                        <button type="button" id="toggle-repeat-off" onclick="toggleEntryRecurrenceMode(false)" aria-pressed="true">NÃ£o repete</button>
+                    <div class="status-toggle recurrence-toggle" role="group" aria-label="Configuração de repetição do lançamento">
+                        <button type="button" id="toggle-repeat-off" onclick="toggleEntryRecurrenceMode(false)" aria-pressed="true">Não repete</button>
                         <button type="button" id="toggle-repeat-on" onclick="toggleEntryRecurrenceMode(true)" aria-pressed="false">Repete</button>
                     </div>
                     <div id="entry-recurrence-grid" class="recurrence-grid hidden">
@@ -4513,15 +4513,15 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
-        function normalizeFlowType(type) {
-            const raw = String(type || '').trim().toUpperCase();
-            if (raw === 'ENTRADA') return 'ENTRADA';
-            if (raw === 'SAÍDA' || raw === 'SAIDA') return 'SAÍDA';
-            return raw;
-        }
         function isCapitalContributionName(value) {
             const normalized = normalizeDestinationLookupLabel(value);
             return normalized.includes('aporte') && normalized.includes('capital');
+        }
+        function normalizeFlowType(type) {
+            const raw = String(type || '').trim().toUpperCase();
+            if (raw === 'ENTRADA') return 'ENTRADA';
+            if (raw === 'SAÍDA' || raw === 'SAIDA' || raw === 'SAÃDA' || raw === 'SAÃƒÂDA') return 'SAÍDA';
+            return raw;
         }
         function getEntryHierarchyNames(entry) {
             const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((entry || {}).destinationId, entry || {});
@@ -8359,7 +8359,8 @@
             if (!list.length) return '';
             const match = list.find((destination) => {
                 const nameNorm = normalizeReconText((destination || {}).name || '');
-                return nameNorm.includes('consultar') && nameNorm.includes(targetFlow === 'SAÍDA' ? 'saida' : 'entrada');
+                const hasConsultationLabel = nameNorm.includes('consultar') || nameNorm.includes('consulta');
+                return hasConsultationLabel && nameNorm.includes(targetFlow === 'SAÍDA' ? 'saida' : 'entrada');
             });
             return String((match || {}).id || '');
         }
@@ -10087,7 +10088,7 @@
                             if (previousItem) {
                                 await cloudSave('subCategories', previousItem);
                             }
-                            alert(`A subcategoria foi revertida porque nÃ£o foi possÃ­vel sincronizar os lanÃ§amentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
+                            alert(`A subcategoria foi revertida porque não foi possível sincronizar os lançamentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
                             await refreshCloudState({ silent: false });
                             return;
                         }
@@ -10102,7 +10103,7 @@
                             if (previousItem) {
                                 await cloudSave('destinations', previousItem);
                             }
-                            alert(`O destino foi revertido porque nÃ£o foi possÃ­vel sincronizar os lanÃ§amentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
+                            alert(`O destino foi revertido porque não foi possível sincronizar os lançamentos existentes.\n\nDetalhe: ${String(syncResult?.error?.message || 'Erro desconhecido.')}`);
                             await refreshCloudState({ silent: false });
                             return;
                         }
