@@ -8303,6 +8303,14 @@
             const tokenSet = descTokens instanceof Set ? descTokens : new Set(tokenizeReconText(text));
             return tokenSet.has('transferencia') || tokenSet.has('transf');
         }
+        function isGenericPixCounterpartyDescription(descNorm) {
+            const text = String(descNorm || '');
+            if (!text) return false;
+            const hasPixOutra = text.includes('pix emit outra') || text.includes('pix receb outra');
+            const hasPagamentoPix = text.includes('pagamento pix') || text.includes('recebimento pix') || text.includes('recebimento de pix');
+            const hasMaskedDocument = text.includes('***');
+            return hasPixOutra || (hasPagamentoPix && hasMaskedDocument);
+        }
 
         function findPreferredBankSalesDestination(validDestinations) {
             const list = Array.isArray(validDestinations) ? validDestinations : [];
@@ -8371,6 +8379,7 @@
 
             const descTokens = new Set(tokenizeReconText(descNorm));
             const hasTransferEvidence = hasReconTransferEvidence(descNorm, descTokens);
+            const isGenericPixCounterparty = isGenericPixCounterpartyDescription(descNorm);
             const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
 
             // 1) Score direto por nome/keywords de destino
@@ -8378,11 +8387,11 @@
             let bestDirectScore = 0;
             validDestinations.forEach(dst => {
                 const nameNorm = normalizeReconText(dst.name);
-                const aliasPhrases = getDestinationAliasPhrases(dst);
                 const destinationMeta = getReconDestinationMeta(dst);
                 const keywordSet = destinationMeta.keywordSet;
                 const documentDigits = destinationMeta.documentDigits;
                 const isInternalTransfer = isInternalTransferDestination(dst);
+                const aliasPhrases = isInternalTransfer ? [] : getDestinationAliasPhrases(dst);
                 let score = 0;
 
                 if (nameNorm && descNorm.includes(nameNorm)) {
@@ -8395,6 +8404,7 @@
                         descDocumentDigits.forEach((descDigits) => {
                             if (descDigits === docDigits) score += 420;
                             else if (
+                                !isInternalTransfer &&
                                 descDigits.length >= 14 &&
                                 docDigits.length >= 14 &&
                                 (descDigits.endsWith(docDigits) || docDigits.endsWith(descDigits))
@@ -8407,9 +8417,11 @@
                     score += scoreDestinationAliasMatch(descNorm, descTokens, phrase);
                 });
 
-                keywordSet.forEach(token => {
-                    if (descTokens.has(token)) score += 22;
-                });
+                if (!isInternalTransfer) {
+                    keywordSet.forEach(token => {
+                        if (descTokens.has(token)) score += 22;
+                    });
+                }
                 if (isInternalTransfer && !hasTransferEvidence) score -= 260;
 
                 if (score > bestDirectScore) {
@@ -8477,6 +8489,7 @@
                     const scoreGap = bestScore - secondBestScore;
                     const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
                     const hasStrongCombinedEvidence = bestScore >= 140 && scoreGap >= 35;
+                    if (isGenericPixCounterparty && !hasStrongDirectEvidence) return consultationId;
                     if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return consultationId;
                 }
                 return bestId;
