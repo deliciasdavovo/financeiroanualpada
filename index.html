@@ -4517,10 +4517,17 @@
             const normalized = normalizeDestinationLookupLabel(value);
             return normalized.includes('aporte') && normalized.includes('capital');
         }
+        const FLOW_IN = 'ENTRADA';
+        const FLOW_OUT = 'SA\u00CDDA';
         function normalizeFlowType(type) {
             const raw = String(type || '').trim().toUpperCase();
-            if (raw === 'ENTRADA') return 'ENTRADA';
-            if (raw === 'SAÍDA' || raw === 'SAIDA' || raw === 'SAÃDA' || raw === 'SAÃƒÂDA') return 'SAÍDA';
+            const ascii = raw
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^\w\s-]/g, '');
+            if (ascii === 'ENTRADA') return FLOW_IN;
+            if (ascii === 'SAIDA') return FLOW_OUT;
+            if (ascii === 'SAIDA') return 'SAÍDA';
             return raw;
         }
         function getEntryHierarchyNames(entry) {
@@ -8343,6 +8350,9 @@
                 }
             });
             const preferredId = findPreferredBankSalesDestination(validDestinations);
+            const resolvedConsultationId = normalizedFlow === FLOW_OUT
+                ? findConsultationDestinationId(normalizedFlow, validDestinations)
+                : '';
             if (preferredId) return preferredId;
             if (avoidInternalTransfer) {
                 const nonTransfer = (validDestinations || []).find((dst) => !isInternalTransferDestination(dst));
@@ -8360,6 +8370,8 @@
             const match = list.find((destination) => {
                 const nameNorm = normalizeReconText((destination || {}).name || '');
                 const hasConsultationLabel = nameNorm.includes('consultar') || nameNorm.includes('consulta');
+                const expectedDirection = targetFlow === FLOW_OUT ? 'saida' : 'entrada';
+                if (hasConsultationLabel) return nameNorm.includes(expectedDirection);
                 return hasConsultationLabel && nameNorm.includes(targetFlow === 'SAÍDA' ? 'saida' : 'entrada');
             });
             return String((match || {}).id || '');
@@ -8376,7 +8388,7 @@
                 : '';
             const exactInternalTransferId = findInternalTransferDestinationByExactDocument(description, validDestinations);
             if (exactInternalTransferId) return exactInternalTransferId;
-            if(!descNorm) return consultationId || getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true });
+            if(!descNorm) return resolvedConsultationId || (normalizedFlow === FLOW_OUT ? '' : getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true }));
 
             const descTokens = new Set(tokenizeReconText(descNorm));
             const hasTransferEvidence = hasReconTransferEvidence(descNorm, descTokens);
@@ -8486,6 +8498,13 @@
             const bestScore = bestPair ? Number(bestPair[1]) : 0;
             const secondBestScore = secondPair ? Number(secondPair[1]) : 0;
             if (bestId) {
+                if (normalizedFlow === FLOW_OUT && resolvedConsultationId) {
+                    const scoreGap = bestScore - secondBestScore;
+                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
+                    const hasStrongCombinedEvidence = bestScore >= 140 && scoreGap >= 35;
+                    if (isGenericPixCounterparty && !hasStrongDirectEvidence) return resolvedConsultationId;
+                    if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return resolvedConsultationId;
+                }
                 if (normalizedFlow === 'SAÍDA' && consultationId) {
                     const scoreGap = bestScore - secondBestScore;
                     const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
@@ -8496,7 +8515,8 @@
                 return bestId;
             }
 
-            if (consultationId) return consultationId;
+            if (resolvedConsultationId) return resolvedConsultationId;
+            if (normalizedFlow === FLOW_OUT) return '';
             if (preferredId) return preferredId;
             return getMostFrequentDestination(validDestinations, { avoidInternalTransfer: !hasTransferEvidence });
         }
@@ -9820,8 +9840,8 @@
             const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
             const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
             if (!(cat || {}).type) {
-                setEntryFieldError('form-dst', 'Destino sem categoria/tipo v�lido. Revise Categoria > Subcategoria > Destino.');
-                setEntryFormFeedback('N�o foi poss�vel salvar: revise o destino selecionado.');
+                setEntryFieldError('form-dst', 'Destino sem categoria/tipo válido. Revise Categoria > Subcategoria > Destino.');
+                setEntryFormFeedback('Não foi possível salvar: revise o destino selecionado.');
                 document.getElementById('form-dst-search')?.focus();
                 return;
             }
