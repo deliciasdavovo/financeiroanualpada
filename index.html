@@ -8301,6 +8301,21 @@
             }
             return '';
         }
+        function findDestinationByExactDocument(description, validDestinations, options = {}) {
+            const { allowInternalTransfer = false } = options || {};
+            const descDocuments = getReconDocumentDigitsList(description);
+            if (!descDocuments.length) return '';
+            const matches = [];
+            const list = Array.isArray(validDestinations) ? validDestinations : [];
+            for (const destination of list) {
+                if (!allowInternalTransfer && isInternalTransferDestination(destination)) continue;
+                const destinationDocuments = getDestinationDocumentDigits(destination);
+                const hasExactMatch = destinationDocuments.some((digits) => descDocuments.includes(digits));
+                if (hasExactMatch) matches.push(String((destination || {}).id || ''));
+            }
+            const uniqueMatches = [...new Set(matches.filter(Boolean))];
+            return uniqueMatches.length === 1 ? uniqueMatches[0] : '';
+        }
         function hasReconTransferEvidence(descNorm, descTokens) {
             const text = String(descNorm || '');
             if (!text) return false;
@@ -8385,6 +8400,8 @@
                 : '';
             const exactInternalTransferId = findInternalTransferDestinationByExactDocument(description, validDestinations);
             if (exactInternalTransferId) return exactInternalTransferId;
+            const exactDocumentDestinationId = findDestinationByExactDocument(description, validDestinations);
+            if (exactDocumentDestinationId) return exactDocumentDestinationId;
             if (!descNorm) return resolvedConsultationId || (normalizedFlow === FLOW_OUT ? '' : getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true }));
 
             const descTokens = new Set(tokenizeReconText(descNorm));
@@ -10279,5 +10296,3 @@
 
 
 
-
-    
