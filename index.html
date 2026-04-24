@@ -8392,6 +8392,12 @@
             const isGenericPixCounterparty = isGenericPixCounterpartyDescription(descNorm);
             const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
 
+            // PIX generico de extrato nao identifica a contraparte com confianca.
+            // Mesmo quando ha CNPJ no texto, evita puxar um destino cadastrado por acidente.
+            if (isGenericPixCounterparty && normalizedFlow === FLOW_OUT) {
+                return resolvedConsultationId || '';
+            }
+
             let bestDirectId = '';
             let bestDirectScore = 0;
             validDestinations.forEach(dst => {
@@ -8441,13 +8447,6 @@
             if (bestDirectId && bestDirectScore >= 190) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
                 if (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence) return bestDirectId;
-            }
-
-            // Descricoes PIX de banco como "PIX EMIT.OUTRA Pagamento Pix ... DOC.: Pix"
-            // nao carregam contraparte suficiente para aprender pelo historico com seguranca.
-            // Sem match direto forte (nome/alias/documento), deixa para revisao manual.
-            if (isGenericPixCounterparty && normalizedFlow === FLOW_OUT) {
-                return resolvedConsultationId || '';
             }
 
             const validIds = new Set(validDestinations.map(d => d.id));
@@ -10280,3 +10279,5 @@
 
 
 
+
+    
