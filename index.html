@@ -3995,6 +3995,15 @@
                 .print-kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;color:#64748b;margin:0 0 4px;}
                 .print-kpi-value{font-size:14px;font-weight:800;margin:0;color:#0f172a;}
                 .print-card{border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#fff;}
+                .flow-section{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:12px;}
+                .flow-section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 12px;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
+                .flow-section-title{margin:0;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+                .flow-section-meta{font-size:11px;font-weight:800;color:#475569;white-space:nowrap;}
+                .flow-section table{border:0;}
+                .flow-section th:first-child,.flow-section td:first-child{border-left:0;}
+                .flow-section th:last-child,.flow-section td:last-child{border-right:0;}
+                .flow-section tbody tr:last-child td{border-bottom:0;}
+                .muted{color:#64748b;}
                 .level-cell{font-weight:700;}
                 .level-1{padding-left:8px;}
                 .level-2{padding-left:22px;}
@@ -4111,6 +4120,117 @@
                 </tr>`);
             }
             return `<div class="print-card"><table><thead><tr><th>Dia</th><th class="r">Entradas Realizadas</th><th class="r">Saídas Realizadas</th><th class="r">Saldo do Dia</th><th class="r">Saldo Acumulado</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+        }
+        function getExportDestinationName(entry) {
+            return getDestinationById((entry || {}).destinationId)?.name || '-';
+        }
+        function getExportAccountName(entry) {
+            return getAccountById((entry || {}).accountId)?.name || '-';
+        }
+        function getExportHierarchyNames(entry) {
+            const hierarchy = getDestinationHierarchyById((entry || {}).destinationId, entry || {});
+            return {
+                category: hierarchy.category?.name || 'Sem categoria',
+                subCategory: hierarchy.subCategory?.name || 'Sem subcategoria',
+                destination: hierarchy.destination?.name || 'Sem destino'
+            };
+        }
+        function sortExportEntries(entries) {
+            return [...(entries || [])].sort((a, b) => {
+                const dateCmp = String(a.date || '').localeCompare(String(b.date || ''));
+                if (dateCmp) return dateCmp;
+                const dstCmp = getExportDestinationName(a).localeCompare(getExportDestinationName(b), 'pt-BR', { sensitivity: 'base' });
+                if (dstCmp) return dstCmp;
+                return (Number(b.amount) || 0) - (Number(a.amount) || 0);
+            });
+        }
+        function buildEmptyPrintCard(message) {
+            return `<div class="print-card"><p class="muted">${escapeHtml(message || 'Sem dados para exportação.')}</p></div>`;
+        }
+        function getExportFlowEntries(entries, flow) {
+            return (entries || []).filter(e => normalizeFlowType(e.type) === flow);
+        }
+        function buildFlowSection(flow, rowsHtml, total, count, emptyMessage) {
+            const meta = getFlowMetaV2(flow);
+            const rows = rowsHtml || `<tr><td colspan="6" class="c muted">${escapeHtml(emptyMessage || 'Sem lançamentos neste fluxo.')}</td></tr>`;
+            return `<div class="flow-section">
+                <div class="flow-section-head">
+                    <p class="flow-section-title ${meta.className}">${meta.label}s</p>
+                    <span class="flow-section-meta">${count} lanç. | ${formatSignedBRLV2(total, flow)}</span>
+                </div>
+                ${rows}
+            </div>`;
+        }
+        function buildFlowGroupedLaunchTables(entries, options = {}) {
+            const includeAccount = options.includeAccount !== false;
+            const includeStatus = options.includeStatus !== false;
+            const columnCount = 4 + (includeAccount ? 1 : 0) + (includeStatus ? 1 : 0);
+            const columns = [
+                '<th>Data</th>',
+                includeAccount ? '<th>Conta</th>' : '',
+                '<th>Destino</th>',
+                '<th>Descrição</th>',
+                includeStatus ? '<th class="c">Status</th>' : '',
+                '<th class="r">Valor</th>'
+            ].filter(Boolean).join('');
+
+            return [FLOW_IN, FLOW_OUT].map((flow) => {
+                const flowRows = sortExportEntries(getExportFlowEntries(entries, flow));
+                const total = flowRows.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                const bodyRows = flowRows.map((e) => {
+                    const meta = getFlowMetaV2(flow);
+                    return `<tr>
+                        <td>${formatDateBRV2(e.date)}</td>
+                        ${includeAccount ? `<td>${escapeHtml(getExportAccountName(e))}</td>` : ''}
+                        <td>${escapeHtml(getExportDestinationName(e))}</td>
+                        <td>${escapeHtml(e.description || '')}</td>
+                        ${includeStatus ? `<td class="c">${escapeHtml(e.status || '-')}</td>` : ''}
+                        <td class="r ${meta.className}">${formatSignedBRLV2(e.amount, flow)}</td>
+                    </tr>`;
+                }).join('');
+                return buildFlowSection(
+                    flow,
+                    `<table><thead><tr>${columns}</tr></thead><tbody>${bodyRows || `<tr><td colspan="${columnCount}" class="c muted">Sem lançamentos neste fluxo.</td></tr>`}</tbody></table>`,
+                    total,
+                    flowRows.length
+                );
+            }).join('');
+        }
+        function buildFlowHierarchySummaryByCategory(entries) {
+            return [FLOW_IN, FLOW_OUT].map((flow) => {
+                const grouped = new Map();
+                getExportFlowEntries(entries, flow).forEach((entry) => {
+                    const names = getExportHierarchyNames(entry);
+                    const key = `${names.category}::${names.subCategory}::${names.destination}`;
+                    if (!grouped.has(key)) {
+                        grouped.set(key, { ...names, total: 0, count: 0 });
+                    }
+                    const ref = grouped.get(key);
+                    ref.total += Number(entry.amount) || 0;
+                    ref.count += 1;
+                });
+                const sorted = Array.from(grouped.values()).sort((a, b) => b.total - a.total);
+                const total = sorted.reduce((acc, item) => acc + item.total, 0);
+                const bodyRows = sorted.map((item) => {
+                    const meta = getFlowMetaV2(flow);
+                    return `<tr>
+                        <td>${escapeHtml(item.category)}</td>
+                        <td>${escapeHtml(item.subCategory)}</td>
+                        <td>${escapeHtml(item.destination)}</td>
+                        <td class="r">${item.count}</td>
+                        <td class="r ${meta.className}">${formatSignedBRLV2(item.total, flow)}</td>
+                    </tr>`;
+                }).join('');
+                return buildFlowSection(
+                    flow,
+                    `<table><thead><tr><th>Categoria</th><th>Subcategoria</th><th>Destino</th><th class="r">Lançamentos</th><th class="r">Total</th></tr></thead><tbody>${bodyRows || '<tr><td colspan="5" class="c muted">Sem dados neste fluxo.</td></tr>'}</tbody></table>`,
+                    total,
+                    sorted.reduce((acc, item) => acc + item.count, 0)
+                );
+            }).join('');
+        }
+        function shouldIncludeCompleteExport(reportName) {
+            return window.confirm(`${reportName}\n\nDeseja incluir todos os lançamentos detalhados no PDF?\n\nOK = relatório completo\nCancelar = relatório resumido`);
         }
         function buildMonthlyHierarchyTableV2Legacy(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
@@ -4376,74 +4496,77 @@
                         { label: 'Saldo', value: formatBRL(totalEntrada - totalSaida), className: totalEntrada - totalSaida >= 0 ? 'flow-in' : 'flow-out' },
                         { label: 'Registros', value: String(rows.length) }
                     ])),
-                    buildExportSectionV2('Lançamentos', `<div class="print-card"><table><thead><tr><th>Data</th><th>Fluxo</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
-                        ${rows.map(e => {
-                            const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
-                            const flowMeta = getFlowMetaV2(e.type);
-                            return `<tr>
-                                <td>${formatDateBRV2(e.date)}</td>
-                                <td class="${flowMeta.className}">${flowMeta.label}</td>
-                                <td>${escapeHtml(dst)}</td>
-                                <td>${escapeHtml(e.description || '')}</td>
-                                <td class="c">${escapeHtml(e.status || '-')}</td>
-                                <td class="r ${flowMeta.className}">${formatSignedBRLV2(e.amount, e.type)}</td>
-                            </tr>`;
-                        }).join('')}
-                    </tbody></table></div>`)
+                    buildExportSectionV2('Lançamentos por Fluxo', rows.length ? buildFlowGroupedLaunchTables(rows) : buildEmptyPrintCard('Sem lançamentos no filtro atual.'))
                 ].join('');
             } else if (currentTab === 'monthly') {
+                const includeComplete = shouldIncludeCompleteExport('Relatório mensal');
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
-                const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
-                const monthlyRows = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
+                const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+                const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
+                const incReal = entries.filter(e => normalizeFlowType(e.type) === 'ENTRADA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                const expReal = entries.filter(e => normalizeFlowType(e.type) === 'SAÍDA' && e.status === 'REALIZADO').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                const incPend = entries.filter(e => normalizeFlowType(e.type) === 'ENTRADA' && e.status === 'PENDENTE').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                const expPend = entries.filter(e => normalizeFlowType(e.type) === 'SAÍDA' && e.status === 'PENDENTE').reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
                 title = `Relatório Mensal (${filter})`;
                 subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
-
-                const hierarchyRows = monthlyRows
-                    .sort((a, b) => (Number(b.valor) || 0) - (Number(a.valor) || 0))
-                    .map(item => {
-                        const flowMeta = getFlowMetaV2(item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA');
-                        return `<tr>
-                            <td class="${flowMeta.className}">${flowMeta.label}</td>
-                            <td>${escapeHtml(item.categoria || 'Sem categoria')}</td>
-                            <td>${escapeHtml(item.subcategoria || 'Sem subcategoria')}</td>
-                            <td>${escapeHtml(item.destino || 'Sem destino')}</td>
-                            <td class="r ${flowMeta.className}">${formatSignedBRLV2(item.valor, flowMeta.label === 'Entrada' ? 'ENTRADA' : 'SAÍDA')}</td>
-                        </tr>`;
-                    }).join('');
 
                 tableHtml = [
                     buildExportPillsV2([
                         ['Período', filter],
                         ['Fluxo', fluxoSelecionado || 'TODOS'],
-                        ['Categoria', categoriaFiltroSelecionada || 'Todas']
+                        ['Categoria', categoriaFiltroSelecionada || 'Todas'],
+                        ['Formato', includeComplete ? 'Completo' : 'Resumido']
                     ]),
-                    buildMonthlyHierarchyExportHtmlV2(entries),
-                    buildExportSectionV2('Detalhamento do Fluxo', `<div class="print-card"><table><thead><tr><th>Fluxo</th><th>Categoria</th><th>Subcategoria</th><th>Destino</th><th class="r">Valor</th></tr></thead><tbody>${hierarchyRows || '<tr><td colspan="5" class="c">Sem dados</td></tr>'}</tbody></table></div>`),
-                    buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries))
+                    buildExportSectionV2('Resumo', buildExportKpiCardsV2([
+                        { label: 'Entradas realizadas', value: formatBRL(incReal), className: 'flow-in' },
+                        { label: 'Saídas realizadas', value: formatBRL(expReal), className: 'flow-out' },
+                        { label: 'Saldo realizado', value: formatBRL(incReal - expReal), className: incReal - expReal >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Lançamentos', value: String(entries.length) }
+                    ])),
+                    buildExportSectionV2('Pendências', buildExportKpiCardsV2([
+                        { label: 'Entradas pendentes', value: formatBRL(incPend), className: 'flow-in' },
+                        { label: 'Saídas pendentes', value: formatBRL(expPend), className: 'flow-out' },
+                        { label: 'Saldo pendente', value: formatBRL(incPend - expPend), className: incPend - expPend >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Formato', value: includeComplete ? 'Completo' : 'Resumido' }
+                    ])),
+                    buildExportSectionV2('Entradas e Saídas por Destino', entries.length ? buildFlowHierarchySummaryByCategory(entries) : buildEmptyPrintCard('Sem dados para exportação no período/filtro selecionado.')),
+                    buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries)),
+                    includeComplete ? buildExportSectionV2('Relatório Completo - Lançamentos', entries.length ? buildFlowGroupedLaunchTables(entries) : buildEmptyPrintCard('Sem lançamentos detalhados no período/filtro selecionado.')) : ''
                 ].join('');
             } else if (currentTab === 'annual') {
-                const year = new Date().getFullYear();
+                const includeComplete = shouldIncludeCompleteExport('Relatório anual');
+                const selectedYear = Number(document.getElementById('annual-temporal-year')?.value);
+                const year = selectedYear || annualTemporalYear || new Date().getFullYear();
                 const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                const analyticalEntries = getAnalyticalEntries(state.entries);
+                const yearEntries = analyticalEntries.filter(e => e.date && e.date.startsWith(`${year}-`));
                 const data = monthNames.map((_, idx) => {
                     const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
-                    const mEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
+                    const mEntries = yearEntries.filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
                     const inc = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
                     const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
                     return { month: monthNames[idx], inc, exp, bal: inc - exp };
                 });
+                const realizedYearEntries = yearEntries.filter(e => e.status === 'REALIZADO');
                 const totalInc = data.reduce((acc, row) => acc + row.inc, 0);
                 const totalExp = data.reduce((acc, row) => acc + row.exp, 0);
                 title = `Relatório Anual (${year})`;
                 tableHtml = [
+                    buildExportPillsV2([
+                        ['Ano', String(year)],
+                        ['Formato', includeComplete ? 'Completo' : 'Resumido']
+                    ]),
                     buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                         { label: 'Entradas', value: formatBRL(totalInc), className: 'flow-in' },
                         { label: 'Saídas', value: formatBRL(totalExp), className: 'flow-out' },
                         { label: 'Saldo', value: formatBRL(totalInc - totalExp), className: totalInc - totalExp >= 0 ? 'flow-in' : 'flow-out' },
-                        { label: 'Meses', value: '12' }
+                        { label: 'Lançamentos', value: String(yearEntries.length) }
                     ])),
                     buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r flow-in">Entradas (+)</th><th class="r flow-out">Saídas (-)</th><th class="r">Saldo</th></tr></thead><tbody>
                         ${data.map(r => `<tr><td>${r.month}</td><td class="r flow-in">+ ${formatBRL(r.inc)}</td><td class="r flow-out">- ${formatBRL(r.exp)}</td><td class="r ${r.bal >= 0 ? 'flow-in' : 'flow-out'}">${r.bal >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(r.bal))}</td></tr>`).join('')}
-                    </tbody></table></div>`)
+                    </tbody></table></div>`),
+                    buildExportSectionV2('Entradas e Saídas por Destino', realizedYearEntries.length ? buildFlowHierarchySummaryByCategory(realizedYearEntries) : buildEmptyPrintCard('Sem lançamentos realizados neste ano.')),
+                    includeComplete ? buildExportSectionV2('Relatório Completo - Lançamentos', yearEntries.length ? buildFlowGroupedLaunchTables(yearEntries) : buildEmptyPrintCard('Sem lançamentos detalhados neste ano.')) : ''
                 ].join('');
             } else {
                 title = 'Relatório';
