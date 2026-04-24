@@ -8139,7 +8139,8 @@
 
         const RECON_STOPWORDS = new Set([
             'de', 'da', 'do', 'das', 'dos', 'para', 'por', 'com', 'sem', 'em', 'no', 'na', 'nos', 'nas',
-            'pix', 'ted', 'doc', 'pagamento', 'pgto', 'transferencia', 'transfer', 'compra', 'debito', 'credito'
+            'pix', 'ted', 'doc', 'pagamento', 'pgto', 'transferencia', 'transfer', 'compra', 'debito', 'credito',
+            'emit', 'emitido', 'emitente', 'outra', 'outro', 'receb', 'recebido', 'recebimento'
         ]);
 
         function tokenizeReconText(value) {
@@ -8349,9 +8350,6 @@
                 }
             });
             const preferredId = findPreferredBankSalesDestination(validDestinations);
-            const resolvedConsultationId = normalizedFlow === FLOW_OUT
-                ? findConsultationDestinationId(normalizedFlow, validDestinations)
-                : '';
             if (preferredId) return preferredId;
             if (avoidInternalTransfer) {
                 const nonTransfer = (validDestinations || []).find((dst) => !isInternalTransferDestination(dst));
@@ -8443,6 +8441,13 @@
             if (bestDirectId && bestDirectScore >= 190) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
                 if (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence) return bestDirectId;
+            }
+
+            // Descricoes PIX de banco como "PIX EMIT.OUTRA Pagamento Pix ... DOC.: Pix"
+            // nao carregam contraparte suficiente para aprender pelo historico com seguranca.
+            // Sem match direto forte (nome/alias/documento), deixa para revisao manual.
+            if (isGenericPixCounterparty && normalizedFlow === FLOW_OUT) {
+                return resolvedConsultationId || '';
             }
 
             const validIds = new Set(validDestinations.map(d => d.id));
