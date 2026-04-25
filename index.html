@@ -141,6 +141,242 @@
         .kpi-card #month-bal-r {
             text-shadow: none;
         }
+        .cash-projection-shell {
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .cash-projection-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 24px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #F8FAFC;
+        }
+        .cash-projection-title {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #0F172A;
+        }
+        .cash-projection-sub {
+            margin-top: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .cash-projection-tabs {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px;
+            border: 1px solid #DDE6F0;
+            border-radius: 12px;
+            background: #FFFFFF;
+        }
+        .cash-projection-tab {
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 9px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #64748B;
+        }
+        .cash-projection-tab:hover {
+            color: #0F172A;
+            background: #F8FAFC;
+        }
+        .cash-projection-tab.active {
+            color: #FFFFFF;
+            background: #0F172A;
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
+        }
+        .cash-projection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            padding: 20px 24px 24px;
+        }
+        .cash-projection-card {
+            border: 1px solid #E5ECF4;
+            border-radius: 16px;
+            padding: 18px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
+            cursor: pointer;
+        }
+        .cash-projection-card:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+        }
+        .cash-projection-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .cash-projection-value {
+            margin-top: 10px;
+            font-size: 26px;
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+        }
+        .cash-projection-hint {
+            margin-top: 10px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #94A3B8;
+        }
+        .cash-projection-note {
+            margin-top: 10px;
+            min-height: 36px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .cash-projection-breakdown {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .cash-projection-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748B;
+        }
+        .cash-projection-card.in {
+            border-top: 3px solid var(--primary-green);
+        }
+        .cash-projection-card.out {
+            border-top: 3px solid var(--soft-red);
+        }
+        .cash-projection-card.net {
+            border-top: 3px solid var(--primary-blue);
+        }
+        .cash-projection-card.net.attention {
+            border-top-color: #D69E2E;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF8DB 100%);
+        }
+        .cash-projection-status {
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            background: var(--bg-blue-soft);
+            color: var(--primary-blue);
+        }
+        .cash-projection-status.attention {
+            background: #FFF3BF;
+            color: #9A6700;
+        }
+        .cash-projection-detail {
+            border-top: 1px solid #E9EEF5;
+            padding: 0 24px 24px;
+        }
+        .cash-projection-detail.hidden {
+            display: none;
+        }
+        .cash-projection-detail-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 0 12px;
+        }
+        .cash-projection-detail-title {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #334155;
+        }
+        .cash-projection-detail-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .cash-projection-day-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .cash-projection-day {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .cash-projection-day-head {
+            display: grid;
+            grid-template-columns: minmax(120px, 1fr) repeat(3, minmax(110px, auto));
+            gap: 12px;
+            align-items: center;
+            padding: 12px 14px;
+            background: #F8FAFC;
+            border-bottom: 1px solid #EEF2F7;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .cash-projection-day-items {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .cash-projection-entry {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 140px;
+            gap: 12px;
+            padding: 10px 14px;
+            border-top: 1px solid #F1F5F9;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .cash-projection-entry-desc {
+            min-width: 0;
+            color: #334155;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cash-projection-entry-value {
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 900;
+        }
+        .cash-projection-entry:first-child {
+            border-top: 0;
+        }
+        .cash-projection-empty {
+            border: 1px dashed #D8E2EE;
+            border-radius: 14px;
+            padding: 16px;
+            color: #64748B;
+            background: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+        }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -2426,6 +2662,44 @@
             #reconciliation .card-premium {
                 overflow: hidden;
             }
+            .cash-projection-head {
+                padding: 18px 16px;
+            }
+            .cash-projection-tabs {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            .cash-projection-tab {
+                padding: 8px 6px;
+                line-height: 1.15;
+                white-space: normal;
+            }
+            .cash-projection-grid {
+                grid-template-columns: 1fr;
+                padding: 16px;
+            }
+            .cash-projection-value {
+                font-size: 23px;
+            }
+            .cash-projection-detail {
+                padding: 0 16px 16px;
+            }
+            .cash-projection-detail-head {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+            .cash-projection-day-head {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            .cash-projection-entry {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+            .cash-projection-entry-value {
+                text-align: left;
+            }
         }
         @media (min-width: 768px) {
             .annual-filters-grid {
@@ -2655,6 +2929,50 @@
                         <p class="text-[8px] font-bold flow-balance-text mt-4 uppercase">Dinheiro no bolso</p>
                     </div>
                 </div>
+
+                <section class="card-premium cash-projection-shell" aria-labelledby="cash-projection-title">
+                    <div class="cash-projection-head">
+                        <div>
+                            <h4 id="cash-projection-title" class="cash-projection-title">Projeção de Caixa</h4>
+                            <p id="cash-projection-range" class="cash-projection-sub">Próximos lançamentos pendentes cadastrados.</p>
+                        </div>
+                        <div class="cash-projection-tabs" role="tablist" aria-label="Período da projeção de caixa">
+                            <button type="button" id="cash-projection-tab-7" class="cash-projection-tab active" onclick="setCashProjectionPeriod(7)">Próximos 7 dias</button>
+                            <button type="button" id="cash-projection-tab-15" class="cash-projection-tab" onclick="setCashProjectionPeriod(15)">Próximos 15 dias</button>
+                            <button type="button" id="cash-projection-tab-30" class="cash-projection-tab" onclick="setCashProjectionPeriod(30)">Próximo mês</button>
+                        </div>
+                    </div>
+                    <div class="cash-projection-grid">
+                        <article class="cash-projection-card in" role="button" tabindex="0" onclick="openCashProjectionDaily()" onkeydown="handleCashProjectionCardKeydown(event)" aria-controls="cash-projection-detail" aria-label="Abrir projeção por dia das entradas previstas">
+                            <p class="cash-projection-label flow-income-text">Entradas previstas</p>
+                            <p id="cash-projection-in" class="cash-projection-value flow-income-text">R$ 0,00</p>
+                            <p class="cash-projection-note">Recebimentos já lançados como pendentes no período selecionado.</p>
+                            <div class="cash-projection-breakdown">
+                                <span id="cash-projection-in-pending" class="cash-projection-pill">Valor pendente: R$ 0,00</span>
+                                <span id="cash-projection-in-average" class="cash-projection-pill">0 lançamento(s)</span>
+                            </div>
+                            <p class="cash-projection-hint">Clique para ver por dia</p>
+                        </article>
+                        <article class="cash-projection-card out" role="button" tabindex="0" onclick="openCashProjectionDaily()" onkeydown="handleCashProjectionCardKeydown(event)" aria-controls="cash-projection-detail" aria-label="Abrir projeção por dia das saídas previstas">
+                            <p class="cash-projection-label flow-expense-text">Saídas previstas</p>
+                            <p id="cash-projection-out" class="cash-projection-value flow-expense-text">R$ 0,00</p>
+                            <p class="cash-projection-note">Compromissos já lançados como pendentes no período selecionado.</p>
+                            <div class="cash-projection-breakdown">
+                                <span id="cash-projection-out-pending" class="cash-projection-pill">Valor pendente: R$ 0,00</span>
+                                <span id="cash-projection-out-average" class="cash-projection-pill">0 lançamento(s)</span>
+                            </div>
+                            <p class="cash-projection-hint">Clique para ver por dia</p>
+                        </article>
+                        <article id="cash-projection-net-card" class="cash-projection-card net" role="button" tabindex="0" onclick="openCashProjectionDaily()" onkeydown="handleCashProjectionCardKeydown(event)" aria-controls="cash-projection-detail" aria-label="Abrir projeção por dia do saldo projetado">
+                            <p class="cash-projection-label flow-balance-text">Saldo projetado</p>
+                            <p id="cash-projection-net" class="cash-projection-value flow-balance-text">R$ 0,00</p>
+                            <span id="cash-projection-status" class="cash-projection-status">Positivo</span>
+                            <p id="cash-projection-net-note" class="cash-projection-note">Leitura baseada somente nas pendências cadastradas.</p>
+                            <p class="cash-projection-hint">Clique para ver por dia</p>
+                        </article>
+                    </div>
+                    <div id="cash-projection-detail" class="cash-projection-detail hidden" aria-live="polite"></div>
+                </section>
 
                 <section id="analise-hierarquica-mensal"></section>
 
@@ -3193,6 +3511,8 @@
         let annualNavDestinationId = '';
         let annualExcludedDestinationId = '';
         let currentTab = 'monthly';
+        let cashProjectionPeriod = 7;
+        let cashProjectionDailyOpen = false;
         let entriesSearchTimer = null;
         let entriesPage = 1;
         const entriesPageSize = 80;
@@ -5461,6 +5781,16 @@
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
+        function parseIsoDateLocal(value) {
+            const [year, month, day] = String(value || '').split('-').map(Number);
+            if (!year || !month || !day) return null;
+            return new Date(year, month - 1, day);
+        }
+        function addLocalDays(dateValue, amount) {
+            const date = dateValue instanceof Date ? new Date(dateValue) : new Date(dateValue);
+            date.setDate(date.getDate() + Number(amount || 0));
+            return date;
+        }
         function toMoneyNumber(value) {
             const parsed = Number(value);
             return Number.isFinite(parsed) ? parsed : 0;
@@ -7388,6 +7718,177 @@
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
 
+        function setCashProjectionPeriod(days) {
+            cashProjectionPeriod = Number(days) === 15 ? 15 : Number(days) === 30 ? 30 : 7;
+            renderCashProjection();
+        }
+
+        function openCashProjectionDaily() {
+            cashProjectionDailyOpen = true;
+            renderCashProjection();
+        }
+
+        function closeCashProjectionDaily() {
+            cashProjectionDailyOpen = false;
+            renderCashProjection();
+        }
+
+        function handleCashProjectionCardKeydown(event) {
+            if (!event || (event.key !== 'Enter' && event.key !== ' ')) return;
+            event.preventDefault();
+            openCashProjectionDaily();
+        }
+
+        function getCashProjectionWindow(days) {
+            const today = parseIsoDateLocal(getTodayIsoDate()) || new Date();
+            const start = addLocalDays(today, 1);
+            const end = addLocalDays(today, Math.max(1, Number(days) || 7));
+            return {
+                startIso: formatLocalDate(start),
+                endIso: formatLocalDate(end),
+                days: Math.max(1, Number(days) || 7)
+            };
+        }
+
+        function buildCashProjectionDailyHtml(entries, range) {
+            const detailEntries = [...(entries || [])].sort((a, b) => {
+                const dateCmp = String(a.date || '').localeCompare(String(b.date || ''));
+                if (dateCmp) return dateCmp;
+                return (Number(b.amount) || 0) - (Number(a.amount) || 0);
+            });
+            if (!detailEntries.length) {
+                return `<div class="cash-projection-detail-head">
+                    <div>
+                        <p class="cash-projection-detail-title">Projeção por dia</p>
+                        <p class="cash-projection-detail-sub">${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')}</p>
+                    </div>
+                    <button type="button" class="cash-projection-tab active" onclick="closeCashProjectionDaily()">Fechar</button>
+                </div>
+                <div class="cash-projection-empty">Nenhum lançamento pendente neste período.</div>`;
+            }
+
+            const grouped = new Map();
+            detailEntries.forEach((entry) => {
+                const key = String(entry.date || '');
+                if (!grouped.has(key)) grouped.set(key, []);
+                grouped.get(key).push(entry);
+            });
+
+            const dayHtml = Array.from(grouped.entries()).map(([dateIso, dayEntries]) => {
+                const totalIn = dayEntries
+                    .filter(entry => normalizeFlowType(entry.type) === FLOW_IN)
+                    .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
+                const totalOut = dayEntries
+                    .filter(entry => normalizeFlowType(entry.type) === FLOW_OUT)
+                    .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
+                const net = totalIn - totalOut;
+                const rows = dayEntries.map((entry) => {
+                    const flow = normalizeFlowType(entry.type);
+                    const flowClass = flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text';
+                    const sign = flow === FLOW_IN ? '+' : '-';
+                    const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
+                    const description = String(entry.description || '').trim();
+                    const label = description ? `${destination} · ${description}` : destination;
+                    return `<div class="cash-projection-entry">
+                        <span class="cash-projection-entry-desc">${escapeHtml(label)}</span>
+                        <span class="cash-projection-entry-value ${flowClass}">${sign} ${formatBRL(Math.abs(Number(entry.amount) || 0))}</span>
+                    </div>`;
+                }).join('');
+
+                return `<article class="cash-projection-day">
+                    <div class="cash-projection-day-head">
+                        <span>${formatDateBRV2(dateIso)} · ${dayEntries.length} pendência(s)</span>
+                        <span class="flow-income-text">Entradas ${formatBRL(totalIn)}</span>
+                        <span class="flow-expense-text">Saídas ${formatBRL(totalOut)}</span>
+                        <span class="${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">Saldo ${formatBRL(net)}</span>
+                    </div>
+                    <div class="cash-projection-day-items">${rows}</div>
+                </article>`;
+            }).join('');
+
+            return `<div class="cash-projection-detail-head">
+                <div>
+                    <p class="cash-projection-detail-title">Projeção por dia</p>
+                    <p class="cash-projection-detail-sub">Somente lançamentos marcados como pendentes.</p>
+                </div>
+                <button type="button" class="cash-projection-tab active" onclick="closeCashProjectionDaily()">Fechar</button>
+            </div>
+            <div class="cash-projection-day-list">${dayHtml}</div>`;
+        }
+
+        function renderCashProjection() {
+            const period = cashProjectionPeriod === 15 ? 15 : cashProjectionPeriod === 30 ? 30 : 7;
+            const range = getCashProjectionWindow(period);
+            const filteredEntries = applyMonthlySelectionFiltersToEntries(getAnalyticalEntries(state.entries));
+            const futureEntries = filteredEntries.filter(entry => {
+                const entryDate = String(entry.date || '');
+                return String(entry.status || '').toUpperCase() === 'PENDENTE' && entryDate >= range.startIso && entryDate <= range.endIso;
+            });
+
+            const pendingIn = futureEntries
+                .filter(entry => normalizeFlowType(entry.type) === FLOW_IN)
+                .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
+            const pendingOut = futureEntries
+                .filter(entry => normalizeFlowType(entry.type) === FLOW_OUT)
+                .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
+            const pendingInCount = futureEntries.filter(entry => normalizeFlowType(entry.type) === FLOW_IN).length;
+            const pendingOutCount = futureEntries.filter(entry => normalizeFlowType(entry.type) === FLOW_OUT).length;
+            const projectedIn = pendingIn;
+            const projectedOut = pendingOut;
+            const projectedNet = projectedIn - projectedOut;
+            const isAttention = projectedNet < 0;
+
+            const rangeEl = document.getElementById('cash-projection-range');
+            if (rangeEl) {
+                rangeEl.innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} • somente lançamentos pendentes cadastrados.`;
+            }
+
+            [
+                ['cash-projection-tab-7', period === 7],
+                ['cash-projection-tab-15', period === 15],
+                ['cash-projection-tab-30', period === 30]
+            ].forEach(([id, active]) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.toggle('active', !!active);
+                    el.setAttribute('aria-selected', active ? 'true' : 'false');
+                }
+            });
+
+            const setText = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = value;
+            };
+            setText('cash-projection-in', formatBRL(projectedIn));
+            setText('cash-projection-out', formatBRL(projectedOut));
+            setText('cash-projection-net', formatBRL(projectedNet));
+            setText('cash-projection-in-pending', `Valor pendente: ${formatBRL(pendingIn)}`);
+            setText('cash-projection-in-average', `${pendingInCount} lançamento(s)`);
+            setText('cash-projection-out-pending', `Valor pendente: ${formatBRL(pendingOut)}`);
+            setText('cash-projection-out-average', `${pendingOutCount} lançamento(s)`);
+            setText('cash-projection-status', isAttention ? 'Atenção' : 'Positivo');
+            setText(
+                'cash-projection-net-note',
+                isAttention
+                    ? 'O período aponta pressão de caixa. Vale revisar vencimentos e recebimentos pendentes.'
+                    : 'O período mantém folga projetada considerando apenas as pendências cadastradas.'
+            );
+
+            const netEl = document.getElementById('cash-projection-net');
+            if (netEl) {
+                netEl.className = `cash-projection-value ${isAttention ? 'flow-expense-text' : 'flow-balance-text'}`;
+            }
+            const statusEl = document.getElementById('cash-projection-status');
+            if (statusEl) statusEl.classList.toggle('attention', isAttention);
+            const cardEl = document.getElementById('cash-projection-net-card');
+            if (cardEl) cardEl.classList.toggle('attention', isAttention);
+            const detailEl = document.getElementById('cash-projection-detail');
+            if (detailEl) {
+                detailEl.classList.toggle('hidden', !cashProjectionDailyOpen);
+                detailEl.innerHTML = cashProjectionDailyOpen ? buildCashProjectionDailyHtml(futureEntries, range) : '';
+            }
+        }
+
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -7402,6 +7903,7 @@
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRL(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
+            renderCashProjection();
             renderAnaliseHierarquicaMensal(monthEntries);
 
             const balR = incR - expR;
@@ -8236,6 +8738,57 @@
             return normalizeReconText(value).replace(/\s+/g, '');
         }
 
+        function getReconCompactDistance(leftValue, rightValue, maxDistance = 2) {
+            const left = String(leftValue || '');
+            const right = String(rightValue || '');
+            if (left === right) return 0;
+            if (!left || !right) return maxDistance + 1;
+            if (Math.abs(left.length - right.length) > maxDistance) return maxDistance + 1;
+
+            const rows = left.length + 1;
+            const cols = right.length + 1;
+            const dp = Array.from({ length: rows }, () => Array(cols).fill(0));
+            for (let i = 0; i < rows; i++) dp[i][0] = i;
+            for (let j = 0; j < cols; j++) dp[0][j] = j;
+
+            for (let i = 1; i < rows; i++) {
+                let rowMin = maxDistance + 1;
+                for (let j = 1; j < cols; j++) {
+                    const cost = left[i - 1] === right[j - 1] ? 0 : 1;
+                    dp[i][j] = Math.min(
+                        dp[i - 1][j] + 1,
+                        dp[i][j - 1] + 1,
+                        dp[i - 1][j - 1] + cost
+                    );
+                    if (
+                        i > 1 &&
+                        j > 1 &&
+                        left[i - 1] === right[j - 2] &&
+                        left[i - 2] === right[j - 1]
+                    ) {
+                        dp[i][j] = Math.min(dp[i][j], dp[i - 2][j - 2] + 1);
+                    }
+                    rowMin = Math.min(rowMin, dp[i][j]);
+                }
+                if (rowMin > maxDistance) return maxDistance + 1;
+            }
+
+            return dp[left.length][right.length];
+        }
+
+        function scoreReconCompactFuzzyMatch(descCompact, phraseCompact) {
+            const desc = String(descCompact || '');
+            const phrase = String(phraseCompact || '');
+            if (desc.length < 6 || phrase.length < 6) return 0;
+            const shorter = Math.min(desc.length, phrase.length);
+            const longer = Math.max(desc.length, phrase.length);
+            if (longer - shorter > 2) return 0;
+            const distance = getReconCompactDistance(desc, phrase, 2);
+            if (distance === 1) return 205 + shorter;
+            if (distance === 2 && shorter >= 9) return 190 + shorter;
+            return 0;
+        }
+
         function onlyDigits(value) {
             return String(value || '').replace(/\D/g, '');
         }
@@ -8399,6 +8952,8 @@
             if (phraseCompact.length >= 6 && descCompact) {
                 if (descCompact === phraseCompact) return 330 + phraseCompact.length;
                 if (descCompact.includes(phraseCompact)) return 210 + phraseCompact.length;
+                const fuzzyScore = scoreReconCompactFuzzyMatch(descCompact, phraseCompact);
+                if (fuzzyScore) return fuzzyScore;
             }
 
             const phraseTokens = tokenizeReconText(phrase);
@@ -8566,6 +9121,8 @@
                     score += 200 + nameNorm.length;
                 } else if (nameCompact.length >= 6 && descCompact.includes(nameCompact)) {
                     score += 195 + nameCompact.length;
+                } else if (nameCompact.length >= 6) {
+                    score += scoreReconCompactFuzzyMatch(descCompact, nameCompact);
                 }
 
                 if (descDocumentDigits.length && documentDigits.length) {
