@@ -8232,6 +8232,10 @@
                 .trim();
         }
 
+        function normalizeReconCompactText(value) {
+            return normalizeReconText(value).replace(/\s+/g, '');
+        }
+
         function onlyDigits(value) {
             return String(value || '').replace(/\D/g, '');
         }
@@ -8389,6 +8393,13 @@
             if (descNorm === phrase) return 340 + phrase.length;
             if (descNorm.includes(phrase)) return 220 + phrase.length;
             if (!phrase.includes(' ') && hasReconTokenBoundary(descNorm, phrase)) return 190 + phrase.length;
+
+            const descCompact = normalizeReconCompactText(descNorm);
+            const phraseCompact = normalizeReconCompactText(phrase);
+            if (phraseCompact.length >= 6 && descCompact) {
+                if (descCompact === phraseCompact) return 330 + phraseCompact.length;
+                if (descCompact.includes(phraseCompact)) return 210 + phraseCompact.length;
+            }
 
             const phraseTokens = tokenizeReconText(phrase);
             if (!phraseTokens.length) return 0;
@@ -8549,8 +8560,12 @@
                 const aliasPhrases = isInternalTransfer ? [] : getDestinationAliasPhrases(dst);
                 let score = 0;
 
+                const nameCompact = normalizeReconCompactText(nameNorm);
+                const descCompact = normalizeReconCompactText(descNorm);
                 if (nameNorm && descNorm.includes(nameNorm)) {
                     score += 200 + nameNorm.length;
+                } else if (nameCompact.length >= 6 && descCompact.includes(nameCompact)) {
+                    score += 195 + nameCompact.length;
                 }
 
                 if (descDocumentDigits.length && documentDigits.length) {
