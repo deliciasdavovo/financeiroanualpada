@@ -1754,6 +1754,28 @@
             border-color: #C7D2FE;
             color: #1D4ED8;
         }
+        .recon-note-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1px solid #D7DFEA;
+            background: #FFFFFF;
+            color: #64748B;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+        .recon-note-btn:hover {
+            background: #F8FAFC;
+            border-color: #C8D3E2;
+            color: #0F172A;
+        }
+        .recon-note-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
         .recon-desc-input {
             min-width: 0;
             width: 100%;
@@ -9104,6 +9126,32 @@
             return hasPixOutra || (hasPagamentoPix && hasMaskedDocument);
         }
 
+        function isAmbiguousPersonalPixDescription(description, flowType = '') {
+            const original = String(description || '').trim();
+            const text = normalizeReconText(original);
+            if (!text) return false;
+            if (normalizeFlowType(flowType) !== FLOW_OUT) return false;
+            const isPixSent = text.includes('pix enviado') || text.includes('pix emit') || text.includes('pagamento pix');
+            if (!isPixSent) return false;
+            const explicitIntentHints = [
+                'emprestimo', 'emprestar', 'parcela', 'parcelamento', 'devolucao', 'devolver',
+                'adiantamento', 'salario', 'comissao', 'frete', 'servico', 'fornecedor'
+            ];
+            if (explicitIntentHints.some(hint => text.includes(hint))) return false;
+            if (getReconDocumentDigitsList(original).length > 0) return false;
+            if (hasOwnCompanyCounterpartyEvidence(text)) return false;
+
+            const businessHints = [
+                'ltda', 'eireli', 'mei', 'me ', 'sa ', 's a', 'comercio', 'mercado', 'supermercado',
+                'posto', 'farmacia', 'padaria', 'panificadora', 'restaurante', 'distribuidora',
+                'industria', 'servicos', 'servico', 'solucoes', 'tecnologia', 'materiais'
+            ];
+            if (businessHints.some(hint => (` ${text} `).includes(` ${hint.trim()} `))) return false;
+
+            const tokens = tokenizeReconText(text);
+            return tokens.length >= 2 && tokens.length <= 5;
+        }
+
         function findPreferredBankSalesDestination(validDestinations) {
             const list = Array.isArray(validDestinations) ? validDestinations : [];
             if (!list.length) return '';
@@ -9180,6 +9228,7 @@
                 : '';
             if (ownCompanyInternalTransferId) return ownCompanyInternalTransferId;
             const hasTransferEvidence = hasReconTransferEvidence(descNorm, descTokens);
+            const isAmbiguousPersonalPix = isAmbiguousPersonalPixDescription(description, normalizedFlow);
             const strongNoteDestinationId = findDestinationByStrongNote(description, validDestinations, {
                 allowInternalTransfer: hasTransferEvidence
             });
@@ -9250,7 +9299,8 @@
 
             if (bestDirectId && bestDirectScore >= 190) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
-                if (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence) return bestDirectId;
+                const canUseDirectMatch = !isAmbiguousPersonalPix || bestDirectScore >= 260;
+                if (canUseDirectMatch && (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence)) return bestDirectId;
             }
 
             const validIds = new Set(validDestinations.map(d => d.id));
@@ -9303,6 +9353,12 @@
             const bestScore = bestPair ? Number(bestPair[1]) : 0;
             const secondBestScore = secondPair ? Number(secondPair[1]) : 0;
             if (bestId) {
+                if (isAmbiguousPersonalPix && normalizedFlow === FLOW_OUT) {
+                    const scoreGap = bestScore - secondBestScore;
+                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 260;
+                    const hasStrongCombinedEvidence = bestScore >= 220 && scoreGap >= 80;
+                    if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return resolvedConsultationId || '';
+                }
                 if (normalizedFlow === FLOW_OUT && resolvedConsultationId) {
                     const scoreGap = bestScore - secondBestScore;
                     const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
@@ -9551,6 +9607,82 @@
             tempRecon[index].description = String(value || '');
         }
 
+        function getReconNoteCandidate(index) {
+            const item = tempRecon[index];
+            if (!item) return '';
+            const textarea = document.getElementById(`recon-desc-${index}`);
+            const rawDescription = String((textarea ? textarea.value : item.description) || '');
+            let selectedText = '';
+            if (textarea) {
+                const start = Number(textarea.selectionStart) || 0;
+                const end = Number(textarea.selectionEnd) || 0;
+                if (end > start) selectedText = rawDescription.slice(start, end);
+            }
+            return String(selectedText || rawDescription).replace(/\s+/g, ' ').trim();
+        }
+
+        function mergeDestinationNotes(currentNotes, nextNote) {
+            const cleanNext = String(nextNote || '').replace(/\s+/g, ' ').trim();
+            if (!cleanNext) return String(currentNotes || '').trim();
+            const parts = String(currentNotes || '')
+                .split(/[;\n|]+/)
+                .map(part => part.replace(/\s+/g, ' ').trim())
+                .filter(Boolean);
+            const exists = parts.some(part => normalizeDestinationLookupLabel(part) === normalizeDestinationLookupLabel(cleanNext));
+            if (!exists) parts.push(cleanNext);
+            return parts.join('; ');
+        }
+
+        async function saveReconDescriptionAsDestinationNote(index) {
+            const item = tempRecon[index];
+            if (!item) return;
+            const destinationId = String(item.destinationId || '');
+            const destination = state.destinations.find(d => String(d.id || '') === destinationId);
+            if (!destination) {
+                alert('Selecione um destino antes de salvar a descrição como nota.');
+                return;
+            }
+            const note = getReconNoteCandidate(index);
+            if (!note) {
+                alert('Digite ou selecione uma descrição para salvar como nota do destino.');
+                return;
+            }
+
+            const updatedDestination = {
+                ...destination,
+                notes: mergeDestinationNotes(destination.notes, note)
+            };
+            if (String(updatedDestination.notes || '') === String(destination.notes || '')) {
+                alert('Essa descrição já está nas notas deste destino.');
+                return;
+            }
+
+            const btn = document.getElementById(`recon-note-btn-${index}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.setAttribute('title', 'Salvando nota...');
+            }
+            const saveResult = await cloudSave('destinations', updatedDestination);
+            if (!saveResult?.ok) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.setAttribute('title', 'Salvar descrição selecionada como nota do destino');
+                }
+                alert(`Não foi possível salvar a nota do destino.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
+
+            state.destinations = state.destinations.map(d => String(d.id || '') === destinationId ? updatedDestination : d);
+            renderReconPreview();
+        }
+
+        function handleReconDescriptionKeydown(index, event) {
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                event.preventDefault();
+                saveReconDescriptionAsDestinationNote(index);
+            }
+        }
+
         function startReconFill(index, event) {
             event.preventDefault();
             if (!tempRecon[index]) return;
@@ -9753,8 +9885,11 @@
                         <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
                         <td class="px-4 py-3 w-[180px]">
                             <textarea
+                                id="recon-desc-${i}"
                                 class="recon-desc-input custom-scrollbar"
                                 oninput="updateReconDescription(${i}, this.value)"
+                                onkeydown="handleReconDescriptionKeydown(${i}, event)"
+                                title="Selecione um trecho e use Ctrl + Enter para salvar como nota do destino"
                                 placeholder="Descrição do lançamento"
                                 rows="2"
                             >${escapeHtml(e.description)}</textarea>
@@ -9765,6 +9900,9 @@
                                     <option value="" ${invalidDestination ? 'selected' : ''}>Selecionar destino...</option>
                                     ${destinationSource.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
                                 </select>
+                                <button type="button" id="recon-note-btn-${i}" class="recon-note-btn" onclick="saveReconDescriptionAsDestinationNote(${i})" title="Salvar descrição selecionada como nota do destino" aria-label="Salvar descrição como nota do destino">
+                                    <i data-lucide="sticky-note" class="w-3.5 h-3.5"></i>
+                                </button>
                                 <button type="button" class="recon-fill-handle" onmousedown="startReconFill(${i}, event)" title="Arraste para baixo para copiar o destino">
                                     ...
                                 </button>
