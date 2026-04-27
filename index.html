@@ -8973,8 +8973,34 @@
             if (!text) return false;
             return text.includes('transferencia interna')
                 || text.includes('transferencia entre contas')
+                || text.includes('trandferencia interna')
+                || text.includes('trandferencia entre contas')
                 || text.includes('transf interna')
                 || (text.includes('transferencia') && text.includes('interna'));
+        }
+        function hasOwnCompanyCounterpartyEvidence(descNorm) {
+            const text = String(descNorm || '');
+            if (!text) return false;
+            const compact = normalizeReconCompactText(text);
+            const hasOwnCompanyName =
+                text.includes('panificadora delicias da vovo')
+                || text.includes('delicias da vovo ltda')
+                || text.includes('delicias da vovo')
+                || compact.includes('panificadoradeliciasdavovo')
+                || compact.includes('deliciasdavovoltda')
+                || compact.includes('deliciasdavovo');
+            if (!hasOwnCompanyName) return false;
+            return text.includes('pix enviado')
+                || text.includes('pix recebido')
+                || text.includes('pix emit')
+                || text.includes('pix receb')
+                || text.includes('transferencia')
+                || text.includes('transf');
+        }
+        function findInternalTransferDestination(validDestinations) {
+            const list = Array.isArray(validDestinations) ? validDestinations : [];
+            const match = list.find((destination) => isInternalTransferDestination(destination));
+            return String((match || {}).id || '');
         }
         function findInternalTransferDestinationByExactDocument(description, validDestinations) {
             const descDocuments = getReconDocumentDigitsList(description).filter((digits) => digits.length === 14);
@@ -9008,6 +9034,7 @@
         function hasReconTransferEvidence(descNorm, descTokens) {
             const text = String(descNorm || '');
             if (!text) return false;
+            if (hasOwnCompanyCounterpartyEvidence(text)) return true;
             if (text.includes('transferencia') || text.includes('transf')) return true;
             if (text.includes('entre contas') || text.includes('mesma titularidade') || text.includes('conta destino')) return true;
             if (text.includes('conta origem') || text.includes('conta de mesma titularidade')) return true;
@@ -9094,6 +9121,10 @@
             if (!descNorm) return resolvedConsultationId || (normalizedFlow === FLOW_OUT ? '' : getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true }));
 
             const descTokens = new Set(tokenizeReconText(descNorm));
+            const ownCompanyInternalTransferId = hasOwnCompanyCounterpartyEvidence(descNorm)
+                ? findInternalTransferDestination(validDestinations)
+                : '';
+            if (ownCompanyInternalTransferId) return ownCompanyInternalTransferId;
             const hasTransferEvidence = hasReconTransferEvidence(descNorm, descTokens);
             const isGenericPixCounterparty = isGenericPixCounterpartyDescription(descNorm);
             const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
