@@ -8820,18 +8820,7 @@
         const RECON_STOPWORDS = new Set([
             'de', 'da', 'do', 'das', 'dos', 'para', 'por', 'com', 'sem', 'em', 'no', 'na', 'nos', 'nas',
             'pix', 'ted', 'doc', 'pagamento', 'pgto', 'transferencia', 'transfer', 'compra', 'debito', 'credito',
-            'emit', 'emitido', 'emitente', 'outra', 'outro', 'receb', 'recebido', 'recebimento',
-            'banco', 'agencia', 'conta', 'cartao', 'credito', 'debito', 'online', 'internet', 'banking',
-            'lancamento', 'lancto', 'historico', 'descricao', 'documento', 'valor', 'saldo',
-            'fornecedor', 'cliente', 'servico', 'servicos', 'produto', 'produtos', 'mercado', 'loja',
-            'comercio', 'empresa', 'ltda', 'eireli', 'mei', 'cpf', 'cnpj'
-        ]);
-
-        const RECON_WEAK_TOKENS = new Set([
-            ...RECON_STOPWORDS,
-            'auto', 'posto', 'super', 'mini', 'max', 'brasil', 'br', 'sa', 's/a', 'pag', 'pagto',
-            'receita', 'despesa', 'entrada', 'saida', 'boleto', 'tarifa', 'taxa', 'diversos',
-            'outros', 'outras', 'geral', 'avulso', 'avulsa'
+            'emit', 'emitido', 'emitente', 'outra', 'outro', 'receb', 'recebido', 'recebimento'
         ]);
 
         function tokenizeReconText(value) {
@@ -8840,20 +8829,6 @@
                 .map(t => t.trim())
                 .filter(t => t.length >= 3 && !RECON_STOPWORDS.has(t))
                 .filter(t => !/^\d+$/.test(t));
-        }
-
-        function isReconWeakToken(token) {
-            const value = normalizeReconText(token);
-            if (!value) return true;
-            if (value.length < 4) return true;
-            if (/^\d+$/.test(value)) return true;
-            return RECON_WEAK_TOKENS.has(value);
-        }
-
-        function getReconSignificantTokens(value) {
-            return tokenizeReconText(value)
-                .filter(token => !isReconWeakToken(token))
-                .filter(token => token.length >= 4);
         }
 
         let reconDestinationMetaCache = {
@@ -8949,9 +8924,7 @@
                 .filter(Boolean);
             const noteTokens = tokenizeReconText(rawNotes);
             const nameTokens = tokenizeReconText(rawName).filter(token => token.length >= 4);
-            const strongNoteTokens = noteTokens.filter(token => token.length >= 5 && !isReconWeakToken(token));
-            const strongNameTokens = nameTokens.filter(token => token.length >= 5 && !isReconWeakToken(token));
-            const phrases = [rawName, ...noteChunks, ...strongNoteTokens, ...strongNameTokens].filter(Boolean);
+            const phrases = [rawName, ...noteChunks, ...noteTokens, ...nameTokens].filter(Boolean);
             const seen = new Set();
             return phrases
                 .map(item => normalizeReconText(item))
@@ -8965,7 +8938,7 @@
                 .split(/[\n,;|]/)
                 .map(item => item.trim())
                 .filter(Boolean);
-            const noteTokens = tokenizeReconText(rawNotes).filter(token => token.length >= 5 && !isReconWeakToken(token));
+            const noteTokens = tokenizeReconText(rawNotes).filter(token => token.length >= 4);
             const seen = new Set();
             return [...noteChunks, ...noteTokens]
                 .map(item => normalizeReconText(item))
@@ -8984,8 +8957,6 @@
         function scoreDestinationAliasMatch(descNorm, descTokens, aliasPhrase) {
             const phrase = String(aliasPhrase || '').trim();
             if (!phrase) return 0;
-            const isSingleWeakToken = !phrase.includes(' ') && isReconWeakToken(phrase);
-            if (isSingleWeakToken) return 0;
             if (descNorm === phrase) return 340 + phrase.length;
             if (descNorm.includes(phrase)) return 220 + phrase.length;
             if (!phrase.includes(' ') && hasReconTokenBoundary(descNorm, phrase)) return 190 + phrase.length;
@@ -9007,15 +8978,12 @@
                 if (descTokens.has(token)) overlap++;
             });
             if (!overlap) return 0;
-            if (phraseTokens.length === 1 && isReconWeakToken(phraseTokens[0])) return 0;
             if (overlap === phraseTokens.length) return 120 + (phraseTokens.length * 18);
             return overlap * 18;
         }
         function scoreDestinationNoteAliasMatch(descNorm, descTokens, notePhrase) {
             const phrase = String(notePhrase || '').trim();
             if (!phrase) return 0;
-            const isSingleWeakToken = !phrase.includes(' ') && isReconWeakToken(phrase);
-            if (isSingleWeakToken) return 0;
             if (descNorm === phrase) return 560 + phrase.length;
             if (descNorm.includes(phrase)) return 500 + phrase.length;
             if (!phrase.includes(' ') && hasReconTokenBoundary(descNorm, phrase)) return 320 + phrase.length;
@@ -9028,7 +8996,6 @@
             if (!phraseTokens.length) return 0;
             const overlap = phraseTokens.filter(token => descTokens.has(token)).length;
             if (!overlap) return 0;
-            if (phraseTokens.length === 1 && isReconWeakToken(phraseTokens[0])) return 0;
             if (overlap === phraseTokens.length) return 260 + (phraseTokens.length * 24);
             return overlap * 28;
         }
@@ -9228,7 +9195,6 @@
 
             let bestDirectId = '';
             let bestDirectScore = 0;
-            const directCandidates = [];
             validDestinations.forEach(dst => {
                 const nameNorm = normalizeReconText(dst.name);
                 const destinationMeta = getReconDestinationMeta(dst);
@@ -9276,32 +9242,13 @@
                 }
                 if (isInternalTransfer && !hasTransferEvidence) score -= 260;
 
-                if (score > 0) {
-                    directCandidates.push({
-                        id: String(dst.id || ''),
-                        score,
-                        isInternalTransfer
-                    });
-                }
                 if (score > bestDirectScore) {
                     bestDirectScore = score;
                     bestDirectId = dst.id;
                 }
             });
 
-            directCandidates.sort((a, b) => Number(b.score) - Number(a.score));
-            const bestDirectCandidate = directCandidates[0] || null;
-            const secondDirectCandidate = directCandidates[1] || null;
-            const directGap = bestDirectCandidate && secondDirectCandidate
-                ? Number(bestDirectCandidate.score) - Number(secondDirectCandidate.score)
-                : Number(bestDirectCandidate?.score || 0);
-            const hasReliableDirectMatch = !!bestDirectCandidate
-                && Number(bestDirectCandidate.score) >= 260
-                && (Number(bestDirectCandidate.score) >= 470 || directGap >= 80);
-
-            if (hasReliableDirectMatch) {
-                bestDirectId = bestDirectCandidate.id;
-                bestDirectScore = Number(bestDirectCandidate.score) || 0;
+            if (bestDirectId && bestDirectScore >= 190) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
                 if (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence) return bestDirectId;
             }
@@ -9314,11 +9261,10 @@
                 const entryText = `${entry.description || ''} ${(dst || {}).name || ''} ${(dst || {}).notes || ''}`;
                 const entryDescNorm = normalizeReconText(entryText);
                 if (!entryDescNorm) return;
-                const entryTokens = getReconSignificantTokens(entryDescNorm);
+                const entryTokens = tokenizeReconText(entryDescNorm);
                 let overlap = 0;
                 entryTokens.forEach(token => { if (descTokens.has(token)) overlap++; });
                 if (overlap <= 0) return;
-                if (overlap === 1 && !entryTokens.some(token => descTokens.has(token) && token.length >= 7)) return;
                 const ym = Number(String(entry.date || '').slice(0, 7).replace('-', '')) || 0;
                 const monthDistance = ym > 0 ? Math.max(0, nowYearMonth - ym) : 999;
                 const recencyWeight = monthDistance <= 1 ? 1.25 : monthDistance <= 6 ? 1.1 : 0.95;
@@ -9359,16 +9305,10 @@
             if (bestId) {
                 if (normalizedFlow === FLOW_OUT && resolvedConsultationId) {
                     const scoreGap = bestScore - secondBestScore;
-                    const hasStrongDirectEvidence = bestDirectId === bestId && hasReliableDirectMatch;
-                    const hasStrongCombinedEvidence = bestScore >= 180 && scoreGap >= 60;
+                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
+                    const hasStrongCombinedEvidence = bestScore >= 140 && scoreGap >= 35;
                     if (isGenericPixCounterparty && !hasStrongDirectEvidence) return resolvedConsultationId;
                     if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return resolvedConsultationId;
-                }
-                if (normalizedFlow === FLOW_OUT) {
-                    const scoreGap = bestScore - secondBestScore;
-                    const hasStrongDirectEvidence = bestDirectId === bestId && hasReliableDirectMatch;
-                    const hasStrongCombinedEvidence = bestScore >= 180 && scoreGap >= 60;
-                    if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return '';
                 }
                 return bestId;
             }
