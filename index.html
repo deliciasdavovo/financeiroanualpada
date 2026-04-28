@@ -9330,10 +9330,10 @@
 
             let bestDirectId = '';
             let bestDirectScore = 0;
+            let secondDirectScore = 0;
             validDestinations.forEach(dst => {
                 const nameNorm = normalizeReconText(dst.name);
                 const destinationMeta = getReconDestinationMeta(dst);
-                const keywordSet = destinationMeta.keywordSet;
                 const documentDigits = destinationMeta.documentDigits;
                 const isInternalTransfer = isInternalTransferDestination(dst);
                 const aliasPhrases = isInternalTransfer && !hasTransferEvidence ? [] : getDestinationAliasPhrases(dst);
@@ -9370,22 +9370,22 @@
                     if (!isInternalTransfer || hasTransferEvidence) score += scoreDestinationNoteAliasMatch(descNorm, descTokens, phrase);
                 });
 
-                if (!isInternalTransfer) {
-                    keywordSet.forEach(token => {
-                        if (descTokens.has(token)) score += 22;
-                    });
-                }
                 if (isInternalTransfer && !hasTransferEvidence) score -= 260;
 
                 if (score > bestDirectScore) {
+                    secondDirectScore = bestDirectScore;
                     bestDirectScore = score;
                     bestDirectId = dst.id;
+                } else if (score > secondDirectScore) {
+                    secondDirectScore = score;
                 }
             });
 
-            if (bestDirectId && bestDirectScore >= 190) {
+            if (bestDirectId && bestDirectScore >= 230) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
-                const canUseDirectMatch = !isAmbiguousPersonalPix || bestDirectScore >= 260;
+                const directScoreGap = bestDirectScore - secondDirectScore;
+                const canUseDirectMatch = (!isAmbiguousPersonalPix || bestDirectScore >= 340)
+                    && (bestDirectScore >= 340 || directScoreGap >= 70);
                 if (canUseDirectMatch && (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence)) return bestDirectId;
             }
 
@@ -9418,7 +9418,7 @@
             });
 
             const combined = {};
-            if (bestDirectId) combined[bestDirectId] = (combined[bestDirectId] || 0) + bestDirectScore;
+            if (bestDirectId && bestDirectScore >= 160) combined[bestDirectId] = (combined[bestDirectId] || 0) + bestDirectScore;
             if (bestHistoryId) combined[bestHistoryId] = (combined[bestHistoryId] || 0) + bestHistoryScore;
             Object.entries(scoreByDestination).forEach(([destinationId, score]) => {
                 combined[destinationId] = (combined[destinationId] || 0) + score;
@@ -9439,9 +9439,17 @@
             const bestScore = bestPair ? Number(bestPair[1]) : 0;
             const secondBestScore = secondPair ? Number(secondPair[1]) : 0;
             if (bestId) {
+                const directScoreGap = bestDirectScore - secondDirectScore;
+                const hasUsableNameOrNoteMatch = bestDirectId === bestId
+                    && bestDirectScore >= 230
+                    && (bestDirectScore >= 340 || directScoreGap >= 70);
+                if (!hasUsableNameOrNoteMatch) {
+                    if (resolvedConsultationId) return resolvedConsultationId;
+                    if (normalizedFlow === FLOW_OUT) return '';
+                }
                 if (isAmbiguousPersonalPix && normalizedFlow === FLOW_OUT) {
                     const scoreGap = bestScore - secondBestScore;
-                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 260;
+                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 340;
                     const hasStrongCombinedEvidence = bestScore >= 220 && scoreGap >= 80;
                     if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return resolvedConsultationId || '';
                 }
@@ -11303,8 +11311,4 @@
     </script>
 </body>
 </html>
-
-
-
-
 
