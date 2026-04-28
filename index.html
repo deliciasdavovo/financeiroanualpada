@@ -3537,7 +3537,7 @@
         let cashProjectionDailyOpen = false;
         let entriesSearchTimer = null;
         let entriesPage = 1;
-        const entriesPageSize = 80;
+        const entriesPageSize = 100;
         let lastEntriesQueryKey = '';
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
         let selectedEntryIds = new Set();
@@ -3554,6 +3554,12 @@
         let lastFocusedElement = null;
         let cloudSyncInFlight = false;
         let cloudRefreshTimer = null;
+        let lastCloudStateSignature = '';
+        let lastCloudRefreshAt = 0;
+        let focusRefreshTimer = null;
+        let monthlyChartsSignature = '';
+        const CLOUD_AUTO_REFRESH_MS = 60 * 1000;
+        const CLOUD_FOCUS_REFRESH_THROTTLE_MS = 15 * 1000;
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
         let entryFillDragMode = '';
@@ -3901,6 +3907,51 @@
             return { ok: true, data: rows, error: null };
         }
 
+        function getCloudStateSignature(snapshot) {
+            const source = snapshot || state || {};
+            return STATE_TABLES.map((table) => {
+                const rows = Array.isArray(source[table]) ? source[table] : [];
+                let newest = '';
+                const fingerprints = [];
+                rows.forEach((row) => {
+                    const item = row || {};
+                    const id = String(item.id || '');
+                    const updatedAt = String((item.updatedAt ?? item.updated_at) || '');
+                    if (updatedAt > newest) newest = updatedAt;
+                    fingerprints.push([
+                        id,
+                        updatedAt,
+                        item.date || '',
+                        item.name || '',
+                        item.type || '',
+                        item.status || '',
+                        item.amount ?? '',
+                        item.accountId ?? item.account_id ?? '',
+                        item.destinationId ?? item.destination_id ?? '',
+                        item.subCategoryId ?? item.sub_category_id ?? '',
+                        item.categoryId ?? item.category_id ?? '',
+                        item.balance ?? '',
+                        item.cashIn ?? item.cash_in ?? '',
+                        item.cardIn ?? item.card_in ?? '',
+                        item.paymentsOut ?? item.payments_out ?? ''
+                    ].join(':'));
+                });
+                fingerprints.sort();
+                return `${table}:${rows.length}:${newest}:${fingerprints.join('|')}`;
+            }).join('|');
+        }
+
+        function requestCloudRefresh(options = {}) {
+            const now = Date.now();
+            const minInterval = Number(options.minIntervalMs ?? CLOUD_FOCUS_REFRESH_THROTTLE_MS);
+            if (cloudSyncInFlight || (now - lastCloudRefreshAt) < minInterval) return;
+            if (focusRefreshTimer) window.clearTimeout(focusRefreshTimer);
+            focusRefreshTimer = window.setTimeout(() => {
+                focusRefreshTimer = null;
+                refreshCloudState({ silent: options.silent !== false });
+            }, Number(options.delayMs || 250));
+        }
+
         async function validateImportedEntryIds(ids, chunkSize = 400) {
             const list = Array.isArray(ids) ? ids.filter(Boolean) : [];
             if (!list.length) return { ok: true, imported: 0, expected: 0, error: null };
@@ -3986,6 +4037,8 @@
                 }
                 state = cloudState;
                 normalizeStateIds();
+                lastCloudStateSignature = getCloudStateSignature(state);
+                lastCloudRefreshAt = Date.now();
                 setSyncStatus('synced');
                 document.getElementById('loading-overlay').style.display = 'none';
                 updateBackupIndicator();
@@ -4003,6 +4056,7 @@
             const { silent = true } = options;
             cloudSyncInFlight = true;
             try {
+                lastCloudRefreshAt = Date.now();
                 if (!silent) setSyncStatus('syncing');
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
                 for (const t of STATE_TABLES) {
@@ -4017,8 +4071,15 @@
                     }
                     cloudState[t] = result.data || [];
                 }
+                const nextSignature = getCloudStateSignature(cloudState);
+                if (nextSignature === lastCloudStateSignature) {
+                    setSyncStatus('synced');
+                    updateBackupIndicator();
+                    return;
+                }
                 state = cloudState;
                 normalizeStateIds();
+                lastCloudStateSignature = getCloudStateSignature(state);
                 setSyncStatus('synced');
                 updateBackupIndicator();
                 render();
@@ -7916,10 +7977,37 @@
             if (!filter) return;
             const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
             const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
-            const incR = entries.filter(e=>e.type==='ENTRADA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const incP = entries.filter(e=>e.type==='ENTRADA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expR = entries.filter(e=>e.type==='SAÍDA' && e.status==='REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const expP = entries.filter(e=>e.type==='SAÍDA' && e.status==='PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const daysInMonth = new Date(...filter.split('-').map((v,i)=>i===0?v:v-1), 0).getDate();
+            const dailyInReal = Array(daysInMonth).fill(0);
+            const dailyInPend = Array(daysInMonth).fill(0);
+            const dailyOutReal = Array(daysInMonth).fill(0);
+            const dailyOutPend = Array(daysInMonth).fill(0);
+            let incR = 0;
+            let incP = 0;
+            let expR = 0;
+            let expP = 0;
+
+            entries.forEach((entry) => {
+                const amount = Number(entry.amount) || 0;
+                const day = Number(String(entry.date || '').slice(8, 10));
+                const dayIndex = day >= 1 && day <= daysInMonth ? day - 1 : -1;
+                const isIncome = normalizeFlowType(entry.type) === FLOW_IN;
+                const isRealized = entry.status === 'REALIZADO';
+
+                if (isIncome && isRealized) {
+                    incR += amount;
+                    if (dayIndex >= 0) dailyInReal[dayIndex] += amount;
+                } else if (isIncome) {
+                    incP += amount;
+                    if (dayIndex >= 0) dailyInPend[dayIndex] += amount;
+                } else if (isRealized) {
+                    expR += amount;
+                    if (dayIndex >= 0) dailyOutReal[dayIndex] += amount;
+                } else {
+                    expP += amount;
+                    if (dayIndex >= 0) dailyOutPend[dayIndex] += amount;
+                }
+            });
 
             document.getElementById('sum-inc-real').innerText = formatBRL(incR);
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
@@ -7935,36 +8023,23 @@
                 balEl.className = 'text-2xl font-black flow-balance-text'; 
             }
 
-            const daysInMonth = new Date(...filter.split('-').map((v,i)=>i===0?v:v-1), 0).getDate();
             let html = '', cumulative = 0;
-            const dailyInReal = []; const dailyInPend = [];
-            const dailyOutReal = []; const dailyOutPend = [];
             const labelsBar = [];
-            for(let d = 1; d <= 31; d++) {
-                const dayStr = `${filter}-${d.toString().padStart(2, '0')}`;
-                const dEntries = entries.filter(e => e.date === dayStr);
-                const dInc = dEntries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExp = dEntries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dIncPend = dEntries.filter(e => e.type === 'ENTRADA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const dExpPend = dEntries.filter(e => e.type === 'SAÍDA' && e.status === 'PENDENTE').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            for(let d = 1; d <= daysInMonth; d++) {
+                const dInc = dailyInReal[d - 1] || 0;
+                const dExp = dailyOutReal[d - 1] || 0;
                 const dBal = dInc - dExp;
                 cumulative += dBal;
-                if (d <= daysInMonth) {
-                    dailyInReal.push(dInc);
-                    dailyInPend.push(dIncPend);
-                    dailyOutReal.push(dExp);
-                    dailyOutPend.push(dExpPend);
-                    labelsBar.push(`Dia ${d}`);
-                    html += `<tr class="text-[11px] font-bold">
-                        <td class="px-8 py-4 text-slate-400">${d}</td>
-                        <td class="px-8 py-4 flow-income-text">${formatBRL(dInc)}</td>
-                        <td class="px-8 py-4 flow-expense-text">${formatBRL(dExp)}</td>
-                        <td class="px-8 py-4 text-right font-black">
-                            <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
-                        </td>
-                        <td class="px-8 py-4 text-right text-slate-900 font-black">${formatBRL(cumulative)}</td>
-                    </tr>`;
-                }
+                labelsBar.push(`Dia ${d}`);
+                html += `<tr class="text-[11px] font-bold">
+                    <td class="px-8 py-4 text-slate-400">${d}</td>
+                    <td class="px-8 py-4 flow-income-text">${formatBRL(dInc)}</td>
+                    <td class="px-8 py-4 flow-expense-text">${formatBRL(dExp)}</td>
+                    <td class="px-8 py-4 text-right font-black">
+                        <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
+                    </td>
+                    <td class="px-8 py-4 text-right text-slate-900 font-black">${formatBRL(cumulative)}</td>
+                </tr>`;
             }
             document.getElementById('monthly-daily-table').innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
             renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar);
@@ -7999,12 +8074,12 @@
             }
 
             const expByCat = {};
-            entries.filter(e => e.type === 'SAÍDA' && e.status === 'REALIZADO').forEach(e => {
+            entries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && e.status === 'REALIZADO').forEach(e => {
                 const c = state.categories.find(x => x.id === e.categoryId)?.name || 'Outros';
                 expByCat[c] = (expByCat[c] || 0) + Number(e.amount || 0);
             });
             const incByCat = {};
-            entries.filter(e => e.type === 'ENTRADA' && e.status === 'REALIZADO').forEach(e => {
+            entries.filter(e => normalizeFlowType(e.type) === FLOW_IN && e.status === 'REALIZADO').forEach(e => {
                 const c = state.categories.find(x => x.id === e.categoryId)?.name || 'Outros';
                 incByCat[c] = (incByCat[c] || 0) + Number(e.amount || 0);
             });
@@ -8017,6 +8092,17 @@
                 expByCat,
                 ['#B23A3A', '#C94A34', '#DE6432', '#EE8833', '#F6AA2F', '#F8C24A', '#F9DA78']
             );
+            const nextChartsSignature = JSON.stringify({
+                inc: incChartData,
+                exp: expChartData,
+                dailyInReal,
+                dailyInPend,
+                dailyOutReal,
+                dailyOutPend,
+                labelsBar
+            });
+            if (nextChartsSignature === monthlyChartsSignature && window.mPieInc && window.mPieExp && window.mBar) return;
+            monthlyChartsSignature = nextChartsSignature;
 
             const pieIncEl = document.getElementById('monthChartPieInc');
             if(pieIncEl) {
@@ -11203,15 +11289,16 @@
             closeDestinationCombobox();
         });
         window.addEventListener('load', initPiggyMicroInteractions);
-        window.addEventListener('focus', () => { refreshCloudState({ silent: true }); });
-        window.addEventListener('online', () => { refreshCloudState({ silent: true }); });
+        window.addEventListener('focus', () => { requestCloudRefresh({ silent: true }); });
+        window.addEventListener('online', () => { requestCloudRefresh({ silent: true, minIntervalMs: 0 }); });
         window.onload = async () => {
             initCustomDatePickers();
             await initCloud();
             if (cloudRefreshTimer) clearInterval(cloudRefreshTimer);
             cloudRefreshTimer = window.setInterval(() => {
-                refreshCloudState({ silent: true });
-            }, 30000);
+                if (document.hidden) return;
+                requestCloudRefresh({ silent: true, minIntervalMs: CLOUD_AUTO_REFRESH_MS });
+            }, CLOUD_AUTO_REFRESH_MS);
         };
     </script>
 </body>
