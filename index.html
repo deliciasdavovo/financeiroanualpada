@@ -3558,7 +3558,7 @@
         let lastCloudRefreshAt = 0;
         let focusRefreshTimer = null;
         let monthlyChartsSignature = '';
-        const CLOUD_AUTO_REFRESH_MS = 60 * 1000;
+        const CLOUD_AUTO_REFRESH_MS = 10 * 60 * 1000;
         const CLOUD_FOCUS_REFRESH_THROTTLE_MS = 15 * 1000;
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
@@ -3941,13 +3941,24 @@
             }).join('|');
         }
 
+        function hasActiveUserEdit() {
+            const active = document.activeElement;
+            const isTyping = active && ['INPUT', 'SELECT', 'TEXTAREA'].includes(active.tagName);
+            const entryModalOpen = !document.getElementById('entry-modal')?.classList.contains('hidden');
+            const dbModalOpen = !document.getElementById('db-modal')?.classList.contains('hidden');
+            const reconOpen = Array.isArray(tempRecon) && tempRecon.length > 0;
+            return Boolean(isTyping || entryModalOpen || dbModalOpen || reconOpen || reconFillState.active || entryDestinationFillState.active || entryAccountFillState.active);
+        }
+
         function requestCloudRefresh(options = {}) {
             const now = Date.now();
             const minInterval = Number(options.minIntervalMs ?? CLOUD_FOCUS_REFRESH_THROTTLE_MS);
             if (cloudSyncInFlight || (now - lastCloudRefreshAt) < minInterval) return;
+            if (!options.force && hasActiveUserEdit()) return;
             if (focusRefreshTimer) window.clearTimeout(focusRefreshTimer);
             focusRefreshTimer = window.setTimeout(() => {
                 focusRefreshTimer = null;
+                if (!options.force && hasActiveUserEdit()) return;
                 refreshCloudState({ silent: options.silent !== false });
             }, Number(options.delayMs || 250));
         }
@@ -6340,132 +6351,6 @@
                 });
             }
             refreshLucideIcons();
-        }
-        function sendTreasuryDailySummaryWhatsApp() {
-            const date = getTreasurySummaryDate();
-            const dayMovements = (state.storeDailyMovements || []).filter(item => item.date === date);
-            const summarizeUnit = (unit) => dayMovements.filter(item => item.unit === unit).reduce((acc, item) => {
-                const totals = getMovementTotals(item);
-                acc.cashIn += totals.cashIn;
-                acc.cardIn += totals.cardIn;
-                acc.paymentsOut += totals.paymentsOut;
-                acc.totalIn += totals.totalIn;
-                acc.result += totals.dailyResult;
-                return acc;
-            }, { cashIn: 0, cardIn: 0, paymentsOut: 0, totalIn: 0, result: 0 });
-            const vila = summarizeUnit('VILA_NOVA');
-            const matriz = summarizeUnit('MATRIZ');
-            const vilaClosing = (vila.cardIn + vila.cashIn) - vila.paymentsOut;
-            const matrizClosing = (matriz.cardIn + matriz.cashIn) - matriz.paymentsOut;
-            const consolidatedSales = (matriz.cardIn + matriz.cashIn) + (vila.cardIn + vila.cashIn);
-            const consolidatedClosing = matrizClosing + vilaClosing;
-            const datePt = formatDateBRV2(date);
-            const bankLines = balances.length
-                ? balances.map(item => `• ${item.name}: ${formatBRL(item.balance)}`)
-                : ['• Sem contas bancárias cadastradas'];
-            const msg = [
-                `📊 *Resumo Tesouraria*`,
-                `📅 *${datePt}*`,
-                ``,
-                `🏬 *Vila Nova*`,
-                `• 💳 Cartão: ${formatBRL(vila.cardIn)}`,
-                `• 💵 Dinheiro: ${formatBRL(vila.cashIn)}`,
-                `• 🧾 Pagamentos: ${formatBRL(vila.paymentsOut)}`,
-                `• ✅ Fechamento: ${formatBRL(vilaClosing)}`,
-                ``,
-                `🏭 *Matriz*`,
-                `• 💳 Cartão: ${formatBRL(matriz.cardIn)}`,
-                `• 💵 Dinheiro: ${formatBRL(matriz.cashIn)}`,
-                `• 🧾 Pagamentos: ${formatBRL(matriz.paymentsOut)}`,
-                `• ✅ Fechamento: ${formatBRL(matrizClosing)}`,
-                ``,
-                `🧮 *Total de vendas (entradas + pagamentos):* ${formatBRL(consolidatedIn)}`,
-                ``,
-                `🏦 *Saldos bancários*`,
-                ...bankLines,
-                `🔢 *Soma dos saldos:* ${formatBRL(totalBalances)}`
-            ].join('\n');
-            const phone = '5511999148044';
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
-        }
-        function renderTreasury() {
-            const today = getTodayIsoDate();
-            const movementDateEl = document.getElementById('treasury-mv-date');
-            const summaryDateEl = document.getElementById('treasury-summary-date');
-            const movementFilterMonthEl = document.getElementById('treasury-mv-filter-month');
-            const balanceFilterMonthEl = document.getElementById('treasury-bal-filter-month');
-            const balanceDateEl = document.getElementById('treasury-bal-date');
-            const todayMonth = today.slice(0, 7);
-            if (movementDateEl && !movementDateEl.value) movementDateEl.value = today;
-            if (balanceDateEl && !balanceDateEl.value) balanceDateEl.value = today;
-            if (summaryDateEl && !summaryDateEl.value) summaryDateEl.value = today;
-            if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
-            if (balanceFilterMonthEl && !balanceFilterMonthEl.value) balanceFilterMonthEl.value = todayMonth;
-            populateTreasuryAccountSelects();
-            renderTreasuryMovements();
-            renderTreasuryBalances();
-            renderTreasuryFinancialPosition();
-        }
-
-        function sendTreasuryDailySummaryWhatsApp() {
-            const date = getTreasurySummaryDate();
-            const dayMovements = (state.storeDailyMovements || []).filter(item => item.date === date);
-            const summarizeUnit = (unit) => dayMovements.filter(item => item.unit === unit).reduce((acc, item) => {
-                const totals = getMovementTotals(item);
-                acc.cashIn += totals.cashIn;
-                acc.cardIn += totals.cardIn;
-                acc.paymentsOut += totals.paymentsOut;
-                acc.totalIn += totals.totalIn;
-                acc.result += totals.dailyResult;
-                return acc;
-            }, { cashIn: 0, cardIn: 0, paymentsOut: 0, totalIn: 0, result: 0 });
-            const vila = summarizeUnit('VILA_NOVA');
-            const matriz = summarizeUnit('MATRIZ');
-            const vilaClosing = (vila.cardIn + vila.cashIn) - vila.paymentsOut;
-            const matrizClosing = (matriz.cardIn + matriz.cashIn) - matriz.paymentsOut;
-            const consolidatedSales = (matriz.cardIn + matriz.cashIn) + (vila.cardIn + vila.cashIn);
-            const consolidatedClosing = matrizClosing + vilaClosing;
-            const datePt = formatDateBRV2(date);
-            const msg = [
-                `Resumo de Vendas`,
-                `${datePt}`,
-                ``,
-                `Vila Nova`,
-                `Cartão: ${formatBRL(vila.cardIn)}`,
-                `Dinheiro: ${formatBRL(vila.cashIn)}`,
-                `Saídas: ${formatBRL(vila.paymentsOut)}`,
-                `Fechamento: ${formatBRL(vilaClosing)}`,
-                ``,
-                `Matriz`,
-                `Cartão: ${formatBRL(matriz.cardIn)}`,
-                `Dinheiro: ${formatBRL(matriz.cashIn)}`,
-                `Saídas: ${formatBRL(matriz.paymentsOut)}`,
-                `Fechamento: ${formatBRL(matrizClosing)}`,
-                ``,
-                `Total de vendas: ${formatBRL(consolidatedSales)}`,
-                `Fechamento consolidado: ${formatBRL(consolidatedClosing)}`
-            ].join('\n');
-            const phone = '5511999148044';
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
-        }
-        function renderTreasury() {
-            const today = getTodayIsoDate();
-            const movementDateEl = document.getElementById('treasury-mv-date');
-            const summaryDateEl = document.getElementById('treasury-summary-date');
-            const movementFilterMonthEl = document.getElementById('treasury-mv-filter-month');
-            const salesReferenceEl = document.getElementById('treasury-sales-reference');
-            const salesPeriodEl = document.getElementById('treasury-sales-period');
-            const todayMonth = today.slice(0, 7);
-            if (movementDateEl && !movementDateEl.value) movementDateEl.value = today;
-            if (summaryDateEl && !summaryDateEl.value) summaryDateEl.value = today;
-            if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
-            if (salesReferenceEl && !salesReferenceEl.value) salesReferenceEl.value = today;
-            if (salesPeriodEl && !salesPeriodEl.value) salesPeriodEl.value = 'SEMANA';
-            renderTreasuryMovements();
-            renderTreasuryFinancialPosition();
-            renderTreasurySalesAnalytics();
         }
 
         function renderTreasuryMovements() {
@@ -11311,4 +11196,8 @@
     </script>
 </body>
 </html>
+
+
+
+
 
