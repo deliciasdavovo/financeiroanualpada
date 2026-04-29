@@ -9183,15 +9183,11 @@
             const descNorm = normalizeReconText(description);
             const descDocumentDigits = getReconDocumentDigitsList(description);
             const normalizedFlow = normalizeFlowType(flowType || getDestinationFlowType((validDestinations[0] || {}).id || ''));
-            const preferredId = findPreferredBankSalesDestination(validDestinations);
-            const resolvedConsultationId = normalizedFlow === FLOW_OUT
-                ? findConsultationDestinationId(normalizedFlow, validDestinations)
-                : '';
             const exactInternalTransferId = findInternalTransferDestinationByExactDocument(description, validDestinations);
             if (exactInternalTransferId) return exactInternalTransferId;
             const exactDocumentDestinationId = findDestinationByExactDocument(description, validDestinations);
             if (exactDocumentDestinationId) return exactDocumentDestinationId;
-            if (!descNorm) return resolvedConsultationId || (normalizedFlow === FLOW_OUT ? '' : getMostFrequentDestination(validDestinations, { avoidInternalTransfer: true }));
+            if (!descNorm) return '';
 
             const descTokens = new Set(tokenizeReconText(descNorm));
             const ownCompanyInternalTransferId = hasOwnCompanyCounterpartyEvidence(descNorm)
@@ -9205,13 +9201,10 @@
             });
             if (strongNoteDestinationId) return strongNoteDestinationId;
             const isGenericPixCounterparty = isGenericPixCounterpartyDescription(descNorm);
-            const nowYearMonth = Number(getTodayIsoDate().slice(0, 7).replace('-', ''));
 
             // PIX generico de extrato nao identifica a contraparte com confianca.
             // Mesmo quando ha CNPJ no texto, evita puxar um destino cadastrado por acidente.
-            if (isGenericPixCounterparty && normalizedFlow === FLOW_OUT) {
-                return resolvedConsultationId || '';
-            }
+            if (isGenericPixCounterparty) return '';
 
             let bestDirectId = '';
             let bestDirectScore = 0;
@@ -9266,92 +9259,14 @@
                 }
             });
 
-            if (bestDirectId && bestDirectScore >= 230) {
+            if (bestDirectId && bestDirectScore >= 340) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
                 const directScoreGap = bestDirectScore - secondDirectScore;
-                const canUseDirectMatch = (!isAmbiguousPersonalPix || bestDirectScore >= 340)
-                    && (bestDirectScore >= 340 || directScoreGap >= 70);
+                const canUseDirectMatch = (!isAmbiguousPersonalPix || bestDirectScore >= 500)
+                    && (bestDirectScore >= 500 || directScoreGap >= 90);
                 if (canUseDirectMatch && (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence)) return bestDirectId;
             }
-
-            const validIds = new Set(validDestinations.map(d => d.id));
-            const scoreByDestination = {};
-            state.entries.forEach(entry => {
-                if (!entry || !validIds.has(entry.destinationId)) return;
-                const dst = getDestinationById(entry.destinationId);
-                const entryText = `${entry.description || ''} ${(dst || {}).name || ''} ${(dst || {}).notes || ''}`;
-                const entryDescNorm = normalizeReconText(entryText);
-                if (!entryDescNorm) return;
-                const entryTokens = tokenizeReconText(entryDescNorm);
-                let overlap = 0;
-                entryTokens.forEach(token => { if (descTokens.has(token)) overlap++; });
-                if (overlap <= 0) return;
-                const ym = Number(String(entry.date || '').slice(0, 7).replace('-', '')) || 0;
-                const monthDistance = ym > 0 ? Math.max(0, nowYearMonth - ym) : 999;
-                const recencyWeight = monthDistance <= 1 ? 1.25 : monthDistance <= 6 ? 1.1 : 0.95;
-                const statusWeight = entry.status === 'REALIZADO' ? 1.2 : 1;
-                scoreByDestination[entry.destinationId] = (scoreByDestination[entry.destinationId] || 0) + (overlap * statusWeight * recencyWeight * 12);
-            });
-
-            let bestHistoryId = '';
-            let bestHistoryScore = 0;
-            Object.entries(scoreByDestination).forEach(([destinationId, score]) => {
-                if (score > bestHistoryScore) {
-                    bestHistoryScore = score;
-                    bestHistoryId = destinationId;
-                }
-            });
-
-            const combined = {};
-            if (bestDirectId && bestDirectScore >= 160) combined[bestDirectId] = (combined[bestDirectId] || 0) + bestDirectScore;
-            if (bestHistoryId) combined[bestHistoryId] = (combined[bestHistoryId] || 0) + bestHistoryScore;
-            Object.entries(scoreByDestination).forEach(([destinationId, score]) => {
-                combined[destinationId] = (combined[destinationId] || 0) + score;
-            });
-
-            const sortedCombined = Object.entries(combined)
-                .sort((a, b) => Number(b[1]) - Number(a[1]));
-            const filteredCombined = hasTransferEvidence
-                ? sortedCombined
-                : sortedCombined.filter(([destinationId]) => {
-                    const dst = validDestinations.find(d => d.id === destinationId) || getDestinationById(destinationId);
-                    return !isInternalTransferDestination(dst);
-                });
-
-            const bestPair = filteredCombined[0] || null;
-            const secondPair = filteredCombined[1] || null;
-            const bestId = bestPair ? String(bestPair[0]) : '';
-            const bestScore = bestPair ? Number(bestPair[1]) : 0;
-            const secondBestScore = secondPair ? Number(secondPair[1]) : 0;
-            if (bestId) {
-                const directScoreGap = bestDirectScore - secondDirectScore;
-                const hasUsableNameOrNoteMatch = bestDirectId === bestId
-                    && bestDirectScore >= 230
-                    && (bestDirectScore >= 340 || directScoreGap >= 70);
-                if (!hasUsableNameOrNoteMatch) {
-                    if (resolvedConsultationId) return resolvedConsultationId;
-                    if (normalizedFlow === FLOW_OUT) return '';
-                }
-                if (isAmbiguousPersonalPix && normalizedFlow === FLOW_OUT) {
-                    const scoreGap = bestScore - secondBestScore;
-                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 340;
-                    const hasStrongCombinedEvidence = bestScore >= 220 && scoreGap >= 80;
-                    if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return resolvedConsultationId || '';
-                }
-                if (normalizedFlow === FLOW_OUT && resolvedConsultationId) {
-                    const scoreGap = bestScore - secondBestScore;
-                    const hasStrongDirectEvidence = bestDirectId === bestId && bestDirectScore >= 120;
-                    const hasStrongCombinedEvidence = bestScore >= 140 && scoreGap >= 35;
-                    if (isGenericPixCounterparty && !hasStrongDirectEvidence) return resolvedConsultationId;
-                    if (!hasStrongDirectEvidence && !hasStrongCombinedEvidence) return resolvedConsultationId;
-                }
-                return bestId;
-            }
-
-            if (resolvedConsultationId) return resolvedConsultationId;
-            if (normalizedFlow === FLOW_OUT) return '';
-            if (preferredId) return preferredId;
-            return getMostFrequentDestination(validDestinations, { avoidInternalTransfer: !hasTransferEvidence });
+            return '';
         }
 
         function isReconDateStart(value) {
