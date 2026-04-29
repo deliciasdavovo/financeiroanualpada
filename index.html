@@ -9213,6 +9213,11 @@
             // Mesmo quando ha CNPJ no texto, evita puxar um destino cadastrado por acidente.
             if (isGenericPixCounterparty) return '';
 
+            const preferredBankSalesId = normalizedFlow === FLOW_IN
+                ? findPreferredBankSalesDestination(validDestinations)
+                : '';
+            if (preferredBankSalesId) return preferredBankSalesId;
+
             let bestDirectId = '';
             let bestDirectScore = 0;
             let secondDirectScore = 0;
@@ -9266,11 +9271,6 @@
                 }
             });
 
-            const preferredBankSalesId = normalizedFlow === FLOW_IN
-                ? findPreferredBankSalesDestination(validDestinations)
-                : '';
-            if (preferredBankSalesId && bestDirectScore < 500) return preferredBankSalesId;
-
             if (bestDirectId && bestDirectScore >= 340) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
                 const directScoreGap = bestDirectScore - secondDirectScore;
@@ -9278,7 +9278,6 @@
                     && (bestDirectScore >= 500 || directScoreGap >= 90);
                 if (canUseDirectMatch && (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence)) return bestDirectId;
             }
-            if (preferredBankSalesId) return preferredBankSalesId;
             return '';
         }
 
@@ -9381,7 +9380,7 @@
             });
         }
 
-        function processPaste() {
+        async function processPaste() {
             const area = document.getElementById('recon-paste-area');
             if(!area) return;
             const batchStatus = getReconBatchStatus();
@@ -9392,7 +9391,11 @@
             }
             const lines = normalizeReconLines(area.value);
             tempRecon = [];
-            lines.forEach(l => {
+            for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+                if (lineIndex > 0 && lineIndex % 50 === 0) {
+                    await new Promise(resolve => window.setTimeout(resolve, 0));
+                }
+                const l = lines[lineIndex];
                 const raw = l.trim();
 
                 const parsedTableRow = parseBankTableRow(raw);
@@ -9412,7 +9415,7 @@
                         description: String(parsedTableRow.description || '').trim(),
                         destinationId: inferredDestinationId,
                     });
-                    return;
+                    continue;
                 }
 
                 let segments = [];
@@ -9463,7 +9466,7 @@
                         .join(' ');
 
                     // Não importa linhas de saldo (são posição de conta, não lançamento).
-                    if (/^\s*saldo\b/i.test(desc)) return;
+                    if (/^\s*saldo\b/i.test(desc)) continue;
 
                     const flowType = val >= 0 ? 'ENTRADA' : 'SAÍDA';
                     const typeDestinations = getValidDestinationsByFlow(flowType);
@@ -9482,7 +9485,7 @@
                         destinationId: inferredDestinationId,
                     });
                 }
-            });
+            }
             renderReconPreview();
             if(tempRecon.length > 0) {
                 area.value = '';
@@ -9508,10 +9511,36 @@
         function updateReconDestination(index, value) {
             if (!tempRecon[index]) return;
             tempRecon[index].destinationId = value;
+            refreshReconRowReview(index);
         }
         function updateReconDescription(index, value) {
             if (!tempRecon[index]) return;
             tempRecon[index].description = String(value || '');
+        }
+
+        function refreshReconRowReview(index) {
+            const item = tempRecon[index];
+            if (!item) return;
+            const validDestinations = getValidDestinations();
+            const invalidDestination = !hasReconValidDestination(item, validDestinations);
+            const selectEl = document.getElementById(`recon-dst-${index}`);
+            const rowEl = document.getElementById(`recon-row-${index}`);
+            const badgeEl = document.getElementById(`recon-badge-${index}`);
+            const noteEl = document.getElementById(`recon-badge-note-${index}`);
+            const matchMeta = getReconExistingMatchMeta(item, getReconSelectedAccountId());
+            const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
+
+            if (rowEl) rowEl.classList.toggle('bg-red-50/60', invalidDestination);
+            if (selectEl) {
+                selectEl.classList.toggle('border-red-300', invalidDestination);
+                selectEl.classList.toggle('bg-red-50', invalidDestination);
+                selectEl.classList.toggle('text-red-700', invalidDestination);
+            }
+            if (badgeEl) {
+                badgeEl.className = `inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}`;
+                badgeEl.innerText = reviewBadge.badgeText;
+            }
+            if (noteEl) noteEl.innerText = reviewBadge.note;
         }
 
         function getReconNoteCandidate(index) {
@@ -9599,11 +9628,9 @@
         }
 
         function stopReconFill() {
-            const wasActive = reconFillState.active;
             reconFillState.active = false;
             reconFillState.sourceIndex = -1;
             reconFillState.value = '';
-            if (wasActive && tempRecon.length > 0) renderReconPreview();
         }
 
         function applyReconFillTo(index) {
@@ -9618,6 +9645,7 @@
                 tempRecon[i].destinationId = reconFillState.value;
                 const el = document.getElementById(`recon-dst-${i}`);
                 if (el) el.value = reconFillState.value;
+                refreshReconRowReview(i);
             }
         }
 
@@ -9662,6 +9690,65 @@
             return String(document.getElementById('recon-account-select')?.value || '');
         }
 
+        let reconExistingMatchCache = {
+            accountId: '',
+            cutoffIso: '',
+            entriesRef: null,
+            entriesLen: -1,
+            strictCounts: new Map(),
+            movementCounts: new Map(),
+            movementDestinationCounts: new Map(),
+            movementDestinationLabels: new Map()
+        };
+
+        function getReconExistingMatchCache(accountIdOverride = '') {
+            const accountId = String(accountIdOverride || getReconSelectedAccountId() || '');
+            const entries = Array.isArray(state.entries) ? state.entries : [];
+            const cutoffDate = addLocalDays(parseIsoDateLocal(getTodayIsoDate()) || new Date(), -30);
+            const cutoffIso = formatLocalDate(cutoffDate);
+            const isFresh = reconExistingMatchCache.accountId === accountId
+                && reconExistingMatchCache.cutoffIso === cutoffIso
+                && reconExistingMatchCache.entriesRef === state.entries
+                && reconExistingMatchCache.entriesLen === entries.length;
+            if (isFresh) return reconExistingMatchCache;
+
+            const strictCounts = new Map();
+            const movementCounts = new Map();
+            const movementDestinationCounts = new Map();
+            const movementDestinationLabels = new Map();
+
+            entries.forEach(existing => {
+                if (accountId && String((existing || {}).accountId ?? (existing || {}).account_id ?? '') !== accountId) return;
+                const existingDate = String((existing || {}).date || '');
+                if (!existingDate || existingDate < cutoffIso) return;
+                const strictKey = buildEntryDuplicateKey(existing, accountId);
+                const movementKey = buildEntryReconMatchKey(existing, accountId, false);
+                const movementDestinationKey = buildEntryReconMatchKey(existing, accountId, true);
+                const destinationId = String((existing || {}).destinationId ?? (existing || {}).destination_id ?? '');
+                const destinationLabel = getDestinationDisplayLabelById(destinationId);
+
+                strictCounts.set(strictKey, (strictCounts.get(strictKey) || 0) + 1);
+                movementCounts.set(movementKey, (movementCounts.get(movementKey) || 0) + 1);
+                movementDestinationCounts.set(movementDestinationKey, (movementDestinationCounts.get(movementDestinationKey) || 0) + 1);
+                if (!movementDestinationLabels.has(movementKey)) movementDestinationLabels.set(movementKey, new Map());
+                const labelsByDestination = movementDestinationLabels.get(movementKey);
+                if (!labelsByDestination.has(destinationId)) labelsByDestination.set(destinationId, new Set());
+                if (destinationLabel) labelsByDestination.get(destinationId).add(destinationLabel);
+            });
+
+            reconExistingMatchCache = {
+                accountId,
+                cutoffIso,
+                entriesRef: state.entries,
+                entriesLen: entries.length,
+                strictCounts,
+                movementCounts,
+                movementDestinationCounts,
+                movementDestinationLabels
+            };
+            return reconExistingMatchCache;
+        }
+
         function getReconExistingMatchMeta(entry, accountIdOverride = '') {
             const accountId = String(accountIdOverride || getReconSelectedAccountId() || '');
             if (!accountId) {
@@ -9677,23 +9764,30 @@
             const strictKey = buildEntryDuplicateKey(entry, accountId);
             const movementKey = buildEntryReconMatchKey(entry, accountId, false);
             const movementWithDestinationKey = buildEntryReconMatchKey(entry, accountId, true);
-            const relatedEntries = state.entries.filter(existing => buildEntryReconMatchKey(existing, accountId, false) === movementKey);
-            const strictMatches = relatedEntries.filter(existing => buildEntryDuplicateKey(existing, accountId) === strictKey).length;
-            const sameDestinationEntries = relatedEntries.filter(existing => buildEntryReconMatchKey(existing, accountId, true) === movementWithDestinationKey);
-            const otherDestinationEntries = relatedEntries.filter(existing => buildEntryReconMatchKey(existing, accountId, true) !== movementWithDestinationKey);
-            const otherDestinationLabels = Array.from(new Set(otherDestinationEntries
-                .map(existing => getDestinationDisplayLabelById(existing.destinationId))
-                .filter(Boolean)));
+            const cache = getReconExistingMatchCache(accountId);
+            const strictMatches = cache.strictCounts.get(strictKey) || 0;
+            const sameDestinationMatches = cache.movementDestinationCounts.get(movementWithDestinationKey) || 0;
+            const totalMovementMatches = cache.movementCounts.get(movementKey) || 0;
+            const otherDestinationMatches = Math.max(0, totalMovementMatches - sameDestinationMatches);
+            const currentDestinationId = String((entry || {}).destinationId ?? (entry || {}).destination_id ?? '');
+            const labelsByDestination = cache.movementDestinationLabels.get(movementKey) || new Map();
+            const otherDestinationLabels = [];
+            labelsByDestination.forEach((labels, destinationId) => {
+                if (String(destinationId || '') === currentDestinationId) return;
+                labels.forEach(label => {
+                    if (label && !otherDestinationLabels.includes(label)) otherDestinationLabels.push(label);
+                });
+            });
 
             let status = 'new';
             if (strictMatches > 0) status = 'exact';
-            else if (otherDestinationEntries.length > 0) status = 'conflict';
-            else if (sameDestinationEntries.length > 0) status = 'similar';
+            else if (otherDestinationMatches > 0) status = 'conflict';
+            else if (sameDestinationMatches > 0) status = 'similar';
 
             return {
                 strictMatches,
-                sameDestinationMatches: sameDestinationEntries.length,
-                otherDestinationMatches: otherDestinationEntries.length,
+                sameDestinationMatches,
+                otherDestinationMatches,
                 otherDestinationLabels,
                 status
             };
@@ -9788,7 +9882,7 @@
                     const invalidDestination = !hasReconValidDestination(e, validDestinations);
                     const matchMeta = getReconExistingMatchMeta(e, selectedAccountId);
                     const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
-                    return `<tr class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
+                    return `<tr id="recon-row-${i}" class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
                         <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
                         <td class="px-4 py-3 w-[180px]">
                             <textarea
@@ -9803,7 +9897,7 @@
                         </td>
                         <td class="px-4 py-3 w-[320px]">
                             <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
-                                <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value); renderReconPreview();" class="recon-destination-select ${invalidDestination ? 'border-red-300 bg-red-50 text-red-700' : ''}">
+                                <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value)" class="recon-destination-select ${invalidDestination ? 'border-red-300 bg-red-50 text-red-700' : ''}">
                                     <option value="" ${invalidDestination ? 'selected' : ''}>Selecionar destino...</option>
                                     ${destinationSource.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
                                 </select>
@@ -9816,8 +9910,8 @@
                             </div>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}">${reviewBadge.badgeText}</div>
-                            <p class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
+                            <div id="recon-badge-${i}" class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}">${reviewBadge.badgeText}</div>
+                            <p id="recon-badge-note-${i}" class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
                         </td>
                         <td class="px-4 py-3 text-center">
                             <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
