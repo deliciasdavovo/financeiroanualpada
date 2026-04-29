@@ -10156,6 +10156,7 @@
                     const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
                     return {
                         ...temp,
+                        id: generateId(),
                         accountId: accId,
                         categoryId: String((cat || {}).id || ''),
                         subCategoryId: String((sub || {}).id || ''),
@@ -10163,10 +10164,10 @@
                     };
                 });
                 const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
-                const entriesToImport = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches === 0);
+                const entriesToImport = newEntries;
                 if (entriesToImport.length === 0) {
                     if (summaryEl) {
-                        summaryEl.innerText = `${duplicateAgainstExisting.length} item(ns) da prévia já existem nesta conta. Nenhum novo lançamento para importar.`;
+                        summaryEl.innerText = 'Nenhum lançamento disponível para importar.';
                     }
                     return;
                 }
@@ -10190,9 +10191,8 @@
                     if (importedNow !== entriesToImport.length) {
                         alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
                     } else {
-                        const skippedCount = duplicateAgainstExisting.length;
-                        const skippedNote = skippedCount > 0 ? `\nIgnorados por já existirem: ${skippedCount}.` : '';
-                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${skippedNote}`);
+                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nDuplicados importados: ${duplicateAgainstExisting.length}.` : '';
+                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}`);
                     }
                 }
                 await refreshCloudState({ silent: false });
@@ -11394,7 +11394,6 @@
     </script>
 </body>
 </html>
-
 
 
 
