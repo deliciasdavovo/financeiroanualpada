@@ -9123,17 +9123,24 @@
             return tokens.length >= 2 && tokens.length <= 5;
         }
 
+        function isPreferredBankSalesDestination(destination) {
+            const hierarchy = getDestinationHierarchyById((destination || {}).id || '', { subCategoryId: (destination || {}).subCategoryId || '' });
+            const labelNorm = normalizeReconText([
+                (destination || {}).name || '',
+                (hierarchy.subCategory || {}).name || '',
+                (hierarchy.category || {}).name || ''
+            ].join(' '));
+            if (!labelNorm) return false;
+            const hasVenda = /\bvendas?\b/.test(labelNorm);
+            const hasEntrada = /\bentrada\b/.test(labelNorm);
+            const hasBanco = /\bbancaria\b/.test(labelNorm) || /\bbanco\b/.test(labelNorm);
+            return hasVenda && hasEntrada && hasBanco;
+        }
+
         function findPreferredBankSalesDestination(validDestinations) {
             const list = Array.isArray(validDestinations) ? validDestinations : [];
             if (!list.length) return '';
-            const preferred = list.find((d) => {
-                const nameNorm = normalizeReconText((d || {}).name || '');
-                if (!nameNorm) return false;
-                const hasVendas = nameNorm.includes('vendas');
-                const hasEntrada = nameNorm.includes('entrada');
-                const hasBanco = nameNorm.includes('bancaria') || nameNorm.includes('banco');
-                return hasVendas && hasEntrada && hasBanco;
-            });
+            const preferred = list.find((d) => isPreferredBankSalesDestination(d));
             return String((preferred || {}).id || '');
         }
 
@@ -9259,6 +9266,11 @@
                 }
             });
 
+            const preferredBankSalesId = normalizedFlow === FLOW_IN
+                ? findPreferredBankSalesDestination(validDestinations)
+                : '';
+            if (preferredBankSalesId && bestDirectScore < 500) return preferredBankSalesId;
+
             if (bestDirectId && bestDirectScore >= 340) {
                 const bestDirectDestination = validDestinations.find(d => d.id === bestDirectId) || getDestinationById(bestDirectId);
                 const directScoreGap = bestDirectScore - secondDirectScore;
@@ -9266,6 +9278,7 @@
                     && (bestDirectScore >= 500 || directScoreGap >= 90);
                 if (canUseDirectMatch && (!isInternalTransferDestination(bestDirectDestination) || hasTransferEvidence)) return bestDirectId;
             }
+            if (preferredBankSalesId) return preferredBankSalesId;
             return '';
         }
 
