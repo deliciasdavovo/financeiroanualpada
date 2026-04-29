@@ -931,16 +931,138 @@
             box-shadow: 0 0 0 3px rgba(178,58,58,0.14) !important;
         }
         .form-feedback {
-            border: 1px dashed #F1C8C8;
-            background: #FFF5F5;
-            color: #991B1B;
-            border-radius: 10px;
-            padding: 10px 12px;
+            position: relative;
+            border: 1px solid #F1C8C8;
+            border-left: 4px solid var(--soft-red);
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF7F7 100%);
+            color: #7F1D1D;
+            border-radius: 14px;
+            padding: 12px 14px 12px 42px;
             font-size: 11px;
-            font-weight: 700;
+            line-height: 1.45;
+            font-weight: 800;
+            box-shadow: 0 8px 18px rgba(178, 58, 58, 0.08);
+            animation: messagePushUp var(--dur-slow) var(--ease-premium);
+        }
+        .form-feedback::before {
+            content: "!";
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            width: 18px;
+            height: 18px;
+            transform: translateY(-50%);
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-red-soft);
+            color: var(--soft-red);
+            font-size: 11px;
+            font-weight: 900;
         }
         .form-feedback.hidden {
             display: none;
+        }
+        .app-toast-region {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 9999;
+            display: grid;
+            gap: 10px;
+            width: min(420px, calc(100vw - 32px));
+            pointer-events: none;
+        }
+        .app-toast {
+            pointer-events: auto;
+            display: grid;
+            grid-template-columns: 36px minmax(0, 1fr) 32px;
+            gap: 12px;
+            align-items: start;
+            border: 1px solid #E5ECF4;
+            border-left: 4px solid var(--primary-blue);
+            border-radius: 16px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.14);
+            padding: 14px;
+            color: var(--text-primary);
+            animation: messagePushUp 260ms var(--ease-premium);
+        }
+        .app-toast.is-leaving {
+            animation: messagePushDown 180ms ease-in forwards;
+        }
+        .app-toast.danger {
+            border-left-color: var(--soft-red);
+            background: linear-gradient(180deg, #FFFFFF 0%, #FFF7F7 100%);
+        }
+        .app-toast.success {
+            border-left-color: var(--primary-green);
+            background: linear-gradient(180deg, #FFFFFF 0%, #F2FBF6 100%);
+        }
+        .app-toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            background: var(--bg-blue-soft);
+        }
+        .app-toast.danger .app-toast-icon {
+            color: var(--soft-red);
+            background: var(--bg-red-soft);
+        }
+        .app-toast.success .app-toast-icon {
+            color: var(--primary-green);
+            background: var(--bg-green-soft);
+        }
+        .app-toast-title {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.35;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .app-toast-message {
+            margin: 4px 0 0;
+            font-size: 11px;
+            line-height: 1.5;
+            font-weight: 700;
+            color: #64748B;
+            white-space: pre-line;
+        }
+        .app-toast-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #94A3B8;
+            transition: color var(--dur-fast) var(--ease-premium), background var(--dur-fast) var(--ease-premium);
+        }
+        .app-toast-close:hover {
+            color: #0F172A;
+            background: #F1F5F9;
+        }
+        @keyframes messagePushUp {
+            from { opacity: 0; transform: translateY(14px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes messagePushDown {
+            to { opacity: 0; transform: translateY(10px) scale(0.98); }
+        }
+        @media (max-width: 640px) {
+            .app-toast-region {
+                right: 16px;
+                bottom: 16px;
+            }
+            .app-toast {
+                grid-template-columns: 34px minmax(0, 1fr) 30px;
+                padding: 12px;
+            }
         }
         .modal-grid-2 {
             display: grid;
@@ -3485,6 +3607,8 @@
         </div>
     </div>
 
+    <div id="app-toast-region" class="app-toast-region" aria-live="polite" aria-atomic="true"></div>
+
     <script>
         // Configurações Supabase
         const SUPABASE_URL = 'https://uvmidrjjbnfsxofhthfq.supabase.co';
@@ -3502,6 +3626,67 @@
             Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '700' };
             Chart.defaults.color = '#64748b';
         }
+
+        function escapeToastHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function getToastRegion() {
+            let region = document.getElementById('app-toast-region');
+            if (region) return region;
+            region = document.createElement('div');
+            region.id = 'app-toast-region';
+            region.className = 'app-toast-region';
+            region.setAttribute('aria-live', 'polite');
+            region.setAttribute('aria-atomic', 'true');
+            document.body.appendChild(region);
+            return region;
+        }
+
+        function inferToastTone(message) {
+            const text = String(message || '').toLowerCase();
+            if (text.includes('conclu') || text.includes('salv') || text.includes('importado')) return 'success';
+            if (text.includes('não foi') || text.includes('erro') || text.includes('atenção') || text.includes('bloquead') || text.includes('revise')) return 'danger';
+            return 'info';
+        }
+
+        function showAppToast(rawMessage, options = {}) {
+            const message = String(rawMessage || '').trim();
+            if (!message) return;
+            const region = getToastRegion();
+            const tone = options.tone || inferToastTone(message);
+            const lines = message.split(/\n+/).map(line => line.trim()).filter(Boolean);
+            const title = options.title || lines.shift() || 'Mensagem';
+            const details = lines.join('\n');
+            const toast = document.createElement('div');
+            toast.className = `app-toast ${tone}`;
+            toast.setAttribute('role', tone === 'danger' ? 'alert' : 'status');
+            toast.innerHTML = `
+                <div class="app-toast-icon"><i data-lucide="${tone === 'success' ? 'check' : tone === 'danger' ? 'triangle-alert' : 'info'}" class="w-4 h-4"></i></div>
+                <div>
+                    <p class="app-toast-title">${escapeToastHtml(title)}</p>
+                    ${details ? `<p class="app-toast-message">${escapeToastHtml(details)}</p>` : ''}
+                </div>
+                <button class="app-toast-close" type="button" aria-label="Fechar mensagem"><i data-lucide="x" class="w-4 h-4"></i></button>
+            `;
+            const dismiss = () => {
+                if (!toast.isConnected || toast.classList.contains('is-leaving')) return;
+                toast.classList.add('is-leaving');
+                window.setTimeout(() => toast.remove(), 190);
+            };
+            toast.querySelector('.app-toast-close')?.addEventListener('click', dismiss);
+            region.appendChild(toast);
+            while (region.children.length > 4) region.firstElementChild?.remove();
+            refreshLucideIcons();
+            window.setTimeout(dismiss, options.duration || (tone === 'danger' ? 7000 : 4600));
+        }
+
+        window.alert = (message) => showAppToast(message);
 
         let state = {
             categories: [],
@@ -9980,7 +10165,9 @@
                 const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
                 const entriesToImport = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches === 0);
                 if (entriesToImport.length === 0) {
-                    alert(`Nenhum novo lançamento para importar.\n\n${duplicateAgainstExisting.length} item(ns) da prévia já existem nesta conta com a mesma data, tipo, valor, destino e descrição.`);
+                    if (summaryEl) {
+                        summaryEl.innerText = `${duplicateAgainstExisting.length} item(ns) da prévia já existem nesta conta. Nenhum novo lançamento para importar.`;
+                    }
                     return;
                 }
                 const batchSeen = new Set();
@@ -9991,7 +10178,9 @@
                     else batchSeen.add(key);
                 });
                 if (duplicateInsideBatch.length > 0) {
-                    alert(`A importação foi bloqueada porque o lote contém ${duplicateInsideBatch.length} lançamento(s) duplicado(s). Revise a prévia antes de importar.`);
+                    if (summaryEl) {
+                        summaryEl.innerText = `Lote com ${duplicateInsideBatch.length} lançamento(s) duplicado(s). Revise a prévia antes de importar.`;
+                    }
                     return;
                 }
                 if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
