@@ -10170,19 +10170,6 @@
                     }
                     return;
                 }
-                const batchSeen = new Set();
-                const duplicateInsideBatch = [];
-                entriesToImport.forEach((entry) => {
-                    const key = buildEntryDuplicateKey(entry, accId);
-                    if (batchSeen.has(key)) duplicateInsideBatch.push(entry);
-                    else batchSeen.add(key);
-                });
-                if (duplicateInsideBatch.length > 0) {
-                    if (summaryEl) {
-                        summaryEl.innerText = `Lote com ${duplicateInsideBatch.length} lançamento(s) duplicado(s). Revise a prévia antes de importar.`;
-                    }
-                    return;
-                }
                 if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
                 const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
                     if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
