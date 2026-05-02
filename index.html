@@ -531,7 +531,6 @@
             width: 100%;
             table-layout: fixed;
         }
-        #monthly-daily-view { min-width: 900px; }
         #annual-main-table { min-width: 640px; }
         #annual-temporal-table { min-width: 420px; }
         #recon-preview-table {
@@ -763,22 +762,111 @@
             gap: 6px;
             min-height: 20px;
         }
-        .day-net-pill {
-            display: inline-block;
-            min-width: 120px;
-            text-align: right;
-            padding: 4px 10px;
-            border-radius: 10px;
+        #monthly-daily-view { min-width: 760px; }
+        .card-premium.monthly-daily-card {
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .monthly-daily-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 24px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #FFFFFF;
+        }
+        .monthly-daily-title {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #0F172A;
+        }
+        .monthly-daily-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .monthly-daily-scroll {
+            flex: 1;
+            min-height: 0;
+            background: #FFFFFF;
+        }
+        .monthly-daily-table thead { background: #F8FAFC; }
+        .monthly-daily-table th {
+            padding: 12px 16px;
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748B;
+            white-space: nowrap;
+        }
+        .monthly-day-row {
+            font-size: 11px;
             font-weight: 800;
+            color: #334155;
+        }
+        .monthly-day-row:hover { background: #F8FAFC; }
+        .monthly-day-row.is-empty {
+            color: #94A3B8;
+            background: #FCFCFD;
+        }
+        .monthly-day-row td {
+            padding: 11px 16px;
+            vertical-align: middle;
+        }
+        .monthly-day-cell {
+            width: 58px;
+            color: #64748B;
+            font-weight: 900;
+        }
+        .monthly-flow-cell { min-width: 190px; }
+        .monthly-flow-value {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .monthly-flow-mini-track {
+            width: 82px;
+            height: 7px;
+            border-radius: 999px;
+            background: #EEF2F7;
+            overflow: hidden;
+            flex: 0 0 82px;
+        }
+        .monthly-flow-mini-fill {
+            display: block;
+            height: 100%;
+            min-width: 3px;
+            border-radius: inherit;
+            background: var(--bar-color);
+        }
+        .monthly-flow-mini-fill.is-zero { min-width: 0; }
+        .day-net-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            min-width: 116px;
+            text-align: right;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-weight: 900;
             color: var(--primary-blue);
         }
-        .day-net-positive {
-            background: var(--bg-blue-soft);
-        }
+        .day-net-positive { background: var(--bg-blue-soft); }
         .day-net-negative {
             background: #FFF3BF;
+            color: #9A6700;
         }
-
+        .monthly-cumulative {
+            color: #0F172A;
+            font-weight: 900;
+            white-space: nowrap;
+        }
         .status-toggle {
             display: flex;
             background: #F3F4F6;
@@ -2240,7 +2328,7 @@
         .entries-filters-grid {
             width: 100%;
             display: grid;
-            grid-template-columns: minmax(260px, 1.3fr) repeat(6, minmax(120px, 0.75fr)) auto;
+            grid-template-columns: minmax(260px, 1.3fr) minmax(190px, 0.85fr) repeat(6, minmax(120px, 0.75fr)) auto;
             gap: 12px;
             align-items: end;
         }
@@ -2256,6 +2344,28 @@
         .entries-toolbar input,
         .entries-toolbar select {
             font-size: 13px;
+        }
+        .entries-month-filter {
+            display: grid;
+            grid-template-columns: 38px minmax(0, 1fr) 38px;
+            gap: 6px;
+        }
+        .entries-month-filter button {
+            height: 44px;
+            border-radius: 12px;
+            border: 1px solid #DDE6F0;
+            background: #FFFFFF;
+            color: #2F4F9D;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .entries-month-filter button:hover {
+            background: #F8FAFC;
+        }
+        .entries-month-filter i {
+            width: 15px;
+            height: 15px;
         }
         .entries-toolbar .btn-new-entry {
             height: 44px;
@@ -2678,6 +2788,21 @@
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
+            .entries-filters-grid > :first-child {
+                grid-column: auto;
+            }
+            .monthly-daily-head {
+                align-items: stretch;
+                flex-direction: column;
+                padding: 16px;
+            }
+            .monthly-flow-cell {
+                min-width: 170px;
+            }
+            .monthly-flow-mini-track {
+                width: 64px;
+                flex-basis: 64px;
+            }
             .entries-toolbar button {
                 white-space: normal;
             }
@@ -2947,7 +3072,15 @@
                         </div>
                     </div>
                     <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
-                        <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, cliente ou descrição..." oninput="queueRenderEntries()"></div>
+                        <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, valor, cliente ou descrição..." oninput="queueRenderEntries()"></div>
+                        <div class="entries-filter-item">
+                            <label for="filter-month" class="label-mini">Mês inteiro</label>
+                            <div class="entries-month-filter">
+                                <button type="button" onclick="shiftEntriesMonthFilter(-1)" aria-label="Mês anterior"><i data-lucide="chevron-left"></i></button>
+                                <input type="month" id="filter-month" onchange="setEntriesMonthFilter(this.value)" aria-label="Filtrar mês inteiro">
+                                <button type="button" onclick="shiftEntriesMonthFilter(1)" aria-label="Próximo mês"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                        </div>
                         <div class="entries-filter-item"><label for="filter-date-start" class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
                         <div class="entries-filter-item"><label for="filter-date-end" class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
                         <div class="entries-filter-item"><label for="filter-type" class="label-mini">Fluxo</label><select id="filter-type" onchange="renderEntries()"><option value="">Todos</option><option value="ENTRADA">Entradas</option><option value="SAÍDA">Saídas</option></select></div>
@@ -3131,21 +3264,23 @@
                     </div>
                 </div>
 
-                <div class="card-premium p-8 h-[620px] lg:h-[760px] flex flex-col">
-                    <h4 class="text-xs font-black text-slate-400 mb-6 tracking-widest">Fluxo diário: Entradas vs Saídas</h4>
-                    <div class="flex-1 min-h-0"><canvas id="monthChartBar"></canvas></div>
-                </div>
-
-                <div class="card-premium overflow-hidden h-[520px] lg:h-[700px] flex flex-col">
-                    <div class="flex-1 overflow-auto table-mobile-scroll custom-scrollbar">
-                        <table id="monthly-daily-view" class="w-full text-left">
-                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400 sticky top-0 z-10">
-                                <tr><th class="px-8 py-4">Dia</th><th class="px-8 py-4">Entradas</th><th class="px-8 py-4">Saídas</th><th class="px-8 py-4 text-right">Líquido do Dia</th><th class="px-8 py-4 text-right">Acumulado</th></tr>
+                <div class="card-premium monthly-daily-card h-[520px] lg:h-[700px] flex flex-col">
+                    <div class="monthly-daily-head">
+                        <div>
+                            <h4 class="monthly-daily-title">Tabela de fluxo diário</h4>
+                            <p class="monthly-daily-sub">Entradas, saídas, líquido do dia e saldo acumulado.</p>
+                        </div>
+                    </div>
+                    <div class="monthly-daily-scroll overflow-auto table-mobile-scroll custom-scrollbar">
+                        <table id="monthly-daily-view" class="monthly-daily-table w-full text-left">
+                            <thead class="border-b sticky top-0 z-10">
+                                <tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th class="text-right">Líquido</th><th class="text-right">Acumulado</th></tr>
                             </thead>
                             <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
                         </table>
                     </div>
                 </div>
+
             </div>
 
             <!-- RELATÓRIO ANUAL -->
@@ -3197,6 +3332,10 @@
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-nav-destination">Destino</label>
                                 <select id="annual-nav-destination"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-nav-account">Conta / Banco</label>
+                                <select id="annual-nav-account"></select>
                             </div>
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-exclude-destination">Excluir destino</label>
@@ -3716,6 +3855,7 @@
         let annualNavCategoryId = '';
         let annualNavSubCategoryId = '';
         let annualNavDestinationId = '';
+        let annualNavAccountId = '';
         let annualExcludedDestinationId = '';
         let currentTab = 'monthly';
         let cashProjectionPeriod = 7;
@@ -3978,6 +4118,7 @@
         function resetEntriesFilters() {
             const map = {
                 'entry-search': '',
+                'filter-month': '',
                 'filter-date-start': '',
                 'filter-date-end': '',
                 'filter-type': '',
@@ -3993,16 +4134,55 @@
             renderEntries();
         }
 
-        function setEntriesCurrentMonthFilter() {
-            const now = new Date();
-            const first = new Date(now.getFullYear(), now.getMonth(), 1);
-            const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        function setEntriesMonthFilter(monthIso) {
+            const monthText = String(monthIso || '').trim();
+            const match = monthText.match(/^(\d{4})-(\d{2})$/);
+            if (!match) return;
+            const year = Number(match[1]);
+            const monthIndex = Number(match[2]) - 1;
+            const first = new Date(year, monthIndex, 1);
+            const last = new Date(year, monthIndex + 1, 0);
+            const monthEl = document.getElementById('filter-month');
             const startEl = document.getElementById('filter-date-start');
             const endEl = document.getElementById('filter-date-end');
+            if (monthEl) monthEl.value = monthText;
             if (startEl) startEl.value = formatLocalDate(first);
             if (endEl) endEl.value = formatLocalDate(last);
             entriesPage = 1;
             renderEntries();
+        }
+
+        function getEntriesCurrentMonthIso() {
+            const monthEl = document.getElementById('filter-month');
+            if (monthEl?.value) return monthEl.value;
+            const start = document.getElementById('filter-date-start')?.value || '';
+            if (/^\d{4}-\d{2}-\d{2}$/.test(start)) return start.slice(0, 7);
+            return getCurrentMonthIso();
+        }
+
+        function shiftEntriesMonthFilter(offset) {
+            const currentMonth = getEntriesCurrentMonthIso();
+            const match = currentMonth.match(/^(\d{4})-(\d{2})$/);
+            if (!match) return;
+            const date = new Date(Number(match[1]), Number(match[2]) - 1 + Number(offset || 0), 1);
+            setEntriesMonthFilter(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`);
+        }
+
+        function syncEntriesMonthControl(dateStart, dateEnd) {
+            const monthEl = document.getElementById('filter-month');
+            if (!monthEl) return;
+            if (!dateStart || !dateEnd || dateStart.slice(0, 7) !== dateEnd.slice(0, 7)) {
+                monthEl.value = '';
+                return;
+            }
+            const [year, month] = dateStart.slice(0, 7).split('-').map(Number);
+            const first = formatLocalDate(new Date(year, month - 1, 1));
+            const last = formatLocalDate(new Date(year, month, 0));
+            monthEl.value = dateStart === first && dateEnd === last ? dateStart.slice(0, 7) : '';
+        }
+
+        function setEntriesCurrentMonthFilter() {
+            setEntriesMonthFilter(getCurrentMonthIso());
         }
 
         function toggleEntriesDuplicateQuick() {
@@ -4543,7 +4723,7 @@
             <div class="mdetails-wrap">${detailsHtml}</div>`;
         }
         function getEntriesForExport() {
-            const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
+            const search = normalizeEntrySearchText(document.getElementById('entry-search')?.value || '');
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             const typeFilter = document.getElementById('filter-type')?.value || '';
@@ -6708,7 +6888,7 @@
 
         function getEntriesFilterSnapshot() {
             return {
-                search: (document.getElementById('entry-search')?.value || '').toLowerCase().trim(),
+                search: normalizeEntrySearchText(document.getElementById('entry-search')?.value || ''),
                 dateStart: document.getElementById('filter-date-start')?.value || '',
                 dateEnd: document.getElementById('filter-date-end')?.value || '',
                 typeFilter: document.getElementById('filter-type')?.value || '',
@@ -6718,14 +6898,42 @@
             };
         }
 
+        function normalizeEntrySearchText(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function getEntryAmountSearchParts(entry) {
+            const amount = Math.abs(Number((entry || {}).amount) || 0);
+            if (!amount) return ['0', '0,00', 'r$ 0,00'];
+            const fixed = amount.toFixed(2);
+            const br = fixed.replace('.', ',');
+            const integer = String(Math.trunc(amount));
+            return [
+                fixed,
+                br,
+                integer,
+                formatBRL(amount),
+                formatBRL(amount).replace(/\s+/g, ''),
+                `${normalizeFlowType((entry || {}).type) === 'ENTRADA' ? '+' : '-'}${br}`
+            ];
+        }
+
         function getEntrySearchHaystack(entry) {
             const destination = getDestinationById((entry || {}).destinationId);
-            return [
+            const account = getAccountById((entry || {}).accountId ?? (entry || {}).account_id);
+            return normalizeEntrySearchText([
                 String((entry || {}).date || ''),
+                String((entry || {}).date || '').split('-').reverse().join('/'),
+                ...getEntryAmountSearchParts(entry),
                 String((entry || {}).description || ''),
                 getDestinationLabel(destination),
-                getDestinationDisplayLabel(destination)
-            ].join(' ').toLowerCase();
+                getDestinationDisplayLabel(destination),
+                String((account || {}).name || '')
+            ].join(' '));
         }
 
         function entryMatchesCurrentEntryFilters(entry, filters = getEntriesFilterSnapshot()) {
@@ -7485,9 +7693,10 @@
             const body = document.getElementById('entries-table-body');
             if(!body) return;
             closeEntryDestinationCombobox();
-            const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
+            const search = normalizeEntrySearchText(document.getElementById('entry-search')?.value || '');
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
+            syncEntriesMonthControl(dateStart, dateEnd);
             const typeFilter = document.getElementById('filter-type')?.value || '';
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
@@ -7674,9 +7883,10 @@
             const body = document.getElementById('entries-table-body');
             if (!body) return;
             closeEntryDestinationCombobox();
-            const search = (document.getElementById('entry-search')?.value || '').toLowerCase();
+            const search = normalizeEntrySearchText(document.getElementById('entry-search')?.value || '');
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
+            syncEntriesMonthControl(dateStart, dateEnd);
             const typeFilter = document.getElementById('filter-type')?.value || '';
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
@@ -8094,28 +8304,45 @@
             }
 
             let html = '', cumulative = 0;
-            const labelsBar = [];
+            const maxDailyReal = Math.max(...dailyInReal, ...dailyOutReal, 0);
+            const getDailyWidth = (value) => maxDailyReal > 0 ? Math.max(0, Math.round((Number(value || 0) / maxDailyReal) * 100)) : 0;
             for(let d = 1; d <= daysInMonth; d++) {
                 const dInc = dailyInReal[d - 1] || 0;
                 const dExp = dailyOutReal[d - 1] || 0;
                 const dBal = dInc - dExp;
                 cumulative += dBal;
-                labelsBar.push(`Dia ${d}`);
-                html += `<tr class="text-[11px] font-bold">
-                    <td class="px-8 py-4 text-slate-400">${d}</td>
-                    <td class="px-8 py-4 flow-income-text">${formatBRL(dInc)}</td>
-                    <td class="px-8 py-4 flow-expense-text">${formatBRL(dExp)}</td>
-                    <td class="px-8 py-4 text-right font-black">
+                const incWidth = getDailyWidth(dInc);
+                const expWidth = getDailyWidth(dExp);
+                const isEmptyDay = dInc === 0 && dExp === 0;
+                html += `<tr class="monthly-day-row ${isEmptyDay ? 'is-empty' : ''}">
+                    <td class="monthly-day-cell">${String(d).padStart(2, '0')}</td>
+                    <td class="monthly-flow-cell">
+                        <div class="monthly-flow-value flow-income-text">
+                            <span>${formatBRL(dInc)}</span>
+                            <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${incWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--primary-green); width: ${incWidth}%;"></span></span>
+                        </div>
+                    </td>
+                    <td class="monthly-flow-cell">
+                        <div class="monthly-flow-value flow-expense-text">
+                            <span>${formatBRL(dExp)}</span>
+                            <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${expWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--soft-red); width: ${expWidth}%;"></span></span>
+                        </div>
+                    </td>
+                    <td class="text-right">
                         <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
                     </td>
-                    <td class="px-8 py-4 text-right text-slate-900 font-black">${formatBRL(cumulative)}</td>
+                    <td class="text-right monthly-cumulative">${formatBRL(cumulative)}</td>
                 </tr>`;
             }
-            document.getElementById('monthly-daily-table').innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
-            renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar);
+            const monthlyDailyTableEl = document.getElementById('monthly-daily-table');
+            if (monthlyDailyTableEl) {
+                monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
+            }
+
+            renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend);
         }
 
-        function renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend, labelsBar) {
+        function renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend) {
             function buildCategoryChartData(baseMap, palette) {
                 const sorted = Object.entries(baseMap)
                     .filter(([, v]) => Number(v) > 0)
@@ -8168,8 +8395,7 @@
                 dailyInReal,
                 dailyInPend,
                 dailyOutReal,
-                dailyOutPend,
-                labelsBar
+                dailyOutPend
             });
             if (nextChartsSignature === monthlyChartsSignature && window.mPieInc && window.mPieExp && window.mBar) return;
             monthlyChartsSignature = nextChartsSignature;
@@ -8260,59 +8486,6 @@
                 });
             }
 
-            const barCtxEl = document.getElementById('monthChartBar');
-            if(barCtxEl) {
-                if(window.mBar) window.mBar.destroy();
-                const dailyInTotal = dailyInReal.map((v, i) => Number(v || 0) + Number(dailyInPend[i] || 0));
-                const dailyOutTotal = dailyOutReal.map((v, i) => Number(v || 0) + Number(dailyOutPend[i] || 0));
-                const monthMax = Math.max(...dailyInTotal, ...dailyOutTotal, 0);
-                const monthAxisMax = monthMax > 0 ? Math.ceil(monthMax * 1.15) : 100;
-                const monthStep = Math.max(1, Math.ceil(monthAxisMax / 5));
-                window.mBar = new Chart(barCtxEl.getContext('2d'), { 
-                    type: 'bar', 
-                    data: { 
-                        labels: labelsBar, 
-                        datasets: [
-                            { label: 'Entradas (Realizado)', data: dailyInReal, backgroundColor: '#0F8A67', borderRadius: 8, maxBarThickness: 96, stack: 'entrada' },
-                            { label: 'Entradas (Pendente)', data: dailyInPend, backgroundColor: '#A7F3D0', borderRadius: 8, maxBarThickness: 96, stack: 'entrada' },
-                            { label: 'Saídas (Realizado)', data: dailyOutReal, backgroundColor: '#C94A34', borderRadius: 8, maxBarThickness: 96, stack: 'saida' },
-                            { label: 'Saídas (Pendente)', data: dailyOutPend, backgroundColor: '#FECACA', borderRadius: 8, maxBarThickness: 96, stack: 'saida' }
-                        ] 
-                    }, 
-                    options: { 
-                        indexAxis: 'y', 
-                        maintainAspectRatio: false, 
-                        barPercentage: 1,
-                        categoryPercentage: 1,
-                        interaction: { mode: 'nearest', intersect: false },
-                        onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
-                        scales: { 
-                            x: {
-                                min: 0,
-                                max: monthAxisMax,
-                                stacked: true,
-                                grid: { borderDash: [4,4] },
-                                ticks: {
-                                    stepSize: monthStep,
-                                    maxTicksLimit: 6,
-                                    callback: (value) => formatChartBRL(value)
-                                }
-                            }, 
-                            y: { stacked: true, grid: { display: false } } 
-                        }, 
-                        plugins: {
-                            legend: { position: 'top' },
-                            tooltip: getReadableTooltipConfig((ctx) => {
-                                const idx = Number(ctx.dataIndex || 0);
-                                const datasetValue = Number(ctx.raw || 0);
-                                const totalEntradaDia = Number(dailyInTotal[idx] || 0);
-                                const totalSaidaDia = Number(dailyOutTotal[idx] || 0);
-                                return `${ctx.dataset.label}: ${formatBRL(datasetValue)} (Total Entradas ${formatBRL(totalEntradaDia)} | Total Saídas ${formatBRL(totalSaidaDia)})`;
-                            })
-                        } 
-                    } 
-                });
-            }
         }
 
         function renderAnnual() {
@@ -8407,11 +8580,12 @@
             const catEl = document.getElementById('annual-nav-category');
             const subEl = document.getElementById('annual-nav-subcategory');
             const dstEl = document.getElementById('annual-nav-destination');
+            const accountEl = document.getElementById('annual-nav-account');
             const excludeDstEl = document.getElementById('annual-exclude-destination');
             const tableBody = document.getElementById('annual-temporal-table-body');
             const summaryEl = document.getElementById('annual-temporal-summary');
             const chartEl = document.getElementById('chartAnnualTemporal');
-            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !excludeDstEl || !tableBody || !summaryEl || !chartEl) return;
+            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !accountEl || !excludeDstEl || !tableBody || !summaryEl || !chartEl) return;
 
             const validYears = Array.from(new Set(
                 getAnalyticalEntries(state.entries)
@@ -8455,13 +8629,25 @@
             if(annualNavDestinationId && !dstOptions.some(d => d.id === annualNavDestinationId)) annualNavDestinationId = '';
             if(annualExcludedDestinationId && !dstOptions.some(d => d.id === annualExcludedDestinationId)) annualExcludedDestinationId = '';
 
+            const accountBase = dstBase.filter(e =>
+                (!annualNavDestinationId || e.destinationId === annualNavDestinationId) &&
+                (!annualExcludedDestinationId || e.destinationId !== annualExcludedDestinationId)
+            );
+            const validAccountIds = new Set(accountBase.map(e => String((e.accountId ?? e.account_id) || '')).filter(Boolean));
+            const accountOptions = (state.accounts || [])
+                .filter(a => validAccountIds.has(String(a.id || '')))
+                .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
+            if(annualNavAccountId && !accountOptions.some(a => String(a.id || '') === String(annualNavAccountId))) annualNavAccountId = '';
+
             catEl.innerHTML = `<option value="">Todas</option>${catOptions.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}`;
             subEl.innerHTML = `<option value="">Todas</option>${subOptions.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}`;
             dstEl.innerHTML = `<option value="">Todos</option>${dstOptions.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}`;
+            accountEl.innerHTML = `<option value="">Todas</option>${accountOptions.map(a => `<option value="${escapeHtml(String(a.id || ''))}">${escapeHtml(String(a.name || 'Conta'))}</option>`).join('')}`;
             excludeDstEl.innerHTML = `<option value="">Nenhum</option>${dstOptions.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}`;
             catEl.value = annualNavCategoryId;
             subEl.value = annualNavSubCategoryId;
             dstEl.value = annualNavDestinationId;
+            accountEl.value = annualNavAccountId;
             excludeDstEl.value = annualExcludedDestinationId;
 
             catEl.onchange = () => {
@@ -8479,6 +8665,10 @@
                 annualNavDestinationId = dstEl.value;
                 renderAnnualTemporalComparison(year);
             };
+            accountEl.onchange = () => {
+                annualNavAccountId = accountEl.value;
+                renderAnnualTemporalComparison(year);
+            };
             excludeDstEl.onchange = () => {
                 annualExcludedDestinationId = excludeDstEl.value;
                 if(annualNavDestinationId && annualNavDestinationId === annualExcludedDestinationId) annualNavDestinationId = '';
@@ -8489,6 +8679,7 @@
                 (!annualNavCategoryId || e.categoryId === annualNavCategoryId) &&
                 (!annualNavSubCategoryId || e.subCategoryId === annualNavSubCategoryId) &&
                 (!annualNavDestinationId || e.destinationId === annualNavDestinationId) &&
+                (!annualNavAccountId || String((e.accountId ?? e.account_id) || '') === String(annualNavAccountId)) &&
                 (!annualExcludedDestinationId || e.destinationId !== annualExcludedDestinationId)
             );
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -8520,6 +8711,7 @@
             if(annualNavCategoryId) navParts.push(catOptions.find(c => c.id === annualNavCategoryId)?.name || '');
             if(annualNavSubCategoryId) navParts.push(subOptions.find(s => s.id === annualNavSubCategoryId)?.name || '');
             if(annualNavDestinationId) navParts.push(dstOptions.find(d => d.id === annualNavDestinationId)?.name || '');
+            if(annualNavAccountId) navParts.push(accountOptions.find(a => String(a.id || '') === String(annualNavAccountId))?.name || '');
             const selectedAnnualNames = [
                 catOptions.find(c => c.id === annualNavCategoryId)?.name || '',
                 subOptions.find(s => s.id === annualNavSubCategoryId)?.name || '',
