@@ -1932,6 +1932,26 @@
             gap: 6px;
             width: 100%;
         }
+        .recon-destination-picker {
+            flex: 1;
+            min-width: 0;
+        }
+        .recon-destination-input {
+            width: 100%;
+            min-width: 0;
+            height: 34px;
+            padding: 0 12px;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 9px;
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #0F172A;
+        }
+        .recon-destination-input:hover,
+        .recon-destination-input:focus {
+            background: #FFFFFF;
+        }
         .recon-destination-select {
             flex: 1;
             width: 100%;
@@ -3865,6 +3885,16 @@
         const entriesPageSize = 100;
         let lastEntriesQueryKey = '';
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
+        let reconDestinationComboboxState = {
+            index: -1,
+            inputId: '',
+            panelId: '',
+            options: [],
+            filteredOptions: [],
+            highlightedIndex: -1,
+            isOpen: false,
+            blurTimer: null
+        };
         let selectedEntryIds = new Set();
         let entryDestinationFillState = { active: false, sourceIndex: -1, value: '', type: '', changedIds: new Set(), originalById: new Map() };
         let entryAccountFillState = { active: false, sourceIndex: -1, value: '', changedIds: new Set(), originalById: new Map() };
@@ -6925,15 +6955,24 @@
         function getEntrySearchHaystack(entry) {
             const destination = getDestinationById((entry || {}).destinationId);
             const account = getAccountById((entry || {}).accountId ?? (entry || {}).account_id);
-            return normalizeEntrySearchText([
+            const description = String(
+                (entry || {}).description ??
+                (entry || {}).descricao ??
+                (entry || {}).desc ??
+                (entry || {}).notes ??
+                (entry || {}).observacao ??
+                ''
+            );
+            const haystack = normalizeEntrySearchText([
                 String((entry || {}).date || ''),
                 String((entry || {}).date || '').split('-').reverse().join('/'),
                 ...getEntryAmountSearchParts(entry),
-                String((entry || {}).description || ''),
+                description,
                 getDestinationLabel(destination),
                 getDestinationDisplayLabel(destination),
                 String((account || {}).name || '')
             ].join(' '));
+            return `${haystack} ${haystack.replace(/\s+/g, '')}`;
         }
 
         function entryMatchesCurrentEntryFilters(entry, filters = getEntriesFilterSnapshot()) {
@@ -9478,6 +9517,63 @@
             return hasPixOutra || (hasPagamentoPix && hasMaskedDocument);
         }
 
+        const RECON_GENERIC_COUNTERPARTY_TERMS = new Set([
+            'financeira', 'financeiro', 'consultar', 'consulta', 'saida', 'entrada',
+            'bancaria', 'banco', 'boleto', 'liquidacao', 'titulo', 'cobranca',
+            'pagamento', 'recebimento', 'fornecedor', 'cliente'
+        ]);
+
+        function isGenericReconDestination(destination) {
+            const hierarchy = getDestinationHierarchyById((destination || {}).id || '', { subCategoryId: (destination || {}).subCategoryId || '' });
+            const labelNorm = normalizeReconText([
+                (destination || {}).name || '',
+                (hierarchy.subCategory || {}).name || '',
+                (hierarchy.category || {}).name || ''
+            ].join(' '));
+            if (!labelNorm) return false;
+            return labelNorm.includes('consultar')
+                || labelNorm.includes('financeira')
+                || labelNorm.includes('entrada bancaria');
+        }
+
+        function getSpecificCounterpartyTokens(value) {
+            return tokenizeReconText(value)
+                .filter(token => token.length >= 4 && !RECON_GENERIC_COUNTERPARTY_TERMS.has(token));
+        }
+
+        function findDestinationByExplicitCounterparty(description, validDestinations) {
+            const descNorm = normalizeReconText(description);
+            if (!descNorm || !Array.isArray(validDestinations) || !validDestinations.length) return '';
+            const descTokens = new Set(tokenizeReconText(descNorm));
+            const candidates = [];
+            validDestinations.forEach((destination) => {
+                let score = 0;
+                getDestinationAliasPhrases(destination).forEach((aliasPhrase) => {
+                    const aliasNorm = normalizeReconText(aliasPhrase);
+                    const specificTokens = getSpecificCounterpartyTokens(aliasNorm);
+                    if (!aliasNorm || !specificTokens.length) return;
+                    if (aliasNorm.length >= 4 && descNorm.includes(aliasNorm)) {
+                        score = Math.max(score, 620 + aliasNorm.length);
+                    }
+                    if (specificTokens.length === 1 && descTokens.has(specificTokens[0])) {
+                        score = Math.max(score, 540 + specificTokens[0].length);
+                    } else if (specificTokens.every(token => descTokens.has(token))) {
+                        score = Math.max(score, 470 + specificTokens.join('').length);
+                    }
+                });
+                if (score > 0) {
+                    if (isGenericReconDestination(destination)) score -= 260;
+                    candidates.push({ id: String((destination || {}).id || ''), score });
+                }
+            });
+            candidates.sort((a, b) => b.score - a.score);
+            const best = candidates[0] || null;
+            const second = candidates[1] || null;
+            if (!best || !best.id || best.score < 420) return '';
+            if (second && best.score - second.score < 90) return '';
+            return best.id;
+        }
+
         function isAmbiguousPersonalPixDescription(description, flowType = '') {
             const original = String(description || '').trim();
             const text = normalizeReconText(original);
@@ -9609,6 +9705,11 @@
             const exactInternalTransferId = findInternalTransferDestinationByExactDocument(description, validDestinations);
             if (exactInternalTransferId) return exactInternalTransferId;
             const exactDocumentDestinationId = findDestinationByExactDocument(description, validDestinations);
+            const explicitCounterpartyDestinationId = findDestinationByExplicitCounterparty(description, validDestinations);
+            if (explicitCounterpartyDestinationId) {
+                const exactDocumentDestination = exactDocumentDestinationId ? getDestinationById(exactDocumentDestinationId) : null;
+                if (!exactDocumentDestinationId || isGenericReconDestination(exactDocumentDestination)) return explicitCounterpartyDestinationId;
+            }
             if (exactDocumentDestinationId) return exactDocumentDestinationId;
             if (!descNorm) return '';
 
@@ -9933,11 +10034,198 @@
         function updateReconDestination(index, value) {
             if (!tempRecon[index]) return;
             tempRecon[index].destinationId = value;
+            const inputEl = document.getElementById(`recon-dst-${index}`);
+            const options = getReconAllowedDestinations(tempRecon[index], getValidDestinations());
+            const label = getDestinationLabelById(value, options) || getDestinationLabelById(value);
+            if (inputEl && label) inputEl.value = label;
             refreshReconRowReview(index);
         }
         function updateReconDescription(index, value) {
             if (!tempRecon[index]) return;
             tempRecon[index].description = String(value || '');
+        }
+
+        function clearReconDestinationComboboxBlurTimer() {
+            if (!reconDestinationComboboxState.blurTimer) return;
+            clearTimeout(reconDestinationComboboxState.blurTimer);
+            reconDestinationComboboxState.blurTimer = null;
+        }
+
+        function closeReconDestinationCombobox(index = -1) {
+            clearReconDestinationComboboxBlurTimer();
+            if (index >= 0 && Number(reconDestinationComboboxState.index) !== Number(index)) return;
+            const inputEl = document.getElementById(reconDestinationComboboxState.inputId);
+            const panelEl = document.getElementById(reconDestinationComboboxState.panelId);
+            reconDestinationComboboxState.filteredOptions = [];
+            reconDestinationComboboxState.highlightedIndex = -1;
+            reconDestinationComboboxState.isOpen = false;
+            if (panelEl) {
+                panelEl.innerHTML = '';
+                panelEl.classList.add('hidden');
+            }
+            if (inputEl) inputEl.setAttribute('aria-expanded', 'false');
+            if (index < 0 || Number(reconDestinationComboboxState.index) === Number(index)) {
+                reconDestinationComboboxState.index = -1;
+                reconDestinationComboboxState.inputId = '';
+                reconDestinationComboboxState.panelId = '';
+                reconDestinationComboboxState.options = [];
+            }
+        }
+
+        function renderReconDestinationComboboxOptions() {
+            const panelEl = document.getElementById(reconDestinationComboboxState.panelId);
+            const inputEl = document.getElementById(reconDestinationComboboxState.inputId);
+            if (!panelEl || !inputEl) return;
+            const filtered = reconDestinationComboboxState.filteredOptions || [];
+            if (!reconDestinationComboboxState.isOpen) {
+                panelEl.classList.add('hidden');
+                inputEl.setAttribute('aria-expanded', 'false');
+                return;
+            }
+            inputEl.setAttribute('aria-expanded', 'true');
+            panelEl.classList.remove('hidden');
+            if (!filtered.length) {
+                panelEl.innerHTML = '<div class="combobox-empty">Nenhum destino encontrado.</div>';
+                return;
+            }
+            const rowIndex = Number(reconDestinationComboboxState.index);
+            panelEl.innerHTML = filtered.map((item, optionIndex) => {
+                const isActive = optionIndex === reconDestinationComboboxState.highlightedIndex;
+                return `<button type="button" class="combobox-option ${isActive ? 'is-active' : ''}" role="option" aria-selected="${isActive ? 'true' : 'false'}" onmousedown="event.preventDefault()" onclick="selectReconDestinationComboboxOption(${rowIndex}, '${String(item.id || '')}')">
+                    <span class="combobox-option-title">${escapeHtml(getDestinationLabel(item))}</span>
+                    <span class="combobox-option-meta">${escapeHtml(getDestinationDisplayLabel(item))}</span>
+                </button>`;
+            }).join('');
+            const activeEl = panelEl.querySelector('.combobox-option.is-active');
+            if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+                activeEl.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        function openReconDestinationCombobox(index, query = '') {
+            const item = tempRecon[index];
+            if (!item) return;
+            const options = getReconAllowedDestinations(item, getValidDestinations());
+            reconDestinationComboboxState.index = Number(index);
+            reconDestinationComboboxState.inputId = `recon-dst-${index}`;
+            reconDestinationComboboxState.panelId = `recon-dst-panel-${index}`;
+            reconDestinationComboboxState.options = options;
+            reconDestinationComboboxState.filteredOptions = filterDestinationOptions(query, options);
+            reconDestinationComboboxState.highlightedIndex = reconDestinationComboboxState.filteredOptions.length ? 0 : -1;
+            reconDestinationComboboxState.isOpen = true;
+            renderReconDestinationComboboxOptions();
+        }
+
+        function handleReconDestinationInput(index) {
+            clearReconDestinationComboboxBlurTimer();
+            const inputEl = document.getElementById(`recon-dst-${index}`);
+            openReconDestinationCombobox(index, inputEl ? inputEl.value : '');
+        }
+
+        function handleReconDestinationFocus(index) {
+            clearReconDestinationComboboxBlurTimer();
+            const inputEl = document.getElementById(`recon-dst-${index}`);
+            openReconDestinationCombobox(index, inputEl ? inputEl.value : '');
+            if (inputEl && typeof inputEl.select === 'function') inputEl.select();
+        }
+
+        function handleReconDestinationBlur(index) {
+            clearReconDestinationComboboxBlurTimer();
+            reconDestinationComboboxState.blurTimer = setTimeout(() => {
+                closeReconDestinationCombobox(index);
+                const item = tempRecon[index];
+                const inputEl = document.getElementById(`recon-dst-${index}`);
+                if (item && inputEl) {
+                    const options = getReconAllowedDestinations(item, getValidDestinations());
+                    inputEl.value = getDestinationLabelById(item.destinationId, options) || getDestinationLabelById(item.destinationId) || '';
+                }
+            }, 120);
+        }
+
+        function moveReconDestinationComboboxHighlight(index, step) {
+            if (!reconDestinationComboboxState.isOpen || Number(reconDestinationComboboxState.index) !== Number(index)) {
+                const inputEl = document.getElementById(`recon-dst-${index}`);
+                openReconDestinationCombobox(index, inputEl ? inputEl.value : '');
+                return;
+            }
+            const total = reconDestinationComboboxState.filteredOptions.length;
+            if (!total) return;
+            const current = reconDestinationComboboxState.highlightedIndex < 0 ? 0 : reconDestinationComboboxState.highlightedIndex;
+            reconDestinationComboboxState.highlightedIndex = (current + step + total) % total;
+            renderReconDestinationComboboxOptions();
+        }
+
+        function focusNextReconDestination(index, options = {}) {
+            const nextIndex = Number(index) + 1;
+            const nextInput = document.getElementById(`recon-dst-${nextIndex}`);
+            if (!nextInput) return false;
+            nextInput.focus();
+            if (typeof nextInput.select === 'function') nextInput.select();
+            if (options.openPicker) openReconDestinationCombobox(nextIndex, nextInput.value);
+            return true;
+        }
+
+        function selectReconDestinationComboboxOption(index, destinationId, options = {}) {
+            clearReconDestinationComboboxBlurTimer();
+            const item = tempRecon[index];
+            const selectedId = String(destinationId || '');
+            if (!item || !selectedId) return false;
+            updateReconDestination(index, selectedId);
+            closeReconDestinationCombobox(index);
+            if (options.focusNext) {
+                setTimeout(() => focusNextReconDestination(index, { openPicker: false }), 0);
+            }
+            return true;
+        }
+
+        function commitReconDestinationInlineInput(index, options = {}) {
+            const item = tempRecon[index];
+            const inputEl = document.getElementById(`recon-dst-${index}`);
+            if (!item || !inputEl) return false;
+            const validDestinations = getReconAllowedDestinations(item, getValidDestinations());
+            const typedLabel = String(inputEl.value || '').trim();
+            const currentLabel = getDestinationLabelById(item.destinationId, validDestinations) || getDestinationLabelById(item.destinationId) || '';
+            if (!typedLabel) {
+                inputEl.value = currentLabel;
+                return false;
+            }
+            const destinationId = findDestinationIdByLabel(typedLabel, validDestinations);
+            if (!destinationId) {
+                inputEl.value = currentLabel;
+                if (options.showAlert) alert('Selecione um destino valido da lista.');
+                return false;
+            }
+            updateReconDestination(index, destinationId);
+            closeReconDestinationCombobox(index);
+            return true;
+        }
+
+        function handleReconDestinationKeydown(index, event) {
+            if (!event) return;
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                moveReconDestinationComboboxHighlight(index, 1);
+                return;
+            }
+            if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                moveReconDestinationComboboxHighlight(index, -1);
+                return;
+            }
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                closeReconDestinationCombobox(index);
+                return;
+            }
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const currentId = Number(reconDestinationComboboxState.index);
+                const active = currentId === Number(index) && reconDestinationComboboxState.isOpen
+                    ? reconDestinationComboboxState.filteredOptions[reconDestinationComboboxState.highlightedIndex]
+                    : null;
+                if (active) selectReconDestinationComboboxOption(index, String(active.id || ''), { focusNext: true });
+                else if (commitReconDestinationInlineInput(index, { showAlert: true })) focusNextReconDestination(index, { openPicker: false });
+            }
         }
 
         function refreshReconRowReview(index) {
@@ -10066,7 +10354,10 @@
                 if (!tempRecon[i]) continue;
                 tempRecon[i].destinationId = reconFillState.value;
                 const el = document.getElementById(`recon-dst-${i}`);
-                if (el) el.value = reconFillState.value;
+                if (el) {
+                    const options = getReconAllowedDestinations(tempRecon[i], getValidDestinations());
+                    el.value = getDestinationLabelById(reconFillState.value, options) || getDestinationLabelById(reconFillState.value) || '';
+                }
                 refreshReconRowReview(i);
             }
         }
@@ -10309,6 +10600,7 @@
                     const invalidDestination = !hasReconValidDestination(e, validDestinations);
                     const matchMeta = getReconExistingMatchMeta(e, selectedAccountId);
                     const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
+                    const destinationInputLabel = getDestinationLabelById(e.destinationId, destinationSource) || getDestinationLabelById(e.destinationId) || '';
                     return `<tr id="recon-row-${i}" class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
                         <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
                         <td class="px-4 py-3 w-[180px]">
@@ -10324,10 +10616,26 @@
                         </td>
                         <td class="px-4 py-3 w-[320px]">
                             <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
-                                <select id="recon-dst-${i}" onchange="updateReconDestination(${i}, this.value)" class="recon-destination-select ${invalidDestination ? 'border-red-300 bg-red-50 text-red-700' : ''}">
-                                    <option value="" ${invalidDestination ? 'selected' : ''}>Selecionar destino...</option>
-                                    ${destinationSource.map(d => `<option value="${d.id}" ${e.destinationId===d.id?'selected':''}>${d.name}</option>`).join('')}
-                                </select>
+                                <div class="combobox-shell recon-destination-picker">
+                                    <input
+                                        id="recon-dst-${i}"
+                                        class="recon-destination-input ${invalidDestination ? 'border-red-300 bg-red-50 text-red-700' : ''}"
+                                        type="text"
+                                        value="${escapeHtml(destinationInputLabel)}"
+                                        placeholder="Digite para buscar..."
+                                        autocomplete="off"
+                                        role="combobox"
+                                        aria-expanded="false"
+                                        aria-haspopup="listbox"
+                                        aria-autocomplete="list"
+                                        onfocus="handleReconDestinationFocus(${i})"
+                                        onclick="handleReconDestinationFocus(${i})"
+                                        oninput="handleReconDestinationInput(${i})"
+                                        onblur="handleReconDestinationBlur(${i})"
+                                        onkeydown="handleReconDestinationKeydown(${i}, event)"
+                                    >
+                                    <div id="recon-dst-panel-${i}" class="combobox-panel custom-scrollbar hidden" role="listbox" aria-label="Sugestoes de destino"></div>
+                                </div>
                                 <button type="button" id="recon-note-btn-${i}" class="recon-note-btn" onclick="saveReconDescriptionAsDestinationNote(${i})" title="Salvar descrição selecionada como nota do destino" aria-label="Salvar descrição como nota do destino">
                                     <i data-lucide="sticky-note" class="w-3.5 h-3.5"></i>
                                 </button>
