@@ -7008,6 +7008,9 @@
             if (dstMeta) {
                 dstMeta.innerText = getEntryDestinationMetaLabel(entry) || 'Sem classificação';
                 dstMeta.title = displayLabel;
+                const descriptionLabel = String(entry.description || '').trim() || 'Sem observacao';
+                dstMeta.innerText = descriptionLabel;
+                dstMeta.title = descriptionLabel;
             }
 
             if (valueEl) {
@@ -7979,6 +7982,7 @@
                 const dstOptions = getDestinationOptionsForFlow(e.type);
                 const destinationMainLabel = getDestinationLabelById(e.destinationId, dstOptions) || getDestinationLabelById(e.destinationId) || '-';
                 const destinationDisplayLabel = getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId) || destinationMainLabel;
+                const entryDescriptionLabel = String(e.description || '').trim() || 'Sem observacao';
                 const destinationMetaLabel = getEntryDestinationMetaLabel(e) || 'Sem classificação';
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
@@ -8038,7 +8042,7 @@
                                     ...
                                 </button>
                             </div>
-                            <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(destinationDisplayLabel)}">${escapeHtml(destinationMetaLabel)}</p>
+                            <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
@@ -9521,6 +9525,41 @@
             return String((preferred || {}).id || '');
         }
 
+        function destinationMatchesLookupTokens(destination, lookupText) {
+            const hierarchy = getDestinationHierarchyById((destination || {}).id || '', { subCategoryId: (destination || {}).subCategoryId || '' });
+            const labelNorm = normalizeDestinationLookupLabel([
+                (destination || {}).name || '',
+                (hierarchy.subCategory || {}).name || '',
+                (hierarchy.category || {}).name || '',
+                (destination || {}).notes || ''
+            ].join(' '));
+            const lookupTokens = normalizeDestinationLookupLabel(lookupText).split(' ').filter(Boolean);
+            return lookupTokens.length > 0 && lookupTokens.every(token => labelNorm.includes(token));
+        }
+
+        function findDestinationByLookupTokens(validDestinations, lookupText) {
+            const list = Array.isArray(validDestinations) ? validDestinations : [];
+            const match = list.find(destination => destinationMatchesLookupTokens(destination, lookupText));
+            return String((match || {}).id || '');
+        }
+
+        function getDefaultReconDestinationId(flowType, validDestinations = null) {
+            const normalizedFlow = normalizeFlowType(flowType);
+            const flowDestinations = Array.isArray(validDestinations) && validDestinations.length
+                ? validDestinations
+                : getValidDestinationsByFlow(normalizedFlow);
+            if (!flowDestinations.length) return '';
+            if (normalizedFlow === FLOW_IN) {
+                return findPreferredBankSalesDestination(flowDestinations)
+                    || findDestinationByLookupTokens(flowDestinations, 'Vendas Entrada Bancaria');
+            }
+            if (normalizedFlow === FLOW_OUT) {
+                return findDestinationByLookupTokens(flowDestinations, 'Consultar saida')
+                    || findConsultationDestinationId(normalizedFlow, flowDestinations);
+            }
+            return '';
+        }
+
         function getMostFrequentDestination(validDestinations, options = {}) {
             const { avoidInternalTransfer = false } = options || {};
             const validIds = new Set((validDestinations || []).map(d => d.id));
@@ -9782,6 +9821,9 @@
                         parsedTableRow.description,
                         typeDestinations.length ? typeDestinations : validDestinations,
                         parsedTableRow.type
+                    ) || getDefaultReconDestinationId(
+                        parsedTableRow.type,
+                        typeDestinations.length ? typeDestinations : validDestinations
                     );
                     tempRecon.push({
                         id: generateId(),
@@ -9851,6 +9893,9 @@
                         desc,
                         typeDestinations.length ? typeDestinations : validDestinations,
                         flowType
+                    ) || getDefaultReconDestinationId(
+                        flowType,
+                        typeDestinations.length ? typeDestinations : validDestinations
                     );
                     tempRecon.push({ 
                         id: generateId(), 
@@ -10228,7 +10273,12 @@
                 }
                 tempRecon = tempRecon.map(item => ({
                     ...item,
-                    destinationId: hasReconValidDestination(item, validDestinations) ? String(item.destinationId || '') : ''
+                    destinationId: hasReconValidDestination(item, validDestinations)
+                        ? String(item.destinationId || '')
+                        : getDefaultReconDestinationId(
+                            item.type,
+                            getReconAllowedDestinations(item, validDestinations)
+                        )
                 }));
                 const reconStats = tempRecon.reduce((acc, item) => {
                     const invalidDestination = !hasReconValidDestination(item, validDestinations);
