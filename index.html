@@ -1301,6 +1301,170 @@
         #loading-overlay p {
             animation: loadingPulse var(--dur-slow) var(--ease-premium) infinite alternate;
         }
+        #login-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background:
+                linear-gradient(135deg, rgba(248, 250, 252, 0.94) 0%, rgba(232, 243, 239, 0.94) 48%, rgba(233, 237, 250, 0.94) 100%);
+            backdrop-filter: blur(18px);
+        }
+        #login-screen.hidden {
+            display: none;
+        }
+        .login-card {
+            width: min(390px, 100%);
+            border: 1px solid rgba(226, 232, 242, 0.88);
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.88);
+            box-shadow: 0 30px 70px rgba(15, 23, 42, 0.16);
+            padding: 28px;
+            animation: modalIn 260ms var(--ease-premium);
+        }
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .login-brand-icon {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            color: #FFFFFF;
+            background: var(--primary-blue);
+            box-shadow: 0 14px 26px rgba(47, 79, 157, 0.22);
+        }
+        .login-eyebrow {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary-green);
+        }
+        .login-title {
+            margin-top: 4px;
+            font-size: 24px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .login-field {
+            margin-bottom: 18px;
+        }
+        .login-input {
+            width: 100%;
+            height: 48px;
+            border-radius: 15px;
+            border: 1px solid #DDE6F0;
+            background: #FFFFFF;
+            padding: 0 15px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #0F172A;
+            outline: none;
+            transition: border-color var(--dur-fast) var(--ease-premium), box-shadow var(--dur-fast) var(--ease-premium);
+        }
+        .login-input:focus {
+            border-color: #AFC4E8;
+            box-shadow: 0 0 0 4px rgba(47, 79, 157, 0.10);
+        }
+        .login-pass-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            height: 42px;
+            margin: 4px 0 18px;
+        }
+        .login-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            border: 1px solid #CBD5E1;
+            background: #FFFFFF;
+            transition: background var(--dur-fast) var(--ease-premium), border-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
+        }
+        .login-dot.filled {
+            background: #0F172A;
+            border-color: #0F172A;
+            transform: scale(1.08);
+        }
+        .login-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 290px;
+            margin: 0 auto;
+        }
+        .login-key,
+        .login-key-action {
+            height: 62px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            background: rgba(248, 250, 252, 0.96);
+            color: #0F172A;
+            font-size: 24px;
+            line-height: 1;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-key:hover,
+        .login-key-action:hover {
+            background: #EEF4FF;
+            border-color: #C8D6EF;
+        }
+        .login-key-action {
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #475569;
+        }
+        .login-submit {
+            width: 100%;
+            height: 48px;
+            margin-top: 18px;
+            border-radius: 15px;
+            background: #0F172A;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: 0 14px 24px rgba(15, 23, 42, 0.18);
+        }
+        .login-error {
+            min-height: 18px;
+            margin-top: 12px;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.35;
+            font-weight: 800;
+            color: var(--soft-red);
+        }
+        @media (max-width: 420px) {
+            #login-screen {
+                padding: 16px;
+            }
+            .login-card {
+                padding: 22px;
+                border-radius: 26px;
+            }
+            .login-key,
+            .login-key-action {
+                height: 58px;
+            }
+        }
         @keyframes loadingPulse {
             from { opacity: 0.65; letter-spacing: 0.18em; }
             to { opacity: 1; letter-spacing: 0.22em; }
@@ -1338,6 +1502,140 @@
 
         .divide-slate-50 > :not([hidden]) ~ :not([hidden]) { border-color: var(--divider) !important; }
         .border-slate-50, .border-slate-100, .border-b { border-color: var(--divider) !important; }
+
+        /* Camada global: texto mais natural e interface mais intuitiva. */
+        body,
+        body * {
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+        }
+        body {
+            background: #F3F6FA;
+            color: var(--text-primary);
+            line-height: 1.45;
+        }
+        .label-mini,
+        th,
+        .mobile-nav-label,
+        .nav-text,
+        .sync-indicator,
+        .backup-indicator,
+        .badge,
+        .cash-projection-title,
+        .cash-projection-label,
+        .cash-projection-hint,
+        .sales-report-eyebrow,
+        .sales-kpi-label,
+        .sales-section-title,
+        .sales-insight-label,
+        .treasury-panel-title,
+        .entries-filter-report-label,
+        .entries-filter-report-note {
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+        }
+        .label-mini {
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            color: #64748B !important;
+            margin-bottom: 7px;
+        }
+        #tab-title {
+            letter-spacing: 0 !important;
+            line-height: 1.12 !important;
+        }
+        .tab-content h4,
+        .sales-report-title,
+        .login-title {
+            letter-spacing: 0 !important;
+            line-height: 1.18 !important;
+        }
+        button,
+        .export-pdf-btn,
+        .entries-quick-btn,
+        .btn-new-entry,
+        .modal-btn-primary,
+        .modal-btn-danger,
+        .modal-btn-neutral,
+        .treasury-secondary-btn,
+        .db-inline-btn,
+        .cash-projection-tab {
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+            border-radius: 12px;
+        }
+        button:focus-visible,
+        [role="button"]:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(47, 79, 157, 0.14) !important;
+            border-color: #9DB4DA !important;
+        }
+        .card-premium,
+        .treasury-form-card,
+        .treasury-history-card,
+        .sales-report-shell,
+        .sales-analytics-shell,
+        .entries-filter-report-card,
+        .db-panel,
+        .modal-shell {
+            border-color: #DFE7F1 !important;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045) !important;
+        }
+        .card-premium:hover,
+        .sales-kpi:hover,
+        .cash-projection-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.065) !important;
+        }
+        .sidebar-btn,
+        .mobile-nav-btn {
+            border-radius: 12px !important;
+        }
+        .sidebar-btn.active::before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 4px;
+            height: 22px;
+            border-radius: 999px;
+            transform: translateY(-50%);
+            background: #FFFFFF;
+            opacity: 0.9;
+        }
+        #sidebar.collapsed .sidebar-btn.active::before {
+            display: none;
+        }
+        thead {
+            background: #F8FAFC !important;
+        }
+        th {
+            font-size: 11px !important;
+            font-weight: 800 !important;
+            color: #5F6B7A !important;
+        }
+        td {
+            color: #334155;
+        }
+        .table-row {
+            transition: background-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
+        }
+        .table-row:hover {
+            background: #F6F9FF !important;
+        }
+        .badge,
+        .quick-status-btn,
+        .sync-indicator,
+        .backup-indicator {
+            border-radius: 999px !important;
+            font-weight: 700 !important;
+        }
+        .login-key {
+            border-radius: 999px !important;
+        }
 
         .hm-breadcrumb {
             display: flex;
@@ -1913,6 +2211,238 @@
             border-color: #F1C8C8;
             background: #FFF5F5;
         }
+        .sales-report-shell {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #DDE6F0;
+            border-radius: 22px;
+            background: #FFFFFF;
+        }
+        .sales-report-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+            gap: 18px;
+            align-items: stretch;
+            padding: 24px;
+            border-bottom: 1px solid #E9EEF5;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F6FAF8 48%, #F7F9FF 100%);
+        }
+        .sales-report-title-wrap {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .sales-report-icon {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            color: var(--primary-green);
+            background: var(--bg-green-soft);
+            border: 1px solid #D5E8E0;
+        }
+        .sales-report-eyebrow {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary-green);
+        }
+        .sales-report-title {
+            margin-top: 4px;
+            font-size: 26px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .sales-report-sub {
+            margin-top: 8px;
+            max-width: 680px;
+            font-size: 12px;
+            line-height: 1.55;
+            font-weight: 600;
+            color: #5F6B7A;
+        }
+        .sales-date-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.82);
+        }
+        .sales-report-kpis {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            padding: 20px 24px 24px;
+        }
+        .sales-kpi {
+            min-height: 122px;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #E4EBF3;
+            background: #FFFFFF;
+            transition: transform var(--dur-std) var(--ease-premium), border-color var(--dur-std) var(--ease-premium), box-shadow var(--dur-std) var(--ease-premium);
+        }
+        .sales-kpi:hover {
+            transform: translateY(-2px);
+            border-color: #CBD5E1;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.07);
+        }
+        .sales-kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .sales-kpi-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748B;
+        }
+        .sales-kpi-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            background: #F1F5F9;
+        }
+        .sales-kpi.in .sales-kpi-icon { color: var(--primary-green); background: var(--bg-green-soft); }
+        .sales-kpi.net .sales-kpi-icon { color: var(--primary-blue); background: var(--bg-blue-soft); }
+        .sales-kpi.period .sales-kpi-icon { color: #0F172A; background: #EEF2F7; }
+        .sales-kpi-value {
+            margin-top: 12px;
+            font-size: 25px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .sales-kpi-note {
+            margin-top: 7px;
+            min-height: 15px;
+            font-size: 10px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .sales-analytics-shell {
+            overflow: hidden;
+            border: 1px solid #DDE6F0;
+            border-radius: 22px;
+            background: #FFFFFF;
+        }
+        .sales-analytics-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 22px 24px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #F8FAFC;
+        }
+        .sales-section-title {
+            font-size: 13px;
+            line-height: 1.2;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #0F172A;
+        }
+        .sales-section-sub {
+            margin-top: 6px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .sales-filter-grid {
+            display: grid;
+            grid-template-columns: 150px 170px 150px;
+            gap: 10px;
+            align-items: end;
+        }
+        .sales-filter-item select,
+        .sales-filter-item input {
+            height: 42px;
+            border-radius: 12px;
+            background-color: #FFFFFF;
+        }
+        .sales-analytics-body {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 300px;
+            gap: 0;
+        }
+        .sales-chart-panel {
+            min-height: 380px;
+            padding: 22px 24px 24px;
+            border-right: 1px solid #E9EEF5;
+        }
+        .sales-chart-frame {
+            height: 310px;
+        }
+        .sales-insight-rail {
+            display: grid;
+            align-content: start;
+            gap: 12px;
+            padding: 22px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFF 100%);
+        }
+        .sales-insight-card {
+            border: 1px solid #E5ECF4;
+            border-radius: 16px;
+            padding: 14px;
+            background: #FFFFFF;
+        }
+        .sales-insight-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94A3B8;
+        }
+        .sales-insight-value {
+            margin-top: 8px;
+            font-size: 20px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .sales-insight-note {
+            margin-top: 6px;
+            font-size: 10px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .sales-table-wrap {
+            padding: 0 24px 24px;
+        }
+        .sales-empty-state {
+            display: none;
+            margin-top: 14px;
+            border: 1px dashed #CBD5E1;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748B;
+            background: #F8FAFC;
+            text-align: center;
+        }
+        .sales-empty-state.active {
+            display: block;
+        }
         @media (max-width: 1200px) {
             .db-explorer {
                 grid-template-columns: 1fr;
@@ -1921,8 +2451,47 @@
                 min-height: 240px;
             }
             .treasury-hero,
-            .treasury-form-grid {
+            .treasury-form-grid,
+            .sales-report-hero,
+            .sales-analytics-body {
                 grid-template-columns: 1fr;
+            }
+            .sales-chart-panel {
+                border-right: 0;
+                border-bottom: 1px solid #E9EEF5;
+            }
+            .sales-filter-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 760px) {
+            .sales-report-hero,
+            .sales-report-kpis,
+            .sales-analytics-head,
+            .sales-filter-grid {
+                grid-template-columns: 1fr;
+            }
+            .sales-report-hero,
+            .sales-report-kpis,
+            .sales-analytics-head,
+            .sales-chart-panel,
+            .sales-insight-rail,
+            .sales-table-wrap {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            .sales-analytics-head {
+                display: grid;
+                align-items: stretch;
+            }
+            .sales-report-title {
+                font-size: 22px;
+            }
+            .sales-chart-panel {
+                min-height: 320px;
+            }
+            .sales-chart-frame {
+                height: 260px;
             }
         }
 
@@ -2340,6 +2909,21 @@
             border-color: #BFD0EF;
             background: #EEF4FF;
             color: #274388;
+        }
+        .entries-quick-btn.danger {
+            border-color: #F1C8C8;
+            background: #FFF6F6;
+            color: #B23A3A;
+        }
+        .entries-quick-btn.danger:hover {
+            border-color: #E8AFAF;
+            background: #FFECEC;
+            color: #8F2D2D;
+        }
+        .entries-quick-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none !important;
         }
         .entries-quick-btn.toggle {
             min-width: 122px;
@@ -3005,9 +3589,79 @@
                 grid-template-columns: repeat(6, minmax(0, 1fr));
             }
         }
+        body *,
+        [class~="uppercase"],
+        [class*="tracking-"],
+        .label-mini,
+        th,
+        button,
+        .badge,
+        .sync-indicator,
+        .backup-indicator,
+        .mobile-nav-label,
+        .nav-text {
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+        }
+        .font-black {
+            font-weight: 800 !important;
+        }
+        .text-\[8px\],
+        .text-\[9px\],
+        .text-\[10px\],
+        .text-\[11px\] {
+            line-height: 1.35 !important;
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
+
+    <section id="login-screen" aria-label="Login inicial">
+        <div class="login-card">
+            <div class="login-brand">
+                <div class="login-brand-icon" aria-hidden="true">
+                    <i data-lucide="lock-keyhole" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="login-eyebrow">Acesso seguro</p>
+                    <h1 class="login-title">Entrar no financeiro</h1>
+                </div>
+            </div>
+
+            <div class="login-field">
+                <label class="label-mini" for="login-user">Usuário</label>
+                <input id="login-user" class="login-input" type="text" autocomplete="username" autocapitalize="none" placeholder="Digite seu usuário">
+            </div>
+
+            <div class="login-field">
+                <label class="label-mini" for="login-pass-hidden">Senha</label>
+                <input id="login-pass-hidden" class="sr-only" type="password" inputmode="numeric" autocomplete="current-password" aria-hidden="true" tabindex="-1">
+                <div id="login-pass-dots" class="login-pass-display" aria-label="Senha com 4 números">
+                    <span class="login-dot"></span>
+                    <span class="login-dot"></span>
+                    <span class="login-dot"></span>
+                    <span class="login-dot"></span>
+                </div>
+                <div class="login-keypad" aria-label="Teclado numérico da senha">
+                    <button type="button" class="login-key" onclick="appendLoginDigit('1')">1</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('2')">2</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('3')">3</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('4')">4</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('5')">5</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('6')">6</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('7')">7</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('8')">8</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('9')">9</button>
+                    <button type="button" class="login-key-action" onclick="clearLoginPass()">Limpar</button>
+                    <button type="button" class="login-key" onclick="appendLoginDigit('0')">0</button>
+                    <button type="button" class="login-key-action" onclick="removeLoginDigit()">Apagar</button>
+                </div>
+            </div>
+
+            <button type="button" class="login-submit" onclick="submitLogin()">Entrar</button>
+            <p id="login-error" class="login-error" role="alert" aria-live="polite"></p>
+        </div>
+    </section>
 
     <div id="loading-overlay">
         <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -3089,6 +3743,7 @@
                             <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()" aria-label="Filtrar lançamentos para o mês atual"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
                             <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()" aria-label="Alternar filtro de lançamentos duplicados"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
                             <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()" aria-label="Limpar todos os filtros de lançamentos"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
+                            <button type="button" id="entries-delete-filter-btn" class="entries-quick-btn danger" onclick="deleteFilteredEntries()" aria-label="Excluir todos os lançamentos do filtro atual" disabled><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Excluir filtro</button>
                         </div>
                     </div>
                     <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
@@ -3388,32 +4043,45 @@
 
             <!-- TESOURARIA -->
             <div id="treasury" class="tab-content space-y-8">
-                <div class="card-premium p-6 lg:p-8 space-y-6">
-                    <div class="treasury-hero">
-                        <div class="treasury-hero-panel">
-                            <h4 class="treasury-hero-title">Relatório de Vendas</h4>
-                            <p class="treasury-hero-sub">Cadastre, revise e edite os fechamentos das unidades com uma leitura mais clara de vendas, saídas e resultado do dia.</p>
+                <div class="sales-report-shell">
+                    <div class="sales-report-hero">
+                        <div class="sales-report-title-wrap">
+                            <div class="sales-report-icon" aria-hidden="true"><i data-lucide="line-chart" class="w-5 h-5"></i></div>
+                            <div>
+                                <p class="sales-report-eyebrow">Relatório de vendas</p>
+                                <h4 class="sales-report-title">Visão clara do dia e do período</h4>
+                                <p class="sales-report-sub">Cadastre, revise e compare os fechamentos das unidades com leitura rápida de vendas, saídas e resultado.</p>
+                            </div>
                         </div>
-                        <div class="treasury-hero-panel">
+                        <div class="sales-date-panel">
                             <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
                             <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="kpi-card p-5">
-                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Vendas do dia</p>
-                            <p id="treasury-sales-day" class="text-2xl font-black flow-income-text mt-2">R$ 0,00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Dinheiro + cartão das unidades</p>
+                    <div class="sales-report-kpis">
+                        <div class="sales-kpi in">
+                            <div class="sales-kpi-top">
+                                <p class="sales-kpi-label">Vendas do dia</p>
+                                <span class="sales-kpi-icon" aria-hidden="true"><i data-lucide="banknote" class="w-4 h-4"></i></span>
+                            </div>
+                            <p id="treasury-sales-day" class="sales-kpi-value flow-income-text">R$ 0,00</p>
+                            <p class="sales-kpi-note">Dinheiro + cartão das unidades</p>
                         </div>
-                        <div class="kpi-card p-5">
-                            <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Fechamento do dia</p>
-                            <p id="treasury-closing-day" class="text-2xl font-black flow-balance-text mt-2">R$ 0,00</p>
-                            <p class="text-[10px] text-slate-500 mt-1">Vendas menos saídas do dia</p>
+                        <div class="sales-kpi net">
+                            <div class="sales-kpi-top">
+                                <p class="sales-kpi-label">Fechamento do dia</p>
+                                <span class="sales-kpi-icon" aria-hidden="true"><i data-lucide="check-circle-2" class="w-4 h-4"></i></span>
+                            </div>
+                            <p id="treasury-closing-day" class="sales-kpi-value flow-balance-text">R$ 0,00</p>
+                            <p class="sales-kpi-note">Vendas menos saídas do dia</p>
                         </div>
-                        <div class="kpi-card p-5">
-                            <p class="text-[9px] font-black text-slate-700 uppercase tracking-widest">Vendas do período</p>
-                            <p id="treasury-sales-period-total" class="text-2xl font-black text-slate-900 mt-2">R$ 0,00</p>
-                            <p id="treasury-sales-period-caption" class="text-[10px] text-slate-500 mt-1">Resumo do filtro atual</p>
+                        <div class="sales-kpi period">
+                            <div class="sales-kpi-top">
+                                <p class="sales-kpi-label">Vendas do período</p>
+                                <span class="sales-kpi-icon" aria-hidden="true"><i data-lucide="calendar-range" class="w-4 h-4"></i></span>
+                            </div>
+                            <p id="treasury-sales-period-total" class="sales-kpi-value">R$ 0,00</p>
+                            <p id="treasury-sales-period-caption" class="sales-kpi-note">Resumo do filtro atual</p>
                         </div>
                     </div>
                 </div>
@@ -3504,10 +4172,14 @@
                     </section>
                 </div>
 
-                <section class="card-premium p-6 lg:p-8 space-y-6">
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest">Análise de Vendas</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
+                <section class="sales-analytics-shell">
+                    <div class="sales-analytics-head">
+                        <div>
+                            <h4 class="sales-section-title">Análise de vendas</h4>
+                            <p class="sales-section-sub">Compare a evolução por período e identifique rapidamente quanto veio de dinheiro, cartão e fechamento.</p>
+                        </div>
+                        <div class="sales-filter-grid">
+                            <div class="sales-filter-item">
                                 <label class="label-mini" for="treasury-sales-period">Visualizar por</label>
                                 <select id="treasury-sales-period" onchange="renderTreasurySalesAnalytics()">
                                     <option value="SEMANA">Semana</option>
@@ -3515,11 +4187,11 @@
                                     <option value="ANO">Ano</option>
                                 </select>
                             </div>
-                            <div>
+                            <div class="sales-filter-item">
                                 <label class="label-mini" for="treasury-sales-reference">Referência</label>
                                 <input id="treasury-sales-reference" type="date" onchange="renderTreasurySalesAnalytics()">
                             </div>
-                            <div>
+                            <div class="sales-filter-item">
                                 <label class="label-mini" for="treasury-sales-unit-filter">Unidade</label>
                                 <select id="treasury-sales-unit-filter" onchange="renderTreasurySalesAnalytics()">
                                     <option value="">Todas</option>
@@ -3528,7 +4200,36 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="h-[280px]"><canvas id="treasury-sales-chart"></canvas></div>
+                    </div>
+                    <div class="sales-analytics-body">
+                        <div class="sales-chart-panel">
+                            <div class="sales-chart-frame"><canvas id="treasury-sales-chart"></canvas></div>
+                            <div id="treasury-sales-empty" class="sales-empty-state">Sem vendas no período selecionado.</div>
+                        </div>
+                        <aside class="sales-insight-rail" aria-label="Resumo financeiro do período">
+                            <div class="sales-insight-card">
+                                <p class="sales-insight-label">Dinheiro</p>
+                                <p id="treasury-sales-cash-total" class="sales-insight-value flow-income-text">R$ 0,00</p>
+                                <p class="sales-insight-note">Entradas registradas em espécie</p>
+                            </div>
+                            <div class="sales-insight-card">
+                                <p class="sales-insight-label">Cartão</p>
+                                <p id="treasury-sales-card-total" class="sales-insight-value flow-balance-text">R$ 0,00</p>
+                                <p class="sales-insight-note">Recebimentos via cartão</p>
+                            </div>
+                            <div class="sales-insight-card">
+                                <p class="sales-insight-label">Saídas</p>
+                                <p id="treasury-sales-out-total" class="sales-insight-value flow-expense-text">R$ 0,00</p>
+                                <p class="sales-insight-note">Pagamentos abatidos no período</p>
+                            </div>
+                            <div class="sales-insight-card">
+                                <p class="sales-insight-label">Fechamento</p>
+                                <p id="treasury-sales-closing-total" class="sales-insight-value flow-balance-text">R$ 0,00</p>
+                                <p class="sales-insight-note">Resultado depois das saídas</p>
+                            </div>
+                        </aside>
+                    </div>
+                    <div class="sales-table-wrap">
                         <div class="table-mobile-scroll custom-scrollbar border border-slate-100 rounded-2xl">
                             <table id="treasury-sales-summary-table" class="w-full text-left">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
@@ -3544,6 +4245,7 @@
                                 <tbody id="treasury-sales-summary-body" class="divide-y divide-slate-50 bg-white"></tbody>
                             </table>
                         </div>
+                    </div>
                 </section>
             </div>
 
@@ -6384,6 +7086,11 @@
             const chartEl = document.getElementById('treasury-sales-chart');
             const periodTotalEl = document.getElementById('treasury-sales-period-total');
             const periodCaptionEl = document.getElementById('treasury-sales-period-caption');
+            const cashTotalEl = document.getElementById('treasury-sales-cash-total');
+            const cardTotalEl = document.getElementById('treasury-sales-card-total');
+            const outTotalEl = document.getElementById('treasury-sales-out-total');
+            const closingTotalEl = document.getElementById('treasury-sales-closing-total');
+            const emptyEl = document.getElementById('treasury-sales-empty');
             if (!body || !chartEl || !periodTotalEl || !periodCaptionEl) return;
 
             const period = getTreasurySalesPeriod();
@@ -6420,6 +7127,14 @@
                     : `Semana de ${new Date(`${reference}T12:00:00`).toLocaleDateString('pt-BR')}`;
             periodTotalEl.innerText = formatBRL(consolidated.totalIn);
             periodCaptionEl.innerText = `${periodText}${unitFilter ? ` • ${unitFilter.replace('_', ' ')}` : ' • todas as unidades'}`;
+            if (cashTotalEl) cashTotalEl.innerText = formatBRL(consolidated.cashIn);
+            if (cardTotalEl) cardTotalEl.innerText = formatBRL(consolidated.cardIn);
+            if (outTotalEl) outTotalEl.innerText = formatBRL(consolidated.paymentsOut);
+            if (closingTotalEl) {
+                closingTotalEl.innerText = formatBRL(consolidated.dailyResult);
+                closingTotalEl.className = `sales-insight-value ${consolidated.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
+            }
+            if (emptyEl) emptyEl.classList.toggle('active', !movements.length);
 
             if (!summary.length || !movements.length) {
                 body.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem vendas no período selecionado</td></tr>';
@@ -7647,6 +8362,32 @@
             render();
         }
 
+        async function deleteFilteredEntries() {
+            const ids = Array.from(window.currentFilteredAllEntryIds || [])
+                .map(id => String(id || ''))
+                .filter(id => state.entries.some(e => String(e.id || '') === id));
+            if (ids.length === 0) return;
+
+            const totalEntries = (state.entries || []).length;
+            const isDeletingAll = ids.length === totalEntries;
+            const warning = isDeletingAll
+                ? `Atenção: sem filtro restritivo, isso vai excluir todos os ${ids.length} lançamento(s).`
+                : `Isso vai excluir ${ids.length} lançamento(s) do filtro atual.`;
+            if (!confirm(`${warning}\n\nDeseja continuar?`)) return;
+
+            const result = await cloudDeleteMany('entries', ids);
+            if (!result?.ok) {
+                alert(`Não foi possível excluir os lançamentos do filtro.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
+
+            const idSet = new Set(ids);
+            state.entries = state.entries.filter(e => !idSet.has(String(e.id || '')));
+            selectedEntryIds = new Set(Array.from(selectedEntryIds).filter(id => !idSet.has(String(id || ''))));
+            window.currentFilteredAllEntryIds = [];
+            render();
+        }
+
         function updateEntriesSummaryAndSelection(filtered) {
             const panelEl = document.getElementById('entries-selection-panel');
             const inEl = document.getElementById('entries-sum-in');
@@ -7655,6 +8396,7 @@
             const netPillEl = document.getElementById('entries-net-pill');
             const countEl = document.getElementById('entries-selected-count');
             const deleteBtnEl = document.getElementById('delete-selected-btn');
+            const deleteFilterBtnEl = document.getElementById('entries-delete-filter-btn');
             const selectAllEl = document.getElementById('entries-select-all');
 
             const selectedEntries = state.entries.filter(e => selectedEntryIds.has(e.id));
@@ -7675,6 +8417,7 @@
             const visibleIds = filtered.map(e => e.id);
             window.currentFilteredEntryIds = visibleIds;
             window.currentFilteredEntries = filtered;
+            if (deleteFilterBtnEl) deleteFilterBtnEl.disabled = (window.currentFilteredAllEntryIds || []).length === 0;
             const allVisibleSelected = visibleIds.length > 0 && visibleIds.every(id => selectedEntryIds.has(id));
             if (selectAllEl) selectAllEl.checked = allVisibleSelected;
         }
@@ -7817,6 +8560,7 @@
             const startIdx = (entriesPage - 1) * entriesPageSize;
             const pageItems = filtered.slice(startIdx, startIdx + entriesPageSize);
 
+            window.currentFilteredAllEntryIds = filtered.map(e => String(e.id || ''));
             updateEntriesFilterReport(filtered);
             selectedEntryIds = new Set(Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id)));
             updateEntriesSummaryAndSelection(pageItems);
@@ -8012,6 +8756,7 @@
                 return options;
             };
 
+            window.currentFilteredAllEntryIds = filtered.map(e => String(e.id || ''));
             updateEntriesFilterReport(filtered);
             selectedEntryIds = new Set(Array.from(selectedEntryIds).filter((id) => allEntryIds.has(String(id || ''))));
             updateEntriesSummaryAndSelection(pageItems);
@@ -11915,11 +12660,101 @@
             }
         }
 
+        const LOGIN_USER = 'nei';
+        const LOGIN_PASS = '0006';
+        const LOGIN_SESSION_KEY = 'financeiroLoginOk';
+        let loginPassBuffer = '';
+
+        function isLoginOpen() {
+            return !document.getElementById('login-screen')?.classList.contains('hidden');
+        }
+
+        function updateLoginDots() {
+            const hiddenInput = document.getElementById('login-pass-hidden');
+            const dots = Array.from(document.querySelectorAll('#login-pass-dots .login-dot'));
+            if (hiddenInput) hiddenInput.value = loginPassBuffer;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('filled', index < loginPassBuffer.length);
+            });
+        }
+
+        function setLoginError(message) {
+            const el = document.getElementById('login-error');
+            if (el) el.innerText = message || '';
+        }
+
+        function appendLoginDigit(digit) {
+            if (loginPassBuffer.length >= 4) return;
+            loginPassBuffer += String(digit || '').replace(/\D/g, '').slice(0, 1);
+            updateLoginDots();
+            setLoginError('');
+            if (loginPassBuffer.length === 4) {
+                window.setTimeout(() => submitLogin(), 120);
+            }
+        }
+
+        function removeLoginDigit() {
+            loginPassBuffer = loginPassBuffer.slice(0, -1);
+            updateLoginDots();
+            setLoginError('');
+        }
+
+        function clearLoginPass() {
+            loginPassBuffer = '';
+            updateLoginDots();
+            setLoginError('');
+        }
+
+        function unlockApp() {
+            document.getElementById('login-screen')?.classList.add('hidden');
+            document.body.classList.remove('login-locked');
+            sessionStorage.setItem(LOGIN_SESSION_KEY, '1');
+        }
+
+        function submitLogin() {
+            const user = String(document.getElementById('login-user')?.value || '').trim().toLowerCase();
+            if (user === LOGIN_USER && loginPassBuffer === LOGIN_PASS) {
+                unlockApp();
+                return;
+            }
+            clearLoginPass();
+            setLoginError('Usuário ou senha incorretos.');
+            document.getElementById('login-user')?.focus();
+        }
+
+        function initLoginScreen() {
+            refreshLucideIcons();
+            if (sessionStorage.getItem(LOGIN_SESSION_KEY) === '1') {
+                unlockApp();
+                return;
+            }
+            document.body.classList.add('login-locked');
+            updateLoginDots();
+            window.setTimeout(() => document.getElementById('login-user')?.focus(), 80);
+        }
+
         const mf = document.getElementById('monthly-filter');
         if(mf) mf.value = getCurrentMonthIso();
         window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
         document.addEventListener('keydown', (event) => {
+            if (isLoginOpen()) {
+                if (/^\d$/.test(event.key)) {
+                    event.preventDefault();
+                    appendLoginDigit(event.key);
+                    return;
+                }
+                if (event.key === 'Backspace') {
+                    event.preventDefault();
+                    removeLoginDigit();
+                    return;
+                }
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    submitLogin();
+                    return;
+                }
+            }
             if (event.key !== 'Escape') return;
             if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
             if (!document.getElementById('db-modal')?.classList.contains('hidden')) closeModal('db-modal');
@@ -11933,6 +12768,7 @@
         window.addEventListener('focus', () => { requestCloudRefresh({ silent: true }); });
         window.addEventListener('online', () => { requestCloudRefresh({ silent: true, minIntervalMs: 0 }); });
         window.onload = async () => {
+            initLoginScreen();
             initCustomDatePickers();
             await initCloud();
             if (cloudRefreshTimer) clearInterval(cloudRefreshTimer);
