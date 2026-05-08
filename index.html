@@ -377,6 +377,192 @@
             font-weight: 700;
             text-align: center;
         }
+        .monthly-ios-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+            gap: 18px;
+            align-items: stretch;
+            border: 1px solid #DDE6F0;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F7FAFF 58%, #F4FBF7 100%);
+            padding: 24px;
+            overflow: hidden;
+        }
+        .monthly-ios-title-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .monthly-ios-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            color: var(--primary-blue);
+            background: var(--bg-blue-soft);
+            border: 1px solid #D7DEF3;
+        }
+        .monthly-ios-eyebrow {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+        .monthly-ios-title {
+            margin-top: 4px;
+            font-size: 28px;
+            line-height: 1.12;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        .monthly-ios-sub {
+            margin-top: 8px;
+            max-width: 720px;
+            font-size: 13px;
+            line-height: 1.55;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .monthly-ios-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .monthly-ios-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 30px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            background: rgba(255,255,255,0.82);
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+        }
+        .monthly-period-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid #E2E8F0;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.86);
+            padding: 18px;
+        }
+        .monthly-period-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .monthly-period-caption {
+            margin-top: 12px;
+            min-height: 17px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .monthly-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .monthly-kpi-card {
+            min-height: 184px;
+            padding: 18px !important;
+            border-radius: 20px !important;
+        }
+        .monthly-kpi-card .kpi-card-header {
+            margin-bottom: 16px;
+        }
+        .monthly-kpi-title {
+            font-size: 13px;
+            line-height: 1.25;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        .monthly-kpi-value-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 11px;
+        }
+        .monthly-kpi-label {
+            font-size: 11px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .monthly-kpi-note {
+            margin-top: 12px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .monthly-chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .monthly-chart-card {
+            display: flex;
+            min-height: 430px;
+            flex-direction: column;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .monthly-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 18px 22px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #F8FAFC;
+        }
+        .monthly-card-title {
+            font-size: 14px;
+            line-height: 1.2;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        .monthly-card-sub {
+            margin-top: 4px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 600;
+            color: #64748B;
+        }
+        .monthly-chart-body {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+            height: 340px;
+            padding: 22px;
+        }
+        @media (max-width: 1100px) {
+            .monthly-ios-hero,
+            .monthly-kpi-grid,
+            .monthly-chart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 640px) {
+            .monthly-ios-hero {
+                padding: 18px;
+                border-radius: 20px;
+            }
+            .monthly-ios-title {
+                font-size: 23px;
+            }
+            .monthly-period-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -3612,6 +3798,303 @@
         .text-\[11px\] {
             line-height: 1.35 !important;
         }
+
+        /* Relatorio mensal: leitura mais calma, hierarquia clara e graficos mais limpos. */
+        #monthly {
+            max-width: 1480px;
+            margin: 0 auto;
+        }
+        #monthly.tab-content.space-y-8 > * + * {
+            margin-top: 22px !important;
+        }
+        #monthly .monthly-ios-hero {
+            grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+            gap: 16px;
+            padding: 20px;
+            border-radius: 20px;
+            background: #FFFFFF;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+        }
+        #monthly .monthly-ios-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 13px;
+        }
+        #monthly .monthly-ios-title-row {
+            gap: 12px;
+        }
+        #monthly .monthly-ios-eyebrow {
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+        }
+        #monthly .monthly-ios-title {
+            font-size: 22px;
+            line-height: 1.18;
+            font-weight: 800;
+        }
+        #monthly .monthly-ios-sub {
+            max-width: 680px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #64748B;
+        }
+        #monthly .monthly-ios-meta {
+            margin-top: 14px;
+        }
+        #monthly .monthly-ios-pill {
+            min-height: 28px;
+            font-size: 11px;
+            background: #F8FAFC;
+        }
+        #monthly .monthly-period-panel {
+            border-radius: 16px;
+            padding: 16px;
+            background: #F8FAFC;
+        }
+        #monthly .monthly-period-grid {
+            gap: 8px;
+        }
+        #monthly .monthly-period-caption {
+            margin-top: 10px;
+            min-height: 0;
+            font-size: 11px;
+        }
+        #monthly .monthly-kpi-grid {
+            gap: 12px;
+        }
+        #monthly .monthly-kpi-card {
+            min-height: 148px;
+            padding: 16px !important;
+            border-radius: 18px !important;
+        }
+        #monthly .monthly-kpi-card .kpi-card-header {
+            margin-bottom: 12px;
+        }
+        #monthly .monthly-kpi-title {
+            font-size: 13px;
+        }
+        #monthly .monthly-kpi-label,
+        #monthly .monthly-kpi-note {
+            font-size: 11px;
+        }
+        #monthly .monthly-kpi-note {
+            margin-top: 10px;
+            color: #728096;
+        }
+        #monthly #sum-inc-real,
+        #monthly #sum-exp-real,
+        #monthly #month-bal-r {
+            font-size: 24px !important;
+            line-height: 1.08;
+        }
+        #monthly #sum-inc-pend,
+        #monthly #sum-exp-pend {
+            font-size: 16px !important;
+            line-height: 1.15;
+        }
+        #monthly .cash-projection-shell {
+            border-radius: 18px;
+        }
+        #monthly .cash-projection-head {
+            padding: 16px 18px;
+            background: #FFFFFF;
+        }
+        #monthly .cash-projection-title,
+        #monthly .monthly-daily-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        #monthly .cash-projection-sub,
+        #monthly .monthly-daily-sub,
+        #monthly .monthly-card-sub {
+            font-size: 11px;
+            color: #728096;
+        }
+        #monthly .cash-projection-tabs {
+            border-radius: 14px;
+            background: #F8FAFC;
+        }
+        #monthly .cash-projection-tab {
+            min-height: 32px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        #monthly .cash-projection-grid {
+            gap: 12px;
+            padding: 16px 18px 18px;
+        }
+        #monthly .cash-projection-card {
+            border-radius: 14px;
+            padding: 14px;
+            background: #FFFFFF;
+        }
+        #monthly .cash-projection-label {
+            font-size: 11px;
+            font-weight: 800;
+        }
+        #monthly .cash-projection-value {
+            margin-top: 8px;
+            font-size: 22px;
+            line-height: 1.08;
+        }
+        #monthly .cash-projection-note {
+            min-height: 0;
+            margin-top: 8px;
+            font-size: 10.5px;
+        }
+        #monthly .cash-projection-breakdown {
+            margin-top: 10px;
+        }
+        #monthly .cash-projection-pill {
+            font-size: 10px;
+        }
+        #monthly .cash-projection-hint {
+            display: none;
+        }
+        #monthly #analise-hierarquica-mensal.card-premium {
+            padding: 18px !important;
+            border-radius: 18px;
+        }
+        #monthly #analise-hierarquica-mensal > .flex:first-child h4 {
+            font-size: 14px !important;
+            font-weight: 800 !important;
+        }
+        #monthly .hm-breadcrumb {
+            font-size: 11px;
+        }
+        #monthly .hm-filters {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+        #monthly .hm-items-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        #monthly .hm-item-card {
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: none;
+        }
+        #monthly .hm-item-card p {
+            line-height: 1.25;
+        }
+        #monthly .hm-progress-track {
+            height: 6px;
+        }
+        #monthly .mdetails-wrap,
+        #monthly .hm-launch-item {
+            border-radius: 14px;
+            box-shadow: none;
+        }
+        #monthly .mdetails-title {
+            font-size: 12px;
+        }
+        #monthly .mdetails-meta,
+        #monthly .mdetails-launch-item {
+            font-size: 11px;
+        }
+        #monthly .monthly-chart-grid {
+            gap: 14px;
+        }
+        #monthly .monthly-chart-card {
+            min-height: 360px;
+            border-radius: 18px;
+        }
+        #monthly .monthly-card-head {
+            padding: 14px 18px;
+            background: #FFFFFF;
+        }
+        #monthly .monthly-card-title {
+            font-size: 13px;
+            font-weight: 800;
+        }
+        #monthly .monthly-chart-body {
+            height: 280px;
+            padding: 16px 18px 18px;
+        }
+        #monthly .monthly-chart-body canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        #monthly .monthly-daily-card {
+            height: auto !important;
+            max-height: none;
+            border-radius: 18px;
+        }
+        #monthly .monthly-daily-head {
+            padding: 14px 18px;
+            background: #FFFFFF;
+        }
+        #monthly .monthly-daily-scroll {
+            max-height: 470px;
+        }
+        #monthly #monthly-daily-view {
+            min-width: 720px;
+        }
+        #monthly .monthly-daily-table th {
+            padding: 10px 14px;
+            font-size: 11px !important;
+            font-weight: 800;
+        }
+        #monthly .monthly-day-row {
+            font-size: 12px;
+            font-weight: 700;
+        }
+        #monthly .monthly-day-row td {
+            padding: 10px 14px;
+        }
+        #monthly .monthly-day-row.is-empty {
+            color: #A0A9B8;
+            background: #FBFCFE;
+        }
+        #monthly .monthly-flow-value {
+            gap: 10px;
+        }
+        #monthly .monthly-flow-mini-track {
+            width: 70px;
+            height: 6px;
+            flex-basis: 70px;
+        }
+        #monthly .day-net-pill {
+            min-width: 104px;
+            padding: 4px 9px;
+        }
+        @media (max-width: 1100px) {
+            #monthly .monthly-ios-hero,
+            #monthly .monthly-kpi-grid,
+            #monthly .monthly-chart-grid,
+            #monthly .hm-filters {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 640px) {
+            #monthly.tab-content.space-y-8 > * + * {
+                margin-top: 16px !important;
+            }
+            #monthly .monthly-ios-hero,
+            #monthly #analise-hierarquica-mensal.card-premium {
+                padding: 14px !important;
+                border-radius: 16px;
+            }
+            #monthly .monthly-ios-title {
+                font-size: 20px;
+            }
+            #monthly .monthly-kpi-card {
+                min-height: 0;
+            }
+            #monthly .cash-projection-grid {
+                padding: 14px;
+            }
+            #monthly .monthly-chart-body {
+                height: 250px;
+                padding: 14px;
+            }
+            #monthly .monthly-daily-scroll {
+                max-height: 430px;
+            }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -3842,43 +4325,62 @@
 
             <!-- RELATÓRIO MENSAL -->
             <div id="monthly" class="tab-content active space-y-8">
-                <div class="w-full lg:w-[420px]">
-                    <label class="label-mini" for="monthly-filter-month">Mês de Referência</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
-                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
+                <section class="monthly-ios-hero" aria-labelledby="monthly-ios-title">
+                    <div>
+                        <div class="monthly-ios-title-row">
+                            <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="calendar-check-2" class="w-5 h-5"></i></span>
+                            <div>
+                                <p class="monthly-ios-eyebrow">Relatório mensal</p>
+                                <h4 id="monthly-ios-title" class="monthly-ios-title">Leitura rápida do caixa do mês</h4>
+                                <p class="monthly-ios-sub">Veja o que já aconteceu, o que ainda está pendente e onde o dinheiro mais entrou ou saiu, sem precisar procurar em várias telas.</p>
+                            </div>
+                        </div>
+                        <div class="monthly-ios-meta">
+                            <span id="monthly-record-count" class="monthly-ios-pill"><i data-lucide="list-checks" class="w-3.5 h-3.5"></i>0 lançamento(s)</span>
+                            <span id="monthly-balance-mood" class="monthly-ios-pill"><i data-lucide="activity" class="w-3.5 h-3.5"></i>Saldo em leitura</span>
+                        </div>
                     </div>
-                    <input type="hidden" id="monthly-filter">
-                </div>
+                    <div class="monthly-period-panel">
+                        <label class="label-mini" for="monthly-filter-month">Período do relatório</label>
+                        <div class="monthly-period-grid">
+                            <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
+                            <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
+                        </div>
+                        <p id="monthly-period-caption" class="monthly-period-caption">Escolha mês e ano para atualizar toda a análise.</p>
+                        <input type="hidden" id="monthly-filter">
+                    </div>
+                </section>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="card-premium kpi-card kpi-card-income p-6">
+                <div class="monthly-kpi-grid">
+                    <div class="card-premium kpi-card kpi-card-income monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="text-[9px] font-black flow-income-text uppercase tracking-widest">Entradas do Mês</p>
+                            <p class="monthly-kpi-title">Entradas do mês</p>
                             <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
                         </div>
-                        <div class="space-y-4">
-                            <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-inc-real" class="text-xl font-black flow-income-text">R$ 0,00</p></div>
-                            <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-inc-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
+                        <div class="monthly-kpi-value-row">
+                            <div><p class="monthly-kpi-label">Realizado</p><p id="sum-inc-real" class="text-xl font-black flow-income-text">R$ 0,00</p></div>
+                            <div class="border-t border-slate-50 pt-3"><p class="monthly-kpi-label">Pendente</p><p id="sum-inc-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
                         </div>
+                        <p class="monthly-kpi-note">Receitas confirmadas e valores que ainda precisam entrar.</p>
                     </div>
-                    <div class="card-premium kpi-card kpi-card-expense p-6">
+                    <div class="card-premium kpi-card kpi-card-expense monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="text-[9px] font-black flow-expense-text uppercase tracking-widest">Saídas do Mês</p>
+                            <p class="monthly-kpi-title">Saídas do mês</p>
                             <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
                         </div>
-                        <div class="space-y-4">
-                            <div><p class="text-[9px] font-bold text-slate-400 uppercase">Realizado</p><p id="sum-exp-real" class="text-xl font-black flow-expense-text">R$ 0,00</p></div>
-                            <div class="border-t border-slate-50 pt-3"><p class="text-[9px] font-bold text-slate-400 uppercase">Pendente</p><p id="sum-exp-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
+                        <div class="monthly-kpi-value-row">
+                            <div><p class="monthly-kpi-label">Realizado</p><p id="sum-exp-real" class="text-xl font-black flow-expense-text">R$ 0,00</p></div>
+                            <div class="border-t border-slate-50 pt-3"><p class="monthly-kpi-label">Pendente</p><p id="sum-exp-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
                         </div>
+                        <p class="monthly-kpi-note">Despesas pagas e compromissos futuros do período.</p>
                     </div>
-                    <div class="card-premium kpi-card kpi-card-balance p-6">
+                    <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="text-[9px] font-black flow-balance-text uppercase tracking-widest">Saldo Realizado (Caixa)</p>
+                            <p class="monthly-kpi-title">Saldo realizado</p>
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
-                        <p class="text-[8px] font-bold flow-balance-text mt-4 uppercase">Dinheiro no bolso</p>
+                        <p class="monthly-kpi-note">Diferença entre entradas e saídas já realizadas.</p>
                     </div>
                 </div>
 
@@ -3927,17 +4429,6 @@
                 </section>
 
                 <section id="analise-hierarquica-mensal"></section>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black flow-income-text mb-6 tracking-widest">Entradas por categoria</h4>
-                        <div class="h-full"><canvas id="monthChartPieInc"></canvas></div>
-                    </div>
-                    <div class="card-premium p-8 h-[400px]">
-                        <h4 class="text-xs font-black flow-expense-text mb-6 tracking-widest">Saídas por categoria</h4>
-                        <div class="h-full"><canvas id="monthChartPieExp"></canvas></div>
-                    </div>
-                </div>
 
                 <div class="card-premium monthly-daily-card h-[520px] lg:h-[700px] flex flex-col">
                     <div class="monthly-daily-head">
@@ -9085,10 +9576,24 @@
             renderAnaliseHierarquicaMensal(monthEntries);
 
             const balR = incR - expR;
+            const periodCaptionEl = document.getElementById('monthly-period-caption');
+            const recordCountEl = document.getElementById('monthly-record-count');
+            const balanceMoodEl = document.getElementById('monthly-balance-mood');
+            const [yearLabel, monthLabel] = String(filter || '').split('-');
+            const monthName = Number(monthLabel)
+                ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                : 'período selecionado';
+            if (periodCaptionEl) periodCaptionEl.innerText = `Mostrando ${monthName} com ${entries.length} lançamento(s) após os filtros da análise mensal.`;
+            if (recordCountEl) recordCountEl.innerHTML = `<i data-lucide="list-checks" class="w-3.5 h-3.5"></i>${entries.length} lançamento(s)`;
+            if (balanceMoodEl) {
+                const moodText = balR >= 0 ? 'Caixa positivo no realizado' : 'Caixa negativo no realizado';
+                balanceMoodEl.innerHTML = `<i data-lucide="${balR >= 0 ? 'activity' : 'circle-alert'}" class="w-3.5 h-3.5"></i>${moodText}`;
+                balanceMoodEl.className = `monthly-ios-pill ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
+            }
             const balEl = document.getElementById('month-bal-r');
             if(balEl) { 
                 balEl.innerText = formatBRL(balR); 
-                balEl.className = 'text-2xl font-black flow-balance-text'; 
+                balEl.className = `text-2xl font-black ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; 
             }
 
             let html = '', cumulative = 0;
@@ -9127,7 +9632,19 @@
                 monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
             }
 
-            renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend);
+            clearMonthlyCategoryCharts();
+        }
+
+        function clearMonthlyCategoryCharts() {
+            if (window.mPieInc) {
+                window.mPieInc.destroy();
+                window.mPieInc = null;
+            }
+            if (window.mPieExp) {
+                window.mPieExp.destroy();
+                window.mPieExp = null;
+            }
+            monthlyChartsSignature = '';
         }
 
         function renderChartsGrouped(entries, dailyInReal, dailyInPend, dailyOutReal, dailyOutPend) {
@@ -9155,7 +9672,9 @@
                 const value = Number(chart.data.datasets[0].data[item.index] || 0);
                 const total = chart.data.datasets[0].data.reduce((acc, cur) => acc + Number(cur || 0), 0);
                 const pct = total > 0 ? (value / total) * 100 : 0;
-                return `${item.text} (${formatPercentual(pct)})`;
+                const label = String(item.text || '');
+                const shortLabel = label.length > 24 ? `${label.slice(0, 23)}...` : label;
+                return `${shortLabel} (${formatPercentual(pct)})`;
             }
 
             const expByCat = {};
@@ -9209,10 +9728,19 @@
                         onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                         plugins: {
                             legend: {
-                                position: 'right',
+                                position: 'bottom',
+                                align: 'center',
                                 labels: {
                                     usePointStyle: true,
-                                    boxWidth: 8,
+                                    boxWidth: 7,
+                                    boxHeight: 7,
+                                    padding: 14,
+                                    color: '#475569',
+                                    font: {
+                                        size: 11,
+                                        weight: '700',
+                                        family: "'Plus Jakarta Sans', sans-serif"
+                                    },
                                     generateLabels: (chart) => {
                                         const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
                                         return original.map(item => ({ ...item, text: getLegendLabelWithPercent(chart, item) }));
@@ -9252,10 +9780,19 @@
                         onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
                         plugins: {
                             legend: {
-                                position: 'right',
+                                position: 'bottom',
+                                align: 'center',
                                 labels: {
                                     usePointStyle: true,
-                                    boxWidth: 8,
+                                    boxWidth: 7,
+                                    boxHeight: 7,
+                                    padding: 14,
+                                    color: '#475569',
+                                    font: {
+                                        size: 11,
+                                        weight: '700',
+                                        family: "'Plus Jakarta Sans', sans-serif"
+                                    },
                                     generateLabels: (chart) => {
                                         const original = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
                                         return original.map(item => ({ ...item, text: getLegendLabelWithPercent(chart, item) }));
