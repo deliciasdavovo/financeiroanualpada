@@ -4095,6 +4095,364 @@
                 max-height: 430px;
             }
         }
+
+        /* Relatórios + Projeção: app financeiro com navegação em cápsulas. */
+        #reports,
+        #projection {
+            max-width: 1480px;
+            margin: 0 auto;
+        }
+        .reports-shell-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding: 20px;
+            border: 1px solid #DFE7F1;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F6FAF8 48%, #F7F9FF 100%);
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+        }
+        .reports-eyebrow {
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+        }
+        .reports-title {
+            margin-top: 4px;
+            font-size: 28px;
+            line-height: 1.12;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .reports-subtitle {
+            margin-top: 6px;
+            font-size: 13px;
+            font-weight: 650;
+            color: #64748B;
+        }
+        .pill-segment {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px;
+            border: 1px solid #DFE7F1;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.86);
+        }
+        .pill-segment.compact {
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            border-radius: 18px;
+        }
+        .pill-segment-btn {
+            min-height: 40px;
+            padding: 0 16px;
+            border-radius: 999px !important;
+            color: #64748B;
+            font-size: 12px;
+            font-weight: 850;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            white-space: nowrap;
+        }
+        .pill-segment-btn.active {
+            color: #244A94;
+            background: #EAF0FF;
+            box-shadow: 0 8px 18px rgba(47, 79, 157, 0.12);
+        }
+        .reports-mode-panel {
+            display: none;
+        }
+        .reports-mode-panel.active {
+            display: block;
+            animation: slideUp var(--dur-slow) var(--ease-premium);
+        }
+        .reports-mode-panel.space-y-8 > * + * {
+            margin-top: 22px !important;
+        }
+        .reports-tab .monthly-kpi-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .reports-tab .monthly-ios-hero {
+            background: #FFFFFF;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+        }
+        .reports-tab .monthly-kpi-card {
+            min-height: 148px;
+            padding: 16px !important;
+            border-radius: 18px !important;
+        }
+        .reports-hidden-legacy-projection {
+            display: none !important;
+        }
+        .reports-month-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-top: 12px;
+        }
+        .reports-chip {
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px !important;
+            border: 1px solid #DDE6F0;
+            background: #FFFFFF;
+            color: #64748B;
+            font-size: 11px;
+            font-weight: 850;
+        }
+        .reports-chip.active {
+            color: #244A94;
+            background: #EAF0FF;
+            border-color: #C8D6EF;
+        }
+        .reports-chart-card,
+        .reports-compare-card,
+        .reports-insights-card,
+        .projection-control-card {
+            border-radius: 22px !important;
+            overflow: hidden;
+        }
+        .reports-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #E9EEF5;
+            background: #FFFFFF;
+        }
+        .reports-card-head h4 {
+            font-size: 15px !important;
+            font-weight: 850 !important;
+            color: #0F172A !important;
+        }
+        .reports-card-head p {
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 650;
+            color: #728096;
+        }
+        .reports-chart-frame {
+            height: 320px;
+            padding: 18px 20px 22px;
+        }
+        .reports-chart-frame canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .reports-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .reports-summary-card {
+            min-height: 142px;
+            padding: 18px;
+            border: 1px solid #E4EBF3;
+            border-radius: 20px;
+            background: #FFFFFF;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+        }
+        .reports-summary-card span {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #F1F5F9;
+            color: #475569;
+        }
+        .reports-summary-card p {
+            margin-top: 14px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #64748B;
+        }
+        .reports-summary-card strong {
+            display: block;
+            margin-top: 7px;
+            font-size: 25px;
+            line-height: 1.08;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .reports-summary-card.in span,
+        .reports-summary-card.in strong { color: var(--primary-green); }
+        .reports-summary-card.out span,
+        .reports-summary-card.out strong { color: var(--soft-red); }
+        .reports-summary-card.net span,
+        .reports-summary-card.net strong { color: var(--primary-blue); }
+        .reports-insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 12px;
+            padding: 18px 20px 20px;
+        }
+        .reports-insight-item {
+            border: 1px solid #E5ECF4;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
+            padding: 16px;
+        }
+        .reports-insight-item .insight-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 11px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #EAF0FF;
+            color: #244A94;
+        }
+        .reports-insight-item strong {
+            display: block;
+            margin-top: 10px;
+            font-size: 15px;
+            line-height: 1.25;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .reports-insight-item p {
+            margin-top: 6px;
+            font-size: 12px;
+            line-height: 1.45;
+            font-weight: 650;
+            color: #64748B;
+        }
+        .projection-control-card {
+            padding: 16px !important;
+            border: 1px solid #DFE7F1;
+            background: #FFFFFF;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+        }
+        .projection-control-card > * + * {
+            margin-top: 12px;
+        }
+        .reports-control-stack {
+            display: grid;
+            gap: 12px;
+        }
+        .reports-control-row.hidden,
+        .reports-control-stack.hidden,
+        .reports-small-input.hidden {
+            display: none;
+        }
+        .reports-control-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+        .reports-control-label {
+            margin-right: 4px;
+            font-size: 12px;
+            font-weight: 900;
+            color: #334155;
+        }
+        .reports-small-input {
+            width: 110px;
+            height: 36px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+        }
+        .projection-list {
+            display: grid;
+            gap: 10px;
+            padding: 18px 20px 20px;
+        }
+        .projection-list-item {
+            display: grid;
+            grid-template-columns: 100px minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+            padding: 13px 14px;
+            border: 1px solid #E8EEF6;
+            border-radius: 16px;
+            background: #FFFFFF;
+        }
+        .projection-list-date {
+            font-size: 12px;
+            font-weight: 850;
+            color: #64748B;
+        }
+        .projection-list-name {
+            min-width: 0;
+            font-size: 13px;
+            font-weight: 850;
+            color: #0F172A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .projection-list-meta {
+            margin-top: 3px;
+            font-size: 11px;
+            font-weight: 650;
+            color: #94A3B8;
+        }
+        .projection-list-value {
+            font-size: 13px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        @media (max-width: 1100px) {
+            .reports-shell-head,
+            .reports-card-head {
+                align-items: stretch;
+                flex-direction: column;
+            }
+            .reports-tab .monthly-kpi-grid,
+            .reports-summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .pill-segment,
+            .pill-segment.compact {
+                width: 100%;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .pill-segment.compact {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 640px) {
+            .reports-shell-head {
+                padding: 16px;
+                border-radius: 20px;
+            }
+            .reports-title {
+                font-size: 24px;
+            }
+            .reports-summary-grid {
+                grid-template-columns: 1fr;
+            }
+            .reports-tab .monthly-kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            .reports-chart-frame {
+                height: 270px;
+                padding: 14px;
+            }
+            .reports-insight-grid,
+            .projection-list {
+                padding: 14px;
+            }
+            .projection-list-item {
+                grid-template-columns: 1fr;
+                align-items: start;
+            }
+            .projection-list-value {
+                justify-self: start;
+            }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -4170,11 +4528,11 @@
         </div>
 
         <nav class="flex-1 px-4 space-y-2">
-            <button onclick="switchTab('monthly')" id="nav-monthly" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="calendar" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Mensal</span>
+            <button onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
-            <button onclick="switchTab('annual')" id="nav-annual" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório Anual</span>
+            <button onclick="switchTab('projection')" id="nav-projection" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="chart-spline" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Projeção</span>
             </button>
             <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
@@ -4195,7 +4553,7 @@
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
         <header class="h-24 bg-white border-b px-10 flex items-center shrink-0">
             <div class="flex items-center gap-6">
-                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Relatório Mensal</h2>
+                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Relatórios financeiros</h2>
                 <div id="sync-status" class="sync-indicator">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
@@ -4324,7 +4682,24 @@
             </div>
 
             <!-- RELATÓRIO MENSAL -->
-            <div id="monthly" class="tab-content active space-y-8">
+            <div id="reports" class="tab-content active reports-tab space-y-8">
+                <section class="reports-shell-head" aria-labelledby="reports-title">
+                    <div>
+                        <p class="reports-eyebrow">Painel financeiro</p>
+                        <h3 id="reports-title" class="reports-title">Relatórios financeiros</h3>
+                        <p class="reports-subtitle">Entenda o que aconteceu no mês ou no ano com a mesma leitura visual.</p>
+                    </div>
+                    <div class="pill-segment" role="tablist" aria-label="Tipo de relatório">
+                        <button type="button" id="reports-mode-monthly" class="pill-segment-btn active" onclick="setReportsMode('monthly')" aria-selected="true">
+                            <i data-lucide="calendar-days" class="w-4 h-4"></i>Mensal
+                        </button>
+                        <button type="button" id="reports-mode-annual" class="pill-segment-btn" onclick="setReportsMode('annual')" aria-selected="false">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>Anual
+                        </button>
+                    </div>
+                </section>
+
+                <div id="reports-monthly-panel" class="reports-mode-panel active space-y-8">
                 <section class="monthly-ios-hero" aria-labelledby="monthly-ios-title">
                     <div>
                         <div class="monthly-ios-title-row">
@@ -4347,6 +4722,7 @@
                             <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
                         </div>
                         <p id="monthly-period-caption" class="monthly-period-caption">Escolha mês e ano para atualizar toda a análise.</p>
+                        <div id="reports-month-chips" class="reports-month-chips" aria-label="Meses do ano"></div>
                         <input type="hidden" id="monthly-filter">
                     </div>
                 </section>
@@ -4376,15 +4752,58 @@
                     </div>
                     <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="monthly-kpi-title">Saldo realizado</p>
+                            <p class="monthly-kpi-title">Saldo do mês</p>
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
                         <p class="monthly-kpi-note">Diferença entre entradas e saídas já realizadas.</p>
                     </div>
+                    <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
+                        <div class="kpi-card-header">
+                            <p class="monthly-kpi-title">Resultado</p>
+                            <span class="kpi-icon"><i data-lucide="activity" class="w-4 h-4"></i></span>
+                        </div>
+                        <p id="reports-month-result" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
+                        <p id="reports-month-result-note" class="monthly-kpi-note">Realizado + pendente do mês.</p>
+                    </div>
                 </div>
 
-                <section class="card-premium cash-projection-shell" aria-labelledby="cash-projection-title">
+                <section class="card-premium reports-chart-card" aria-labelledby="reports-monthly-chart-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="reports-monthly-chart-title">Gráfico mensal</h4>
+                            <p>Entradas e saídas realizadas por dia.</p>
+                        </div>
+                    </div>
+                    <div class="reports-chart-frame"><canvas id="reports-monthly-chart"></canvas></div>
+                </section>
+
+                <section class="card-premium reports-compare-card" aria-labelledby="reports-monthly-compare-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="reports-monthly-compare-title">Comparar com</h4>
+                            <p>Escolha uma referência para medir o mês atual.</p>
+                        </div>
+                        <div class="pill-segment compact">
+                            <button type="button" id="monthly-compare-prev" class="pill-segment-btn active" onclick="setMonthlyCompareMode('prev')">Mês anterior</button>
+                            <button type="button" id="monthly-compare-last-year" class="pill-segment-btn" onclick="setMonthlyCompareMode('lastYear')">Ano passado</button>
+                            <button type="button" id="monthly-compare-avg3" class="pill-segment-btn" onclick="setMonthlyCompareMode('avg3')">Média 3 meses</button>
+                        </div>
+                    </div>
+                    <div id="reports-monthly-compare-grid" class="reports-insight-grid"></div>
+                </section>
+
+                <section class="card-premium reports-insights-card" aria-labelledby="reports-monthly-insights-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="reports-monthly-insights-title">Insights</h4>
+                            <p>Leituras automáticas do período selecionado.</p>
+                        </div>
+                    </div>
+                    <div id="reports-monthly-insights" class="reports-insight-grid"></div>
+                </section>
+
+                <section class="card-premium cash-projection-shell reports-hidden-legacy-projection" aria-labelledby="cash-projection-title">
                     <div class="cash-projection-head">
                         <div>
                             <h4 id="cash-projection-title" class="cash-projection-title">Projeção de Caixa</h4>
@@ -4450,9 +4869,32 @@
             </div>
 
             <!-- RELATÓRIO ANUAL -->
-            <div id="annual" class="tab-content space-y-12">
-                <div class="card-premium p-10 h-[450px]"><h4 class="text-xs font-black uppercase text-slate-400 mb-10 tracking-widest">Performance Anual</h4><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
-                <div class="card-premium overflow-hidden">
+                <div id="reports-annual-panel" class="reports-mode-panel space-y-8">
+                <section class="monthly-ios-hero reports-annual-hero" aria-labelledby="reports-annual-title">
+                    <div>
+                        <div class="monthly-ios-title-row">
+                            <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></span>
+                            <div>
+                                <p class="monthly-ios-eyebrow">Relatório anual</p>
+                                <h4 id="reports-annual-title" class="monthly-ios-title">Visão mês a mês do ano</h4>
+                                <p class="monthly-ios-sub">Acompanhe entradas, saídas, resultado anual e os meses que mais puxaram o caixa.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="monthly-period-panel">
+                        <label class="label-mini" for="reports-annual-year">Ano do relatório</label>
+                        <select id="reports-annual-year" onchange="setAnnualReportYear(this.value)" aria-label="Ano do relatório anual"></select>
+                        <p id="reports-annual-caption" class="monthly-period-caption">Selecione um ano para atualizar os relatórios.</p>
+                    </div>
+                </section>
+                <div class="reports-summary-grid">
+                    <article class="reports-summary-card in"><span><i data-lucide="trending-up" class="w-4 h-4"></i></span><p>Entradas no ano</p><strong id="reports-annual-in">R$ 0,00</strong></article>
+                    <article class="reports-summary-card out"><span><i data-lucide="trending-down" class="w-4 h-4"></i></span><p>Saídas no ano</p><strong id="reports-annual-out">R$ 0,00</strong></article>
+                    <article class="reports-summary-card net"><span><i data-lucide="wallet" class="w-4 h-4"></i></span><p>Resultado anual</p><strong id="reports-annual-net">R$ 0,00</strong></article>
+                    <article class="reports-summary-card avg"><span><i data-lucide="calendar-range" class="w-4 h-4"></i></span><p>Média mensal</p><strong id="reports-annual-avg">R$ 0,00</strong></article>
+                </div>
+                <div class="card-premium p-10 h-[450px] reports-chart-card"><div class="reports-card-head"><div><h4>Gráfico anual</h4><p>Comparação mês a mês de entradas e saídas.</p></div></div><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
+                <div class="card-premium overflow-hidden reports-legacy-annual-table hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="annual-main-table" class="w-full text-left">
                             <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
@@ -4530,6 +4972,85 @@
                     </div>
                     <div id="annual-hierarchy-detail"></div>
                 </div>
+                <section class="card-premium reports-insights-card" aria-labelledby="reports-annual-ranking-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="reports-annual-ranking-title">Insights</h4>
+                            <p>Ranking dos pontos mais importantes do ano.</p>
+                        </div>
+                    </div>
+                    <div id="reports-annual-ranking" class="reports-insight-grid"></div>
+                </section>
+            </div>
+            </div>
+
+            <!-- PROJEÇÃO -->
+            <div id="projection" class="tab-content projection-tab space-y-8">
+                <section class="reports-shell-head" aria-labelledby="projection-title">
+                    <div>
+                        <p class="reports-eyebrow">Previsão financeira</p>
+                        <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
+                        <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
+                    </div>
+                    <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
+                        <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
+                        <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
+                    </div>
+                </section>
+                <section class="projection-control-card">
+                    <div id="projection-pending-controls" class="reports-control-row">
+                        <span class="reports-control-label">Prazo</span>
+                        <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">7 dias</button>
+                        <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">15 dias</button>
+                        <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">30 dias</button>
+                        <button type="button" id="projection-period-custom" class="reports-chip" onclick="setProjectionPeriod('custom')">Personalizado</button>
+                        <input id="projection-custom-days" class="reports-small-input hidden" type="number" min="1" max="365" value="45" onchange="renderProjection()" aria-label="Dias personalizados">
+                    </div>
+                    <div id="projection-history-controls" class="reports-control-stack hidden">
+                        <div class="reports-control-row">
+                            <span class="reports-control-label">Base histórica</span>
+                            <button type="button" id="projection-history-1" class="reports-chip active" onclick="setProjectionHistoryMonths(1)">Mês passado</button>
+                            <button type="button" id="projection-history-2" class="reports-chip" onclick="setProjectionHistoryMonths(2)">Últimos 2 meses</button>
+                            <button type="button" id="projection-history-3" class="reports-chip" onclick="setProjectionHistoryMonths(3)">Últimos 3 meses</button>
+                            <button type="button" id="projection-history-6" class="reports-chip" onclick="setProjectionHistoryMonths(6)">Últimos 6 meses</button>
+                        </div>
+                        <div class="reports-control-row">
+                            <span class="reports-control-label">Prazo</span>
+                            <button type="button" id="projection-history-period-7" class="reports-chip active" onclick="setProjectionHistoryPeriod(7)">7 dias</button>
+                            <button type="button" id="projection-history-period-15" class="reports-chip" onclick="setProjectionHistoryPeriod(15)">15 dias</button>
+                            <button type="button" id="projection-history-period-30" class="reports-chip" onclick="setProjectionHistoryPeriod(30)">30 dias</button>
+                        </div>
+                    </div>
+                    <div class="reports-control-row" aria-label="Agrupamento do gráfico de projeção">
+                        <span class="reports-control-label">Mostrar gráfico por</span>
+                        <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
+                        <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
+                        <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
+                    </div>
+                </section>
+                <div class="reports-summary-grid">
+                    <article class="reports-summary-card in"><span><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i></span><p id="projection-card-in-label">Entradas previstas</p><strong id="projection-card-in">R$ 0,00</strong></article>
+                    <article class="reports-summary-card out"><span><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i></span><p id="projection-card-out-label">Saídas previstas</p><strong id="projection-card-out">R$ 0,00</strong></article>
+                    <article class="reports-summary-card net"><span><i data-lucide="chart-spline" class="w-4 h-4"></i></span><p id="projection-card-net-label">Saldo projetado</p><strong id="projection-card-net">R$ 0,00</strong></article>
+                </div>
+                <section class="card-premium reports-chart-card">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="projection-chart-title">Saldo projetado</h4>
+                            <p id="projection-explain">Baseado nos lançamentos futuros pendentes já cadastrados.</p>
+                        </div>
+                    </div>
+                    <div class="reports-chart-frame"><canvas id="projection-chart"></canvas></div>
+                </section>
+                <section class="card-premium reports-insights-card">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="projection-list-title">Lançamentos usados na projeção</h4>
+                            <p id="projection-list-subtitle">Somente pendências futuras dentro do prazo escolhido.</p>
+                        </div>
+                    </div>
+                    <div id="projection-list" class="projection-list"></div>
+                </section>
             </div>
 
             <!-- TESOURARIA -->
@@ -4809,13 +5330,13 @@
     </main>
 
     <nav id="mobile-nav" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
-        <button onclick="switchTab('monthly')" id="mnav-monthly" class="mobile-nav-btn active" aria-label="Relatório Mensal">
-            <i data-lucide="calendar" class="w-5 h-5"></i>
-            <span class="mobile-nav-label">Mensal</span>
+        <button onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros">
+            <i data-lucide="chart-no-axes-combined" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Relat.</span>
         </button>
-        <button onclick="switchTab('annual')" id="mnav-annual" class="mobile-nav-btn" aria-label="Relatório Anual">
-            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-            <span class="mobile-nav-label">Anual</span>
+        <button onclick="switchTab('projection')" id="mnav-projection" class="mobile-nav-btn" aria-label="Projeção financeira">
+            <i data-lucide="chart-spline" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Proj.</span>
         </button>
         <button onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
             <i data-lucide="receipt" class="w-5 h-5"></i>
@@ -5070,7 +5591,14 @@
         let annualNavDestinationId = '';
         let annualNavAccountId = '';
         let annualExcludedDestinationId = '';
-        let currentTab = 'monthly';
+        let currentTab = 'reports';
+        let reportsMode = 'monthly';
+        let monthlyCompareMode = 'prev';
+        let projectionMode = 'pending';
+        let projectionPeriod = 7;
+        let projectionHistoryMonths = 1;
+        let projectionHistoryPeriod = 7;
+        let projectionGranularity = 'day';
         let cashProjectionPeriod = 7;
         let cashProjectionDailyOpen = false;
         let entriesSearchTimer = null;
@@ -6361,7 +6889,7 @@
                         </tr>`;
                     }).join('')}
                 </tbody></table>`;
-            } else if (currentTab === 'monthly') {
+            } else if (currentTab === 'reports' && reportsMode === 'monthly') {
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
                 title = `Relatório Mensal (${filter})`;
@@ -6427,7 +6955,7 @@
                         }).join('')}
                     </tbody></table></div>`)
                 ].join('');
-            } else if (currentTab === 'monthly') {
+            } else if (currentTab === 'reports' && reportsMode === 'monthly') {
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
                 title = `Relatório Mensal (${filter})`;
@@ -6500,7 +7028,7 @@
                     ])),
                     buildExportSectionV2('Lançamentos por Fluxo', rows.length ? buildFlowGroupedLaunchTables(rows) : buildEmptyPrintCard('Sem lançamentos no filtro atual.'))
                 ].join('');
-            } else if (currentTab === 'monthly') {
+            } else if (currentTab === 'reports' && reportsMode === 'monthly') {
                 const includeComplete = shouldIncludeCompleteExport('Relatório mensal');
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
@@ -6535,9 +7063,9 @@
                     buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries)),
                     includeComplete ? buildExportSectionV2('Relatório Completo - Lançamentos', entries.length ? buildFlowGroupedLaunchTables(entries) : buildEmptyPrintCard('Sem lançamentos detalhados no período/filtro selecionado.')) : ''
                 ].join('');
-            } else if (currentTab === 'annual') {
+            } else if (currentTab === 'reports' && reportsMode === 'annual') {
                 const includeComplete = shouldIncludeCompleteExport('Relatório anual');
-                const selectedYear = Number(document.getElementById('annual-temporal-year')?.value);
+                const selectedYear = Number(document.getElementById('reports-annual-year')?.value || document.getElementById('annual-temporal-year')?.value);
                 const year = selectedYear || annualTemporalYear || new Date().getFullYear();
                 const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
                 const analyticalEntries = getAnalyticalEntries(state.entries);
@@ -6572,7 +7100,7 @@
                 ].join('');
             } else {
                 title = 'Relatório';
-                tableHtml = '<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>';
+                tableHtml = '<p>A exportação PDF está disponível para as abas Lançamentos e Relatórios.</p>';
             }
 
             const win = window.open('', '_blank');
@@ -7326,8 +7854,8 @@
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
                 entries: 'Lançamentos',
-                monthly: 'Relatório Mensal',
-                annual: 'Relatório Anual',
+                reports: 'Relatórios financeiros',
+                projection: 'Projeção financeira',
                 reconciliation: 'Conciliação',
                 treasury: 'Relatório de Vendas',
                 database: 'Banco de Dados'
@@ -7344,11 +7872,15 @@
             if (currentTab === 'entries') {
                 applyEntriesToolbarState();
                 renderEntries();
-            } else if (currentTab === 'monthly') {
+            } else if (currentTab === 'reports') {
                 populateMonthlyFilterSelectors();
+                populateReportsMonthChips();
+                populateAnnualReportYearSelector();
                 renderMonthly();
-            } else if (currentTab === 'annual') {
                 renderAnnual();
+                updateReportsModeUI();
+            } else if (currentTab === 'projection') {
+                renderProjection();
             } else if (currentTab === 'treasury') {
                 renderTreasury();
             } else if (currentTab === 'database') {
@@ -7409,6 +7941,57 @@
             const hiddenEl = document.getElementById('monthly-filter');
             if(!monthEl || !yearEl || !hiddenEl) return;
             hiddenEl.value = `${yearEl.value}-${monthEl.value}`;
+            populateReportsMonthChips();
+            renderMonthly();
+        }
+
+        function updateReportsModeUI() {
+            const isAnnual = reportsMode === 'annual';
+            document.getElementById('reports-monthly-panel')?.classList.toggle('active', !isAnnual);
+            document.getElementById('reports-annual-panel')?.classList.toggle('active', isAnnual);
+            document.getElementById('reports-mode-monthly')?.classList.toggle('active', !isAnnual);
+            document.getElementById('reports-mode-annual')?.classList.toggle('active', isAnnual);
+            document.getElementById('reports-mode-monthly')?.setAttribute('aria-selected', !isAnnual ? 'true' : 'false');
+            document.getElementById('reports-mode-annual')?.setAttribute('aria-selected', isAnnual ? 'true' : 'false');
+        }
+
+        function setReportsMode(mode) {
+            reportsMode = mode === 'annual' ? 'annual' : 'monthly';
+            updateReportsModeUI();
+            if (reportsMode === 'annual') renderAnnual();
+            else renderMonthly();
+            refreshLucideIcons();
+        }
+
+        function populateReportsMonthChips() {
+            const host = document.getElementById('reports-month-chips');
+            const hiddenEl = document.getElementById('monthly-filter');
+            const yearEl = document.getElementById('monthly-filter-year');
+            if(!host || !hiddenEl || !yearEl) return;
+            const selected = hiddenEl.value || getCurrentMonthIso();
+            const selectedMonth = selected.slice(5, 7);
+            const year = yearEl.value || selected.slice(0, 4) || String(new Date().getFullYear());
+            host.innerHTML = MONTH_NAMES_PT.map((name, idx) => {
+                const month = String(idx + 1).padStart(2, '0');
+                return `<button type="button" class="reports-chip ${month === selectedMonth ? 'active' : ''}" onclick="setReportsMonth('${year}-${month}')">${name.slice(0, 3)}</button>`;
+            }).join('');
+        }
+
+        function setReportsMonth(value) {
+            const hiddenEl = document.getElementById('monthly-filter');
+            const monthEl = document.getElementById('monthly-filter-month');
+            const yearEl = document.getElementById('monthly-filter-year');
+            if(!hiddenEl || !monthEl || !yearEl) return;
+            const [year, month] = String(value || getCurrentMonthIso()).split('-');
+            hiddenEl.value = `${year}-${month}`;
+            yearEl.value = year;
+            monthEl.value = month;
+            populateReportsMonthChips();
+            renderMonthly();
+        }
+
+        function setMonthlyCompareMode(mode) {
+            monthlyCompareMode = ['lastYear', 'avg3'].includes(mode) ? mode : 'prev';
             renderMonthly();
         }
 
@@ -9531,6 +10114,138 @@
             }
         }
 
+        function summarizeFinancialEntries(entries, realizedOnly = true) {
+            const base = (Array.isArray(entries) ? entries : []).filter(entry => !realizedOnly || String(entry.status || '').toUpperCase() === 'REALIZADO');
+            const inc = base
+                .filter(entry => normalizeFlowType(entry.type) === FLOW_IN)
+                .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
+            const exp = base
+                .filter(entry => normalizeFlowType(entry.type) === FLOW_OUT)
+                .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
+            return { inc, exp, net: inc - exp, count: base.length };
+        }
+
+        function getMonthPrefixShift(filter, deltaMonths) {
+            const [yearRaw, monthRaw] = String(filter || getCurrentMonthIso()).split('-');
+            const date = new Date(Number(yearRaw), (Number(monthRaw) || 1) - 1 + Number(deltaMonths || 0), 1);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        function getRealizedEntriesForPrefix(prefix) {
+            return getAnalyticalEntries(state.entries).filter(entry =>
+                entry.date &&
+                String(entry.date).startsWith(prefix) &&
+                String(entry.status || '').toUpperCase() === 'REALIZADO'
+            );
+        }
+
+        function getTopFlowDestination(entries, flow) {
+            const totals = new Map();
+            (Array.isArray(entries) ? entries : [])
+                .filter(entry => normalizeFlowType(entry.type) === flow && String(entry.status || '').toUpperCase() === 'REALIZADO')
+                .forEach(entry => {
+                    const destination = getDestinationById(entry.destinationId)?.name || getEntryDestinationMeta(entry).category || 'Sem destino';
+                    totals.set(destination, (totals.get(destination) || 0) + (Number(entry.amount) || 0));
+                });
+            return Array.from(totals.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(([name, value]) => ({ name, value }))[0] || null;
+        }
+
+        function buildInsightCard(icon, title, text) {
+            return `<article class="reports-insight-item">
+                <span class="insight-icon"><i data-lucide="${icon}" class="w-4 h-4"></i></span>
+                <strong>${escapeHtml(title)}</strong>
+                <p>${escapeHtml(text)}</p>
+            </article>`;
+        }
+
+        function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP) {
+            const totalProjected = (Number(incR) || 0) + (Number(incP) || 0) - (Number(expR) || 0) - (Number(expP) || 0);
+            const resultEl = document.getElementById('reports-month-result');
+            const resultNoteEl = document.getElementById('reports-month-result-note');
+            if (resultEl) {
+                resultEl.innerText = formatBRL(totalProjected);
+                resultEl.className = `text-2xl font-black ${totalProjected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
+            }
+            if (resultNoteEl) resultNoteEl.innerText = `Inclui ${formatBRL(incP)} a receber e ${formatBRL(expP)} a pagar.`;
+
+            const labels = Array.from({ length: dailyInReal.length }, (_, idx) => String(idx + 1).padStart(2, '0'));
+            const chartEl = document.getElementById('reports-monthly-chart');
+            if (chartEl && window.Chart) {
+                if (window.reportsMonthlyChart) window.reportsMonthlyChart.destroy();
+                window.reportsMonthlyChart = new Chart(chartEl.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: 'Entradas', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 18 },
+                            { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { callback: value => formatChartBRL(value) } }
+                        },
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: getReadableTooltipConfig(ctx => `${ctx.dataset.label}: ${formatBRL(ctx.raw || 0)}`)
+                        }
+                    }
+                });
+            }
+
+            const compareModes = [
+                ['monthly-compare-prev', monthlyCompareMode === 'prev'],
+                ['monthly-compare-last-year', monthlyCompareMode === 'lastYear'],
+                ['monthly-compare-avg3', monthlyCompareMode === 'avg3']
+            ];
+            compareModes.forEach(([id, active]) => document.getElementById(id)?.classList.toggle('active', active));
+
+            let referenceLabel = 'mês anterior';
+            let refSummary = summarizeFinancialEntries(getRealizedEntriesForPrefix(getMonthPrefixShift(filter, -1)));
+            if (monthlyCompareMode === 'lastYear') {
+                referenceLabel = 'mesmo mês do ano passado';
+                refSummary = summarizeFinancialEntries(getRealizedEntriesForPrefix(getMonthPrefixShift(filter, -12)));
+            } else if (monthlyCompareMode === 'avg3') {
+                referenceLabel = 'média dos últimos 3 meses';
+                const summaries = [-1, -2, -3].map(delta => summarizeFinancialEntries(getRealizedEntriesForPrefix(getMonthPrefixShift(filter, delta))));
+                refSummary = {
+                    inc: summaries.reduce((acc, item) => acc + item.inc, 0) / 3,
+                    exp: summaries.reduce((acc, item) => acc + item.exp, 0) / 3,
+                    net: summaries.reduce((acc, item) => acc + item.net, 0) / 3
+                };
+            }
+            const currentSummary = { inc: incR, exp: expR, net: incR - expR };
+            const compareHost = document.getElementById('reports-monthly-compare-grid');
+            if (compareHost) {
+                compareHost.innerHTML = [
+                    buildInsightCard('trending-up', 'Entradas', `${formatBRL(currentSummary.inc)} contra ${formatBRL(refSummary.inc)} no ${referenceLabel}.`),
+                    buildInsightCard('trending-down', 'Saídas', `${formatBRL(currentSummary.exp)} contra ${formatBRL(refSummary.exp)} no ${referenceLabel}.`),
+                    buildInsightCard(currentSummary.net >= refSummary.net ? 'circle-check' : 'circle-alert', 'Resultado', `${formatBRL(currentSummary.net)} contra ${formatBRL(refSummary.net)} no ${referenceLabel}.`)
+                ].join('');
+            }
+
+            const topOut = getTopFlowDestination(entries, FLOW_OUT);
+            const topIn = getTopFlowDestination(entries, FLOW_IN);
+            const insights = [];
+            if (currentSummary.exp < refSummary.exp) {
+                insights.push(buildInsightCard('sparkles', 'Saídas em queda', 'Suas saídas caíram em relação à referência selecionada.'));
+            } else if (currentSummary.exp > refSummary.exp) {
+                insights.push(buildInsightCard('circle-alert', 'Saídas em alta', 'Suas saídas subiram em relação à referência selecionada.'));
+            } else {
+                insights.push(buildInsightCard('minus', 'Saídas estáveis', 'Suas saídas ficaram praticamente no mesmo patamar.'));
+            }
+            if (topOut) insights.push(buildInsightCard('shopping-bag', 'Maior saída', `Sua maior saída foi em ${topOut.name}, com ${formatBRL(topOut.value)}.`));
+            if (topIn) insights.push(buildInsightCard('banknote', 'Maior entrada', `Sua maior entrada foi em ${topIn.name}, com ${formatBRL(topIn.value)}.`));
+            insights.push(buildInsightCard(currentSummary.net >= 0 ? 'thumbs-up' : 'triangle-alert', 'Leitura do resultado', currentSummary.net >= 0 ? 'O saldo realizado do mês está positivo.' : 'O saldo realizado do mês está negativo e merece atenção.'));
+            const insightsHost = document.getElementById('reports-monthly-insights');
+            if (insightsHost) insightsHost.innerHTML = insights.join('');
+        }
+
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -9632,6 +10347,7 @@
                 monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
             }
 
+            renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP);
             clearMonthlyCategoryCharts();
         }
 
@@ -9813,15 +10529,101 @@
 
         }
 
+        function getAvailableEntryYears(extraYear = new Date().getFullYear()) {
+            const yearsSet = new Set(
+                getAnalyticalEntries(state.entries)
+                    .map(entry => Number(String(entry.date || '').slice(0, 4)))
+                    .filter(year => !isNaN(year))
+            );
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear - 2; year <= currentYear + 2; year++) yearsSet.add(year);
+            yearsSet.add(Number(extraYear) || currentYear);
+            return Array.from(yearsSet).sort((a, b) => a - b);
+        }
+
+        function populateAnnualReportYearSelector() {
+            const yearEl = document.getElementById('reports-annual-year');
+            if (!yearEl) return;
+            const selected = Number(yearEl.value) || annualTemporalYear || new Date().getFullYear();
+            const years = getAvailableEntryYears(selected);
+            yearEl.innerHTML = years.map(year => `<option value="${year}">${year}</option>`).join('');
+            yearEl.value = String(years.includes(selected) ? selected : years[years.length - 1]);
+        }
+
+        function setAnnualReportYear(value) {
+            annualTemporalYear = Number(value) || new Date().getFullYear();
+            renderAnnual();
+        }
+
+        function renderAnnualReportExtras(year, data, yearEntries) {
+            const totalInc = data.reduce((acc, item) => acc + item.inc, 0);
+            const totalExp = data.reduce((acc, item) => acc + item.exp, 0);
+            const totalNet = totalInc - totalExp;
+            const activeMonths = data.filter(item => item.inc > 0 || item.exp > 0).length || 12;
+            const avg = totalNet / activeMonths;
+            const setText = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = value;
+            };
+            setText('reports-annual-in', formatBRL(totalInc));
+            setText('reports-annual-out', formatBRL(totalExp));
+            setText('reports-annual-net', formatBRL(totalNet));
+            setText('reports-annual-avg', formatBRL(avg));
+            const netEl = document.getElementById('reports-annual-net');
+            if (netEl) netEl.className = totalNet >= 0 ? 'flow-balance-text' : 'flow-expense-text';
+            const captionEl = document.getElementById('reports-annual-caption');
+            if (captionEl) captionEl.innerText = `${year} com ${yearEntries.length} lançamento(s) cadastrados.`;
+
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const rankedByNet = data
+                .map((item, idx) => ({ ...item, label: monthNames[idx] }))
+                .filter(item => item.inc > 0 || item.exp > 0);
+            const best = [...rankedByNet].sort((a, b) => b.bal - a.bal)[0];
+            const worst = [...rankedByNet].sort((a, b) => a.bal - b.bal)[0];
+            const topIn = [...rankedByNet].sort((a, b) => b.inc - a.inc)[0];
+            const topOut = [...rankedByNet].sort((a, b) => b.exp - a.exp)[0];
+            const previousYearSummary = summarizeFinancialEntries(getRealizedEntriesForPrefix(`${year - 1}-`));
+            const twoYearAvg = [year - 1, year - 2]
+                .map(y => summarizeFinancialEntries(getRealizedEntriesForPrefix(`${y}-`)))
+                .reduce((acc, item) => ({ inc: acc.inc + item.inc / 2, exp: acc.exp + item.exp / 2, net: acc.net + item.net / 2 }), { inc: 0, exp: 0, net: 0 });
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const cutoffMonthDay = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            const ytdCurrent = summarizeFinancialEntries(getAnalyticalEntries(state.entries).filter(entry => {
+                const date = String(entry.date || '');
+                return date.startsWith(`${year}-`) && date.slice(5, 10) <= (year === currentYear ? cutoffMonthDay : '12-31');
+            }));
+            const ytdPrevious = summarizeFinancialEntries(getAnalyticalEntries(state.entries).filter(entry => {
+                const date = String(entry.date || '');
+                return date.startsWith(`${year - 1}-`) && date.slice(5, 10) <= (year === currentYear ? cutoffMonthDay : '12-31');
+            }));
+
+            const compareHost = document.getElementById('annual-temporal-summary');
+            if (compareHost) {
+                compareHost.innerText = `Ano anterior: ${formatBRL(previousYearSummary.net)}. Média dos últimos 2 anos: ${formatBRL(twoYearAvg.net)}. Até hoje vs período anterior: ${formatBRL(ytdCurrent.net)} contra ${formatBRL(ytdPrevious.net)}.`;
+            }
+            const rankingHost = document.getElementById('reports-annual-ranking');
+            if (rankingHost) {
+                rankingHost.innerHTML = [
+                    buildInsightCard('trophy', 'Melhor mês', best ? `${best.label} fechou com ${formatBRL(best.bal)}.` : 'Ainda não há mês com movimentação.'),
+                    buildInsightCard('triangle-alert', 'Pior mês', worst ? `${worst.label} fechou com ${formatBRL(worst.bal)}.` : 'Ainda não há mês com movimentação.'),
+                    buildInsightCard('arrow-down-to-line', 'Maior entrada', topIn ? `${topIn.label} teve ${formatBRL(topIn.inc)} em entradas.` : 'Sem entradas realizadas no ano.'),
+                    buildInsightCard('arrow-up-from-line', 'Maior saída', topOut ? `${topOut.label} teve ${formatBRL(topOut.exp)} em saídas.` : 'Sem saídas realizadas no ano.')
+                ].join('');
+            }
+        }
+
         function renderAnnual() {
-            const year = new Date().getFullYear();
+            populateAnnualReportYearSelector();
+            const year = Number(document.getElementById('reports-annual-year')?.value) || annualTemporalYear || new Date().getFullYear();
+            annualTemporalYear = year;
             const data = [];
             for(let m=0; m<12; m++) {
                 const prefix = `${year}-${(m+1).toString().padStart(2,'0')}`;
                 const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
-                const inc = mEntries.filter(e=>e.type==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const exp = mEntries.filter(e=>e.type==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                const aporte = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA' && isCapitalContributionEntry(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                const inc = mEntries.filter(e=>normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const exp = mEntries.filter(e=>normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
+                const aporte = mEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
                 data.push({m, inc, exp, aporte, bal: inc-exp});
             }
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -9890,6 +10692,8 @@
                 window.aChart.update();
             }
             renderAnnualTemporalComparison(year);
+            const yearEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`));
+            renderAnnualReportExtras(year, data, yearEntries);
         }
         function formatVariation(current, prev) {
             if (!prev) return '-';
@@ -9918,6 +10722,10 @@
                     .map(e => Number((e.date || '').slice(0, 4)))
                     .filter(v => !isNaN(v))
             )).sort((a, b) => a - b);
+            if(!validYears.includes(annualTemporalYear)) {
+                validYears.push(annualTemporalYear);
+                validYears.sort((a, b) => a - b);
+            }
             const fallbackYear = validYears[validYears.length - 1] || year;
             if(!validYears.includes(annualTemporalYear)) annualTemporalYear = fallbackYear;
 
@@ -9931,7 +10739,8 @@
             modeEl.onchange = () => { annualTemporalMode = modeEl.value; renderAnnualTemporalComparison(year); };
             yearEl.onchange = () => { annualTemporalYear = Number(yearEl.value) || fallbackYear; renderAnnualTemporalComparison(year); };
 
-            const baseFlowEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && e.type === annualTemporalFlow);
+            const selectedAnnualFlow = annualTemporalFlow === 'ENTRADA' ? FLOW_IN : FLOW_OUT;
+            const baseFlowEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && normalizeFlowType(e.type) === selectedAnnualFlow);
 
             const validCatIds = new Set(baseFlowEntries.map(e => e.categoryId).filter(Boolean));
             const catOptions = state.categories
@@ -10099,6 +10908,251 @@
                     }
                 }
             });
+        }
+
+        function setProjectionMode(mode) {
+            projectionMode = mode === 'history' ? 'history' : 'pending';
+            renderProjection();
+        }
+
+        function setProjectionPeriod(value) {
+            projectionPeriod = value === 'custom' ? 'custom' : ([15, 30].includes(Number(value)) ? Number(value) : 7);
+            renderProjection();
+        }
+
+        function setProjectionHistoryMonths(months) {
+            projectionHistoryMonths = [2, 3, 6].includes(Number(months)) ? Number(months) : 1;
+            renderProjection();
+        }
+
+        function setProjectionHistoryPeriod(days) {
+            projectionHistoryPeriod = [15, 30].includes(Number(days)) ? Number(days) : 7;
+            renderProjection();
+        }
+
+        function setProjectionGranularity(granularity) {
+            projectionGranularity = ['week', 'month'].includes(granularity) ? granularity : 'day';
+            renderProjection();
+        }
+
+        function getProjectionDays() {
+            if (projectionPeriod !== 'custom') return Number(projectionPeriod) || 7;
+            const custom = Number(document.getElementById('projection-custom-days')?.value);
+            return Math.min(365, Math.max(1, custom || 45));
+        }
+
+        function updateProjectionControls() {
+            const isHistory = projectionMode === 'history';
+            document.getElementById('projection-mode-pending')?.classList.toggle('active', !isHistory);
+            document.getElementById('projection-mode-history')?.classList.toggle('active', isHistory);
+            document.getElementById('projection-pending-controls')?.classList.toggle('hidden', isHistory);
+            document.getElementById('projection-history-controls')?.classList.toggle('hidden', !isHistory);
+            [7, 15, 30].forEach(days => document.getElementById(`projection-period-${days}`)?.classList.toggle('active', projectionPeriod === days));
+            document.getElementById('projection-period-custom')?.classList.toggle('active', projectionPeriod === 'custom');
+            document.getElementById('projection-custom-days')?.classList.toggle('hidden', projectionPeriod !== 'custom');
+            [1, 2, 3, 6].forEach(months => document.getElementById(`projection-history-${months}`)?.classList.toggle('active', projectionHistoryMonths === months));
+            [7, 15, 30].forEach(days => document.getElementById(`projection-history-period-${days}`)?.classList.toggle('active', projectionHistoryPeriod === days));
+            ['day', 'week', 'month'].forEach(item => {
+                document.getElementById(`projection-granularity-${item}`)?.classList.toggle('active', projectionGranularity === item);
+            });
+        }
+
+        function getProjectionGranularityLabel() {
+            if (projectionGranularity === 'week') return 'semana';
+            if (projectionGranularity === 'month') return 'mês';
+            return 'dia';
+        }
+
+        function makeProjectionBucket(startDate, endDate, index) {
+            const startIso = formatLocalDate(startDate);
+            const endIso = formatLocalDate(endDate);
+            let label = formatDateBRV2(startIso).slice(0, 5);
+            if (projectionGranularity === 'week') {
+                label = `${formatDateBRV2(startIso).slice(0, 5)} - ${formatDateBRV2(endIso).slice(0, 5)}`;
+            } else if (projectionGranularity === 'month') {
+                label = `${MONTH_NAMES_PT[startDate.getMonth()].slice(0, 3)}/${startDate.getFullYear()}`;
+            }
+            return { key: `${projectionGranularity}-${index}-${startIso}`, label, startIso, endIso, inc: 0, exp: 0 };
+        }
+
+        function getProjectionBuckets(startIso, endIso) {
+            const start = parseIsoDateLocal(startIso);
+            const end = parseIsoDateLocal(endIso);
+            if (!start || !end || start > end) return [];
+            const buckets = [];
+            let cursor = start;
+            let index = 0;
+            while (cursor <= end) {
+                let bucketEnd;
+                if (projectionGranularity === 'week') {
+                    bucketEnd = addLocalDays(cursor, 6);
+                } else if (projectionGranularity === 'month') {
+                    bucketEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+                } else {
+                    bucketEnd = cursor;
+                }
+                if (bucketEnd > end) bucketEnd = end;
+                buckets.push(makeProjectionBucket(cursor, bucketEnd, index));
+                cursor = addLocalDays(bucketEnd, 1);
+                index += 1;
+            }
+            return buckets;
+        }
+
+        function addEntryToProjectionBuckets(buckets, entry) {
+            const entryDate = String(entry.date || '');
+            const bucket = buckets.find(item => entryDate >= item.startIso && entryDate <= item.endIso);
+            if (!bucket) return;
+            if (normalizeFlowType(entry.type) === FLOW_IN) bucket.inc += Number(entry.amount) || 0;
+            else bucket.exp += Number(entry.amount) || 0;
+        }
+
+        function countProjectionBucketDays(bucket) {
+            const start = parseIsoDateLocal(bucket.startIso);
+            const end = parseIsoDateLocal(bucket.endIso);
+            if (!start || !end) return 0;
+            return Math.max(1, Math.round((end - start) / 86400000) + 1);
+        }
+
+        function renderProjectionChart(labels, incomeData, expenseData, netData) {
+            const chartEl = document.getElementById('projection-chart');
+            if (!chartEl || !window.Chart) return;
+            if (window.projectionChart) window.projectionChart.destroy();
+            window.projectionChart = new Chart(chartEl.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { type: 'bar', label: 'Entradas', data: incomeData, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 26 },
+                        { type: 'bar', label: 'Saídas', data: expenseData, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 26 },
+                        { type: 'line', label: 'Saldo', data: netData, borderColor: '#2F4F9D', backgroundColor: '#2F4F9D', tension: 0.35, borderWidth: 3, pointRadius: 3 }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { callback: value => formatChartBRL(value) } }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: getReadableTooltipConfig(ctx => `${ctx.dataset.label}: ${formatBRL(ctx.raw || 0)}`)
+                    }
+                }
+            });
+        }
+
+        function renderPendingProjection() {
+            const days = getProjectionDays();
+            const range = getCashProjectionWindow(days);
+            const entries = getAnalyticalEntries(state.entries)
+                .filter(entry => {
+                    const date = String(entry.date || '');
+                    return String(entry.status || '').toUpperCase() === 'PENDENTE' && date >= range.startIso && date <= range.endIso;
+                })
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+            const summary = summarizeFinancialEntries(entries, false);
+            document.getElementById('projection-card-in-label').innerText = 'Entradas previstas';
+            document.getElementById('projection-card-out-label').innerText = 'Saídas previstas';
+            document.getElementById('projection-card-net-label').innerText = 'Saldo projetado';
+            document.getElementById('projection-card-in').innerText = formatBRL(summary.inc);
+            document.getElementById('projection-card-out').innerText = formatBRL(summary.exp);
+            document.getElementById('projection-card-net').innerText = formatBRL(summary.net);
+            document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
+            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} com lançamentos pendentes cadastrados, agrupados por ${getProjectionGranularityLabel()}.`;
+            document.getElementById('projection-list-title').innerText = 'Lançamentos usados na projeção';
+            document.getElementById('projection-list-subtitle').innerText = 'Somente pendências futuras dentro do prazo escolhido.';
+
+            const buckets = getProjectionBuckets(range.startIso, range.endIso);
+            entries.forEach(entry => addEntryToProjectionBuckets(buckets, entry));
+            renderProjectionChart(
+                buckets.length ? buckets.map(bucket => bucket.label) : ['Sem dados'],
+                buckets.length ? buckets.map(bucket => bucket.inc) : [0],
+                buckets.length ? buckets.map(bucket => bucket.exp) : [0],
+                buckets.length ? buckets.map(bucket => bucket.inc - bucket.exp) : [0]
+            );
+
+            const listEl = document.getElementById('projection-list');
+            if (listEl) {
+                listEl.innerHTML = entries.length ? entries.map(entry => {
+                    const flow = normalizeFlowType(entry.type);
+                    const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
+                    const meta = [getAccountNameById(entry.accountId), entry.description || ''].filter(Boolean).join(' • ');
+                    return `<article class="projection-list-item">
+                        <span class="projection-list-date">${formatDateBRV2(entry.date)}</span>
+                        <div>
+                            <p class="projection-list-name">${escapeHtml(destination)}</p>
+                            <p class="projection-list-meta">${escapeHtml(meta)}</p>
+                        </div>
+                        <strong class="projection-list-value ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'} ${formatBRL(Number(entry.amount) || 0)}</strong>
+                    </article>`;
+                }).join('') : '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+            }
+        }
+
+        function renderHistoryProjection() {
+            const today = new Date();
+            const months = projectionHistoryMonths;
+            const periodDays = projectionHistoryPeriod;
+            const ranges = Array.from({ length: months }, (_, idx) => {
+                const start = new Date(today.getFullYear(), today.getMonth() - idx - 1, 1);
+                return `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}`;
+            });
+            const entries = getAnalyticalEntries(state.entries).filter(entry =>
+                ranges.some(prefix => String(entry.date || '').startsWith(prefix)) &&
+                String(entry.status || '').toUpperCase() === 'REALIZADO'
+            );
+            const monthlyAverage = summarizeFinancialEntries(entries);
+            monthlyAverage.inc = monthlyAverage.inc / months;
+            monthlyAverage.exp = monthlyAverage.exp / months;
+            monthlyAverage.net = monthlyAverage.inc - monthlyAverage.exp;
+            const factor = periodDays / 30;
+            const projected = {
+                inc: monthlyAverage.inc * factor,
+                exp: monthlyAverage.exp * factor,
+                net: monthlyAverage.net * factor
+            };
+            document.getElementById('projection-card-in-label').innerText = 'Entrada projetada';
+            document.getElementById('projection-card-out-label').innerText = 'Saída projetada';
+            document.getElementById('projection-card-net-label').innerText = 'Resultado projetado';
+            document.getElementById('projection-card-in').innerText = formatBRL(projected.inc);
+            document.getElementById('projection-card-out').innerText = formatBRL(projected.exp);
+            document.getElementById('projection-card-net').innerText = formatBRL(projected.net);
+            document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
+            document.getElementById('projection-explain').innerText = `Projeção calculada com base na média dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
+            document.getElementById('projection-list-title').innerText = 'Base histórica';
+            document.getElementById('projection-list-subtitle').innerText = `Média aplicada para os próximos ${periodDays} dias.`;
+            const range = getCashProjectionWindow(periodDays);
+            const buckets = getProjectionBuckets(range.startIso, range.endIso);
+            const dailyInc = monthlyAverage.inc / 30;
+            const dailyExp = monthlyAverage.exp / 30;
+            buckets.forEach(bucket => {
+                const bucketDays = countProjectionBucketDays(bucket);
+                bucket.inc = dailyInc * bucketDays;
+                bucket.exp = dailyExp * bucketDays;
+            });
+            renderProjectionChart(
+                buckets.length ? buckets.map(bucket => bucket.label) : ['Sem dados'],
+                buckets.length ? buckets.map(bucket => bucket.inc) : [0],
+                buckets.length ? buckets.map(bucket => bucket.exp) : [0],
+                buckets.length ? buckets.map(bucket => bucket.inc - bucket.exp) : [0]
+            );
+            const listEl = document.getElementById('projection-list');
+            if (listEl) {
+                listEl.innerHTML = [
+                    buildInsightCard('calculator', 'Base da projeção', `Projeção calculada com base na média dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}.`),
+                    buildInsightCard('trending-up', 'Média mensal de entradas', formatBRL(monthlyAverage.inc)),
+                    buildInsightCard('trending-down', 'Média mensal de saídas', formatBRL(monthlyAverage.exp))
+                ].join('');
+            }
+        }
+
+        function renderProjection() {
+            updateProjectionControls();
+            if (projectionMode === 'history') renderHistoryProjection();
+            else renderPendingProjection();
+            refreshLucideIcons();
         }
 
         function parseValueRobust(raw) {
