@@ -4793,16 +4793,6 @@
                     <div id="reports-monthly-compare-grid" class="reports-insight-grid"></div>
                 </section>
 
-                <section class="card-premium reports-insights-card" aria-labelledby="reports-monthly-insights-title">
-                    <div class="reports-card-head">
-                        <div>
-                            <h4 id="reports-monthly-insights-title">Insights</h4>
-                            <p>Leituras automáticas do período selecionado.</p>
-                        </div>
-                    </div>
-                    <div id="reports-monthly-insights" class="reports-insight-grid"></div>
-                </section>
-
                 <section class="card-premium cash-projection-shell reports-hidden-legacy-projection" aria-labelledby="cash-projection-title">
                     <div class="cash-projection-head">
                         <div>
@@ -11014,6 +11004,31 @@
             return Math.max(1, Math.round((end - start) / 86400000) + 1);
         }
 
+        function getHistoricalProjectionForDay(entries, months, isoDate) {
+            const dayKey = String(isoDate || '').slice(8, 10);
+            const dayEntries = entries.filter(entry => String(entry.date || '').slice(8, 10) === dayKey);
+            const summary = summarizeFinancialEntries(dayEntries);
+            const divisor = Math.max(1, Number(months) || 1);
+            return {
+                inc: summary.inc / divisor,
+                exp: summary.exp / divisor
+            };
+        }
+
+        function fillProjectionBucketsFromHistory(buckets, entries, months) {
+            buckets.forEach(bucket => {
+                let cursor = parseIsoDateLocal(bucket.startIso);
+                const end = parseIsoDateLocal(bucket.endIso);
+                while (cursor && end && cursor <= end) {
+                    const iso = formatLocalDate(cursor);
+                    const projectedDay = getHistoricalProjectionForDay(entries, months, iso);
+                    bucket.inc += projectedDay.inc;
+                    bucket.exp += projectedDay.exp;
+                    cursor = addLocalDays(cursor, 1);
+                }
+            });
+        }
+
         function renderProjectionChart(labels, incomeData, expenseData, netData) {
             const chartEl = document.getElementById('projection-chart');
             if (!chartEl || !window.Chart) return;
@@ -11107,12 +11122,15 @@
             monthlyAverage.inc = monthlyAverage.inc / months;
             monthlyAverage.exp = monthlyAverage.exp / months;
             monthlyAverage.net = monthlyAverage.inc - monthlyAverage.exp;
-            const factor = periodDays / 30;
-            const projected = {
-                inc: monthlyAverage.inc * factor,
-                exp: monthlyAverage.exp * factor,
-                net: monthlyAverage.net * factor
-            };
+            const range = getCashProjectionWindow(periodDays);
+            const buckets = getProjectionBuckets(range.startIso, range.endIso);
+            fillProjectionBucketsFromHistory(buckets, entries, months);
+            const projected = buckets.reduce((acc, bucket) => {
+                acc.inc += bucket.inc;
+                acc.exp += bucket.exp;
+                return acc;
+            }, { inc: 0, exp: 0 });
+            projected.net = projected.inc - projected.exp;
             document.getElementById('projection-card-in-label').innerText = 'Entrada projetada';
             document.getElementById('projection-card-out-label').innerText = 'Saída projetada';
             document.getElementById('projection-card-net-label').innerText = 'Resultado projetado';
@@ -11120,18 +11138,9 @@
             document.getElementById('projection-card-out').innerText = formatBRL(projected.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(projected.net);
             document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
-            document.getElementById('projection-explain').innerText = `Projeção calculada com base na média dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
+            document.getElementById('projection-explain').innerText = `Projeção calculada usando o mesmo dia do mês no histórico dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
             document.getElementById('projection-list-title').innerText = 'Base histórica';
-            document.getElementById('projection-list-subtitle').innerText = `Média aplicada para os próximos ${periodDays} dias.`;
-            const range = getCashProjectionWindow(periodDays);
-            const buckets = getProjectionBuckets(range.startIso, range.endIso);
-            const dailyInc = monthlyAverage.inc / 30;
-            const dailyExp = monthlyAverage.exp / 30;
-            buckets.forEach(bucket => {
-                const bucketDays = countProjectionBucketDays(bucket);
-                bucket.inc = dailyInc * bucketDays;
-                bucket.exp = dailyExp * bucketDays;
-            });
+            document.getElementById('projection-list-subtitle').innerText = `Cada dia projetado usa o histórico do mesmo dia do mês.`;
             renderProjectionChart(
                 buckets.length ? buckets.map(bucket => bucket.label) : ['Sem dados'],
                 buckets.length ? buckets.map(bucket => bucket.inc) : [0],
@@ -11141,7 +11150,7 @@
             const listEl = document.getElementById('projection-list');
             if (listEl) {
                 listEl.innerHTML = [
-                    buildInsightCard('calculator', 'Base da projeção', `Projeção calculada com base na média dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}.`),
+                    buildInsightCard('calendar-search', 'Base da projeção', `Cada dia busca os lançamentos do mesmo dia nos últimos ${months} ${months === 1 ? 'mês' : 'meses'}.`),
                     buildInsightCard('trending-up', 'Média mensal de entradas', formatBRL(monthlyAverage.inc)),
                     buildInsightCard('trending-down', 'Média mensal de saídas', formatBRL(monthlyAverage.exp))
                 ].join('');
