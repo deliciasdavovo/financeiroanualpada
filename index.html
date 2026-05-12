@@ -503,6 +503,149 @@
             font-weight: 700;
             color: #64748B;
         }
+        .budgets-card {
+            margin-top: 16px;
+        }
+        .budgets-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .budgets-card-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: #0F172A;
+            letter-spacing: -0.01em;
+        }
+        .budgets-card-sub {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            margin-top: 2px;
+        }
+        .budgets-card-manage {
+            background: #0F172A;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 8px 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+        }
+        .budgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+        .budget-item {
+            border: 1px solid #E5EAF2;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: #FAFBFD;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .budget-item-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .budget-item-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #0F172A;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .budget-item-scope {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748B;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+        .budget-bar {
+            position: relative;
+            height: 10px;
+            background: #E2E8F0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .budget-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            border-radius: 6px;
+            transition: width 240ms ease, background 240ms ease;
+        }
+        .budget-bar-fill.safe { background: linear-gradient(90deg, #10B981, #34D399); }
+        .budget-bar-fill.warn { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+        .budget-bar-fill.over { background: linear-gradient(90deg, #DC2626, #F87171); }
+        .budget-item-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+        }
+        .budget-item-percent {
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .budget-item-percent.safe { color: #059669; }
+        .budget-item-percent.warn { color: #B45309; }
+        .budget-item-percent.over { color: #B91C1C; }
+        .budgets-empty {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            padding: 22px 16px;
+            background: #F8FAFC;
+            border: 1px dashed #CBD5E1;
+            border-radius: 12px;
+        }
+        .budget-modal-table {
+            width: 100%;
+            font-size: 12px;
+            border-collapse: collapse;
+        }
+        .budget-modal-table th {
+            text-align: left;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748B;
+            letter-spacing: 0.05em;
+            padding: 8px 10px;
+            border-bottom: 1px solid #E5EAF2;
+        }
+        .budget-modal-table td {
+            padding: 10px;
+            border-bottom: 1px solid #F1F5F9;
+            font-weight: 700;
+            color: #0F172A;
+        }
+        .budget-modal-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .budget-modal-form .full {
+            grid-column: 1 / -1;
+        }
         .monthly-chart-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4768,6 +4911,17 @@
                     </div>
                 </div>
 
+                <section class="card-premium budgets-card" id="budgets-card" aria-labelledby="budgets-card-title">
+                    <div class="budgets-card-head">
+                        <div>
+                            <p class="budgets-card-title" id="budgets-card-title">Metas do mês</p>
+                            <p class="budgets-card-sub">Acompanhe limites por categoria, subcategoria e fornecedor.</p>
+                        </div>
+                        <button type="button" class="budgets-card-manage" onclick="openBudgetModal()">+ Gerenciar metas</button>
+                    </div>
+                    <div id="budgets-grid"></div>
+                </section>
+
                 <section class="card-premium reports-chart-card" aria-labelledby="reports-monthly-chart-title">
                     <div class="reports-card-head">
                         <div>
@@ -5470,6 +5624,36 @@
         </div>
     </div>
 
+    <div id="budget-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeBudgetModal()">
+        <div class="modal-shell modal-shell-db" style="max-width:760px;">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title">Metas mensais</h3>
+                    <p class="modal-head-sub">Defina limites por categoria, subcategoria ou fornecedor.</p>
+                </div>
+                <button onclick="closeBudgetModal()" class="modal-close-btn" type="button" aria-label="Fechar metas">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div id="budget-modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <div id="duplicate-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeDuplicateModal()">
+        <div class="modal-shell modal-shell-db" style="max-width:760px;">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title">Fornecedores possivelmente duplicados</h3>
+                    <p class="modal-head-sub">Mescle (editando) ou ignore os pares abaixo.</p>
+                </div>
+                <button onclick="closeDuplicateModal()" class="modal-close-btn" type="button" aria-label="Fechar duplicatas">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div id="duplicate-modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
     <div id="app-toast-region" class="app-toast-region" aria-live="polite" aria-atomic="true"></div>
 
     <script>
@@ -5558,9 +5742,11 @@
             accounts: [],
             entries: [],
             storeDailyMovements: [],
-            dailyBalances: []
+            dailyBalances: [],
+            budgets: []
         };
-        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances'];
+        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances', 'budgets'];
+        const OPTIONAL_CLOUD_TABLES = new Set(['storeDailyMovements', 'dailyBalances', 'budgets']);
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -5689,7 +5875,8 @@
                 accounts: Array.isArray(state.accounts) ? state.accounts : [],
                 entries: Array.isArray(state.entries) ? state.entries : [],
                 storeDailyMovements: Array.isArray(state.storeDailyMovements) ? state.storeDailyMovements : [],
-                dailyBalances: Array.isArray(state.dailyBalances) ? state.dailyBalances : []
+                dailyBalances: Array.isArray(state.dailyBalances) ? state.dailyBalances : [],
+                budgets: Array.isArray(state.budgets) ? state.budgets : []
             };
         }
 
@@ -5702,6 +5889,7 @@
             state.categories = (state.categories || []).map(c => ({
                 ...c,
                 id: String(c.id || ''),
+                isFixedPriority: Boolean((c.isFixedPriority ?? c.is_fixed_priority) || false),
                 updatedAt: String((c.updatedAt ?? c.updated_at) || '')
             }));
             state.subCategories = (state.subCategories || []).map(s => ({
@@ -5747,6 +5935,43 @@
                 notes: String(b.notes || ''),
                 updatedAt: String((b.updatedAt ?? b.updated_at) || '')
             }));
+            state.budgets = (state.budgets || []).map(b => ({
+                ...b,
+                id: String(b.id || ''),
+                scope: String(b.scope || 'category'),
+                targetId: String((b.targetId ?? b.target_id) || ''),
+                monthlyLimit: Number((b.monthlyLimit ?? b.monthly_limit) ?? 0) || 0,
+                type: String(b.type || 'SAÍDA'),
+                alertThreshold: (() => {
+                    const raw = Number((b.alertThreshold ?? b.alert_threshold) ?? 0.8);
+                    if (!Number.isFinite(raw) || raw <= 0) return 0.8;
+                    return raw > 1 ? Math.min(raw / 100, 1) : Math.min(raw, 1);
+                })(),
+                updatedAt: String((b.updatedAt ?? b.updated_at) || '')
+            }));
+            autoMarkFixedPriorityCategories();
+        }
+
+        let autoFixedPriorityRanOnce = false;
+        function autoMarkFixedPriorityCategories() {
+            if (autoFixedPriorityRanOnce) return;
+            autoFixedPriorityRanOnce = true;
+            const patterns = ['fixo', 'fixos', 'fixa', 'fixas', 'emprestimo', 'emprestimos'];
+            const changed = [];
+            (state.categories || []).forEach(c => {
+                if (c.isFixedPriority) return;
+                const norm = String(c.name || '')
+                    .normalize('NFD')
+                    .replace(/[̀-ͯ]/g, '')
+                    .toLowerCase();
+                if (patterns.some(p => norm.includes(p))) {
+                    c.isFixedPriority = true;
+                    changed.push(c);
+                }
+            });
+            if (changed.length && typeof cloudSaveBatched === 'function') {
+                cloudSaveBatched('categories', changed, 50).catch(() => {});
+            }
         }
 
         let stateLookupCache = {
@@ -5950,6 +6175,7 @@
             return clean;
         }
 
+        let cloudSupportsFixedPriorityColumn = true;
         function sanitizePayloadForCloud(table, data, includeUpdatedAt = true) {
             const sanitizeEntryForCloud = (entry) => {
                 if (!entry || typeof entry !== 'object') return entry;
@@ -5959,9 +6185,34 @@
                 delete clean.is_internal_transfer;
                 return clean;
             };
-            let payload = table === 'entries'
-                ? (Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data))
-                : data;
+            const sanitizeCategoryForCloud = (cat) => {
+                if (!cat || typeof cat !== 'object') return cat;
+                const clean = { ...cat };
+                if (!cloudSupportsFixedPriorityColumn) delete clean.isFixedPriority;
+                return clean;
+            };
+            const sanitizeBudgetForCloud = (b) => {
+                if (!b || typeof b !== 'object') return b;
+                return {
+                    id: b.id,
+                    scope: b.scope,
+                    targetId: b.targetId,
+                    monthlyLimit: b.monthlyLimit,
+                    type: b.type,
+                    alertThreshold: b.alertThreshold,
+                    ...(b.updatedAt ? { updatedAt: b.updatedAt } : {})
+                };
+            };
+            let payload;
+            if (table === 'entries') {
+                payload = Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data);
+            } else if (table === 'categories') {
+                payload = Array.isArray(data) ? data.map(sanitizeCategoryForCloud) : sanitizeCategoryForCloud(data);
+            } else if (table === 'budgets') {
+                payload = Array.isArray(data) ? data.map(sanitizeBudgetForCloud) : sanitizeBudgetForCloud(data);
+            } else {
+                payload = data;
+            }
             if (!includeUpdatedAt) payload = stripUpdatedAtField(payload);
             return payload;
         }
@@ -5975,6 +6226,12 @@
             const code = String(error.code || '').toUpperCase();
             const message = String(error.message || '').toLowerCase();
             return code === 'PGRST205' || message.includes('does not exist') || message.includes('relation') || message.includes('could not find the table');
+        }
+        function isMissingColumnError(error) {
+            if (!error) return false;
+            const code = String(error.code || '').toUpperCase();
+            const message = String(error.message || '').toLowerCase();
+            return code === 'PGRST204' || message.includes('column') && (message.includes('does not exist') || message.includes('not find'));
         }
         function isMissingRpcFunctionError(error) {
             if (!error) return false;
@@ -6087,7 +6344,7 @@
 
         async function upsertWithUpdatedAtFallback(table, data) {
             let includeUpdatedAt = cloudSupportsUpdatedAt;
-            for (let attempt = 0; attempt < 3; attempt++) {
+            for (let attempt = 0; attempt < 4; attempt++) {
                 const payload = sanitizePayloadForCloud(table, data, includeUpdatedAt);
                 const { error } = await sbClient.from(table).upsert(payload);
                 if (!error) {
@@ -6096,6 +6353,10 @@
                 }
                 if (includeUpdatedAt && isUpdatedAtColumnError(error)) {
                     includeUpdatedAt = false;
+                    continue;
+                }
+                if (table === 'categories' && cloudSupportsFixedPriorityColumn && isMissingColumnError(error) && /isfixedpriority/i.test(String(error.message || ''))) {
+                    cloudSupportsFixedPriorityColumn = false;
                     continue;
                 }
                 return { error };
@@ -6139,14 +6400,19 @@
             try {
                 setSyncStatus('syncing');
                 // Tenta carregar dados do Supabase
-                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
+                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [], budgets: [] };
                 for(const t of STATE_TABLES) {
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
-                        if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
+                        if (isMissingTableError(error) && OPTIONAL_CLOUD_TABLES.has(t)) {
                             cloudState[t] = [];
                             continue;
+                        }
+                        if (isMissingColumnError(error) && t === 'categories') {
+                            const retry = await cloudSelectAllRows(t);
+                            if (retry.ok) { cloudState[t] = retry.data || []; continue; }
+                            throw retry.error;
                         }
                         throw error;
                     }
@@ -6175,12 +6441,12 @@
             try {
                 lastCloudRefreshAt = Date.now();
                 if (!silent) setSyncStatus('syncing');
-                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
+                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [], budgets: [] };
                 for (const t of STATE_TABLES) {
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
-                        if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
+                        if (isMissingTableError(error) && OPTIONAL_CLOUD_TABLES.has(t)) {
                             cloudState[t] = [];
                             continue;
                         }
@@ -6229,6 +6495,11 @@
             setSyncStatus('syncing');
             const { error } = await upsertWithUpdatedAtFallback(table, touched);
             if (error) {
+                if (isMissingTableError(error) && OPTIONAL_CLOUD_TABLES.has(table)) {
+                    console.warn(`Tabela ${table} ainda não existe no Supabase — salvando apenas em memória.`);
+                    setSyncStatus('synced');
+                    return { ok: true, error: null, skipped: true };
+                }
                 console.error(`Erro ao salvar em ${table}:`, error);
                 setSyncStatus('offline');
                 return { ok: false, error };
@@ -6336,6 +6607,440 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
+
+        function getBudgetScopeIds(budget) {
+            const scope = String((budget || {}).scope || '');
+            const targetId = String((budget || {}).targetId || '');
+            if (!targetId) return { categoryIds: new Set(), subCategoryIds: new Set(), destinationIds: new Set() };
+            if (scope === 'destination') {
+                return { categoryIds: new Set(), subCategoryIds: new Set(), destinationIds: new Set([targetId]) };
+            }
+            if (scope === 'subCategory') {
+                const destinationIds = new Set(
+                    (state.destinations || [])
+                        .filter(d => String(d.subCategoryId || '') === targetId)
+                        .map(d => String(d.id || ''))
+                );
+                return { categoryIds: new Set(), subCategoryIds: new Set([targetId]), destinationIds };
+            }
+            const subIds = new Set(
+                (state.subCategories || [])
+                    .filter(s => String(s.categoryId || '') === targetId)
+                    .map(s => String(s.id || ''))
+            );
+            const destinationIds = new Set(
+                (state.destinations || [])
+                    .filter(d => subIds.has(String(d.subCategoryId || '')))
+                    .map(d => String(d.id || ''))
+            );
+            return { categoryIds: new Set([targetId]), subCategoryIds: subIds, destinationIds };
+        }
+
+        function getBudgetTargetName(budget) {
+            const scope = String((budget || {}).scope || '');
+            const targetId = String((budget || {}).targetId || '');
+            if (!targetId) return '—';
+            if (scope === 'destination') {
+                const dst = state.destinations.find(d => String(d.id || '') === targetId);
+                return String((dst || {}).name || '—');
+            }
+            if (scope === 'subCategory') {
+                const sub = state.subCategories.find(s => String(s.id || '') === targetId);
+                return String((sub || {}).name || '—');
+            }
+            const cat = state.categories.find(c => String(c.id || '') === targetId);
+            return String((cat || {}).name || '—');
+        }
+
+        function getBudgetScopeLabel(scope) {
+            if (scope === 'destination') return 'Fornecedor';
+            if (scope === 'subCategory') return 'Subcategoria';
+            return 'Categoria';
+        }
+
+        function computeBudgetUsage(budget, monthIso) {
+            const targetMonth = String(monthIso || getCurrentMonthIso() || '').slice(0, 7);
+            const limit = Number((budget || {}).monthlyLimit) || 0;
+            const desiredType = String((budget || {}).type || 'SAÍDA');
+            const { categoryIds, subCategoryIds, destinationIds } = getBudgetScopeIds(budget);
+            let realized = 0;
+            let pending = 0;
+            (state.entries || []).forEach(e => {
+                const entryDate = String(e.date || '');
+                if (entryDate.slice(0, 7) !== targetMonth) return;
+                if (String(e.type || '') !== desiredType) return;
+                const catId = String(e.categoryId || '');
+                const subId = String(e.subCategoryId || '');
+                const dstId = String(e.destinationId || '');
+                const matches = destinationIds.has(dstId)
+                    || subCategoryIds.has(subId)
+                    || categoryIds.has(catId);
+                if (!matches) return;
+                const amount = Math.abs(Number(e.amount) || 0);
+                if (String(e.status || '') === 'REALIZADO') realized += amount;
+                else pending += amount;
+            });
+            const total = realized + pending;
+            const percent = limit > 0 ? (total / limit) * 100 : 0;
+            const threshold = Number((budget || {}).alertThreshold) || 0.8;
+            let status = 'safe';
+            if (percent >= 100) status = 'over';
+            else if (percent >= (threshold * 100)) status = 'warn';
+            return { realized, pending, total, percent, limit, status };
+        }
+
+        async function saveBudget(budget) {
+            const payload = {
+                id: budget.id || generateId(),
+                scope: String(budget.scope || 'category'),
+                targetId: String(budget.targetId || ''),
+                monthlyLimit: Number(budget.monthlyLimit) || 0,
+                type: String(budget.type || 'SAÍDA'),
+                alertThreshold: Number(budget.alertThreshold) || 0.8
+            };
+            const existingIndex = (state.budgets || []).findIndex(b => String(b.id || '') === payload.id);
+            if (existingIndex >= 0) state.budgets[existingIndex] = { ...state.budgets[existingIndex], ...payload };
+            else state.budgets = [...(state.budgets || []), payload];
+            const result = await cloudSave('budgets', payload);
+            if (!result.ok && !result.skipped) {
+                if (existingIndex >= 0) state.budgets[existingIndex] = state.budgets[existingIndex];
+                else state.budgets = (state.budgets || []).filter(b => b.id !== payload.id);
+                return { ok: false, error: result.error };
+            }
+            return { ok: true };
+        }
+
+        async function deleteBudget(budgetId) {
+            const id = String(budgetId || '');
+            if (!id) return;
+            state.budgets = (state.budgets || []).filter(b => String(b.id || '') !== id);
+            if (sbClient) {
+                try { await sbClient.from('budgets').delete().eq('id', id); }
+                catch (e) { console.warn('Falha ao remover meta na nuvem:', e); }
+            }
+        }
+
+        function renderBudgetsWidget(monthIso) {
+            const grid = document.getElementById('budgets-grid');
+            if (!grid) return;
+            const list = Array.isArray(state.budgets) ? state.budgets : [];
+            if (!list.length) {
+                grid.innerHTML = `<div class="budgets-empty">Nenhuma meta cadastrada ainda. Use o botão acima para criar metas por categoria, subcategoria ou fornecedor.</div>`;
+                return;
+            }
+            const cards = list.map(b => {
+                const usage = computeBudgetUsage(b, monthIso);
+                const scopeLabel = getBudgetScopeLabel(b.scope);
+                const targetName = getBudgetTargetName(b);
+                const pct = Math.min(usage.percent, 999);
+                const fillWidth = Math.min(Math.max(usage.percent, 0), 100);
+                const statusClass = usage.status;
+                return `
+                    <div class="budget-item">
+                        <div class="budget-item-head">
+                            <div class="budget-item-name" title="${escapeHtml(targetName)}">${escapeHtml(targetName)}</div>
+                            <div class="budget-item-scope">${scopeLabel}</div>
+                        </div>
+                        <div class="budget-bar"><div class="budget-bar-fill ${statusClass}" style="width:${fillWidth}%"></div></div>
+                        <div class="budget-item-foot">
+                            <span>${formatBRL(usage.total)} / ${formatBRL(usage.limit)}</span>
+                            <span class="budget-item-percent ${statusClass}">${pct.toFixed(0)}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            grid.innerHTML = `<div class="budgets-grid">${cards}</div>`;
+        }
+
+        let budgetModalEditingId = '';
+        function openBudgetModal() {
+            budgetModalEditingId = '';
+            const modal = document.getElementById('budget-modal');
+            if (!modal) return;
+            renderBudgetModalBody();
+            modal.classList.remove('hidden');
+            refreshLucideIcons();
+        }
+        function closeBudgetModal() {
+            budgetModalEditingId = '';
+            const modal = document.getElementById('budget-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function renderBudgetModalBody() {
+            const body = document.getElementById('budget-modal-body');
+            if (!body) return;
+            const editing = budgetModalEditingId
+                ? (state.budgets || []).find(b => String(b.id || '') === budgetModalEditingId)
+                : null;
+            const formScope = editing ? String(editing.scope || 'category') : 'category';
+            const formTargetId = editing ? String(editing.targetId || '') : '';
+            const formLimit = editing ? Number(editing.monthlyLimit) || 0 : 0;
+            const formThreshold = editing ? Math.round((Number(editing.alertThreshold) || 0.8) * 100) : 80;
+            const formType = editing ? String(editing.type || 'SAÍDA') : 'SAÍDA';
+
+            const targetOptions = buildBudgetTargetOptions(formScope, formTargetId);
+
+            const list = (state.budgets || []).slice().sort((a, b) =>
+                getBudgetTargetName(a).localeCompare(getBudgetTargetName(b), 'pt-BR', { sensitivity: 'base' })
+            );
+            const tableRows = list.length
+                ? list.map(b => {
+                    const usage = computeBudgetUsage(b, getCurrentMonthIso());
+                    return `
+                        <tr>
+                            <td>${escapeHtml(getBudgetScopeLabel(b.scope))}</td>
+                            <td>${escapeHtml(getBudgetTargetName(b))}</td>
+                            <td>${formatBRL(b.monthlyLimit)}</td>
+                            <td><span class="budget-item-percent ${usage.status}">${usage.percent.toFixed(0)}%</span></td>
+                            <td style="text-align:right;white-space:nowrap;">
+                                <button type="button" class="db-action-btn" onclick="editBudget('${b.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                                <button type="button" class="db-action-btn danger" onclick="removeBudget('${b.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')
+                : `<tr><td colspan="5" style="text-align:center;color:#64748B;font-weight:700;padding:18px;">Nenhuma meta cadastrada.</td></tr>`;
+
+            body.innerHTML = `
+                <form class="budget-modal-form" onsubmit="event.preventDefault(); submitBudgetForm();">
+                    <div>
+                        <label class="label-mini" for="budget-form-scope">Escopo</label>
+                        <select id="budget-form-scope" onchange="onBudgetScopeChange()">
+                            <option value="category" ${formScope === 'category' ? 'selected' : ''}>Categoria</option>
+                            <option value="subCategory" ${formScope === 'subCategory' ? 'selected' : ''}>Subcategoria</option>
+                            <option value="destination" ${formScope === 'destination' ? 'selected' : ''}>Fornecedor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-mini" for="budget-form-target">Item alvo</label>
+                        <select id="budget-form-target">${targetOptions}</select>
+                    </div>
+                    <div>
+                        <label class="label-mini" for="budget-form-limit">Limite mensal (R$)</label>
+                        <input type="number" id="budget-form-limit" min="0" step="0.01" value="${formLimit || ''}" placeholder="ex: 500,00">
+                    </div>
+                    <div>
+                        <label class="label-mini" for="budget-form-threshold">Alerta a partir de (%)</label>
+                        <input type="number" id="budget-form-threshold" min="10" max="100" step="5" value="${formThreshold}">
+                    </div>
+                    <div>
+                        <label class="label-mini" for="budget-form-type">Tipo</label>
+                        <select id="budget-form-type">
+                            <option value="SAÍDA" ${formType === 'SAÍDA' ? 'selected' : ''}>Saída (gasto)</option>
+                            <option value="ENTRADA" ${formType === 'ENTRADA' ? 'selected' : ''}>Entrada (receita)</option>
+                        </select>
+                    </div>
+                    <div class="full" style="display:flex;gap:10px;justify-content:flex-end;">
+                        ${editing ? `<button type="button" class="db-inline-btn" onclick="cancelBudgetEdit()">Cancelar edição</button>` : ''}
+                        <button type="submit" class="budgets-card-manage" style="background:#0F172A;color:#fff;">${editing ? 'Salvar alterações' : '+ Adicionar meta'}</button>
+                    </div>
+                </form>
+                <div style="margin-top:20px;">
+                    <p class="label-mini" style="margin-bottom:8px;">Metas cadastradas</p>
+                    <div style="overflow-x:auto;border:1px solid #E5EAF2;border-radius:12px;">
+                        <table class="budget-modal-table">
+                            <thead>
+                                <tr><th>Escopo</th><th>Alvo</th><th>Limite</th><th>Uso</th><th></th></tr>
+                            </thead>
+                            <tbody>${tableRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            refreshLucideIcons();
+        }
+
+        function buildBudgetTargetOptions(scope, selectedId) {
+            const safeSelected = String(selectedId || '');
+            if (scope === 'destination') {
+                const items = [...(state.destinations || [])]
+                    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
+                return items.map(d => `<option value="${String(d.id || '')}" ${String(d.id || '') === safeSelected ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join('');
+            }
+            if (scope === 'subCategory') {
+                const items = [...(state.subCategories || [])]
+                    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
+                return items.map(s => {
+                    const cat = (state.categories || []).find(c => String(c.id || '') === String(s.categoryId || ''));
+                    const label = cat ? `${cat.name} › ${s.name}` : s.name;
+                    return `<option value="${String(s.id || '')}" ${String(s.id || '') === safeSelected ? 'selected' : ''}>${escapeHtml(label)}</option>`;
+                }).join('');
+            }
+            const items = [...(state.categories || [])]
+                .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
+            return items.map(c => `<option value="${String(c.id || '')}" ${String(c.id || '') === safeSelected ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
+        }
+
+        function onBudgetScopeChange() {
+            const scopeEl = document.getElementById('budget-form-scope');
+            const targetEl = document.getElementById('budget-form-target');
+            if (!scopeEl || !targetEl) return;
+            targetEl.innerHTML = buildBudgetTargetOptions(scopeEl.value, '');
+        }
+
+        async function submitBudgetForm() {
+            const scope = String(document.getElementById('budget-form-scope')?.value || 'category');
+            const targetId = String(document.getElementById('budget-form-target')?.value || '');
+            const monthlyLimit = Number(document.getElementById('budget-form-limit')?.value || 0);
+            const thresholdPct = Number(document.getElementById('budget-form-threshold')?.value || 80);
+            const type = String(document.getElementById('budget-form-type')?.value || 'SAÍDA');
+            if (!targetId) { alert('Escolha o item alvo da meta.'); return; }
+            if (!monthlyLimit || monthlyLimit <= 0) { alert('Informe um limite mensal maior que zero.'); return; }
+            const payload = {
+                id: budgetModalEditingId || '',
+                scope,
+                targetId,
+                monthlyLimit,
+                type,
+                alertThreshold: Math.min(Math.max(thresholdPct / 100, 0.1), 1)
+            };
+            const result = await saveBudget(payload);
+            if (!result.ok) {
+                alert('Não foi possível salvar a meta na nuvem. Tente novamente.');
+                return;
+            }
+            budgetModalEditingId = '';
+            renderBudgetModalBody();
+            renderBudgetsWidget(document.getElementById('monthly-filter')?.value || getCurrentMonthIso());
+        }
+
+        function editBudget(id) {
+            budgetModalEditingId = String(id || '');
+            renderBudgetModalBody();
+        }
+
+        function cancelBudgetEdit() {
+            budgetModalEditingId = '';
+            renderBudgetModalBody();
+        }
+
+        async function removeBudget(id) {
+            if (!confirm('Excluir esta meta?')) return;
+            await deleteBudget(id);
+            renderBudgetModalBody();
+            renderBudgetsWidget(document.getElementById('monthly-filter')?.value || getCurrentMonthIso());
+        }
+
+        const DUPLICATE_IGNORES_KEY = 'duplicateDestinationIgnores';
+        function loadDuplicateIgnores() {
+            try {
+                const raw = window.localStorage.getItem(DUPLICATE_IGNORES_KEY);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? new Set(parsed.map(String)) : new Set();
+            } catch (e) {
+                return new Set();
+            }
+        }
+        function persistDuplicateIgnores(set) {
+            try {
+                window.localStorage.setItem(DUPLICATE_IGNORES_KEY, JSON.stringify(Array.from(set)));
+            } catch (e) {}
+        }
+        let duplicateIgnoresSet = loadDuplicateIgnores();
+        function buildDuplicatePairKey(idA, idB) {
+            const a = String(idA || '');
+            const b = String(idB || '');
+            return a < b ? `${a}|${b}` : `${b}|${a}`;
+        }
+        function findDuplicateDestinations() {
+            const destinations = Array.isArray(state.destinations) ? state.destinations : [];
+            const items = destinations.map(d => ({
+                id: String(d.id || ''),
+                name: String(d.name || ''),
+                normalized: normalizeReconText(d.name || ''),
+                compact: normalizeReconCompactText(d.name || ''),
+                documents: getReconDocumentDigitsList(`${d.name || ''} ${d.notes || ''}`)
+            }));
+            const pairs = [];
+            const seenKeys = new Set();
+            for (let i = 0; i < items.length; i++) {
+                for (let j = i + 1; j < items.length; j++) {
+                    const a = items[i];
+                    const b = items[j];
+                    if (!a.id || !b.id) continue;
+                    const key = buildDuplicatePairKey(a.id, b.id);
+                    if (duplicateIgnoresSet.has(key) || seenKeys.has(key)) continue;
+                    let reason = '';
+                    if (a.normalized && a.normalized === b.normalized) {
+                        reason = 'Nomes idênticos após normalização';
+                    } else if (a.compact.length >= 4 && b.compact.length >= 4) {
+                        const dist = getReconCompactDistance(a.compact, b.compact, 2);
+                        if (dist <= 2) reason = `Levenshtein ${dist} entre nomes compactos`;
+                    }
+                    if (!reason && a.documents.length && b.documents.length) {
+                        const shared = a.documents.find(d => b.documents.includes(d));
+                        if (shared) reason = `CNPJ/CPF compartilhado: ${shared}`;
+                    }
+                    if (reason) {
+                        seenKeys.add(key);
+                        pairs.push({ key, a, b, reason });
+                    }
+                }
+            }
+            return pairs;
+        }
+
+        function getDestinationEntryCount(destinationId) {
+            const id = String(destinationId || '');
+            if (!id) return 0;
+            return (state.entries || []).filter(e => String((e.destinationId ?? e.destination_id) || '') === id).length;
+        }
+
+        function openDuplicateModal() {
+            const modal = document.getElementById('duplicate-modal');
+            if (!modal) return;
+            renderDuplicateModalBody();
+            modal.classList.remove('hidden');
+            refreshLucideIcons();
+        }
+        function closeDuplicateModal() {
+            const modal = document.getElementById('duplicate-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+        function renderDuplicateModalBody() {
+            const body = document.getElementById('duplicate-modal-body');
+            if (!body) return;
+            const pairs = findDuplicateDestinations();
+            if (!pairs.length) {
+                body.innerHTML = `<div class="budgets-empty">Nenhuma duplicata detectada no momento.</div>`;
+                return;
+            }
+            body.innerHTML = pairs.map(({ key, a, b, reason }) => {
+                const aCount = getDestinationEntryCount(a.id);
+                const bCount = getDestinationEntryCount(b.id);
+                return `
+                    <div style="border:1px solid #E5EAF2;border-radius:12px;padding:14px;margin-bottom:12px;background:#FAFBFD;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
+                            <span style="font-size:11px;font-weight:800;color:#B45309;background:#FEF3C7;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.04em;">${escapeHtml(reason)}</span>
+                            <button type="button" class="db-inline-btn" onclick="ignoreDuplicatePair('${key}')">Manter ambos</button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div style="border:1px solid #E5EAF2;border-radius:10px;padding:10px;background:#fff;">
+                                <div style="font-size:13px;font-weight:800;color:#0F172A;">${escapeHtml(a.name)}</div>
+                                <div style="font-size:11px;font-weight:700;color:#64748B;margin-top:2px;">${aCount} lançamento(s)</div>
+                                <button type="button" class="db-inline-btn" style="margin-top:8px;" onclick="openDuplicateEdit('${a.id}')">Editar A</button>
+                            </div>
+                            <div style="border:1px solid #E5EAF2;border-radius:10px;padding:10px;background:#fff;">
+                                <div style="font-size:13px;font-weight:800;color:#0F172A;">${escapeHtml(b.name)}</div>
+                                <div style="font-size:11px;font-weight:700;color:#64748B;margin-top:2px;">${bCount} lançamento(s)</div>
+                                <button type="button" class="db-inline-btn" style="margin-top:8px;" onclick="openDuplicateEdit('${b.id}')">Editar B</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        function ignoreDuplicatePair(key) {
+            duplicateIgnoresSet.add(String(key));
+            persistDuplicateIgnores(duplicateIgnoresSet);
+            renderDuplicateModalBody();
+            renderDatabase();
+        }
+        function openDuplicateEdit(destinationId) {
+            closeDuplicateModal();
+            openDbEdit('DESTINATION', String(destinationId || ''));
+        }
         function getExportTimestamp() {
             return new Date().toLocaleString('pt-BR', { hour12: false });
         }
@@ -10277,6 +10982,7 @@
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRL(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
+            renderBudgetsWidget(filter);
             renderCashProjection();
             renderAnaliseHierarquicaMensal(monthEntries);
 
@@ -12042,7 +12748,58 @@
             return String((match || {}).id || '');
         }
 
-        function inferDestinationFromDescription(description, validDestinations, flowType = '') {
+        function isDestinationInFixedPriorityCategory(destination) {
+            const dst = destination || {};
+            const subId = String(dst.subCategoryId || '');
+            if (!subId) return false;
+            const sub = (state.subCategories || []).find(s => String(s.id || '') === subId);
+            if (!sub) return false;
+            const catId = String(sub.categoryId || '');
+            if (!catId) return false;
+            const cat = (state.categories || []).find(c => String(c.id || '') === catId);
+            return Boolean(cat && cat.isFixedPriority);
+        }
+
+        let destinationRecentHistoryCache = {
+            destinationsRef: null,
+            entriesRef: null,
+            entriesLen: -1,
+            items: new Map()
+        };
+        function getDestinationRecentHistory(destinationId) {
+            const id = String(destinationId || '');
+            if (!id) return { count: 0, daysOfMonth: [] };
+            if (destinationRecentHistoryCache.destinationsRef !== state.destinations
+                || destinationRecentHistoryCache.entriesRef !== state.entries
+                || destinationRecentHistoryCache.entriesLen !== (state.entries || []).length) {
+                destinationRecentHistoryCache = {
+                    destinationsRef: state.destinations,
+                    entriesRef: state.entries,
+                    entriesLen: (state.entries || []).length,
+                    items: new Map()
+                };
+            }
+            if (destinationRecentHistoryCache.items.has(id)) {
+                return destinationRecentHistoryCache.items.get(id);
+            }
+            const today = parseIsoDateLocal(getTodayIsoDate()) || new Date();
+            const cutoffMs = today.getTime() - (90 * 24 * 60 * 60 * 1000);
+            const daysOfMonth = [];
+            let count = 0;
+            (state.entries || []).forEach(e => {
+                if (String(e.destinationId || '') !== id) return;
+                const d = parseIsoDateLocal(String(e.date || ''));
+                if (!d) return;
+                if (d.getTime() < cutoffMs) return;
+                count++;
+                daysOfMonth.push(d.getDate());
+            });
+            const result = { count, daysOfMonth };
+            destinationRecentHistoryCache.items.set(id, result);
+            return result;
+        }
+
+        function inferDestinationFromDescription(description, validDestinations, flowType = '', options = {}) {
             if (!validDestinations || validDestinations.length === 0) return '';
             const descNorm = normalizeReconText(description);
             const descDocumentDigits = getReconDocumentDigitsList(description);
@@ -12123,6 +12880,19 @@
                 });
 
                 if (isInternalTransfer && !hasTransferEvidence) score -= 260;
+
+                if (score > 0 && isDestinationInFixedPriorityCategory(dst)) {
+                    const history = getDestinationRecentHistory(dst.id);
+                    if (history.count > 0) {
+                        score += 250;
+                        const referenceDay = Number(String(options.referenceDate || '').slice(8, 10));
+                        if (referenceDay && history.daysOfMonth.length) {
+                            const recentDays = history.daysOfMonth.slice(-3);
+                            const avgDay = recentDays.reduce((s, d) => s + d, 0) / recentDays.length;
+                            if (Math.abs(avgDay - referenceDay) <= 3) score += 100;
+                        }
+                    }
+                }
 
                 if (score > bestDirectScore) {
                     secondDirectScore = bestDirectScore;
@@ -12266,12 +13036,13 @@
                     const inferredDestinationId = inferDestinationFromDescription(
                         parsedTableRow.description,
                         typeDestinations.length ? typeDestinations : validDestinations,
-                        parsedTableRow.type
+                        parsedTableRow.type,
+                        { referenceDate: parsedTableRow.date }
                     ) || getDefaultReconDestinationId(
                         parsedTableRow.type,
                         typeDestinations.length ? typeDestinations : validDestinations
                     );
-                    tempRecon.push({
+                    const reconItem = {
                         id: generateId(),
                         date: parsedTableRow.date,
                         amount: parsedTableRow.amountAbs,
@@ -12279,7 +13050,13 @@
                         status: batchStatus,
                         description: String(parsedTableRow.description || '').trim(),
                         destinationId: inferredDestinationId,
-                    });
+                    };
+                    const crossMatch = findCrossAccountPendingMatch(reconItem, getReconSelectedAccountId());
+                    if (crossMatch) {
+                        reconItem.crossAccountMatch = crossMatch;
+                        reconItem.moveCrossAccount = true;
+                    }
+                    tempRecon.push(reconItem);
                     continue;
                 }
 
@@ -12338,20 +13115,27 @@
                     const inferredDestinationId = inferDestinationFromDescription(
                         desc,
                         typeDestinations.length ? typeDestinations : validDestinations,
-                        flowType
+                        flowType,
+                        { referenceDate: rawDate }
                     ) || getDefaultReconDestinationId(
                         flowType,
                         typeDestinations.length ? typeDestinations : validDestinations
                     );
-                    tempRecon.push({ 
-                        id: generateId(), 
-                        date: rawDate, 
-                        amount: Math.abs(val), 
-                        type: flowType, 
+                    const reconItem = {
+                        id: generateId(),
+                        date: rawDate,
+                        amount: Math.abs(val),
+                        type: flowType,
                         status: batchStatus,
-                        description: String(desc || '').trim(), 
+                        description: String(desc || '').trim(),
                         destinationId: inferredDestinationId,
-                    });
+                    };
+                    const crossMatch = findCrossAccountPendingMatch(reconItem, getReconSelectedAccountId());
+                    if (crossMatch) {
+                        reconItem.crossAccountMatch = crossMatch;
+                        reconItem.moveCrossAccount = true;
+                    }
+                    tempRecon.push(reconItem);
                 }
             }
             renderReconPreview();
@@ -12748,6 +13532,76 @@
             return String(document.getElementById('recon-account-select')?.value || '');
         }
 
+        function getAccountLabelById(accountId) {
+            const id = String(accountId || '');
+            if (!id) return '';
+            const acc = (state.accounts || []).find(a => String(a.id || '') === id);
+            return String((acc || {}).name || '');
+        }
+
+        function normalizeReconDescriptionForMatch(value) {
+            return normalizeReconText(value).replace(/\s+/g, ' ').trim();
+        }
+
+        function findCrossAccountPendingMatch(reconItem, selectedAccountId) {
+            const targetAcc = String(selectedAccountId || '');
+            const item = reconItem || {};
+            const itemDate = String(item.date || '');
+            const itemAmount = Math.abs(Number(item.amount) || 0);
+            const itemType = normalizeFlowType(item.type);
+            if (!itemDate || !itemAmount || !itemType) return null;
+            const itemDateObj = parseIsoDateLocal(itemDate);
+            if (!itemDateObj) return null;
+            const itemDescNorm = normalizeReconDescriptionForMatch(item.description);
+            const itemDescCompact = normalizeReconCompactText(itemDescNorm);
+            const candidates = [];
+            (state.entries || []).forEach(existing => {
+                if (!existing) return;
+                const exStatus = String(existing.status || '').toUpperCase();
+                if (exStatus !== 'PENDENTE') return;
+                const exType = normalizeFlowType(existing.type);
+                if (exType !== itemType) return;
+                const exAccountId = String((existing.accountId ?? existing.account_id) || '');
+                if (!exAccountId || exAccountId === targetAcc) return;
+                const exAmount = Math.abs(Number(existing.amount) || 0);
+                if (Math.abs(exAmount - itemAmount) > 0.01) return;
+                const exDateObj = parseIsoDateLocal(String(existing.date || ''));
+                if (!exDateObj) return;
+                const daysDiff = Math.abs((exDateObj.getTime() - itemDateObj.getTime()) / (24 * 60 * 60 * 1000));
+                if (daysDiff > 7) return;
+                let descScore = 0;
+                if (itemDescNorm) {
+                    const exDescNorm = normalizeReconDescriptionForMatch(existing.description);
+                    if (exDescNorm) {
+                        if (exDescNorm === itemDescNorm) descScore = 100;
+                        else if (itemDescNorm.includes(exDescNorm) || exDescNorm.includes(itemDescNorm)) descScore = 70;
+                        else {
+                            const exCompact = normalizeReconCompactText(exDescNorm);
+                            if (exCompact && itemDescCompact) {
+                                if (exCompact === itemDescCompact) descScore = 100;
+                                else if (exCompact.includes(itemDescCompact) || itemDescCompact.includes(exCompact)) descScore = 60;
+                            }
+                        }
+                    }
+                }
+                const destinationId = String((existing.destinationId ?? existing.destination_id) || '');
+                if (String(item.destinationId || '') && destinationId && String(item.destinationId) === destinationId) descScore += 40;
+                const score = 100 - (daysDiff * 5) + descScore;
+                candidates.push({
+                    entryId: String(existing.id || ''),
+                    accountId: exAccountId,
+                    accountLabel: getAccountLabelById(exAccountId),
+                    destinationId,
+                    destinationLabel: getDestinationDisplayLabelById(destinationId),
+                    daysDiff,
+                    score
+                });
+            });
+            if (!candidates.length) return null;
+            candidates.sort((a, b) => b.score - a.score);
+            return candidates[0];
+        }
+
         let reconExistingMatchCache = {
             accountId: '',
             cutoffIso: '',
@@ -12992,6 +13846,16 @@
                         <td class="px-4 py-3">
                             <div id="recon-badge-${i}" class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}">${reviewBadge.badgeText}</div>
                             <p id="recon-badge-note-${i}" class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
+                            ${e.crossAccountMatch ? `
+                                <div class="mt-2 rounded-lg border border-indigo-200 bg-indigo-50 p-2">
+                                    <div class="inline-flex items-center rounded-full bg-indigo-100 text-indigo-700 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">Pendente em outra conta</div>
+                                    <p class="mt-1 text-[11px] font-semibold leading-4 text-indigo-800">${escapeHtml(e.crossAccountMatch.accountLabel || 'outra conta')}</p>
+                                    <label class="mt-1 flex items-center gap-1.5 text-[11px] font-bold text-indigo-900 cursor-pointer">
+                                        <input type="checkbox" ${e.moveCrossAccount ? 'checked' : ''} onchange="toggleReconMoveCrossAccount(${i})" class="w-3 h-3 accent-indigo-600">
+                                        Mover para esta conta
+                                    </label>
+                                </div>
+                            ` : ''}
                         </td>
                         <td class="px-4 py-3 text-center">
                             <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
@@ -13011,6 +13875,12 @@
         function removeRecon(index) {
             tempRecon.splice(index, 1);
             renderReconPreview();
+        }
+
+        function toggleReconMoveCrossAccount(index) {
+            const item = tempRecon[index];
+            if (!item || !item.crossAccountMatch) return;
+            item.moveCrossAccount = !item.moveCrossAccount;
         }
 
         async function finalizeRecon() {
@@ -13045,50 +13915,90 @@
                     alert('Existem registros com destino sem vínculo válido no Banco de Dados.');
                     return;
                 }
-                const newEntries = tempRecon.map((temp) => {
+                const newEntries = [];
+                const movedExistingEntries = [];
+                tempRecon.forEach((temp) => {
                     const dst = state.destinations.find(d => d.id === temp.destinationId);
                     const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
                     const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                    return {
+                    if (temp.crossAccountMatch && temp.moveCrossAccount && temp.crossAccountMatch.entryId) {
+                        const existing = state.entries.find(e => String(e.id || '') === String(temp.crossAccountMatch.entryId));
+                        if (existing) {
+                            movedExistingEntries.push({
+                                ...existing,
+                                accountId: accId,
+                                date: temp.date,
+                                amount: temp.amount,
+                                description: temp.description || existing.description || '',
+                                destinationId: temp.destinationId,
+                                categoryId: String((cat || {}).id || existing.categoryId || ''),
+                                subCategoryId: String((sub || {}).id || existing.subCategoryId || ''),
+                                status: 'REALIZADO'
+                            });
+                            return;
+                        }
+                    }
+                    newEntries.push({
                         ...temp,
                         id: generateId(),
                         accountId: accId,
                         categoryId: String((cat || {}).id || ''),
                         subCategoryId: String((sub || {}).id || ''),
-                        status: batchStatus,
-                    };
+                        status: batchStatus
+                    });
                 });
+
                 const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
                 const entriesToImport = newEntries;
-                if (entriesToImport.length === 0) {
+                if (entriesToImport.length === 0 && movedExistingEntries.length === 0) {
                     if (summaryEl) {
                         summaryEl.innerText = 'Nenhum lançamento disponível para importar.';
                     }
                     return;
                 }
-                if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
-                const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
-                    if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
-                });
-                if (!saveResult?.ok) {
-                    if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
-                    await refreshCloudState({ silent: false });
-                    alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                    return;
-                }
-                const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
-                const validation = await validateImportedEntryIds(importedIds);
-                if (!validation.ok) {
-                    alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
-                } else {
-                    const importedNow = Number(validation.imported || 0);
-                    if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
-                    if (importedNow !== entriesToImport.length) {
-                        alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
-                    } else {
-                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nDuplicados importados: ${duplicateAgainstExisting.length}.` : '';
-                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}`);
+
+                if (movedExistingEntries.length) {
+                    const moveResult = await cloudSaveBatched('entries', movedExistingEntries, 200);
+                    if (!moveResult?.ok) {
+                        await refreshCloudState({ silent: false });
+                        alert(`Não foi possível mover lançamentos existentes.\n\nDetalhe: ${String(moveResult?.error?.message || 'Erro desconhecido.')}`);
+                        return;
                     }
+                    movedExistingEntries.forEach(updated => {
+                        const idx = state.entries.findIndex(e => String(e.id || '') === String(updated.id || ''));
+                        if (idx >= 0) state.entries[idx] = { ...state.entries[idx], ...updated };
+                    });
+                }
+
+                if (entriesToImport.length > 0) {
+                    if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
+                    const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
+                        if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
+                    });
+                    if (!saveResult?.ok) {
+                        if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
+                        await refreshCloudState({ silent: false });
+                        alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                        return;
+                    }
+                    const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
+                    const validation = await validateImportedEntryIds(importedIds);
+                    if (!validation.ok) {
+                        alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
+                    } else {
+                        const importedNow = Number(validation.imported || 0);
+                        if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
+                        if (importedNow !== entriesToImport.length) {
+                            alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
+                        } else {
+                            const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nDuplicados importados: ${duplicateAgainstExisting.length}.` : '';
+                            const movedNote = movedExistingEntries.length > 0 ? `\nMovidos de outra conta: ${movedExistingEntries.length}.` : '';
+                            alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}${movedNote}`);
+                        }
+                    }
+                } else if (movedExistingEntries.length > 0) {
+                    if (summaryEl) summaryEl.innerText = `${movedExistingEntries.length} lançamento(s) movido(s) para esta conta`;
+                    alert(`Conciliação concluída.\n\n${movedExistingEntries.length} lançamento(s) pendente(s) foram movidos para esta conta e marcados como REALIZADO.`);
                 }
                 await refreshCloudState({ silent: false });
                 cancelRecon(); render(); switchTab('entries');
@@ -13189,6 +14099,12 @@
                             <div>
                                 <div class="db-col-title">Destinos</div>
                                 <div class="db-col-count">${filteredDestinations.length} item(ns)</div>
+                                ${(() => {
+                                    const dupCount = findDuplicateDestinations().length;
+                                    return dupCount > 0
+                                        ? `<button type="button" onclick="openDuplicateModal()" style="margin-top:6px;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:#B45309;background:#FEF3C7;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.04em;border:1px solid #FCD34D;">⚠ ${dupCount} possíve${dupCount > 1 ? 'is' : 'l'} duplicata${dupCount > 1 ? 's' : ''}</button>`
+                                        : '';
+                                })()}
                             </div>
                             ${selectedSub ? `<button class="db-inline-btn" onclick="openDbModal('DESTINATION', '${selectedSub.id}')">+ Destino</button>` : ''}
                         </div>
@@ -14014,7 +14930,22 @@
             if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
+                if(type === 'CATEGORY') {
+                    const isFixed = Boolean(editItem && editItem.isFixedPriority);
+                    exEl.innerHTML = `
+                        <label class="label-mini" for="db-cat-type">Tipo</label>
+                        <select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>
+                        <div style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #E5EAF2;border-radius:10px;background:#F8FAFC;">
+                            <input type="checkbox" id="db-cat-fixed" ${isFixed ? 'checked' : ''} style="margin-top:3px;">
+                            <label for="db-cat-fixed" style="font-size:12px;font-weight:700;color:#0F172A;line-height:1.4;">
+                                Categoria de gastos fixos/mensais
+                                <span style="display:block;font-weight:600;color:#64748B;font-size:11px;margin-top:2px;">
+                                    Destinos desta categoria ganham prioridade nas sugestões de conciliação.
+                                </span>
+                            </label>
+                        </div>
+                    `;
+                }
                 else if(type === 'SUBCATEGORY') exEl.innerHTML = `<div><label class="label-mini" for="db-subcategory-category">Categoria</label><select id="db-subcategory-category" onchange="syncDbSubCategoryParentField()">${buildDbCategoryOptions(parentId)}</select><p class="field-help">Ao mover a subcategoria, os lançamentos vinculados continuam ligados e têm a categoria atualizada automaticamente.</p></div>`;
                 else if(type === 'DESTINATION') {
                     const initialSubCategoryId = String((editItem || {}).subCategoryId || parentId || '');
@@ -14068,7 +14999,12 @@
             if(type==='CATEGORY') {
                 table = 'categories';
                 previousItem = state.categories.find(item => item.id === id) || null;
-                data = {id, name, type: document.getElementById('db-cat-type').value };
+                data = {
+                    id,
+                    name,
+                    type: document.getElementById('db-cat-type').value,
+                    isFixedPriority: Boolean(document.getElementById('db-cat-fixed')?.checked)
+                };
             }
             if(type==='SUBCATEGORY') {
                 table = 'subCategories';
