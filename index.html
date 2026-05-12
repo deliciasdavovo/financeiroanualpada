@@ -14867,7 +14867,7 @@
             if (!row || typeof row !== 'object') return null;
             return {
                 id:            String(row.id || ''),
-                type:          String(row.type || 'SAÍDA'),
+                type:          getGoalNormalizedType(row.type || FLOW_OUT),
                 hierarchyType: String(row.hierarchy_type || row.hierarchyType || 'category'),
                 hierarchyId:   String(row.hierarchy_id   || row.hierarchyId   || ''),
                 amount:        Number(row.amount || 0),
@@ -14880,7 +14880,7 @@
         function goalToCloudPayload(goal) {
             return {
                 id:             goal.id,
-                type:           goal.type,
+                type:           getGoalNormalizedType(goal.type),
                 hierarchy_type: goal.hierarchyType,
                 hierarchy_id:   goal.hierarchyId,
                 amount:         goal.amount,
@@ -14963,25 +14963,18 @@
             const start = `${yyyyMM}-01`;
             const end = `${yyyyMM}-${String(new Date(yr, mn, 0).getDate()).padStart(2, '0')}`;
 
-            let destIds;
-            if (goal.hierarchyType === 'destination') {
-                destIds = new Set([goal.hierarchyId]);
-            } else if (goal.hierarchyType === 'subcategory') {
-                destIds = new Set(state.destinations.filter(d => d.subCategoryId === goal.hierarchyId).map(d => d.id));
-            } else {
-                const subIds = new Set(state.subCategories.filter(s => s.categoryId === goal.hierarchyId).map(s => s.id));
-                destIds = new Set(state.destinations.filter(d => subIds.has(d.subCategoryId)).map(d => d.id));
-            }
+            const targetFlow = getGoalNormalizedType(goal.type);
+            const destIds = getGoalDestinationIds(goal.hierarchyType, goal.hierarchyId);
 
             const actual = state.entries
-                .filter(e => e.type === goal.type && e.date >= start && e.date <= end && destIds.has(e.destinationId))
+                .filter(e => getGoalNormalizedType(e.type) === targetFlow && e.date >= start && e.date <= end && destIds.has(getGoalEntryDestinationId(e)))
                 .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
             const rawPct = goal.amount > 0 ? (actual / goal.amount) * 100 : 0;
             const pct = Math.min(rawPct, 100);
 
             let status;
-            if (goal.type === 'SAÍDA') {
+            if (targetFlow === FLOW_OUT) {
                 status = rawPct > 100 ? 'over' : rawPct > 90 ? 'danger' : rawPct > 70 ? 'warn' : 'ok';
             } else {
                 status = rawPct >= 90 ? 'rev_ok' : rawPct >= 70 ? 'warn' : 'rev_danger';
@@ -15003,15 +14996,54 @@
             return { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' }[t] || t;
         }
 
+        function getGoalNormalizedType(type) {
+            return normalizeFlowType(type) === FLOW_IN ? FLOW_IN : FLOW_OUT;
+        }
+
+        function getGoalEntryDestinationId(entry) {
+            return String((entry || {}).destinationId ?? (entry || {}).destination_id ?? '');
+        }
+
+        function getGoalDestinationSubCategoryId(destination) {
+            return String((destination || {}).subCategoryId ?? (destination || {}).sub_category_id ?? '');
+        }
+
+        function getGoalSubCategoryCategoryId(subCategory) {
+            return String((subCategory || {}).categoryId ?? (subCategory || {}).category_id ?? '');
+        }
+
+        function getGoalCategoryFlowType(category) {
+            return getGoalNormalizedType((category || {}).type || FLOW_OUT);
+        }
+
+        function getGoalSubCategoryFlowType(subCategory) {
+            const category = getCategoryById(getGoalSubCategoryCategoryId(subCategory));
+            return getGoalCategoryFlowType(category);
+        }
+
+        function getGoalDestinationFlowType(destination) {
+            const subCategory = getSubCategoryById(getGoalDestinationSubCategoryId(destination));
+            return getGoalSubCategoryFlowType(subCategory);
+        }
+
         function getGoalDestinationIds(hierarchyType, hierarchyId) {
             const targetId = String(hierarchyId || '');
             if (!targetId) return new Set();
             if (hierarchyType === 'destination') return new Set([targetId]);
             if (hierarchyType === 'subcategory') {
-                return new Set(state.destinations.filter(d => String(d.subCategoryId || '') === targetId).map(d => d.id));
+                return new Set(state.destinations
+                    .filter(d => getGoalDestinationSubCategoryId(d) === targetId)
+                    .map(d => String(d.id || ''))
+                    .filter(Boolean));
             }
-            const subIds = new Set(state.subCategories.filter(s => String(s.categoryId || '') === targetId).map(s => s.id));
-            return new Set(state.destinations.filter(d => subIds.has(String(d.subCategoryId || ''))).map(d => d.id));
+            const subIds = new Set(state.subCategories
+                .filter(s => getGoalSubCategoryCategoryId(s) === targetId)
+                .map(s => String(s.id || ''))
+                .filter(Boolean));
+            return new Set(state.destinations
+                .filter(d => subIds.has(getGoalDestinationSubCategoryId(d)))
+                .map(d => String(d.id || ''))
+                .filter(Boolean));
         }
 
         function getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId, referenceMonth = goalsGetCurrentMonth()) {
@@ -15023,8 +15055,8 @@
                 const date = String(entry.date || '');
                 const month = date.slice(0, 7);
                 if (!month || month >= referenceMonth) return;
-                if (normalizeFlowType(entry.type) !== normalizeFlowType(type)) return;
-                if (!destIds.has(String(entry.destinationId || ''))) return;
+                if (getGoalNormalizedType(entry.type) !== getGoalNormalizedType(type)) return;
+                if (!destIds.has(getGoalEntryDestinationId(entry))) return;
                 monthlyTotals.set(month, (monthlyTotals.get(month) || 0) + (Number(entry.amount) || 0));
             });
 
@@ -15049,7 +15081,7 @@
             const contentEl = document.getElementById('goal-history-content');
             const subtitleEl = document.getElementById('goal-history-subtitle');
             if (!contentEl) return;
-            const type = document.getElementById('goal-type-val')?.value || 'SAIDA';
+            const type = getGoalNormalizedType(document.getElementById('goal-type-val')?.value || FLOW_OUT);
             const hierarchyType = document.getElementById('goal-level-sel')?.value || 'category';
             const hierarchyId = document.getElementById('goal-item-sel')?.value || '';
             const stats = getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId);
@@ -15060,7 +15092,8 @@
                 return;
             }
 
-            if (subtitleEl) subtitleEl.textContent = `Base: ${stats.months.length} mes(es) anteriores deste item.`;
+            const flowLabel = type === FLOW_IN ? 'entradas' : 'saidas';
+            if (subtitleEl) subtitleEl.textContent = `Base: ${stats.months.length} mes(es) anteriores de ${flowLabel} deste item.`;
             contentEl.innerHTML = `
                 <div class="goal-history-grid">
                     <div class="goal-history-stat">
@@ -15151,7 +15184,7 @@
                 const sc   = statusMap[prog.status] || statusMap.ok;
                 const name = getGoalHierarchyName(goal);
                 const lvl  = getGoalLevelLabel(goal.hierarchyType);
-                const isEx = goal.type === 'SAÍDA';
+                const isEx = getGoalNormalizedType(goal.type) === FLOW_OUT;
                 const typeIcon  = isEx ? 'trending-down' : 'trending-up';
                 const typeBg    = isEx ? 'background:#FFF0F0;color:#B23A3A' : 'background:#EEF9F3;color:#1F7A5C';
                 const typeLabel = isEx ? 'Despesa' : 'Receita';
@@ -15234,12 +15267,13 @@
         }
 
         function selectGoalType(type) {
-            document.getElementById('goal-type-val').value = type;
+            const normalizedType = getGoalNormalizedType(type);
+            document.getElementById('goal-type-val').value = normalizedType;
             const btnS = document.getElementById('goal-type-btn-saida');
             const btnE = document.getElementById('goal-type-btn-entrada');
-            if (btnS) btnS.className = `goal-form-toggle ${type === 'SAÍDA' ? 'active-red' : ''}`;
-            if (btnE) btnE.className = `goal-form-toggle ${type === 'ENTRADA' ? 'active-green' : ''}`;
-            renderGoalHistorySuggestion();
+            if (btnS) btnS.className = `goal-form-toggle ${normalizedType === FLOW_OUT ? 'active-red' : ''}`;
+            if (btnE) btnE.className = `goal-form-toggle ${normalizedType === FLOW_IN ? 'active-green' : ''}`;
+            updateGoalHierarchyOptions();
         }
 
         function selectGoalRecurring(recurring) {
@@ -15252,7 +15286,7 @@
             if (wrap) wrap.classList.toggle('hidden', recurring);
         }
 
-        function updateGoalHierarchyOptions() {
+        function updateGoalHierarchyOptionsLegacy() {
             const level   = document.getElementById('goal-level-sel')?.value || 'category';
             const itemEl  = document.getElementById('goal-item-sel');
             const labelEl = document.getElementById('goal-item-label');
@@ -15294,12 +15328,61 @@
             }
 
             itemEl.innerHTML = options.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
+            updateGoalHierarchyOptions();
+        }
+
+        function updateGoalHierarchyOptions() {
+            const level = document.getElementById('goal-level-sel')?.value || 'category';
+            const itemEl = document.getElementById('goal-item-sel');
+            const labelEl = document.getElementById('goal-item-label');
+            if (!itemEl) return;
+
+            const selectedFlow = getGoalNormalizedType(document.getElementById('goal-type-val')?.value || FLOW_OUT);
+            const labels = { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' };
+            if (labelEl) labelEl.textContent = labels[level] || 'Item';
+
+            let options = [];
+            if (level === 'category') {
+                options = [...state.categories]
+                    .filter(c => getGoalCategoryFlowType(c) === selectedFlow)
+                    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR'))
+                    .map(c => ({ id: String(c.id || ''), label: String(c.name || '') }));
+            } else if (level === 'subcategory') {
+                options = [...state.subCategories]
+                    .filter(s => getGoalSubCategoryFlowType(s) === selectedFlow)
+                    .sort((a, b) => {
+                        const cA = getCategoryById(getGoalSubCategoryCategoryId(a))?.name || '';
+                        const cB = getCategoryById(getGoalSubCategoryCategoryId(b))?.name || '';
+                        return cA.localeCompare(cB, 'pt-BR') || String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR');
+                    })
+                    .map(s => {
+                        const cat = getCategoryById(getGoalSubCategoryCategoryId(s))?.name || '';
+                        return { id: String(s.id || ''), label: `${cat} > ${String(s.name || '')}` };
+                    });
+            } else {
+                options = [...state.destinations]
+                    .filter(d => getGoalDestinationFlowType(d) === selectedFlow)
+                    .sort((a, b) => {
+                        const subA = getSubCategoryById(getGoalDestinationSubCategoryId(a));
+                        const subB = getSubCategoryById(getGoalDestinationSubCategoryId(b));
+                        const cA = getCategoryById(getGoalSubCategoryCategoryId(subA))?.name || '';
+                        const cB = getCategoryById(getGoalSubCategoryCategoryId(subB))?.name || '';
+                        return cA.localeCompare(cB, 'pt-BR') || String(subA?.name || '').localeCompare(String(subB?.name || ''), 'pt-BR') || String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR');
+                    })
+                    .map(d => {
+                        const sub = getSubCategoryById(getGoalDestinationSubCategoryId(d));
+                        const cat = getCategoryById(getGoalSubCategoryCategoryId(sub))?.name || '';
+                        return { id: String(d.id || ''), label: `${cat} > ${String(sub?.name || '')} > ${String(d.name || '')}` };
+                    });
+            }
+
+            itemEl.innerHTML = options.map(o => `<option value="${escapeHtml(o.id)}">${escapeHtml(o.label)}</option>`).join('');
             renderGoalHistorySuggestion();
         }
 
         async function saveGoal() {
             const id            = document.getElementById('goal-id')?.value;
-            const type          = document.getElementById('goal-type-val')?.value || 'SAÍDA';
+            const type          = getGoalNormalizedType(document.getElementById('goal-type-val')?.value || FLOW_OUT);
             const hierarchyType = document.getElementById('goal-level-sel')?.value || 'category';
             const hierarchyId   = document.getElementById('goal-item-sel')?.value || '';
             const amtRaw        = (document.getElementById('goal-amount-inp')?.value || '').replace(/\./g, '').replace(',', '.');
