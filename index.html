@@ -1,10 +1,10 @@
-<html lang="pt-BR">
+    
+    <scrip<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delícias da Vovó | Gestão Financeira Premium</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+t src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -503,149 +503,6 @@
             font-weight: 700;
             color: #64748B;
         }
-        .budgets-card {
-            margin-top: 16px;
-        }
-        .budgets-card-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .budgets-card-title {
-            font-size: 14px;
-            font-weight: 900;
-            color: #0F172A;
-            letter-spacing: -0.01em;
-        }
-        .budgets-card-sub {
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748B;
-            margin-top: 2px;
-        }
-        .budgets-card-manage {
-            background: #0F172A;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            padding: 8px 14px;
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
-        }
-        .budgets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 14px;
-        }
-        .budget-item {
-            border: 1px solid #E5EAF2;
-            border-radius: 14px;
-            padding: 14px 16px;
-            background: #FAFBFD;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .budget-item-head {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .budget-item-name {
-            font-size: 13px;
-            font-weight: 800;
-            color: #0F172A;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .budget-item-scope {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #64748B;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
-        }
-        .budget-bar {
-            position: relative;
-            height: 10px;
-            background: #E2E8F0;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .budget-bar-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            border-radius: 6px;
-            transition: width 240ms ease, background 240ms ease;
-        }
-        .budget-bar-fill.safe { background: linear-gradient(90deg, #10B981, #34D399); }
-        .budget-bar-fill.warn { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
-        .budget-bar-fill.over { background: linear-gradient(90deg, #DC2626, #F87171); }
-        .budget-item-foot {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #475569;
-        }
-        .budget-item-percent {
-            font-size: 12px;
-            font-weight: 900;
-        }
-        .budget-item-percent.safe { color: #059669; }
-        .budget-item-percent.warn { color: #B45309; }
-        .budget-item-percent.over { color: #B91C1C; }
-        .budgets-empty {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-            color: #64748B;
-            padding: 22px 16px;
-            background: #F8FAFC;
-            border: 1px dashed #CBD5E1;
-            border-radius: 12px;
-        }
-        .budget-modal-table {
-            width: 100%;
-            font-size: 12px;
-            border-collapse: collapse;
-        }
-        .budget-modal-table th {
-            text-align: left;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #64748B;
-            letter-spacing: 0.05em;
-            padding: 8px 10px;
-            border-bottom: 1px solid #E5EAF2;
-        }
-        .budget-modal-table td {
-            padding: 10px;
-            border-bottom: 1px solid #F1F5F9;
-            font-weight: 700;
-            color: #0F172A;
-        }
-        .budget-modal-form {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-        .budget-modal-form .full {
-            grid-column: 1 / -1;
-        }
         .monthly-chart-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -861,7 +718,7 @@
             table-layout: fixed;
         }
         #annual-main-table { min-width: 640px; }
-        #annual-temporal-table { min-width: 420px; }
+        #annual-temporal-table { min-width: 760px; }
         #recon-preview-table {
             min-width: 100%;
             table-layout: fixed;
@@ -2144,6 +2001,75 @@
             line-height: 1;
             letter-spacing: 0.02em;
             text-transform: uppercase;
+        }
+        .annual-supplier-compare-card {
+            overflow: hidden;
+        }
+        .annual-compare-table {
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .annual-compare-table thead {
+            background: transparent !important;
+        }
+        .annual-compare-table th {
+            padding-top: 0 !important;
+            padding-bottom: 6px !important;
+            white-space: nowrap;
+        }
+        .annual-compare-table tbody tr {
+            cursor: default;
+        }
+        .annual-compare-table tbody td {
+            background: #FFFFFF;
+            border-top: 1px solid #E8EEF6;
+            border-bottom: 1px solid #E8EEF6;
+            vertical-align: middle;
+        }
+        .annual-compare-table tbody td:first-child {
+            border-left: 1px solid #E8EEF6;
+            border-radius: 14px 0 0 14px;
+        }
+        .annual-compare-table tbody td:last-child {
+            border-right: 1px solid #E8EEF6;
+            border-radius: 0 14px 14px 0;
+        }
+        .annual-compare-period {
+            font-size: 12px;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .annual-compare-sub {
+            margin-top: 2px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+        .annual-compare-value {
+            font-size: 13px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .annual-compare-muted {
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748B;
+            white-space: nowrap;
+        }
+        .annual-compare-open {
+            min-height: 32px;
+            padding: 0 11px;
+            border-radius: 999px;
+            border: 1px solid #DDE6F0;
+            background: #F8FAFC;
+            color: #244A94;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .annual-compare-open:hover {
+            background: #EAF0FF;
+            border-color: #C8D6EF;
         }
         .db-toolbar {
             display: flex;
@@ -4546,6 +4472,68 @@
             font-weight: 900;
             white-space: nowrap;
         }
+        .projection-table-wrap {
+            padding: 0;
+            overflow-x: auto;
+        }
+        .projection-table {
+            width: 100%;
+            min-width: 680px;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .projection-table th {
+            padding: 0 12px 6px;
+            font-size: 11px !important;
+            font-weight: 900 !important;
+            color: #64748B !important;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .projection-table th:first-child {
+            text-align: left;
+        }
+        .projection-table td {
+            padding: 14px 12px;
+            border-top: 1px solid #E8EEF6;
+            border-bottom: 1px solid #E8EEF6;
+            background: #FFFFFF;
+            font-size: 13px;
+            font-weight: 850;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .projection-table td:first-child {
+            border-left: 1px solid #E8EEF6;
+            border-radius: 14px 0 0 14px;
+            text-align: left;
+        }
+        .projection-table td:last-child {
+            border-right: 1px solid #E8EEF6;
+            border-radius: 0 14px 14px 0;
+        }
+        .projection-table-date {
+            font-size: 13px;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .projection-table-sub {
+            margin-top: 3px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+        .projection-table-value {
+            font-size: 15px;
+            font-weight: 900;
+        }
+        .projection-table-total td {
+            background: #F8FAFF;
+            border-color: #DDE6F0;
+        }
+        .projection-table-total .projection-table-date {
+            color: #244A94;
+        }
         @media (max-width: 1100px) {
             .reports-shell-head,
             .reports-card-head {
@@ -4588,6 +4576,9 @@
             .projection-list {
                 padding: 14px;
             }
+            .projection-table-wrap {
+                padding: 0;
+            }
             .projection-list-item {
                 grid-template-columns: 1fr;
                 align-items: start;
@@ -4596,6 +4587,67 @@
                 justify-self: start;
             }
         }
+
+        /* ─── METAS / GOALS ─── */
+        .goal-card {
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            padding: 20px 20px 16px;
+            transition: box-shadow var(--dur-std) var(--ease-premium), border-color var(--dur-std) var(--ease-premium);
+        }
+        .goal-card:hover { box-shadow: 0 4px 20px rgba(15,23,42,.08); border-color: #c8d3e0; }
+        .goal-icon-wrap {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .goal-progress-track {
+            height: 8px; border-radius: 99px;
+            background: #E2E8F2; overflow: hidden; margin-top: 12px;
+        }
+        .goal-progress-fill {
+            height: 100%; border-radius: 99px;
+            transition: width 700ms var(--ease-premium);
+        }
+        .goal-fill-ok     { background: var(--primary-green); }
+        .goal-fill-warn   { background: #D97706; }
+        .goal-fill-danger { background: var(--soft-red); }
+        .goal-fill-over   { background: #7F1D1D; }
+        .goal-action-btn {
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); background: transparent;
+            cursor: pointer; transition: all var(--dur-fast) var(--ease-premium);
+            color: var(--text-secondary);
+        }
+        .goal-action-btn:hover { background: #F1F5F9; color: var(--text-primary); }
+        .goal-action-btn.delete:hover { background: var(--bg-red-soft); color: var(--soft-red); border-color: #f5c6c6; }
+        .goals-empty { text-align: center; padding: 64px 24px; color: var(--text-secondary); }
+        .goals-month-nav {
+            display: flex; align-items: center; gap: 2px;
+            background: #F1F5F9; border-radius: 10px; padding: 2px;
+        }
+        .goals-month-nav button {
+            width: 30px; height: 30px; border-radius: 8px; border: none; background: transparent;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            color: var(--text-secondary); transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .goals-month-nav button:hover { background: white; color: var(--text-primary); box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        .goals-month-nav span {
+            font-size: 13px; font-weight: 700; padding: 0 10px;
+            color: var(--text-primary); min-width: 120px; text-align: center;
+        }
+        .goal-form-toggle {
+            flex: 1; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border);
+            background: transparent; cursor: pointer; font-size: 12px; font-weight: 700;
+            color: var(--text-secondary); transition: all var(--dur-fast) var(--ease-premium);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .goal-form-toggle:hover { background: #F8FAFC; color: var(--text-primary); }
+        .goal-form-toggle.active { background: var(--text-primary); color: white; border-color: var(--text-primary); }
+        .goal-form-toggle.active-green { background: var(--primary-green); color: white; border-color: var(--primary-green); }
+        .goal-form-toggle.active-red { background: var(--soft-red); color: white; border-color: var(--soft-red); }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -4688,6 +4740,9 @@
             </button>
             <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
+            </button>
+            <button onclick="switchTab('goals')" id="nav-goals" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="target" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Metas</span>
             </button>
         </nav>
     </aside>
@@ -4911,17 +4966,6 @@
                     </div>
                 </div>
 
-                <section class="card-premium budgets-card" id="budgets-card" aria-labelledby="budgets-card-title">
-                    <div class="budgets-card-head">
-                        <div>
-                            <p class="budgets-card-title" id="budgets-card-title">Metas do mês</p>
-                            <p class="budgets-card-sub">Acompanhe limites por categoria, subcategoria e fornecedor.</p>
-                        </div>
-                        <button type="button" class="budgets-card-manage" onclick="openBudgetModal()">+ Gerenciar metas</button>
-                    </div>
-                    <div id="budgets-grid"></div>
-                </section>
-
                 <section class="card-premium reports-chart-card" aria-labelledby="reports-monthly-chart-title">
                     <div class="reports-card-head">
                         <div>
@@ -5048,11 +5092,11 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-premium p-8 space-y-6">
+                <div class="card-premium p-8 space-y-6 annual-supplier-compare-card">
                     <div class="flex flex-wrap items-end justify-between gap-4">
                         <div>
-                            <h4 class="text-sm font-black text-slate-900">Comparativo temporal</h4>
-                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Comparando períodos...</p>
+                            <h4 class="text-sm font-black text-slate-900">Fornecedor mês a mês</h4>
+                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Escolha um destino/fornecedor para comparar janeiro, fevereiro, março e os demais meses.</p>
                         </div>
                         <div class="annual-filters-grid">
                             <div class="annual-filter-item">
@@ -5101,12 +5145,15 @@
                         </div>
                         <div class="xl:col-span-2 border border-slate-100 rounded-2xl overflow-hidden">
                             <div class="table-mobile-scroll custom-scrollbar">
-                                <table id="annual-temporal-table" class="w-full text-left">
+                                <table id="annual-temporal-table" class="w-full text-left annual-compare-table">
                                     <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
                                         <tr>
                                             <th class="px-4 py-3">Período</th>
                                             <th class="px-4 py-3 text-right">Total</th>
+                                            <th class="px-4 py-3 text-right">Lançamentos</th>
+                                            <th class="px-4 py-3 text-right">Média</th>
                                             <th class="px-4 py-3 text-right">Variação</th>
+                                            <th class="px-4 py-3 text-right">Abrir</th>
                                         </tr>
                                     </thead>
                                     <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
@@ -5470,6 +5517,34 @@
                     <div id="account-list"></div>
                 </section>
             </div>
+
+            <!-- METAS -->
+            <div id="goals" class="tab-content space-y-6">
+                <div class="card-premium p-6">
+                    <div class="flex flex-wrap gap-4 items-center justify-between">
+                        <div>
+                            <p class="text-base font-black text-slate-900">Controle de Metas</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Orçamentos e metas por categoria, subcategoria e destino.</p>
+                        </div>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <div class="goals-month-nav">
+                                <button type="button" onclick="goalsNavMonth(-1)" aria-label="Mês anterior">
+                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                </button>
+                                <span id="goals-month-label">—</span>
+                                <button type="button" onclick="goalsNavMonth(1)" aria-label="Próximo mês">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase shadow flex items-center gap-2">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>Nova Meta
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
         </div>
     </main>
 
@@ -5497,6 +5572,10 @@
         <button onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
             <i data-lucide="database" class="w-5 h-5"></i>
             <span class="mobile-nav-label">Banco</span>
+        </button>
+        <button onclick="switchTab('goals')" id="mnav-goals" class="mobile-nav-btn" aria-label="Metas financeiras">
+            <i data-lucide="target" class="w-5 h-5"></i>
+            <span class="mobile-nav-label">Metas</span>
         </button>
     </nav>
 
@@ -5624,33 +5703,76 @@
         </div>
     </div>
 
-    <div id="budget-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeBudgetModal()">
-        <div class="modal-shell modal-shell-db" style="max-width:760px;">
+    <!-- MODAL METAS -->
+    <div id="goals-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('goals-modal')">
+        <div class="modal-shell modal-shell-db">
             <div class="modal-head">
                 <div>
-                    <h3 class="modal-head-title">Metas mensais</h3>
-                    <p class="modal-head-sub">Defina limites por categoria, subcategoria ou fornecedor.</p>
+                    <h3 class="modal-head-title">Meta / Orçamento</h3>
+                    <p class="modal-head-sub">Configure sua meta financeira mensal.</p>
                 </div>
-                <button onclick="closeBudgetModal()" class="modal-close-btn" type="button" aria-label="Fechar metas">
+                <button onclick="closeModal('goals-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            <div id="budget-modal-body" class="modal-body"></div>
-        </div>
-    </div>
+            <div class="modal-body space-y-5">
+                <input type="hidden" id="goal-id">
+                <input type="hidden" id="goal-type-val" value="SAÍDA">
+                <input type="hidden" id="goal-recurring-val" value="true">
 
-    <div id="duplicate-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeDuplicateModal()">
-        <div class="modal-shell modal-shell-db" style="max-width:760px;">
-            <div class="modal-head">
                 <div>
-                    <h3 class="modal-head-title">Fornecedores possivelmente duplicados</h3>
-                    <p class="modal-head-sub">Mescle (editando) ou ignore os pares abaixo.</p>
+                    <label class="label-mini">Tipo de meta</label>
+                    <div class="flex gap-3 mt-1.5">
+                        <button type="button" id="goal-type-btn-saida" class="goal-form-toggle active-red" onclick="selectGoalType('SAÍDA')">
+                            <i data-lucide="trending-down" class="w-3.5 h-3.5"></i>Orçamento (despesa)
+                        </button>
+                        <button type="button" id="goal-type-btn-entrada" class="goal-form-toggle" onclick="selectGoalType('ENTRADA')">
+                            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>Meta de receita
+                        </button>
+                    </div>
                 </div>
-                <button onclick="closeDuplicateModal()" class="modal-close-btn" type="button" aria-label="Fechar duplicatas">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
+
+                <div>
+                    <label class="label-mini" for="goal-level-sel">Nível hierárquico</label>
+                    <select id="goal-level-sel" onchange="updateGoalHierarchyOptions()">
+                        <option value="category">Categoria</option>
+                        <option value="subcategory">Subcategoria</option>
+                        <option value="destination">Destino</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="label-mini" for="goal-item-sel" id="goal-item-label">Categoria</label>
+                    <select id="goal-item-sel"></select>
+                </div>
+
+                <div>
+                    <label class="label-mini" for="goal-amount-inp">Valor da meta (R$)</label>
+                    <input type="text" id="goal-amount-inp" inputmode="numeric" autocomplete="off" placeholder="0,00">
+                </div>
+
+                <div>
+                    <label class="label-mini">Recorrência</label>
+                    <div class="flex gap-3 mt-1.5">
+                        <button type="button" id="goal-recur-btn-yes" class="goal-form-toggle active" onclick="selectGoalRecurring(true)">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>Todo mês
+                        </button>
+                        <button type="button" id="goal-recur-btn-no" class="goal-form-toggle" onclick="selectGoalRecurring(false)">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>Mês específico
+                        </button>
+                    </div>
+                </div>
+
+                <div id="goal-month-wrap" class="hidden">
+                    <label class="label-mini" for="goal-month-inp">Mês específico</label>
+                    <input type="month" id="goal-month-inp">
+                </div>
+
+                <div class="flex gap-3 pt-1">
+                    <button type="button" onclick="saveGoal()" class="modal-btn-neutral flex-1">Salvar meta</button>
+                    <button type="button" id="goal-del-btn" class="modal-btn-danger hidden" onclick="deleteGoalFromModal()">Excluir</button>
+                </div>
             </div>
-            <div id="duplicate-modal-body" class="modal-body"></div>
         </div>
     </div>
 
@@ -5742,11 +5864,9 @@
             accounts: [],
             entries: [],
             storeDailyMovements: [],
-            dailyBalances: [],
-            budgets: []
+            dailyBalances: []
         };
-        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances', 'budgets'];
-        const OPTIONAL_CLOUD_TABLES = new Set(['storeDailyMovements', 'dailyBalances', 'budgets']);
+        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances'];
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -5875,8 +5995,7 @@
                 accounts: Array.isArray(state.accounts) ? state.accounts : [],
                 entries: Array.isArray(state.entries) ? state.entries : [],
                 storeDailyMovements: Array.isArray(state.storeDailyMovements) ? state.storeDailyMovements : [],
-                dailyBalances: Array.isArray(state.dailyBalances) ? state.dailyBalances : [],
-                budgets: Array.isArray(state.budgets) ? state.budgets : []
+                dailyBalances: Array.isArray(state.dailyBalances) ? state.dailyBalances : []
             };
         }
 
@@ -5889,7 +6008,6 @@
             state.categories = (state.categories || []).map(c => ({
                 ...c,
                 id: String(c.id || ''),
-                isFixedPriority: Boolean((c.isFixedPriority ?? c.is_fixed_priority) || false),
                 updatedAt: String((c.updatedAt ?? c.updated_at) || '')
             }));
             state.subCategories = (state.subCategories || []).map(s => ({
@@ -5935,43 +6053,6 @@
                 notes: String(b.notes || ''),
                 updatedAt: String((b.updatedAt ?? b.updated_at) || '')
             }));
-            state.budgets = (state.budgets || []).map(b => ({
-                ...b,
-                id: String(b.id || ''),
-                scope: String(b.scope || 'category'),
-                targetId: String((b.targetId ?? b.target_id) || ''),
-                monthlyLimit: Number((b.monthlyLimit ?? b.monthly_limit) ?? 0) || 0,
-                type: String(b.type || 'SAÍDA'),
-                alertThreshold: (() => {
-                    const raw = Number((b.alertThreshold ?? b.alert_threshold) ?? 0.8);
-                    if (!Number.isFinite(raw) || raw <= 0) return 0.8;
-                    return raw > 1 ? Math.min(raw / 100, 1) : Math.min(raw, 1);
-                })(),
-                updatedAt: String((b.updatedAt ?? b.updated_at) || '')
-            }));
-            autoMarkFixedPriorityCategories();
-        }
-
-        let autoFixedPriorityRanOnce = false;
-        function autoMarkFixedPriorityCategories() {
-            if (autoFixedPriorityRanOnce) return;
-            autoFixedPriorityRanOnce = true;
-            const patterns = ['fixo', 'fixos', 'fixa', 'fixas', 'emprestimo', 'emprestimos'];
-            const changed = [];
-            (state.categories || []).forEach(c => {
-                if (c.isFixedPriority) return;
-                const norm = String(c.name || '')
-                    .normalize('NFD')
-                    .replace(/[̀-ͯ]/g, '')
-                    .toLowerCase();
-                if (patterns.some(p => norm.includes(p))) {
-                    c.isFixedPriority = true;
-                    changed.push(c);
-                }
-            });
-            if (changed.length && typeof cloudSaveBatched === 'function') {
-                cloudSaveBatched('categories', changed, 50).catch(() => {});
-            }
         }
 
         let stateLookupCache = {
@@ -6175,7 +6256,6 @@
             return clean;
         }
 
-        let cloudSupportsFixedPriorityColumn = true;
         function sanitizePayloadForCloud(table, data, includeUpdatedAt = true) {
             const sanitizeEntryForCloud = (entry) => {
                 if (!entry || typeof entry !== 'object') return entry;
@@ -6185,34 +6265,9 @@
                 delete clean.is_internal_transfer;
                 return clean;
             };
-            const sanitizeCategoryForCloud = (cat) => {
-                if (!cat || typeof cat !== 'object') return cat;
-                const clean = { ...cat };
-                if (!cloudSupportsFixedPriorityColumn) delete clean.isFixedPriority;
-                return clean;
-            };
-            const sanitizeBudgetForCloud = (b) => {
-                if (!b || typeof b !== 'object') return b;
-                return {
-                    id: b.id,
-                    scope: b.scope,
-                    targetId: b.targetId,
-                    monthlyLimit: b.monthlyLimit,
-                    type: b.type,
-                    alertThreshold: b.alertThreshold,
-                    ...(b.updatedAt ? { updatedAt: b.updatedAt } : {})
-                };
-            };
-            let payload;
-            if (table === 'entries') {
-                payload = Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data);
-            } else if (table === 'categories') {
-                payload = Array.isArray(data) ? data.map(sanitizeCategoryForCloud) : sanitizeCategoryForCloud(data);
-            } else if (table === 'budgets') {
-                payload = Array.isArray(data) ? data.map(sanitizeBudgetForCloud) : sanitizeBudgetForCloud(data);
-            } else {
-                payload = data;
-            }
+            let payload = table === 'entries'
+                ? (Array.isArray(data) ? data.map(sanitizeEntryForCloud) : sanitizeEntryForCloud(data))
+                : data;
             if (!includeUpdatedAt) payload = stripUpdatedAtField(payload);
             return payload;
         }
@@ -6226,12 +6281,6 @@
             const code = String(error.code || '').toUpperCase();
             const message = String(error.message || '').toLowerCase();
             return code === 'PGRST205' || message.includes('does not exist') || message.includes('relation') || message.includes('could not find the table');
-        }
-        function isMissingColumnError(error) {
-            if (!error) return false;
-            const code = String(error.code || '').toUpperCase();
-            const message = String(error.message || '').toLowerCase();
-            return code === 'PGRST204' || message.includes('column') && (message.includes('does not exist') || message.includes('not find'));
         }
         function isMissingRpcFunctionError(error) {
             if (!error) return false;
@@ -6344,7 +6393,7 @@
 
         async function upsertWithUpdatedAtFallback(table, data) {
             let includeUpdatedAt = cloudSupportsUpdatedAt;
-            for (let attempt = 0; attempt < 4; attempt++) {
+            for (let attempt = 0; attempt < 3; attempt++) {
                 const payload = sanitizePayloadForCloud(table, data, includeUpdatedAt);
                 const { error } = await sbClient.from(table).upsert(payload);
                 if (!error) {
@@ -6353,10 +6402,6 @@
                 }
                 if (includeUpdatedAt && isUpdatedAtColumnError(error)) {
                     includeUpdatedAt = false;
-                    continue;
-                }
-                if (table === 'categories' && cloudSupportsFixedPriorityColumn && isMissingColumnError(error) && /isfixedpriority/i.test(String(error.message || ''))) {
-                    cloudSupportsFixedPriorityColumn = false;
                     continue;
                 }
                 return { error };
@@ -6400,19 +6445,14 @@
             try {
                 setSyncStatus('syncing');
                 // Tenta carregar dados do Supabase
-                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [], budgets: [] };
+                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
                 for(const t of STATE_TABLES) {
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
-                        if (isMissingTableError(error) && OPTIONAL_CLOUD_TABLES.has(t)) {
+                        if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
                             cloudState[t] = [];
                             continue;
-                        }
-                        if (isMissingColumnError(error) && t === 'categories') {
-                            const retry = await cloudSelectAllRows(t);
-                            if (retry.ok) { cloudState[t] = retry.data || []; continue; }
-                            throw retry.error;
                         }
                         throw error;
                     }
@@ -6425,6 +6465,7 @@
                 setSyncStatus('synced');
                 document.getElementById('loading-overlay').style.display = 'none';
                 updateBackupIndicator();
+                await loadGoalsFromCloud();
                 render();
             } catch (err) {
                 console.error("Erro na sincronização:", err);
@@ -6441,12 +6482,12 @@
             try {
                 lastCloudRefreshAt = Date.now();
                 if (!silent) setSyncStatus('syncing');
-                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [], budgets: [] };
+                const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
                 for (const t of STATE_TABLES) {
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
-                        if (isMissingTableError(error) && OPTIONAL_CLOUD_TABLES.has(t)) {
+                        if (isMissingTableError(error) && (t === 'storeDailyMovements' || t === 'dailyBalances')) {
                             cloudState[t] = [];
                             continue;
                         }
@@ -6465,6 +6506,7 @@
                 lastCloudStateSignature = getCloudStateSignature(state);
                 setSyncStatus('synced');
                 updateBackupIndicator();
+                await loadGoalsFromCloud();
                 render();
             } catch (err) {
                 console.error("Erro ao atualizar estado da nuvem:", err);
@@ -6495,11 +6537,6 @@
             setSyncStatus('syncing');
             const { error } = await upsertWithUpdatedAtFallback(table, touched);
             if (error) {
-                if (isMissingTableError(error) && OPTIONAL_CLOUD_TABLES.has(table)) {
-                    console.warn(`Tabela ${table} ainda não existe no Supabase — salvando apenas em memória.`);
-                    setSyncStatus('synced');
-                    return { ok: true, error: null, skipped: true };
-                }
                 console.error(`Erro ao salvar em ${table}:`, error);
                 setSyncStatus('offline');
                 return { ok: false, error };
@@ -6607,440 +6644,6 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
-
-        function getBudgetScopeIds(budget) {
-            const scope = String((budget || {}).scope || '');
-            const targetId = String((budget || {}).targetId || '');
-            if (!targetId) return { categoryIds: new Set(), subCategoryIds: new Set(), destinationIds: new Set() };
-            if (scope === 'destination') {
-                return { categoryIds: new Set(), subCategoryIds: new Set(), destinationIds: new Set([targetId]) };
-            }
-            if (scope === 'subCategory') {
-                const destinationIds = new Set(
-                    (state.destinations || [])
-                        .filter(d => String(d.subCategoryId || '') === targetId)
-                        .map(d => String(d.id || ''))
-                );
-                return { categoryIds: new Set(), subCategoryIds: new Set([targetId]), destinationIds };
-            }
-            const subIds = new Set(
-                (state.subCategories || [])
-                    .filter(s => String(s.categoryId || '') === targetId)
-                    .map(s => String(s.id || ''))
-            );
-            const destinationIds = new Set(
-                (state.destinations || [])
-                    .filter(d => subIds.has(String(d.subCategoryId || '')))
-                    .map(d => String(d.id || ''))
-            );
-            return { categoryIds: new Set([targetId]), subCategoryIds: subIds, destinationIds };
-        }
-
-        function getBudgetTargetName(budget) {
-            const scope = String((budget || {}).scope || '');
-            const targetId = String((budget || {}).targetId || '');
-            if (!targetId) return '—';
-            if (scope === 'destination') {
-                const dst = state.destinations.find(d => String(d.id || '') === targetId);
-                return String((dst || {}).name || '—');
-            }
-            if (scope === 'subCategory') {
-                const sub = state.subCategories.find(s => String(s.id || '') === targetId);
-                return String((sub || {}).name || '—');
-            }
-            const cat = state.categories.find(c => String(c.id || '') === targetId);
-            return String((cat || {}).name || '—');
-        }
-
-        function getBudgetScopeLabel(scope) {
-            if (scope === 'destination') return 'Fornecedor';
-            if (scope === 'subCategory') return 'Subcategoria';
-            return 'Categoria';
-        }
-
-        function computeBudgetUsage(budget, monthIso) {
-            const targetMonth = String(monthIso || getCurrentMonthIso() || '').slice(0, 7);
-            const limit = Number((budget || {}).monthlyLimit) || 0;
-            const desiredType = String((budget || {}).type || 'SAÍDA');
-            const { categoryIds, subCategoryIds, destinationIds } = getBudgetScopeIds(budget);
-            let realized = 0;
-            let pending = 0;
-            (state.entries || []).forEach(e => {
-                const entryDate = String(e.date || '');
-                if (entryDate.slice(0, 7) !== targetMonth) return;
-                if (String(e.type || '') !== desiredType) return;
-                const catId = String(e.categoryId || '');
-                const subId = String(e.subCategoryId || '');
-                const dstId = String(e.destinationId || '');
-                const matches = destinationIds.has(dstId)
-                    || subCategoryIds.has(subId)
-                    || categoryIds.has(catId);
-                if (!matches) return;
-                const amount = Math.abs(Number(e.amount) || 0);
-                if (String(e.status || '') === 'REALIZADO') realized += amount;
-                else pending += amount;
-            });
-            const total = realized + pending;
-            const percent = limit > 0 ? (total / limit) * 100 : 0;
-            const threshold = Number((budget || {}).alertThreshold) || 0.8;
-            let status = 'safe';
-            if (percent >= 100) status = 'over';
-            else if (percent >= (threshold * 100)) status = 'warn';
-            return { realized, pending, total, percent, limit, status };
-        }
-
-        async function saveBudget(budget) {
-            const payload = {
-                id: budget.id || generateId(),
-                scope: String(budget.scope || 'category'),
-                targetId: String(budget.targetId || ''),
-                monthlyLimit: Number(budget.monthlyLimit) || 0,
-                type: String(budget.type || 'SAÍDA'),
-                alertThreshold: Number(budget.alertThreshold) || 0.8
-            };
-            const existingIndex = (state.budgets || []).findIndex(b => String(b.id || '') === payload.id);
-            if (existingIndex >= 0) state.budgets[existingIndex] = { ...state.budgets[existingIndex], ...payload };
-            else state.budgets = [...(state.budgets || []), payload];
-            const result = await cloudSave('budgets', payload);
-            if (!result.ok && !result.skipped) {
-                if (existingIndex >= 0) state.budgets[existingIndex] = state.budgets[existingIndex];
-                else state.budgets = (state.budgets || []).filter(b => b.id !== payload.id);
-                return { ok: false, error: result.error };
-            }
-            return { ok: true };
-        }
-
-        async function deleteBudget(budgetId) {
-            const id = String(budgetId || '');
-            if (!id) return;
-            state.budgets = (state.budgets || []).filter(b => String(b.id || '') !== id);
-            if (sbClient) {
-                try { await sbClient.from('budgets').delete().eq('id', id); }
-                catch (e) { console.warn('Falha ao remover meta na nuvem:', e); }
-            }
-        }
-
-        function renderBudgetsWidget(monthIso) {
-            const grid = document.getElementById('budgets-grid');
-            if (!grid) return;
-            const list = Array.isArray(state.budgets) ? state.budgets : [];
-            if (!list.length) {
-                grid.innerHTML = `<div class="budgets-empty">Nenhuma meta cadastrada ainda. Use o botão acima para criar metas por categoria, subcategoria ou fornecedor.</div>`;
-                return;
-            }
-            const cards = list.map(b => {
-                const usage = computeBudgetUsage(b, monthIso);
-                const scopeLabel = getBudgetScopeLabel(b.scope);
-                const targetName = getBudgetTargetName(b);
-                const pct = Math.min(usage.percent, 999);
-                const fillWidth = Math.min(Math.max(usage.percent, 0), 100);
-                const statusClass = usage.status;
-                return `
-                    <div class="budget-item">
-                        <div class="budget-item-head">
-                            <div class="budget-item-name" title="${escapeHtml(targetName)}">${escapeHtml(targetName)}</div>
-                            <div class="budget-item-scope">${scopeLabel}</div>
-                        </div>
-                        <div class="budget-bar"><div class="budget-bar-fill ${statusClass}" style="width:${fillWidth}%"></div></div>
-                        <div class="budget-item-foot">
-                            <span>${formatBRL(usage.total)} / ${formatBRL(usage.limit)}</span>
-                            <span class="budget-item-percent ${statusClass}">${pct.toFixed(0)}%</span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            grid.innerHTML = `<div class="budgets-grid">${cards}</div>`;
-        }
-
-        let budgetModalEditingId = '';
-        function openBudgetModal() {
-            budgetModalEditingId = '';
-            const modal = document.getElementById('budget-modal');
-            if (!modal) return;
-            renderBudgetModalBody();
-            modal.classList.remove('hidden');
-            refreshLucideIcons();
-        }
-        function closeBudgetModal() {
-            budgetModalEditingId = '';
-            const modal = document.getElementById('budget-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function renderBudgetModalBody() {
-            const body = document.getElementById('budget-modal-body');
-            if (!body) return;
-            const editing = budgetModalEditingId
-                ? (state.budgets || []).find(b => String(b.id || '') === budgetModalEditingId)
-                : null;
-            const formScope = editing ? String(editing.scope || 'category') : 'category';
-            const formTargetId = editing ? String(editing.targetId || '') : '';
-            const formLimit = editing ? Number(editing.monthlyLimit) || 0 : 0;
-            const formThreshold = editing ? Math.round((Number(editing.alertThreshold) || 0.8) * 100) : 80;
-            const formType = editing ? String(editing.type || 'SAÍDA') : 'SAÍDA';
-
-            const targetOptions = buildBudgetTargetOptions(formScope, formTargetId);
-
-            const list = (state.budgets || []).slice().sort((a, b) =>
-                getBudgetTargetName(a).localeCompare(getBudgetTargetName(b), 'pt-BR', { sensitivity: 'base' })
-            );
-            const tableRows = list.length
-                ? list.map(b => {
-                    const usage = computeBudgetUsage(b, getCurrentMonthIso());
-                    return `
-                        <tr>
-                            <td>${escapeHtml(getBudgetScopeLabel(b.scope))}</td>
-                            <td>${escapeHtml(getBudgetTargetName(b))}</td>
-                            <td>${formatBRL(b.monthlyLimit)}</td>
-                            <td><span class="budget-item-percent ${usage.status}">${usage.percent.toFixed(0)}%</span></td>
-                            <td style="text-align:right;white-space:nowrap;">
-                                <button type="button" class="db-action-btn" onclick="editBudget('${b.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                                <button type="button" class="db-action-btn danger" onclick="removeBudget('${b.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('')
-                : `<tr><td colspan="5" style="text-align:center;color:#64748B;font-weight:700;padding:18px;">Nenhuma meta cadastrada.</td></tr>`;
-
-            body.innerHTML = `
-                <form class="budget-modal-form" onsubmit="event.preventDefault(); submitBudgetForm();">
-                    <div>
-                        <label class="label-mini" for="budget-form-scope">Escopo</label>
-                        <select id="budget-form-scope" onchange="onBudgetScopeChange()">
-                            <option value="category" ${formScope === 'category' ? 'selected' : ''}>Categoria</option>
-                            <option value="subCategory" ${formScope === 'subCategory' ? 'selected' : ''}>Subcategoria</option>
-                            <option value="destination" ${formScope === 'destination' ? 'selected' : ''}>Fornecedor</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini" for="budget-form-target">Item alvo</label>
-                        <select id="budget-form-target">${targetOptions}</select>
-                    </div>
-                    <div>
-                        <label class="label-mini" for="budget-form-limit">Limite mensal (R$)</label>
-                        <input type="number" id="budget-form-limit" min="0" step="0.01" value="${formLimit || ''}" placeholder="ex: 500,00">
-                    </div>
-                    <div>
-                        <label class="label-mini" for="budget-form-threshold">Alerta a partir de (%)</label>
-                        <input type="number" id="budget-form-threshold" min="10" max="100" step="5" value="${formThreshold}">
-                    </div>
-                    <div>
-                        <label class="label-mini" for="budget-form-type">Tipo</label>
-                        <select id="budget-form-type">
-                            <option value="SAÍDA" ${formType === 'SAÍDA' ? 'selected' : ''}>Saída (gasto)</option>
-                            <option value="ENTRADA" ${formType === 'ENTRADA' ? 'selected' : ''}>Entrada (receita)</option>
-                        </select>
-                    </div>
-                    <div class="full" style="display:flex;gap:10px;justify-content:flex-end;">
-                        ${editing ? `<button type="button" class="db-inline-btn" onclick="cancelBudgetEdit()">Cancelar edição</button>` : ''}
-                        <button type="submit" class="budgets-card-manage" style="background:#0F172A;color:#fff;">${editing ? 'Salvar alterações' : '+ Adicionar meta'}</button>
-                    </div>
-                </form>
-                <div style="margin-top:20px;">
-                    <p class="label-mini" style="margin-bottom:8px;">Metas cadastradas</p>
-                    <div style="overflow-x:auto;border:1px solid #E5EAF2;border-radius:12px;">
-                        <table class="budget-modal-table">
-                            <thead>
-                                <tr><th>Escopo</th><th>Alvo</th><th>Limite</th><th>Uso</th><th></th></tr>
-                            </thead>
-                            <tbody>${tableRows}</tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            refreshLucideIcons();
-        }
-
-        function buildBudgetTargetOptions(scope, selectedId) {
-            const safeSelected = String(selectedId || '');
-            if (scope === 'destination') {
-                const items = [...(state.destinations || [])]
-                    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
-                return items.map(d => `<option value="${String(d.id || '')}" ${String(d.id || '') === safeSelected ? 'selected' : ''}>${escapeHtml(d.name)}</option>`).join('');
-            }
-            if (scope === 'subCategory') {
-                const items = [...(state.subCategories || [])]
-                    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
-                return items.map(s => {
-                    const cat = (state.categories || []).find(c => String(c.id || '') === String(s.categoryId || ''));
-                    const label = cat ? `${cat.name} › ${s.name}` : s.name;
-                    return `<option value="${String(s.id || '')}" ${String(s.id || '') === safeSelected ? 'selected' : ''}>${escapeHtml(label)}</option>`;
-                }).join('');
-            }
-            const items = [...(state.categories || [])]
-                .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR', { sensitivity: 'base' }));
-            return items.map(c => `<option value="${String(c.id || '')}" ${String(c.id || '') === safeSelected ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
-        }
-
-        function onBudgetScopeChange() {
-            const scopeEl = document.getElementById('budget-form-scope');
-            const targetEl = document.getElementById('budget-form-target');
-            if (!scopeEl || !targetEl) return;
-            targetEl.innerHTML = buildBudgetTargetOptions(scopeEl.value, '');
-        }
-
-        async function submitBudgetForm() {
-            const scope = String(document.getElementById('budget-form-scope')?.value || 'category');
-            const targetId = String(document.getElementById('budget-form-target')?.value || '');
-            const monthlyLimit = Number(document.getElementById('budget-form-limit')?.value || 0);
-            const thresholdPct = Number(document.getElementById('budget-form-threshold')?.value || 80);
-            const type = String(document.getElementById('budget-form-type')?.value || 'SAÍDA');
-            if (!targetId) { alert('Escolha o item alvo da meta.'); return; }
-            if (!monthlyLimit || monthlyLimit <= 0) { alert('Informe um limite mensal maior que zero.'); return; }
-            const payload = {
-                id: budgetModalEditingId || '',
-                scope,
-                targetId,
-                monthlyLimit,
-                type,
-                alertThreshold: Math.min(Math.max(thresholdPct / 100, 0.1), 1)
-            };
-            const result = await saveBudget(payload);
-            if (!result.ok) {
-                alert('Não foi possível salvar a meta na nuvem. Tente novamente.');
-                return;
-            }
-            budgetModalEditingId = '';
-            renderBudgetModalBody();
-            renderBudgetsWidget(document.getElementById('monthly-filter')?.value || getCurrentMonthIso());
-        }
-
-        function editBudget(id) {
-            budgetModalEditingId = String(id || '');
-            renderBudgetModalBody();
-        }
-
-        function cancelBudgetEdit() {
-            budgetModalEditingId = '';
-            renderBudgetModalBody();
-        }
-
-        async function removeBudget(id) {
-            if (!confirm('Excluir esta meta?')) return;
-            await deleteBudget(id);
-            renderBudgetModalBody();
-            renderBudgetsWidget(document.getElementById('monthly-filter')?.value || getCurrentMonthIso());
-        }
-
-        const DUPLICATE_IGNORES_KEY = 'duplicateDestinationIgnores';
-        function loadDuplicateIgnores() {
-            try {
-                const raw = window.localStorage.getItem(DUPLICATE_IGNORES_KEY);
-                const parsed = raw ? JSON.parse(raw) : [];
-                return Array.isArray(parsed) ? new Set(parsed.map(String)) : new Set();
-            } catch (e) {
-                return new Set();
-            }
-        }
-        function persistDuplicateIgnores(set) {
-            try {
-                window.localStorage.setItem(DUPLICATE_IGNORES_KEY, JSON.stringify(Array.from(set)));
-            } catch (e) {}
-        }
-        let duplicateIgnoresSet = loadDuplicateIgnores();
-        function buildDuplicatePairKey(idA, idB) {
-            const a = String(idA || '');
-            const b = String(idB || '');
-            return a < b ? `${a}|${b}` : `${b}|${a}`;
-        }
-        function findDuplicateDestinations() {
-            const destinations = Array.isArray(state.destinations) ? state.destinations : [];
-            const items = destinations.map(d => ({
-                id: String(d.id || ''),
-                name: String(d.name || ''),
-                normalized: normalizeReconText(d.name || ''),
-                compact: normalizeReconCompactText(d.name || ''),
-                documents: getReconDocumentDigitsList(`${d.name || ''} ${d.notes || ''}`)
-            }));
-            const pairs = [];
-            const seenKeys = new Set();
-            for (let i = 0; i < items.length; i++) {
-                for (let j = i + 1; j < items.length; j++) {
-                    const a = items[i];
-                    const b = items[j];
-                    if (!a.id || !b.id) continue;
-                    const key = buildDuplicatePairKey(a.id, b.id);
-                    if (duplicateIgnoresSet.has(key) || seenKeys.has(key)) continue;
-                    let reason = '';
-                    if (a.normalized && a.normalized === b.normalized) {
-                        reason = 'Nomes idênticos após normalização';
-                    } else if (a.compact.length >= 4 && b.compact.length >= 4) {
-                        const dist = getReconCompactDistance(a.compact, b.compact, 2);
-                        if (dist <= 2) reason = `Levenshtein ${dist} entre nomes compactos`;
-                    }
-                    if (!reason && a.documents.length && b.documents.length) {
-                        const shared = a.documents.find(d => b.documents.includes(d));
-                        if (shared) reason = `CNPJ/CPF compartilhado: ${shared}`;
-                    }
-                    if (reason) {
-                        seenKeys.add(key);
-                        pairs.push({ key, a, b, reason });
-                    }
-                }
-            }
-            return pairs;
-        }
-
-        function getDestinationEntryCount(destinationId) {
-            const id = String(destinationId || '');
-            if (!id) return 0;
-            return (state.entries || []).filter(e => String((e.destinationId ?? e.destination_id) || '') === id).length;
-        }
-
-        function openDuplicateModal() {
-            const modal = document.getElementById('duplicate-modal');
-            if (!modal) return;
-            renderDuplicateModalBody();
-            modal.classList.remove('hidden');
-            refreshLucideIcons();
-        }
-        function closeDuplicateModal() {
-            const modal = document.getElementById('duplicate-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-        function renderDuplicateModalBody() {
-            const body = document.getElementById('duplicate-modal-body');
-            if (!body) return;
-            const pairs = findDuplicateDestinations();
-            if (!pairs.length) {
-                body.innerHTML = `<div class="budgets-empty">Nenhuma duplicata detectada no momento.</div>`;
-                return;
-            }
-            body.innerHTML = pairs.map(({ key, a, b, reason }) => {
-                const aCount = getDestinationEntryCount(a.id);
-                const bCount = getDestinationEntryCount(b.id);
-                return `
-                    <div style="border:1px solid #E5EAF2;border-radius:12px;padding:14px;margin-bottom:12px;background:#FAFBFD;">
-                        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;">
-                            <span style="font-size:11px;font-weight:800;color:#B45309;background:#FEF3C7;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.04em;">${escapeHtml(reason)}</span>
-                            <button type="button" class="db-inline-btn" onclick="ignoreDuplicatePair('${key}')">Manter ambos</button>
-                        </div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                            <div style="border:1px solid #E5EAF2;border-radius:10px;padding:10px;background:#fff;">
-                                <div style="font-size:13px;font-weight:800;color:#0F172A;">${escapeHtml(a.name)}</div>
-                                <div style="font-size:11px;font-weight:700;color:#64748B;margin-top:2px;">${aCount} lançamento(s)</div>
-                                <button type="button" class="db-inline-btn" style="margin-top:8px;" onclick="openDuplicateEdit('${a.id}')">Editar A</button>
-                            </div>
-                            <div style="border:1px solid #E5EAF2;border-radius:10px;padding:10px;background:#fff;">
-                                <div style="font-size:13px;font-weight:800;color:#0F172A;">${escapeHtml(b.name)}</div>
-                                <div style="font-size:11px;font-weight:700;color:#64748B;margin-top:2px;">${bCount} lançamento(s)</div>
-                                <button type="button" class="db-inline-btn" style="margin-top:8px;" onclick="openDuplicateEdit('${b.id}')">Editar B</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-        function ignoreDuplicatePair(key) {
-            duplicateIgnoresSet.add(String(key));
-            persistDuplicateIgnores(duplicateIgnoresSet);
-            renderDuplicateModalBody();
-            renderDatabase();
-        }
-        function openDuplicateEdit(destinationId) {
-            closeDuplicateModal();
-            openDbEdit('DESTINATION', String(destinationId || ''));
-        }
         function getExportTimestamp() {
             return new Date().toLocaleString('pt-BR', { hour12: false });
         }
@@ -8553,7 +8156,8 @@
                 projection: 'Projeção financeira',
                 reconciliation: 'Conciliação',
                 treasury: 'Relatório de Vendas',
-                database: 'Banco de Dados'
+                database: 'Banco de Dados',
+                goals: 'Metas financeiras'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
@@ -8582,6 +8186,8 @@
                 renderDatabase();
             } else if (currentTab === 'reconciliation') {
                 populateDropdown('recon-account-select', state.accounts);
+            } else if (currentTab === 'goals') {
+                renderGoals();
             }
             refreshLucideIcons();
             initPiggyMicroInteractions();
@@ -10982,7 +10588,6 @@
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRL(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
-            renderBudgetsWidget(filter);
             renderCashProjection();
             renderAnaliseHierarquicaMensal(monthEntries);
 
@@ -11398,6 +11003,29 @@
             return `${sign}${pct.toFixed(1).replace('.', ',')}%`;
         }
 
+        function openAnnualTemporalPeriodInEntries(startIso, endIso) {
+            const destinationName = annualNavDestinationId ? (getDestinationById(annualNavDestinationId)?.name || '') : '';
+            const setValue = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value;
+            };
+            setValue('entry-search', destinationName);
+            setValue('filter-type', annualTemporalFlow);
+            setValue('filter-status', 'REALIZADO');
+            setValue('filter-account', annualNavAccountId || '');
+            if (String(startIso || '').slice(0, 7) === String(endIso || '').slice(0, 7)) {
+                setValue('filter-month', String(startIso || '').slice(0, 7));
+                setValue('filter-date-start', startIso || '');
+                setValue('filter-date-end', endIso || '');
+            } else {
+                setValue('filter-month', '');
+                setValue('filter-date-start', startIso || '');
+                setValue('filter-date-end', endIso || '');
+            }
+            switchTab('entries');
+            renderEntries();
+        }
+
         function renderAnnualTemporalComparison(year) {
             const flowEl = document.getElementById('annual-temporal-flow');
             const modeEl = document.getElementById('annual-temporal-mode');
@@ -11515,25 +11143,45 @@
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             let labels = [];
             let values = [];
+            let periods = [];
 
             if(annualTemporalMode === 'MESES') {
                 labels = monthNames;
-                values = monthNames.map((_, m) => {
+                periods = monthNames.map((label, m) => {
                     const prefix = `${annualTemporalYear}-${String(m + 1).padStart(2, '0')}`;
-                    return filtered
-                        .filter(e => (e.date || '').startsWith(prefix))
-                        .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                    const monthEntries = filtered.filter(e => (e.date || '').startsWith(prefix));
+                    const total = monthEntries.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                    const lastDay = new Date(annualTemporalYear, m + 1, 0).getDate();
+                    return {
+                        label,
+                        detail: `${String(m + 1).padStart(2, '0')}/${annualTemporalYear}`,
+                        startIso: `${prefix}-01`,
+                        endIso: `${prefix}-${String(lastDay).padStart(2, '0')}`,
+                        value: total,
+                        count: monthEntries.length,
+                        average: monthEntries.length ? total / monthEntries.length : 0
+                    };
                 });
+                values = periods.map(item => item.value);
                 summaryEl.innerText = `Comparativo mensal de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} em ${annualTemporalYear}.`;
             } else {
                 const years = validYears;
                 labels = years.map(String);
-                values = years.map(y => {
+                periods = years.map(y => {
                     const prefix = `${y}-`;
-                    return filtered
-                        .filter(e => (e.date || '').startsWith(prefix))
-                        .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                    const yearEntries = filtered.filter(e => (e.date || '').startsWith(prefix));
+                    const total = yearEntries.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                    return {
+                        label: String(y),
+                        detail: 'Ano completo',
+                        startIso: `${y}-01-01`,
+                        endIso: `${y}-12-31`,
+                        value: total,
+                        count: yearEntries.length,
+                        average: yearEntries.length ? total / yearEntries.length : 0
+                    };
                 });
+                values = periods.map(item => item.value);
                 summaryEl.innerText = `Comparativo anual de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} entre anos.`;
             }
 
@@ -11551,24 +11199,37 @@
                 selectedAnnualNames.some(isCapitalContributionName) ||
                 (filtered.length > 0 && filtered.every(isCapitalContributionEntry))
             );
+            if(annualTemporalMode === 'MESES' && annualNavDestinationId) {
+                const supplierName = dstOptions.find(d => d.id === annualNavDestinationId)?.name || 'Fornecedor selecionado';
+                summaryEl.innerText = `${supplierName}: comparação mês a mês em ${annualTemporalYear}. Clique em "Ver" para abrir os lançamentos do período.`;
+            } else if(annualTemporalMode === 'MESES' && !annualNavDestinationId) {
+                summaryEl.innerText = `Escolha um destino/fornecedor para ver quanto gastou em Jan, Fev, Mar e nos demais meses de ${annualTemporalYear}.`;
+            }
             if(navParts.length) summaryEl.innerText += ` Filtro: ${navParts.filter(Boolean).join(' > ')}.`;
             if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
             renderAnnualHierarchyDetail(filtered);
 
             if(values.every(v => v === 0)) {
-                tableBody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
                 if(window.aTemporalChart) window.aTemporalChart.destroy();
                 return;
             }
 
-            tableBody.innerHTML = labels.map((label, idx) => {
+            tableBody.innerHTML = periods.map((item, idx) => {
                 const current = values[idx] || 0;
                 const prev = idx > 0 ? (values[idx - 1] || 0) : 0;
                 const varText = formatVariation(current, prev);
+                const valueClass = isCapitalView ? 'flow-capital-text' : annualTemporalFlow === 'ENTRADA' ? 'flow-income-text' : 'flow-expense-text';
                 return `<tr class="table-row">
-                    <td class="px-4 py-3 text-[11px] font-black text-slate-700 uppercase">${label}</td>
-                    <td class="px-4 py-3 text-right text-[11px] font-black ${isCapitalView ? 'flow-capital-text' : annualTemporalFlow === 'ENTRADA' ? 'flow-income-text' : 'flow-expense-text'}">${formatBRL(current)}</td>
-                    <td class="px-4 py-3 text-right text-[11px] font-bold text-slate-500">${varText}</td>
+                    <td class="px-4 py-3">
+                        <div class="annual-compare-period">${escapeHtml(item.label)}</div>
+                        <div class="annual-compare-sub">${escapeHtml(item.detail)}</div>
+                    </td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-value ${valueClass}">${formatBRL(current)}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-muted">${item.count}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-muted">${item.count ? formatBRL(item.average) : '-'}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-muted">${varText}</span></td>
+                    <td class="px-4 py-3 text-right"><button type="button" class="annual-compare-open" onclick="openAnnualTemporalPeriodInEntries('${item.startIso}', '${item.endIso}')">Ver</button></td>
                 </tr>`;
             }).join('');
 
@@ -11824,10 +11485,6 @@
                 ranges.some(prefix => String(entry.date || '').startsWith(prefix)) &&
                 String(entry.status || '').toUpperCase() === 'REALIZADO'
             );
-            const monthlyAverage = summarizeFinancialEntries(entries);
-            monthlyAverage.inc = monthlyAverage.inc / months;
-            monthlyAverage.exp = monthlyAverage.exp / months;
-            monthlyAverage.net = monthlyAverage.inc - monthlyAverage.exp;
             const range = getCashProjectionWindow(periodDays);
             const buckets = getProjectionBuckets(range.startIso, range.endIso);
             fillProjectionBucketsFromHistory(buckets, entries, months);
@@ -11845,8 +11502,8 @@
             document.getElementById('projection-card-net').innerText = formatBRL(projected.net);
             document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
             document.getElementById('projection-explain').innerText = `Projeção calculada usando o mesmo dia do mês no histórico dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
-            document.getElementById('projection-list-title').innerText = 'Base histórica';
-            document.getElementById('projection-list-subtitle').innerText = `Cada dia projetado usa o histórico do mesmo dia do mês.`;
+            document.getElementById('projection-list-title').innerText = 'Tabela da projeção';
+            document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia do mês no histórico.`;
             renderProjectionChart(
                 buckets.length ? buckets.map(bucket => bucket.label) : ['Sem dados'],
                 buckets.length ? buckets.map(bucket => bucket.inc) : [0],
@@ -11855,11 +11512,51 @@
             );
             const listEl = document.getElementById('projection-list');
             if (listEl) {
-                listEl.innerHTML = [
-                    buildInsightCard('calendar-search', 'Base da projeção', `Cada dia busca os lançamentos do mesmo dia nos últimos ${months} ${months === 1 ? 'mês' : 'meses'}.`),
-                    buildInsightCard('trending-up', 'Média mensal de entradas', formatBRL(monthlyAverage.inc)),
-                    buildInsightCard('trending-down', 'Média mensal de saídas', formatBRL(monthlyAverage.exp))
-                ].join('');
+                document.getElementById('projection-list-title').innerText = 'Tabela da projeção';
+                document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia do mês no histórico.`;
+                if (!buckets.length) {
+                    listEl.innerHTML = '<div class="cash-projection-empty">Nenhum dado histórico encontrado para montar a projeção.</div>';
+                    return;
+                }
+                const rows = buckets.map(bucket => {
+                    const net = bucket.inc - bucket.exp;
+                    const periodDetail = bucket.startIso === bucket.endIso
+                        ? formatDateBRV2(bucket.startIso)
+                        : `${formatDateBRV2(bucket.startIso)} a ${formatDateBRV2(bucket.endIso)}`;
+                    return `<tr>
+                        <td>
+                            <div class="projection-table-date">${escapeHtml(bucket.label)}</div>
+                            <div class="projection-table-sub">${escapeHtml(periodDetail)}</div>
+                        </td>
+                        <td><span class="projection-table-value flow-income-text">${formatBRL(bucket.inc)}</span></td>
+                        <td><span class="projection-table-value flow-expense-text">${formatBRL(bucket.exp)}</span></td>
+                        <td><span class="projection-table-value ${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(net)}</span></td>
+                    </tr>`;
+                }).join('');
+                listEl.innerHTML = `<div class="projection-table-wrap custom-scrollbar">
+                    <table class="projection-table" aria-label="Tabela da projeção histórica">
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Entradas</th>
+                                <th>Saídas</th>
+                                <th>Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows}
+                            <tr class="projection-table-total">
+                                <td>
+                                    <div class="projection-table-date">Total projetado</div>
+                                    <div class="projection-table-sub">${periodDays} dias com base em ${months} ${months === 1 ? 'mês' : 'meses'}</div>
+                                </td>
+                                <td><span class="projection-table-value flow-income-text">${formatBRL(projected.inc)}</span></td>
+                                <td><span class="projection-table-value flow-expense-text">${formatBRL(projected.exp)}</span></td>
+                                <td><span class="projection-table-value ${projected.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(projected.net)}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`;
             }
         }
 
@@ -12748,58 +12445,7 @@
             return String((match || {}).id || '');
         }
 
-        function isDestinationInFixedPriorityCategory(destination) {
-            const dst = destination || {};
-            const subId = String(dst.subCategoryId || '');
-            if (!subId) return false;
-            const sub = (state.subCategories || []).find(s => String(s.id || '') === subId);
-            if (!sub) return false;
-            const catId = String(sub.categoryId || '');
-            if (!catId) return false;
-            const cat = (state.categories || []).find(c => String(c.id || '') === catId);
-            return Boolean(cat && cat.isFixedPriority);
-        }
-
-        let destinationRecentHistoryCache = {
-            destinationsRef: null,
-            entriesRef: null,
-            entriesLen: -1,
-            items: new Map()
-        };
-        function getDestinationRecentHistory(destinationId) {
-            const id = String(destinationId || '');
-            if (!id) return { count: 0, daysOfMonth: [] };
-            if (destinationRecentHistoryCache.destinationsRef !== state.destinations
-                || destinationRecentHistoryCache.entriesRef !== state.entries
-                || destinationRecentHistoryCache.entriesLen !== (state.entries || []).length) {
-                destinationRecentHistoryCache = {
-                    destinationsRef: state.destinations,
-                    entriesRef: state.entries,
-                    entriesLen: (state.entries || []).length,
-                    items: new Map()
-                };
-            }
-            if (destinationRecentHistoryCache.items.has(id)) {
-                return destinationRecentHistoryCache.items.get(id);
-            }
-            const today = parseIsoDateLocal(getTodayIsoDate()) || new Date();
-            const cutoffMs = today.getTime() - (90 * 24 * 60 * 60 * 1000);
-            const daysOfMonth = [];
-            let count = 0;
-            (state.entries || []).forEach(e => {
-                if (String(e.destinationId || '') !== id) return;
-                const d = parseIsoDateLocal(String(e.date || ''));
-                if (!d) return;
-                if (d.getTime() < cutoffMs) return;
-                count++;
-                daysOfMonth.push(d.getDate());
-            });
-            const result = { count, daysOfMonth };
-            destinationRecentHistoryCache.items.set(id, result);
-            return result;
-        }
-
-        function inferDestinationFromDescription(description, validDestinations, flowType = '', options = {}) {
+        function inferDestinationFromDescription(description, validDestinations, flowType = '') {
             if (!validDestinations || validDestinations.length === 0) return '';
             const descNorm = normalizeReconText(description);
             const descDocumentDigits = getReconDocumentDigitsList(description);
@@ -12880,19 +12526,6 @@
                 });
 
                 if (isInternalTransfer && !hasTransferEvidence) score -= 260;
-
-                if (score > 0 && isDestinationInFixedPriorityCategory(dst)) {
-                    const history = getDestinationRecentHistory(dst.id);
-                    if (history.count > 0) {
-                        score += 250;
-                        const referenceDay = Number(String(options.referenceDate || '').slice(8, 10));
-                        if (referenceDay && history.daysOfMonth.length) {
-                            const recentDays = history.daysOfMonth.slice(-3);
-                            const avgDay = recentDays.reduce((s, d) => s + d, 0) / recentDays.length;
-                            if (Math.abs(avgDay - referenceDay) <= 3) score += 100;
-                        }
-                    }
-                }
 
                 if (score > bestDirectScore) {
                     secondDirectScore = bestDirectScore;
@@ -13036,13 +12669,12 @@
                     const inferredDestinationId = inferDestinationFromDescription(
                         parsedTableRow.description,
                         typeDestinations.length ? typeDestinations : validDestinations,
-                        parsedTableRow.type,
-                        { referenceDate: parsedTableRow.date }
+                        parsedTableRow.type
                     ) || getDefaultReconDestinationId(
                         parsedTableRow.type,
                         typeDestinations.length ? typeDestinations : validDestinations
                     );
-                    const reconItem = {
+                    tempRecon.push({
                         id: generateId(),
                         date: parsedTableRow.date,
                         amount: parsedTableRow.amountAbs,
@@ -13050,13 +12682,7 @@
                         status: batchStatus,
                         description: String(parsedTableRow.description || '').trim(),
                         destinationId: inferredDestinationId,
-                    };
-                    const crossMatch = findCrossAccountPendingMatch(reconItem, getReconSelectedAccountId());
-                    if (crossMatch) {
-                        reconItem.crossAccountMatch = crossMatch;
-                        reconItem.moveCrossAccount = true;
-                    }
-                    tempRecon.push(reconItem);
+                    });
                     continue;
                 }
 
@@ -13115,27 +12741,20 @@
                     const inferredDestinationId = inferDestinationFromDescription(
                         desc,
                         typeDestinations.length ? typeDestinations : validDestinations,
-                        flowType,
-                        { referenceDate: rawDate }
+                        flowType
                     ) || getDefaultReconDestinationId(
                         flowType,
                         typeDestinations.length ? typeDestinations : validDestinations
                     );
-                    const reconItem = {
-                        id: generateId(),
-                        date: rawDate,
-                        amount: Math.abs(val),
-                        type: flowType,
+                    tempRecon.push({ 
+                        id: generateId(), 
+                        date: rawDate, 
+                        amount: Math.abs(val), 
+                        type: flowType, 
                         status: batchStatus,
-                        description: String(desc || '').trim(),
+                        description: String(desc || '').trim(), 
                         destinationId: inferredDestinationId,
-                    };
-                    const crossMatch = findCrossAccountPendingMatch(reconItem, getReconSelectedAccountId());
-                    if (crossMatch) {
-                        reconItem.crossAccountMatch = crossMatch;
-                        reconItem.moveCrossAccount = true;
-                    }
-                    tempRecon.push(reconItem);
+                    });
                 }
             }
             renderReconPreview();
@@ -13532,76 +13151,6 @@
             return String(document.getElementById('recon-account-select')?.value || '');
         }
 
-        function getAccountLabelById(accountId) {
-            const id = String(accountId || '');
-            if (!id) return '';
-            const acc = (state.accounts || []).find(a => String(a.id || '') === id);
-            return String((acc || {}).name || '');
-        }
-
-        function normalizeReconDescriptionForMatch(value) {
-            return normalizeReconText(value).replace(/\s+/g, ' ').trim();
-        }
-
-        function findCrossAccountPendingMatch(reconItem, selectedAccountId) {
-            const targetAcc = String(selectedAccountId || '');
-            const item = reconItem || {};
-            const itemDate = String(item.date || '');
-            const itemAmount = Math.abs(Number(item.amount) || 0);
-            const itemType = normalizeFlowType(item.type);
-            if (!itemDate || !itemAmount || !itemType) return null;
-            const itemDateObj = parseIsoDateLocal(itemDate);
-            if (!itemDateObj) return null;
-            const itemDescNorm = normalizeReconDescriptionForMatch(item.description);
-            const itemDescCompact = normalizeReconCompactText(itemDescNorm);
-            const candidates = [];
-            (state.entries || []).forEach(existing => {
-                if (!existing) return;
-                const exStatus = String(existing.status || '').toUpperCase();
-                if (exStatus !== 'PENDENTE') return;
-                const exType = normalizeFlowType(existing.type);
-                if (exType !== itemType) return;
-                const exAccountId = String((existing.accountId ?? existing.account_id) || '');
-                if (!exAccountId || exAccountId === targetAcc) return;
-                const exAmount = Math.abs(Number(existing.amount) || 0);
-                if (Math.abs(exAmount - itemAmount) > 0.01) return;
-                const exDateObj = parseIsoDateLocal(String(existing.date || ''));
-                if (!exDateObj) return;
-                const daysDiff = Math.abs((exDateObj.getTime() - itemDateObj.getTime()) / (24 * 60 * 60 * 1000));
-                if (daysDiff > 7) return;
-                let descScore = 0;
-                if (itemDescNorm) {
-                    const exDescNorm = normalizeReconDescriptionForMatch(existing.description);
-                    if (exDescNorm) {
-                        if (exDescNorm === itemDescNorm) descScore = 100;
-                        else if (itemDescNorm.includes(exDescNorm) || exDescNorm.includes(itemDescNorm)) descScore = 70;
-                        else {
-                            const exCompact = normalizeReconCompactText(exDescNorm);
-                            if (exCompact && itemDescCompact) {
-                                if (exCompact === itemDescCompact) descScore = 100;
-                                else if (exCompact.includes(itemDescCompact) || itemDescCompact.includes(exCompact)) descScore = 60;
-                            }
-                        }
-                    }
-                }
-                const destinationId = String((existing.destinationId ?? existing.destination_id) || '');
-                if (String(item.destinationId || '') && destinationId && String(item.destinationId) === destinationId) descScore += 40;
-                const score = 100 - (daysDiff * 5) + descScore;
-                candidates.push({
-                    entryId: String(existing.id || ''),
-                    accountId: exAccountId,
-                    accountLabel: getAccountLabelById(exAccountId),
-                    destinationId,
-                    destinationLabel: getDestinationDisplayLabelById(destinationId),
-                    daysDiff,
-                    score
-                });
-            });
-            if (!candidates.length) return null;
-            candidates.sort((a, b) => b.score - a.score);
-            return candidates[0];
-        }
-
         let reconExistingMatchCache = {
             accountId: '',
             cutoffIso: '',
@@ -13846,16 +13395,6 @@
                         <td class="px-4 py-3">
                             <div id="recon-badge-${i}" class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}">${reviewBadge.badgeText}</div>
                             <p id="recon-badge-note-${i}" class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
-                            ${e.crossAccountMatch ? `
-                                <div class="mt-2 rounded-lg border border-indigo-200 bg-indigo-50 p-2">
-                                    <div class="inline-flex items-center rounded-full bg-indigo-100 text-indigo-700 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">Pendente em outra conta</div>
-                                    <p class="mt-1 text-[11px] font-semibold leading-4 text-indigo-800">${escapeHtml(e.crossAccountMatch.accountLabel || 'outra conta')}</p>
-                                    <label class="mt-1 flex items-center gap-1.5 text-[11px] font-bold text-indigo-900 cursor-pointer">
-                                        <input type="checkbox" ${e.moveCrossAccount ? 'checked' : ''} onchange="toggleReconMoveCrossAccount(${i})" class="w-3 h-3 accent-indigo-600">
-                                        Mover para esta conta
-                                    </label>
-                                </div>
-                            ` : ''}
                         </td>
                         <td class="px-4 py-3 text-center">
                             <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
@@ -13875,12 +13414,6 @@
         function removeRecon(index) {
             tempRecon.splice(index, 1);
             renderReconPreview();
-        }
-
-        function toggleReconMoveCrossAccount(index) {
-            const item = tempRecon[index];
-            if (!item || !item.crossAccountMatch) return;
-            item.moveCrossAccount = !item.moveCrossAccount;
         }
 
         async function finalizeRecon() {
@@ -13915,90 +13448,50 @@
                     alert('Existem registros com destino sem vínculo válido no Banco de Dados.');
                     return;
                 }
-                const newEntries = [];
-                const movedExistingEntries = [];
-                tempRecon.forEach((temp) => {
+                const newEntries = tempRecon.map((temp) => {
                     const dst = state.destinations.find(d => d.id === temp.destinationId);
                     const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
                     const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
-                    if (temp.crossAccountMatch && temp.moveCrossAccount && temp.crossAccountMatch.entryId) {
-                        const existing = state.entries.find(e => String(e.id || '') === String(temp.crossAccountMatch.entryId));
-                        if (existing) {
-                            movedExistingEntries.push({
-                                ...existing,
-                                accountId: accId,
-                                date: temp.date,
-                                amount: temp.amount,
-                                description: temp.description || existing.description || '',
-                                destinationId: temp.destinationId,
-                                categoryId: String((cat || {}).id || existing.categoryId || ''),
-                                subCategoryId: String((sub || {}).id || existing.subCategoryId || ''),
-                                status: 'REALIZADO'
-                            });
-                            return;
-                        }
-                    }
-                    newEntries.push({
+                    return {
                         ...temp,
                         id: generateId(),
                         accountId: accId,
                         categoryId: String((cat || {}).id || ''),
                         subCategoryId: String((sub || {}).id || ''),
-                        status: batchStatus
-                    });
+                        status: batchStatus,
+                    };
                 });
-
                 const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
                 const entriesToImport = newEntries;
-                if (entriesToImport.length === 0 && movedExistingEntries.length === 0) {
+                if (entriesToImport.length === 0) {
                     if (summaryEl) {
                         summaryEl.innerText = 'Nenhum lançamento disponível para importar.';
                     }
                     return;
                 }
-
-                if (movedExistingEntries.length) {
-                    const moveResult = await cloudSaveBatched('entries', movedExistingEntries, 200);
-                    if (!moveResult?.ok) {
-                        await refreshCloudState({ silent: false });
-                        alert(`Não foi possível mover lançamentos existentes.\n\nDetalhe: ${String(moveResult?.error?.message || 'Erro desconhecido.')}`);
-                        return;
-                    }
-                    movedExistingEntries.forEach(updated => {
-                        const idx = state.entries.findIndex(e => String(e.id || '') === String(updated.id || ''));
-                        if (idx >= 0) state.entries[idx] = { ...state.entries[idx], ...updated };
-                    });
+                if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
+                const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
+                    if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
+                });
+                if (!saveResult?.ok) {
+                    if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
+                    await refreshCloudState({ silent: false });
+                    alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                    return;
                 }
-
-                if (entriesToImport.length > 0) {
-                    if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
-                    const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
-                        if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
-                    });
-                    if (!saveResult?.ok) {
-                        if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
-                        await refreshCloudState({ silent: false });
-                        alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
-                        return;
-                    }
-                    const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
-                    const validation = await validateImportedEntryIds(importedIds);
-                    if (!validation.ok) {
-                        alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
+                const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
+                const validation = await validateImportedEntryIds(importedIds);
+                if (!validation.ok) {
+                    alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
+                } else {
+                    const importedNow = Number(validation.imported || 0);
+                    if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
+                    if (importedNow !== entriesToImport.length) {
+                        alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
                     } else {
-                        const importedNow = Number(validation.imported || 0);
-                        if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
-                        if (importedNow !== entriesToImport.length) {
-                            alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
-                        } else {
-                            const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nDuplicados importados: ${duplicateAgainstExisting.length}.` : '';
-                            const movedNote = movedExistingEntries.length > 0 ? `\nMovidos de outra conta: ${movedExistingEntries.length}.` : '';
-                            alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}${movedNote}`);
-                        }
+                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nDuplicados importados: ${duplicateAgainstExisting.length}.` : '';
+                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}`);
                     }
-                } else if (movedExistingEntries.length > 0) {
-                    if (summaryEl) summaryEl.innerText = `${movedExistingEntries.length} lançamento(s) movido(s) para esta conta`;
-                    alert(`Conciliação concluída.\n\n${movedExistingEntries.length} lançamento(s) pendente(s) foram movidos para esta conta e marcados como REALIZADO.`);
                 }
                 await refreshCloudState({ silent: false });
                 cancelRecon(); render(); switchTab('entries');
@@ -14099,12 +13592,6 @@
                             <div>
                                 <div class="db-col-title">Destinos</div>
                                 <div class="db-col-count">${filteredDestinations.length} item(ns)</div>
-                                ${(() => {
-                                    const dupCount = findDuplicateDestinations().length;
-                                    return dupCount > 0
-                                        ? `<button type="button" onclick="openDuplicateModal()" style="margin-top:6px;display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;color:#B45309;background:#FEF3C7;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:0.04em;border:1px solid #FCD34D;">⚠ ${dupCount} possíve${dupCount > 1 ? 'is' : 'l'} duplicata${dupCount > 1 ? 's' : ''}</button>`
-                                        : '';
-                                })()}
                             </div>
                             ${selectedSub ? `<button class="db-inline-btn" onclick="openDbModal('DESTINATION', '${selectedSub.id}')">+ Destino</button>` : ''}
                         </div>
@@ -14930,22 +14417,7 @@
             if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') {
-                    const isFixed = Boolean(editItem && editItem.isFixedPriority);
-                    exEl.innerHTML = `
-                        <label class="label-mini" for="db-cat-type">Tipo</label>
-                        <select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>
-                        <div style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid #E5EAF2;border-radius:10px;background:#F8FAFC;">
-                            <input type="checkbox" id="db-cat-fixed" ${isFixed ? 'checked' : ''} style="margin-top:3px;">
-                            <label for="db-cat-fixed" style="font-size:12px;font-weight:700;color:#0F172A;line-height:1.4;">
-                                Categoria de gastos fixos/mensais
-                                <span style="display:block;font-weight:600;color:#64748B;font-size:11px;margin-top:2px;">
-                                    Destinos desta categoria ganham prioridade nas sugestões de conciliação.
-                                </span>
-                            </label>
-                        </div>
-                    `;
-                }
+                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
                 else if(type === 'SUBCATEGORY') exEl.innerHTML = `<div><label class="label-mini" for="db-subcategory-category">Categoria</label><select id="db-subcategory-category" onchange="syncDbSubCategoryParentField()">${buildDbCategoryOptions(parentId)}</select><p class="field-help">Ao mover a subcategoria, os lançamentos vinculados continuam ligados e têm a categoria atualizada automaticamente.</p></div>`;
                 else if(type === 'DESTINATION') {
                     const initialSubCategoryId = String((editItem || {}).subCategoryId || parentId || '');
@@ -14999,12 +14471,7 @@
             if(type==='CATEGORY') {
                 table = 'categories';
                 previousItem = state.categories.find(item => item.id === id) || null;
-                data = {
-                    id,
-                    name,
-                    type: document.getElementById('db-cat-type').value,
-                    isFixedPriority: Boolean(document.getElementById('db-cat-fixed')?.checked)
-                };
+                data = {id, name, type: document.getElementById('db-cat-type').value };
             }
             if(type==='SUBCATEGORY') {
                 table = 'subCategories';
@@ -15300,10 +14767,444 @@
             if (!shell || shell.contains(event.target)) return;
             closeDestinationCombobox();
         });
+        // ─── METAS (GOALS) ───────────────────────────────────────────────────────
+        let goalsData = [];
+        let goalsCurrentMonth = '';
+
+        function loadGoals() {
+            try { goalsData = JSON.parse(localStorage.getItem('metas_goals_v1') || '[]'); }
+            catch { goalsData = []; }
+            if (!Array.isArray(goalsData)) goalsData = [];
+        }
+
+        function saveGoals() {
+            localStorage.setItem('metas_goals_v1', JSON.stringify(goalsData));
+        }
+
+        function normalizeGoalFromCloud(row) {
+            if (!row || typeof row !== 'object') return null;
+            return {
+                id:            String(row.id || ''),
+                type:          String(row.type || 'SAÍDA'),
+                hierarchyType: String(row.hierarchy_type || row.hierarchyType || 'category'),
+                hierarchyId:   String(row.hierarchy_id   || row.hierarchyId   || ''),
+                amount:        Number(row.amount || 0),
+                recurring:     row.recurring !== false,
+                targetMonth:   row.target_month || row.targetMonth || null,
+                createdAt:     row.created_at   || row.createdAt   || new Date().toISOString()
+            };
+        }
+
+        function goalToCloudPayload(goal) {
+            return {
+                id:             goal.id,
+                type:           goal.type,
+                hierarchy_type: goal.hierarchyType,
+                hierarchy_id:   goal.hierarchyId,
+                amount:         goal.amount,
+                recurring:      goal.recurring,
+                target_month:   goal.targetMonth || null,
+                created_at:     goal.createdAt   || new Date().toISOString(),
+                updated_at:     new Date().toISOString()
+            };
+        }
+
+        async function loadGoalsFromCloud() {
+            if (!sbClient) return;
+            try {
+                const { data, error } = await withTimeout(
+                    sbClient.from('goals').select('*'),
+                    10000, 'Carregar metas'
+                );
+                if (error) {
+                    if (isMissingTableError(error)) {
+                        console.warn('Tabela goals não encontrada. Crie-a no Supabase.');
+                        return;
+                    }
+                    throw error;
+                }
+                const loaded = (Array.isArray(data) ? data : []).map(normalizeGoalFromCloud).filter(Boolean);
+                goalsData = loaded;
+                saveGoals();
+            } catch (err) {
+                console.error('Erro ao carregar metas da nuvem:', err);
+            }
+        }
+
+        async function upsertGoalToCloud(goal) {
+            if (!sbClient) return { ok: false };
+            try {
+                const { error } = await sbClient.from('goals').upsert(goalToCloudPayload(goal));
+                return { ok: !error, error };
+            } catch (err) {
+                return { ok: false, error: err };
+            }
+        }
+
+        async function deleteGoalFromCloud(id) {
+            if (!sbClient) return { ok: false };
+            try {
+                const { error } = await sbClient.from('goals').delete().eq('id', id);
+                return { ok: !error, error };
+            } catch (err) {
+                return { ok: false, error: err };
+            }
+        }
+
+        function goalsGetCurrentMonth() {
+            if (!goalsCurrentMonth) {
+                const now = new Date();
+                goalsCurrentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            }
+            return goalsCurrentMonth;
+        }
+
+        function goalMonthLabel(yyyyMM) {
+            const [y, m] = (yyyyMM || '').split('-');
+            if (!y || !m) return '—';
+            const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            return `${months[Number(m) - 1]} ${y}`;
+        }
+
+        function goalsNavMonth(delta) {
+            const m = goalsGetCurrentMonth();
+            const [y, mo] = m.split('-').map(Number);
+            const d = new Date(y, mo - 1 + delta, 1);
+            goalsCurrentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            renderGoals();
+        }
+
+        function calcGoalProgress(goal, yyyyMM) {
+            const [yr, mn] = (yyyyMM || '').split('-').map(Number);
+            if (!yr || !mn) return { actual: 0, target: goal.amount, pct: 0, rawPct: 0, status: 'ok', remaining: goal.amount };
+
+            const start = `${yyyyMM}-01`;
+            const end = `${yyyyMM}-${String(new Date(yr, mn, 0).getDate()).padStart(2, '0')}`;
+
+            let destIds;
+            if (goal.hierarchyType === 'destination') {
+                destIds = new Set([goal.hierarchyId]);
+            } else if (goal.hierarchyType === 'subcategory') {
+                destIds = new Set(state.destinations.filter(d => d.subCategoryId === goal.hierarchyId).map(d => d.id));
+            } else {
+                const subIds = new Set(state.subCategories.filter(s => s.categoryId === goal.hierarchyId).map(s => s.id));
+                destIds = new Set(state.destinations.filter(d => subIds.has(d.subCategoryId)).map(d => d.id));
+            }
+
+            const actual = state.entries
+                .filter(e => e.type === goal.type && e.date >= start && e.date <= end && destIds.has(e.destinationId))
+                .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+            const rawPct = goal.amount > 0 ? (actual / goal.amount) * 100 : 0;
+            const pct = Math.min(rawPct, 100);
+
+            let status;
+            if (goal.type === 'SAÍDA') {
+                status = rawPct > 100 ? 'over' : rawPct > 90 ? 'danger' : rawPct > 70 ? 'warn' : 'ok';
+            } else {
+                status = rawPct >= 90 ? 'rev_ok' : rawPct >= 70 ? 'warn' : 'rev_danger';
+            }
+
+            return { actual, target: goal.amount, pct, rawPct, status, remaining: goal.amount - actual };
+        }
+
+        function getGoalHierarchyName(goal) {
+            if (goal.hierarchyType === 'destination') {
+                return state.destinations.find(d => d.id === goal.hierarchyId)?.name || 'Destino';
+            } else if (goal.hierarchyType === 'subcategory') {
+                return state.subCategories.find(s => s.id === goal.hierarchyId)?.name || 'Subcategoria';
+            }
+            return state.categories.find(c => c.id === goal.hierarchyId)?.name || 'Categoria';
+        }
+
+        function getGoalLevelLabel(t) {
+            return { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' }[t] || t;
+        }
+
+        function renderGoals() {
+            const month = goalsGetCurrentMonth();
+            const lblEl = document.getElementById('goals-month-label');
+            if (lblEl) lblEl.textContent = goalMonthLabel(month);
+
+            const visibleGoals = goalsData.filter(g => g.recurring ? true : g.targetMonth === month);
+
+            const kpiEl = document.getElementById('goals-kpi-row');
+            if (kpiEl) {
+                const progs = visibleGoals.map(g => calcGoalProgress(g, month));
+                const total = visibleGoals.length;
+                const ok   = progs.filter(p => p.status === 'ok' || p.status === 'rev_ok').length;
+                const attn = progs.filter(p => p.status === 'warn' || p.status === 'danger' || p.status === 'rev_danger').length;
+                const over = progs.filter(p => p.status === 'over').length;
+                kpiEl.innerHTML = `
+                    <div class="kpi-card p-5" style="border-top:4px solid #2F4F9D;background:linear-gradient(180deg,#fff 0%,#EEF2FF 100%)">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total ativo</p>
+                        <p class="text-3xl font-black text-slate-900">${total}</p>
+                        <p class="text-xs text-slate-400 mt-1">metas neste mês</p>
+                    </div>
+                    <div class="kpi-card p-5" style="border-top:4px solid #1F7A5C;background:linear-gradient(180deg,#fff 0%,#EEF9F3 100%)">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">No prazo</p>
+                        <p class="text-3xl font-black" style="color:#1F7A5C">${ok}</p>
+                        <p class="text-xs text-slate-400 mt-1">dentro do esperado</p>
+                    </div>
+                    <div class="kpi-card p-5" style="border-top:4px solid #D97706;background:linear-gradient(180deg,#fff 0%,#FFFBEB 100%)">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Em atenção</p>
+                        <p class="text-3xl font-black" style="color:#D97706">${attn}</p>
+                        <p class="text-xs text-slate-400 mt-1">entre 70–100%</p>
+                    </div>
+                    <div class="kpi-card p-5" style="border-top:4px solid #B23A3A;background:linear-gradient(180deg,#fff 0%,#FFF0F0 100%)">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Excedido</p>
+                        <p class="text-3xl font-black" style="color:#B23A3A">${over}</p>
+                        <p class="text-xs text-slate-400 mt-1">acima da meta</p>
+                    </div>`;
+            }
+
+            const gridEl = document.getElementById('goals-grid');
+            if (!gridEl) return;
+
+            if (visibleGoals.length === 0) {
+                gridEl.innerHTML = `
+                    <div class="goals-empty col-span-full">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="target" class="w-8 h-8 text-slate-300"></i>
+                        </div>
+                        <p class="font-bold text-slate-700 mb-1">Nenhuma meta para ${goalMonthLabel(month)}</p>
+                        <p class="text-sm text-slate-400 mb-5">Crie metas para monitorar orçamentos e receitas por categoria.</p>
+                        <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase">+ Nova Meta</button>
+                    </div>`;
+                refreshLucideIcons();
+                return;
+            }
+
+            const statusMap = {
+                ok:         { fillClass: 'goal-fill-ok',     textColor: '#1F7A5C', label: 'No prazo',  topColor: '#1F7A5C' },
+                warn:       { fillClass: 'goal-fill-warn',    textColor: '#D97706', label: 'Atenção',   topColor: '#D97706' },
+                danger:     { fillClass: 'goal-fill-danger',  textColor: '#B23A3A', label: 'Em risco',  topColor: '#B23A3A' },
+                over:       { fillClass: 'goal-fill-over',    textColor: '#7F1D1D', label: 'Excedido',  topColor: '#7F1D1D' },
+                rev_ok:     { fillClass: 'goal-fill-ok',      textColor: '#1F7A5C', label: 'Atingido',  topColor: '#1F7A5C' },
+                rev_danger: { fillClass: 'goal-fill-danger',  textColor: '#B23A3A', label: 'Abaixo',    topColor: '#D97706' },
+            };
+
+            gridEl.innerHTML = visibleGoals.map(goal => {
+                const prog = calcGoalProgress(goal, month);
+                const sc   = statusMap[prog.status] || statusMap.ok;
+                const name = getGoalHierarchyName(goal);
+                const lvl  = getGoalLevelLabel(goal.hierarchyType);
+                const isEx = goal.type === 'SAÍDA';
+                const typeIcon  = isEx ? 'trending-down' : 'trending-up';
+                const typeBg    = isEx ? 'background:#FFF0F0;color:#B23A3A' : 'background:#EEF9F3;color:#1F7A5C';
+                const typeLabel = isEx ? 'Despesa' : 'Receita';
+                const recurTag  = goal.recurring ? '<span class="text-[10px] text-slate-400 ml-1">· Recorrente</span>' : `<span class="text-[10px] text-slate-400 ml-1">· ${goalMonthLabel(goal.targetMonth)}</span>`;
+                const remainTxt = isEx
+                    ? (prog.remaining > 0 ? `Restam ${formatBRL(prog.remaining)}` : `Excedeu ${formatBRL(Math.abs(prog.remaining))}`)
+                    : (prog.remaining > 0 ? `Faltam ${formatBRL(prog.remaining)}`  : 'Meta atingida!');
+
+                return `<div class="goal-card" style="border-top:4px solid ${sc.topColor}">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="goal-icon-wrap shrink-0" style="${typeBg}">
+                                <i data-lucide="${typeIcon}" class="w-4 h-4"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-black text-sm text-slate-900 truncate">${name}</p>
+                                <p class="text-[11px] text-slate-400">${typeLabel} · ${lvl}${recurTag}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-1.5 shrink-0 mt-0.5">
+                            <button type="button" class="goal-action-btn" onclick="openGoalModal('${goal.id}')" aria-label="Editar meta"><i data-lucide="pencil" class="w-3 h-3"></i></button>
+                            <button type="button" class="goal-action-btn delete" onclick="deleteGoal('${goal.id}')" aria-label="Excluir meta"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-4 mb-1">
+                        <div>
+                            <p class="text-[11px] text-slate-400 font-semibold">Realizado</p>
+                            <p class="text-lg font-black text-slate-900">${formatBRL(prog.actual)}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[11px] text-slate-400 font-semibold">Meta</p>
+                            <p class="text-lg font-black" style="color:${sc.textColor}">${formatBRL(prog.target)}</p>
+                        </div>
+                    </div>
+                    <div class="goal-progress-track">
+                        <div class="goal-progress-fill ${sc.fillClass}" style="width:${prog.pct}%"></div>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-[11px] font-bold" style="color:${sc.textColor}">${sc.label} · ${remainTxt}</span>
+                        <span class="text-xs font-black text-slate-600">${Math.round(prog.rawPct)}%</span>
+                    </div>
+                </div>`;
+            }).join('');
+
+            refreshLucideIcons();
+        }
+
+        function openGoalModal(id = null) {
+            lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+            document.getElementById('goal-id').value = id || '';
+            document.getElementById('goal-del-btn')?.classList.toggle('hidden', !id);
+
+            selectGoalType('SAÍDA');
+            const levelEl = document.getElementById('goal-level-sel');
+            if (levelEl) levelEl.value = 'category';
+            updateGoalHierarchyOptions();
+            selectGoalRecurring(true);
+            const amtEl = document.getElementById('goal-amount-inp');
+            if (amtEl) amtEl.value = '';
+            const monthInpEl = document.getElementById('goal-month-inp');
+            if (monthInpEl) monthInpEl.value = '';
+
+            if (id) {
+                const g = goalsData.find(x => x.id === id);
+                if (g) {
+                    selectGoalType(g.type);
+                    if (levelEl) levelEl.value = g.hierarchyType;
+                    updateGoalHierarchyOptions();
+                    const itemEl = document.getElementById('goal-item-sel');
+                    if (itemEl) itemEl.value = g.hierarchyId;
+                    if (amtEl) amtEl.value = Number(g.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    selectGoalRecurring(g.recurring !== false);
+                    if (g.recurring === false && g.targetMonth && monthInpEl) monthInpEl.value = g.targetMonth;
+                }
+            }
+
+            document.getElementById('goals-modal')?.classList.remove('hidden');
+            refreshLucideIcons();
+        }
+
+        function selectGoalType(type) {
+            document.getElementById('goal-type-val').value = type;
+            const btnS = document.getElementById('goal-type-btn-saida');
+            const btnE = document.getElementById('goal-type-btn-entrada');
+            if (btnS) btnS.className = `goal-form-toggle ${type === 'SAÍDA' ? 'active-red' : ''}`;
+            if (btnE) btnE.className = `goal-form-toggle ${type === 'ENTRADA' ? 'active-green' : ''}`;
+        }
+
+        function selectGoalRecurring(recurring) {
+            document.getElementById('goal-recurring-val').value = String(recurring);
+            const btnY = document.getElementById('goal-recur-btn-yes');
+            const btnN = document.getElementById('goal-recur-btn-no');
+            const wrap = document.getElementById('goal-month-wrap');
+            if (btnY) btnY.className = `goal-form-toggle ${recurring ? 'active' : ''}`;
+            if (btnN) btnN.className = `goal-form-toggle ${!recurring ? 'active' : ''}`;
+            if (wrap) wrap.classList.toggle('hidden', recurring);
+        }
+
+        function updateGoalHierarchyOptions() {
+            const level   = document.getElementById('goal-level-sel')?.value || 'category';
+            const itemEl  = document.getElementById('goal-item-sel');
+            const labelEl = document.getElementById('goal-item-label');
+            if (!itemEl) return;
+
+            const labels = { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' };
+            if (labelEl) labelEl.textContent = labels[level] || 'Item';
+
+            let options = [];
+            if (level === 'category') {
+                options = [...state.categories]
+                    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+                    .map(c => ({ id: c.id, label: c.name }));
+            } else if (level === 'subcategory') {
+                options = [...state.subCategories]
+                    .sort((a, b) => {
+                        const cA = state.categories.find(c => c.id === a.categoryId)?.name || '';
+                        const cB = state.categories.find(c => c.id === b.categoryId)?.name || '';
+                        return cA.localeCompare(cB, 'pt-BR') || a.name.localeCompare(b.name, 'pt-BR');
+                    })
+                    .map(s => {
+                        const cat = state.categories.find(c => c.id === s.categoryId)?.name || '';
+                        return { id: s.id, label: `${cat} › ${s.name}` };
+                    });
+            } else {
+                options = [...state.destinations]
+                    .sort((a, b) => {
+                        const subA = state.subCategories.find(s => s.id === a.subCategoryId);
+                        const subB = state.subCategories.find(s => s.id === b.subCategoryId);
+                        const cA = state.categories.find(c => c.id === subA?.categoryId)?.name || '';
+                        const cB = state.categories.find(c => c.id === subB?.categoryId)?.name || '';
+                        return cA.localeCompare(cB, 'pt-BR') || (subA?.name || '').localeCompare(subB?.name || '', 'pt-BR') || a.name.localeCompare(b.name, 'pt-BR');
+                    })
+                    .map(d => {
+                        const sub = state.subCategories.find(s => s.id === d.subCategoryId);
+                        const cat = state.categories.find(c => c.id === sub?.categoryId)?.name || '';
+                        return { id: d.id, label: `${cat} › ${sub?.name || ''} › ${d.name}` };
+                    });
+            }
+
+            itemEl.innerHTML = options.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
+        }
+
+        async function saveGoal() {
+            const id            = document.getElementById('goal-id')?.value;
+            const type          = document.getElementById('goal-type-val')?.value || 'SAÍDA';
+            const hierarchyType = document.getElementById('goal-level-sel')?.value || 'category';
+            const hierarchyId   = document.getElementById('goal-item-sel')?.value || '';
+            const amtRaw        = (document.getElementById('goal-amount-inp')?.value || '').replace(/\./g, '').replace(',', '.');
+            const amount        = parseFloat(amtRaw) || 0;
+            const recurring     = document.getElementById('goal-recurring-val')?.value !== 'false';
+            const targetMonth   = document.getElementById('goal-month-inp')?.value || '';
+
+            if (!hierarchyId) { showAppToast('Selecione uma categoria, subcategoria ou destino.', { tone: 'danger' }); return; }
+            if (!amount || amount <= 0) { showAppToast('Informe um valor válido para a meta.', { tone: 'danger' }); return; }
+            if (!recurring && !targetMonth) { showAppToast('Selecione o mês específico.', { tone: 'danger' }); return; }
+
+            const record = { type, hierarchyType, hierarchyId, amount, recurring, targetMonth: recurring ? null : targetMonth };
+            let goal;
+            if (id) {
+                const idx = goalsData.findIndex(g => g.id === id);
+                if (idx > -1) { goalsData[idx] = { ...goalsData[idx], ...record }; goal = goalsData[idx]; }
+            } else {
+                goal = { ...record, id: `g_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`, createdAt: new Date().toISOString() };
+                goalsData.push(goal);
+            }
+
+            saveGoals();
+            closeModal('goals-modal');
+            if (currentTab === 'goals') renderGoals();
+
+            if (goal) {
+                const result = await upsertGoalToCloud(goal);
+                if (!result.ok) {
+                    showAppToast('Meta salva localmente. Falha ao sincronizar com a nuvem.', { tone: 'danger' });
+                } else {
+                    showAppToast('Meta salva e sincronizada!');
+                }
+            }
+        }
+
+        async function deleteGoal(id) {
+            if (!confirm('Excluir esta meta?')) return;
+            goalsData = goalsData.filter(g => g.id !== id);
+            saveGoals();
+            renderGoals();
+            const result = await deleteGoalFromCloud(id);
+            if (!result.ok) {
+                showAppToast('Meta removida localmente. Falha ao sincronizar com a nuvem.', { tone: 'danger' });
+            } else {
+                showAppToast('Meta excluída.');
+            }
+        }
+
+        async function deleteGoalFromModal() {
+            const id = document.getElementById('goal-id')?.value;
+            if (!id) return;
+            if (!confirm('Excluir esta meta?')) return;
+            goalsData = goalsData.filter(g => g.id !== id);
+            saveGoals();
+            closeModal('goals-modal');
+            if (currentTab === 'goals') renderGoals();
+            const result = await deleteGoalFromCloud(id);
+            if (!result.ok) {
+                showAppToast('Meta removida localmente. Falha ao sincronizar com a nuvem.', { tone: 'danger' });
+            } else {
+                showAppToast('Meta excluída.');
+            }
+        }
+        // ─── FIM METAS ────────────────────────────────────────────────────────────
+
         window.addEventListener('load', initPiggyMicroInteractions);
         window.addEventListener('focus', () => { requestCloudRefresh({ silent: true }); });
         window.addEventListener('online', () => { requestCloudRefresh({ silent: true, minIntervalMs: 0 }); });
         window.onload = async () => {
+            loadGoals();
             initLoginScreen();
             initCustomDatePickers();
             await initCloud();
