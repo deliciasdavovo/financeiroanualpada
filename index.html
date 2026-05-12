@@ -1,10 +1,10 @@
-    
-    <scrip<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delícias da Vovó | Gestão Financeira Premium</title>
-t src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -4613,6 +4613,53 @@ t src="https://cdn.tailwindcss.com"></script>
         .goal-fill-warn   { background: #D97706; }
         .goal-fill-danger { background: var(--soft-red); }
         .goal-fill-over   { background: #7F1D1D; }
+        .goal-history-box {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: #F8FAFC;
+            padding: 14px;
+        }
+        .goal-history-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .goal-history-stat {
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            background: #fff;
+            padding: 10px;
+        }
+        .goal-history-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .goal-history-value {
+            margin-top: 3px;
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+        .goal-history-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .goal-history-btn {
+            border: 1px solid #CBD5E1;
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-primary);
+            padding: 8px 10px;
+            font-size: 11px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .goal-history-btn:hover { background: #EEF2FF; border-color: #B8C3F4; color: var(--primary-blue); }
         .goal-action-btn {
             width: 28px; height: 28px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
@@ -4648,6 +4695,9 @@ t src="https://cdn.tailwindcss.com"></script>
         .goal-form-toggle.active { background: var(--text-primary); color: white; border-color: var(--text-primary); }
         .goal-form-toggle.active-green { background: var(--primary-green); color: white; border-color: var(--primary-green); }
         .goal-form-toggle.active-red { background: var(--soft-red); color: white; border-color: var(--soft-red); }
+        @media (max-width: 640px) {
+            .goal-history-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -5743,12 +5793,23 @@ t src="https://cdn.tailwindcss.com"></script>
 
                 <div>
                     <label class="label-mini" for="goal-item-sel" id="goal-item-label">Categoria</label>
-                    <select id="goal-item-sel"></select>
+                    <select id="goal-item-sel" onchange="renderGoalHistorySuggestion()"></select>
                 </div>
 
                 <div>
                     <label class="label-mini" for="goal-amount-inp">Valor da meta (R$)</label>
                     <input type="text" id="goal-amount-inp" inputmode="numeric" autocomplete="off" placeholder="0,00">
+                </div>
+
+                <div id="goal-history-box" class="goal-history-box">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="label-mini">Sugestao pelo historico</p>
+                            <p id="goal-history-subtitle" class="field-help mt-1">Escolha um item para calcular media, ultimo mes e pico.</p>
+                        </div>
+                        <i data-lucide="sparkles" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                    </div>
+                    <div id="goal-history-content" class="mt-3"></div>
                 </div>
 
                 <div>
@@ -12078,14 +12139,12 @@ t src="https://cdn.tailwindcss.com"></script>
         function getDestinationAliasPhrases(destination) {
             const dst = destination || {};
             const rawName = String(dst.name || '').trim();
-            const rawNotes = String(dst.notes || '').trim();
             const noteChunks = String(dst.notes || '')
                 .split(/[\n,;|]/)
                 .map(item => item.trim())
-                .filter(Boolean);
-            const noteTokens = tokenizeReconText(rawNotes);
+                .filter(item => tokenizeReconText(item).length >= 2 || normalizeReconCompactText(item).length >= 8);
             const nameTokens = tokenizeReconText(rawName).filter(token => token.length >= 4);
-            const phrases = [rawName, ...noteChunks, ...noteTokens, ...nameTokens].filter(Boolean);
+            const phrases = [rawName, ...noteChunks, ...nameTokens].filter(Boolean);
             const seen = new Set();
             return phrases
                 .map(item => normalizeReconText(item))
@@ -12098,12 +12157,11 @@ t src="https://cdn.tailwindcss.com"></script>
             const noteChunks = rawNotes
                 .split(/[\n,;|]/)
                 .map(item => item.trim())
-                .filter(Boolean);
-            const noteTokens = tokenizeReconText(rawNotes).filter(token => token.length >= 4);
+                .filter(item => tokenizeReconText(item).length >= 2 || normalizeReconCompactText(item).length >= 8);
             const seen = new Set();
-            return [...noteChunks, ...noteTokens]
+            return noteChunks
                 .map(item => normalizeReconText(item))
-                .filter(item => item.length >= 4 && !seen.has(item) && seen.add(item))
+                .filter(item => item.length >= 6 && !seen.has(item) && seen.add(item))
                 .sort((a, b) => b.length - a.length);
         }
         function getDestinationDocumentDigits(destination) {
@@ -12243,7 +12301,7 @@ t src="https://cdn.tailwindcss.com"></script>
             const best = candidates[0] || null;
             const second = candidates[1] || null;
             if (!best || !best.id || best.score < 260) return '';
-            if (second && best.score - second.score < 60 && best.score < 470) return '';
+            if (second && best.score - second.score < 120) return '';
             return best.id;
         }
         function hasReconTransferEvidence(descNorm, descTokens) {
@@ -13126,23 +13184,21 @@ t src="https://cdn.tailwindcss.com"></script>
             return normalizeReconText(value).slice(0, 140);
         }
 
-        function buildEntryDuplicateKey(entry, accountIdOverride = '') {
-            const accountId = String(accountIdOverride || (entry.accountId ?? entry.account_id) || '');
+        function buildEntryDuplicateKey(entry) {
             const destinationId = String((entry.destinationId ?? entry.destination_id) || '');
             const date = String(entry.date || '');
             const type = normalizeFlowType(entry.type);
             const amount = Number(entry.amount ?? 0).toFixed(2);
             const description = normalizeDuplicateDescription(entry.description || '');
-            return [date, type, amount, destinationId, accountId, description].join('|');
+            return [date, type, amount, destinationId, description].join('|');
         }
 
-        function buildEntryReconMatchKey(entry, accountIdOverride = '', includeDestination = false) {
-            const accountId = String(accountIdOverride || (entry.accountId ?? entry.account_id) || '');
+        function buildEntryReconMatchKey(entry, includeDestination = false) {
             const destinationId = String((entry.destinationId ?? entry.destination_id) || '');
             const date = String(entry.date || '');
             const type = normalizeFlowType(entry.type);
             const amount = Number(entry.amount ?? 0).toFixed(2);
-            const parts = [date, type, amount, accountId];
+            const parts = [date, type, amount];
             if (includeDestination) parts.push(destinationId);
             return parts.join('|');
         }
@@ -13162,12 +13218,11 @@ t src="https://cdn.tailwindcss.com"></script>
             movementDestinationLabels: new Map()
         };
 
-        function getReconExistingMatchCache(accountIdOverride = '') {
-            const accountId = String(accountIdOverride || getReconSelectedAccountId() || '');
+        function getReconExistingMatchCache() {
             const entries = Array.isArray(state.entries) ? state.entries : [];
             const cutoffDate = addLocalDays(parseIsoDateLocal(getTodayIsoDate()) || new Date(), -30);
             const cutoffIso = formatLocalDate(cutoffDate);
-            const isFresh = reconExistingMatchCache.accountId === accountId
+            const isFresh = reconExistingMatchCache.accountId === 'ALL'
                 && reconExistingMatchCache.cutoffIso === cutoffIso
                 && reconExistingMatchCache.entriesRef === state.entries
                 && reconExistingMatchCache.entriesLen === entries.length;
@@ -13179,12 +13234,11 @@ t src="https://cdn.tailwindcss.com"></script>
             const movementDestinationLabels = new Map();
 
             entries.forEach(existing => {
-                if (accountId && String((existing || {}).accountId ?? (existing || {}).account_id ?? '') !== accountId) return;
                 const existingDate = String((existing || {}).date || '');
                 if (!existingDate || existingDate < cutoffIso) return;
-                const strictKey = buildEntryDuplicateKey(existing, accountId);
-                const movementKey = buildEntryReconMatchKey(existing, accountId, false);
-                const movementDestinationKey = buildEntryReconMatchKey(existing, accountId, true);
+                const strictKey = buildEntryDuplicateKey(existing);
+                const movementKey = buildEntryReconMatchKey(existing, false);
+                const movementDestinationKey = buildEntryReconMatchKey(existing, true);
                 const destinationId = String((existing || {}).destinationId ?? (existing || {}).destination_id ?? '');
                 const destinationLabel = getDestinationDisplayLabelById(destinationId);
 
@@ -13198,7 +13252,7 @@ t src="https://cdn.tailwindcss.com"></script>
             });
 
             reconExistingMatchCache = {
-                accountId,
+                accountId: 'ALL',
                 cutoffIso,
                 entriesRef: state.entries,
                 entriesLen: entries.length,
@@ -13211,21 +13265,10 @@ t src="https://cdn.tailwindcss.com"></script>
         }
 
         function getReconExistingMatchMeta(entry, accountIdOverride = '') {
-            const accountId = String(accountIdOverride || getReconSelectedAccountId() || '');
-            if (!accountId) {
-                return {
-                    strictMatches: 0,
-                    sameDestinationMatches: 0,
-                    otherDestinationMatches: 0,
-                    otherDestinationLabels: [],
-                    status: 'select-account'
-                };
-            }
-
-            const strictKey = buildEntryDuplicateKey(entry, accountId);
-            const movementKey = buildEntryReconMatchKey(entry, accountId, false);
-            const movementWithDestinationKey = buildEntryReconMatchKey(entry, accountId, true);
-            const cache = getReconExistingMatchCache(accountId);
+            const strictKey = buildEntryDuplicateKey(entry);
+            const movementKey = buildEntryReconMatchKey(entry, false);
+            const movementWithDestinationKey = buildEntryReconMatchKey(entry, true);
+            const cache = getReconExistingMatchCache();
             const strictMatches = cache.strictCounts.get(strictKey) || 0;
             const sameDestinationMatches = cache.movementDestinationCounts.get(movementWithDestinationKey) || 0;
             const totalMovementMatches = cache.movementCounts.get(movementKey) || 0;
@@ -13255,6 +13298,44 @@ t src="https://cdn.tailwindcss.com"></script>
         }
 
         function getReconReviewBadge(meta, invalidDestination) {
+            if (invalidDestination) {
+                return {
+                    badgeClass: 'bg-red-50 text-red-700 border border-red-200',
+                    badgeText: 'Revisar destino',
+                    note: 'Escolha um destino valido antes de importar.'
+                };
+            }
+            if (meta.status === 'exact') {
+                return {
+                    badgeClass: 'bg-green-50 text-green-700 border border-green-200',
+                    badgeText: 'Ja lancado',
+                    note: 'Esse lancamento ja existe no historico geral com mesmo destino e descricao.'
+                };
+            }
+            if (meta.status === 'conflict') {
+                const firstConflict = meta.otherDestinationLabels[0] || 'outro destino';
+                const suffix = meta.otherDestinationLabels.length > 1 ? ` e mais ${meta.otherDestinationLabels.length - 1}` : '';
+                return {
+                    badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
+                    badgeText: 'Conferir destino',
+                    note: `Ha lancamento parecido em ${firstConflict}${suffix} no historico geral.`
+                };
+            }
+            if (meta.status === 'similar') {
+                return {
+                    badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
+                    badgeText: 'Destino confere',
+                    note: 'Ja existe lancamento parecido com este destino no historico geral.'
+                };
+            }
+            return {
+                badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',
+                badgeText: 'Novo lancamento',
+                note: 'Nao encontrei registro parecido no historico geral.'
+            };
+        }
+
+        function getReconReviewBadgeLegacy(meta, invalidDestination) {
             if (invalidDestination) {
                 return {
                     badgeClass: 'bg-red-50 text-red-700 border border-red-200',
@@ -13331,6 +13412,7 @@ t src="https://cdn.tailwindcss.com"></script>
                 }, { invalid: 0, exact: 0, conflict: 0, similar: 0, newItems: 0 });
                 if(summary) {
                     const summaryParts = [`${tempRecon.length} registro(s) extraído(s)`];
+                    summaryParts.push('historico geral');
                     if (selectedAccountId) {
                         if (reconStats.exact > 0) summaryParts.push(`${reconStats.exact} já lançado(s)`);
                         if (reconStats.similar > 0) summaryParts.push(`${reconStats.similar} com destino coerente`);
@@ -14921,6 +15003,86 @@ t src="https://cdn.tailwindcss.com"></script>
             return { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' }[t] || t;
         }
 
+        function getGoalDestinationIds(hierarchyType, hierarchyId) {
+            const targetId = String(hierarchyId || '');
+            if (!targetId) return new Set();
+            if (hierarchyType === 'destination') return new Set([targetId]);
+            if (hierarchyType === 'subcategory') {
+                return new Set(state.destinations.filter(d => String(d.subCategoryId || '') === targetId).map(d => d.id));
+            }
+            const subIds = new Set(state.subCategories.filter(s => String(s.categoryId || '') === targetId).map(s => s.id));
+            return new Set(state.destinations.filter(d => subIds.has(String(d.subCategoryId || ''))).map(d => d.id));
+        }
+
+        function getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId, referenceMonth = goalsGetCurrentMonth()) {
+            const destIds = getGoalDestinationIds(hierarchyType, hierarchyId);
+            const monthlyTotals = new Map();
+            if (!destIds.size) return { months: [], avg: 0, last: 0, max: 0 };
+
+            (state.entries || []).forEach(entry => {
+                const date = String(entry.date || '');
+                const month = date.slice(0, 7);
+                if (!month || month >= referenceMonth) return;
+                if (normalizeFlowType(entry.type) !== normalizeFlowType(type)) return;
+                if (!destIds.has(String(entry.destinationId || ''))) return;
+                monthlyTotals.set(month, (monthlyTotals.get(month) || 0) + (Number(entry.amount) || 0));
+            });
+
+            const months = Array.from(monthlyTotals.entries())
+                .map(([month, total]) => ({ month, total }))
+                .sort((a, b) => a.month.localeCompare(b.month))
+                .slice(-6);
+            const totals = months.map(item => item.total);
+            const avg = totals.length ? totals.reduce((sum, value) => sum + value, 0) / totals.length : 0;
+            const last = totals.length ? totals[totals.length - 1] : 0;
+            const max = totals.length ? Math.max(...totals) : 0;
+            return { months, avg, last, max };
+        }
+
+        function setGoalAmountFromHistory(value) {
+            const amountEl = document.getElementById('goal-amount-inp');
+            const amount = Math.max(0, Number(value) || 0);
+            if (amountEl) amountEl.value = amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function renderGoalHistorySuggestion() {
+            const contentEl = document.getElementById('goal-history-content');
+            const subtitleEl = document.getElementById('goal-history-subtitle');
+            if (!contentEl) return;
+            const type = document.getElementById('goal-type-val')?.value || 'SAIDA';
+            const hierarchyType = document.getElementById('goal-level-sel')?.value || 'category';
+            const hierarchyId = document.getElementById('goal-item-sel')?.value || '';
+            const stats = getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId);
+
+            if (!hierarchyId || !stats.months.length) {
+                if (subtitleEl) subtitleEl.textContent = 'Sem meses anteriores para este item ainda.';
+                contentEl.innerHTML = '<p class="field-help">Quando houver lancamentos anteriores, eu mostro media, ultimo mes e maior mes para preencher a meta em um clique.</p>';
+                return;
+            }
+
+            if (subtitleEl) subtitleEl.textContent = `Base: ${stats.months.length} mes(es) anteriores deste item.`;
+            contentEl.innerHTML = `
+                <div class="goal-history-grid">
+                    <div class="goal-history-stat">
+                        <p class="goal-history-label">Media</p>
+                        <p class="goal-history-value">${formatBRL(stats.avg)}</p>
+                    </div>
+                    <div class="goal-history-stat">
+                        <p class="goal-history-label">Ultimo mes</p>
+                        <p class="goal-history-value">${formatBRL(stats.last)}</p>
+                    </div>
+                    <div class="goal-history-stat">
+                        <p class="goal-history-label">Maior mes</p>
+                        <p class="goal-history-value">${formatBRL(stats.max)}</p>
+                    </div>
+                </div>
+                <div class="goal-history-actions">
+                    <button type="button" class="goal-history-btn" onclick="setGoalAmountFromHistory(${Number(stats.avg.toFixed(2))})">Usar media</button>
+                    <button type="button" class="goal-history-btn" onclick="setGoalAmountFromHistory(${Number(stats.last.toFixed(2))})">Usar ultimo</button>
+                    <button type="button" class="goal-history-btn" onclick="setGoalAmountFromHistory(${Number(stats.max.toFixed(2))})">Usar maior</button>
+                </div>`;
+        }
+
         function renderGoals() {
             const month = goalsGetCurrentMonth();
             const lblEl = document.getElementById('goals-month-label');
@@ -15066,6 +15228,7 @@ t src="https://cdn.tailwindcss.com"></script>
                 }
             }
 
+            renderGoalHistorySuggestion();
             document.getElementById('goals-modal')?.classList.remove('hidden');
             refreshLucideIcons();
         }
@@ -15076,6 +15239,7 @@ t src="https://cdn.tailwindcss.com"></script>
             const btnE = document.getElementById('goal-type-btn-entrada');
             if (btnS) btnS.className = `goal-form-toggle ${type === 'SAÍDA' ? 'active-red' : ''}`;
             if (btnE) btnE.className = `goal-form-toggle ${type === 'ENTRADA' ? 'active-green' : ''}`;
+            renderGoalHistorySuggestion();
         }
 
         function selectGoalRecurring(recurring) {
@@ -15130,6 +15294,7 @@ t src="https://cdn.tailwindcss.com"></script>
             }
 
             itemEl.innerHTML = options.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
+            renderGoalHistorySuggestion();
         }
 
         async function saveGoal() {
