@@ -90,17 +90,17 @@
         .kpi-card-income {
             --kpi-glow: 31, 122, 92;
             border-top: 4px solid var(--primary-green);
-            background: linear-gradient(180deg, #FFFFFF 0%, #EEF9F3 100%);
+            background: #EEF9F3;
         }
         .kpi-card-expense {
             --kpi-glow: 178, 58, 58;
             border-top: 4px solid var(--soft-red);
-            background: linear-gradient(180deg, #FFFFFF 0%, #FFF0F0 100%);
+            background: #FFF0F0;
         }
         .kpi-card-balance {
             --kpi-glow: 47, 79, 157;
             border-top: 4px solid var(--primary-blue);
-            background: linear-gradient(180deg, #FFFFFF 0%, #EDF3FF 100%);
+            background: #EDF3FF;
         }
         .kpi-card-header {
             display: flex;
@@ -1861,6 +1861,18 @@
         .hm-item-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
+        }
+        .hm-parent-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748B;
+            background: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            border-radius: 999px;
+            padding: 2px 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
         .hm-progress-track {
             width: 100%;
@@ -4279,6 +4291,29 @@
             background: #EAF0FF;
             border-color: #C8D6EF;
         }
+        .entries-month-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .entries-chip {
+            min-height: 30px;
+            padding: 0 11px;
+            border-radius: 999px !important;
+            border: 1px solid #DDE6F0;
+            background: #FFFFFF;
+            color: #64748B;
+            font-size: 11px;
+            font-weight: 850;
+            cursor: pointer;
+            transition: background 120ms, color 120ms, border-color 120ms;
+        }
+        .entries-chip.active {
+            color: #244A94;
+            background: #EAF0FF;
+            border-color: #C8D6EF;
+        }
         .reports-chart-card,
         .reports-compare-card,
         .reports-insights-card,
@@ -4602,12 +4637,33 @@
             display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .goal-progress-track {
-            height: 8px; border-radius: 99px;
-            background: #E2E8F2; overflow: hidden; margin-top: 12px;
+            height: 14px; border-radius: 99px;
+            background: #F1F5F9; overflow: hidden; margin-top: 12px;
+            border: 1px solid #DDE6F0;
+            box-shadow: inset 0 1px 2px rgba(15,23,42,.06);
         }
         .goal-progress-fill {
             height: 100%; border-radius: 99px;
             transition: width 700ms var(--ease-premium);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.32);
+        }
+        .goal-progress-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .goal-percent-pill {
+            min-width: 52px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            color: #FFFFFF;
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 900;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(15,23,42,.10);
         }
         .goal-fill-ok     { background: var(--primary-green); }
         .goal-fill-warn   { background: #D97706; }
@@ -4837,13 +4893,14 @@
                     </div>
                     <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
                         <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, valor, cliente ou descrição..." oninput="queueRenderEntries()"></div>
-                        <div class="entries-filter-item">
+                        <div class="entries-filter-item" style="grid-column: 1 / -1;">
                             <label for="filter-month" class="label-mini">Mês inteiro</label>
                             <div class="entries-month-filter">
                                 <button type="button" onclick="shiftEntriesMonthFilter(-1)" aria-label="Mês anterior"><i data-lucide="chevron-left"></i></button>
                                 <input type="month" id="filter-month" onchange="setEntriesMonthFilter(this.value)" aria-label="Filtrar mês inteiro">
                                 <button type="button" onclick="shiftEntriesMonthFilter(1)" aria-label="Próximo mês"><i data-lucide="chevron-right"></i></button>
                             </div>
+                            <div id="entries-month-chips" class="entries-month-chips" aria-label="Navegar por mês"></div>
                         </div>
                         <div class="entries-filter-item"><label for="filter-date-start" class="label-mini">Início</label><input type="date" id="filter-date-start" onchange="renderEntries()"></div>
                         <div class="entries-filter-item"><label for="filter-date-end" class="label-mini">Fim</label><input type="date" id="filter-date-end" onchange="renderEntries()"></div>
@@ -6242,6 +6299,19 @@
             renderEntries();
         }
 
+        function populateEntriesMonthChips() {
+            const host = document.getElementById('entries-month-chips');
+            const monthEl = document.getElementById('filter-month');
+            if (!host || !monthEl) return;
+            const selected = monthEl.value || getCurrentMonthIso();
+            const selectedMonth = selected.slice(5, 7);
+            const year = selected.slice(0, 4) || String(new Date().getFullYear());
+            host.innerHTML = MONTH_NAMES_PT.map((name, idx) => {
+                const month = String(idx + 1).padStart(2, '0');
+                return `<button type="button" class="entries-chip ${month === selectedMonth ? 'active' : ''}" onclick="setEntriesMonthFilter('${year}-${month}')">${name.slice(0, 3)}</button>`;
+            }).join('');
+        }
+
         function setEntriesMonthFilter(monthIso) {
             const monthText = String(monthIso || '').trim();
             const match = monthText.match(/^(\d{4})-(\d{2})$/);
@@ -6258,6 +6328,7 @@
             if (endEl) endEl.value = formatLocalDate(last);
             entriesPage = 1;
             renderEntries();
+            populateEntriesMonthChips();
         }
 
         function getEntriesCurrentMonthIso() {
@@ -7802,9 +7873,10 @@
             nivelAtual = 'lancamentos';
             renderAnaliseHierarquicaMensal(getMonthlySelectedEntries());
         }
-        function renderResumoCardsAgrupados(grupos, totalMes, onClickFn) {
+        function renderResumoCardsAgrupados(grupos, totalMes, onClickFn, parentLabel) {
             const entries = Object.entries(grupos).sort((a, b) => b[1].total - a[1].total);
             if(entries.length === 0) return `<div class="hm-empty">Nenhum dado encontrado para os filtros selecionados.</div>`;
+            const mostrarTodos = fluxoSelecionado === 'TODOS';
             return `<div class="hm-items-grid">
                 ${entries.map(([nome, info]) => {
                     const valor = info.total;
@@ -7815,13 +7887,22 @@
                         : fluxoSelecionado === 'ENTRADAS'
                             ? 'entrada'
                             : (info.saida > info.entrada ? 'saida' : 'entrada');
-                    const classeCor = corFluxo === 'saida' ? 'hm-flow-saida' : 'hm-flow-entrada';
                     const classeCorBg = corFluxo === 'saida' ? 'hm-flow-saida-bg' : 'hm-flow-entrada-bg';
+                    const parentTag = parentLabel
+                        ? `<span class="hm-parent-tag">${escapeHtml(parentLabel)}</span>`
+                        : '';
+                    const valoresHtml = mostrarTodos && (info.entrada > 0 || info.saida > 0)
+                        ? `<div class="flex gap-2">
+                            ${info.entrada > 0 ? `<p class="text-xs font-black hm-flow-entrada">↑ ${formatBRL(info.entrada)}</p>` : ''}
+                            ${info.saida > 0 ? `<p class="text-xs font-black hm-flow-saida">↓ ${formatBRL(info.saida)}</p>` : ''}
+                          </div>`
+                        : `<p class="text-xs font-black ${corFluxo === 'saida' ? 'hm-flow-saida' : 'hm-flow-entrada'}">${formatBRL(valor)}</p>`;
                     return `
                         <button class="hm-item-card" onclick="${onClickFn}(decodeURIComponent('${nomeSafe}'))">
-                            <div class="flex items-start justify-between gap-3 mb-3">
+                            ${parentTag}
+                            <div class="flex items-start justify-between gap-3 mb-3 ${parentLabel ? 'mt-2' : ''}">
                                 <p class="text-sm font-black text-slate-900 uppercase">${nome}</p>
-                                <p class="text-xs font-black ${classeCor}">${formatBRL(valor)}</p>
+                                ${valoresHtml}
                             </div>
                             <div class="flex items-center justify-between text-[11px] mb-2">
                                 <span class="text-slate-500">Participação no mês</span>
@@ -7850,7 +7931,7 @@
             const filtrado = dados.filter(d => d.categoria === categoriaSelecionada);
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
             const grupos = agruparPorFluxo(filtrado, 'subcategoria');
-            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectSubcategoria');
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectSubcategoria', categoriaSelecionada);
         }
 
         function renderDestinos(dados) {
@@ -7859,7 +7940,7 @@
             const filtrado = dados.filter(d => d.categoria === categoriaSelecionada && d.subcategoria === subcategoriaSelecionada);
             const totalMes = dados.reduce((acc, item) => acc + item.valor, 0);
             const grupos = agruparPorFluxo(filtrado, 'destino');
-            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectDestino');
+            content.innerHTML = renderResumoCardsAgrupados(grupos, totalMes, 'hmSelectDestino', subcategoriaSelecionada);
         }
 
         function renderLancamentos(dados) {
@@ -8232,6 +8313,7 @@
             if (currentTab === 'entries') {
                 applyEntriesToolbarState();
                 renderEntries();
+                populateEntriesMonthChips();
             } else if (currentTab === 'reports') {
                 populateMonthlyFilterSelectors();
                 populateReportsMonthChips();
@@ -15131,22 +15213,22 @@
                 const attn = progs.filter(p => p.status === 'warn' || p.status === 'danger' || p.status === 'rev_danger').length;
                 const over = progs.filter(p => p.status === 'over').length;
                 kpiEl.innerHTML = `
-                    <div class="kpi-card p-5" style="border-top:4px solid #2F4F9D;background:linear-gradient(180deg,#fff 0%,#EEF2FF 100%)">
+                    <div class="kpi-card p-5" style="border-top:4px solid #2F4F9D;background:#EEF2FF">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total ativo</p>
                         <p class="text-3xl font-black text-slate-900">${total}</p>
                         <p class="text-xs text-slate-400 mt-1">metas neste mês</p>
                     </div>
-                    <div class="kpi-card p-5" style="border-top:4px solid #1F7A5C;background:linear-gradient(180deg,#fff 0%,#EEF9F3 100%)">
+                    <div class="kpi-card p-5" style="border-top:4px solid #1F7A5C;background:#EEF9F3">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">No prazo</p>
                         <p class="text-3xl font-black" style="color:#1F7A5C">${ok}</p>
                         <p class="text-xs text-slate-400 mt-1">dentro do esperado</p>
                     </div>
-                    <div class="kpi-card p-5" style="border-top:4px solid #D97706;background:linear-gradient(180deg,#fff 0%,#FFFBEB 100%)">
+                    <div class="kpi-card p-5" style="border-top:4px solid #D97706;background:#FFFBEB">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Em atenção</p>
                         <p class="text-3xl font-black" style="color:#D97706">${attn}</p>
                         <p class="text-xs text-slate-400 mt-1">entre 70–100%</p>
                     </div>
-                    <div class="kpi-card p-5" style="border-top:4px solid #B23A3A;background:linear-gradient(180deg,#fff 0%,#FFF0F0 100%)">
+                    <div class="kpi-card p-5" style="border-top:4px solid #B23A3A;background:#FFF0F0">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Excedido</p>
                         <p class="text-3xl font-black" style="color:#B23A3A">${over}</p>
                         <p class="text-xs text-slate-400 mt-1">acima da meta</p>
@@ -15179,21 +15261,48 @@
                 rev_danger: { fillClass: 'goal-fill-danger',  textColor: '#B23A3A', label: 'Abaixo',    topColor: '#D97706' },
             };
 
+            const getGoalStatusStyle = (status, type) => {
+                const isExpense = getGoalNormalizedType(type) === FLOW_OUT;
+                const expenseStatusMap = {
+                    ok:         { color: '#D69E2E', label: 'No prazo' },
+                    warn:       { color: '#E09132', label: 'Atencao' },
+                    danger:     { color: '#B23A3A', label: 'Em risco' },
+                    over:       { color: '#7F1D1D', label: 'Excedido' },
+                    rev_ok:     { color: '#D69E2E', label: 'No prazo' },
+                    rev_danger: { color: '#B23A3A', label: 'Em risco' },
+                };
+                const incomeStatusMap = {
+                    ok:         { color: '#1F7A5C', label: 'No prazo' },
+                    warn:       { color: '#2F7FB3', label: 'Atencao' },
+                    danger:     { color: '#2F4F9D', label: 'Abaixo' },
+                    over:       { color: '#1F7A5C', label: 'Atingido' },
+                    rev_ok:     { color: '#1F7A5C', label: 'Atingido' },
+                    rev_danger: { color: '#2F4F9D', label: 'Abaixo' },
+                };
+                const map = isExpense ? expenseStatusMap : incomeStatusMap;
+                const style = map[status] || (isExpense ? expenseStatusMap.ok : incomeStatusMap.ok);
+                return { ...style, textColor: style.color };
+            };
+
             gridEl.innerHTML = visibleGoals.map(goal => {
                 const prog = calcGoalProgress(goal, month);
-                const sc   = statusMap[prog.status] || statusMap.ok;
+                const sc   = getGoalStatusStyle(prog.status, goal.type);
                 const name = getGoalHierarchyName(goal);
                 const lvl  = getGoalLevelLabel(goal.hierarchyType);
                 const isEx = getGoalNormalizedType(goal.type) === FLOW_OUT;
-                const typeIcon  = isEx ? 'trending-down' : 'trending-up';
+                const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
                 const typeBg    = isEx ? 'background:#FFF0F0;color:#B23A3A' : 'background:#EEF9F3;color:#1F7A5C';
+                const typeIcon  = isEx ? 'trending-down' : 'trending-up';
                 const typeLabel = isEx ? 'Despesa' : 'Receita';
                 const recurTag  = goal.recurring ? '<span class="text-[10px] text-slate-400 ml-1">· Recorrente</span>' : `<span class="text-[10px] text-slate-400 ml-1">· ${goalMonthLabel(goal.targetMonth)}</span>`;
                 const remainTxt = isEx
                     ? (prog.remaining > 0 ? `Restam ${formatBRL(prog.remaining)}` : `Excedeu ${formatBRL(Math.abs(prog.remaining))}`)
                     : (prog.remaining > 0 ? `Faltam ${formatBRL(prog.remaining)}`  : 'Meta atingida!');
+                const pctLabel = `${Math.round(prog.rawPct)}%`;
+                const ariaPct = Math.min(Math.max(Math.round(prog.rawPct), 0), 100);
+                const barPct = prog.rawPct > 0 ? Math.max(prog.pct, 4) : 0;
 
-                return `<div class="goal-card" style="border-top:4px solid ${sc.topColor}">
+                return `<div class="goal-card" style="border-top:4px solid ${typeColor}">
                     <div class="flex justify-between items-start gap-2">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="goal-icon-wrap shrink-0" style="${typeBg}">
@@ -15212,19 +15321,19 @@
                     <div class="flex justify-between mt-4 mb-1">
                         <div>
                             <p class="text-[11px] text-slate-400 font-semibold">Realizado</p>
-                            <p class="text-lg font-black text-slate-900">${formatBRL(prog.actual)}</p>
+                            <p class="text-lg font-black" style="color:${typeColor}">${formatBRL(prog.actual)}</p>
                         </div>
                         <div class="text-right">
                             <p class="text-[11px] text-slate-400 font-semibold">Meta</p>
-                            <p class="text-lg font-black" style="color:${sc.textColor}">${formatBRL(prog.target)}</p>
+                            <p class="text-lg font-black" style="color:${typeColor}">${formatBRL(prog.target)}</p>
                         </div>
                     </div>
                     <div class="goal-progress-track">
-                        <div class="goal-progress-fill ${sc.fillClass}" style="width:${prog.pct}%"></div>
+                        <div class="goal-progress-fill" style="width:${barPct}%;background:${sc.color}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ariaPct}" aria-valuetext="${pctLabel}"></div>
                     </div>
-                    <div class="flex justify-between items-center mt-2">
+                    <div class="goal-progress-meta">
                         <span class="text-[11px] font-bold" style="color:${sc.textColor}">${sc.label} · ${remainTxt}</span>
-                        <span class="text-xs font-black text-slate-600">${Math.round(prog.rawPct)}%</span>
+                        <span class="goal-percent-pill" style="background:${sc.color}">${pctLabel}</span>
                     </div>
                 </div>`;
             }).join('');
