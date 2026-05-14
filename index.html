@@ -717,8 +717,8 @@
             width: 100%;
             table-layout: fixed;
         }
-        #annual-main-table { min-width: 640px; }
-        #annual-temporal-table { min-width: 760px; }
+#annual-main-table { min-width: 640px; }
+#annual-temporal-table { min-width: 940px; }
         #recon-preview-table {
             min-width: 100%;
             table-layout: fixed;
@@ -1052,89 +1052,6 @@
             color: #0F172A;
             font-weight: 900;
             white-space: nowrap;
-        }
-        .monthly-side-card {
-            padding: 0 !important;
-            overflow: hidden;
-        }
-        .monthly-side-table {
-            min-width: 920px;
-            width: 100%;
-            table-layout: fixed;
-        }
-        .monthly-side-table th {
-            padding: 12px 14px;
-            font-size: 11px !important;
-            font-weight: 900 !important;
-            color: #64748B !important;
-            white-space: nowrap;
-        }
-        .monthly-side-table td {
-            padding: 10px 14px;
-            border-top: 1px solid #EEF2F7;
-            vertical-align: top;
-        }
-        .monthly-side-entry {
-            display: grid;
-            grid-template-columns: 52px minmax(0, 1fr) 116px;
-            gap: 10px;
-            align-items: start;
-            min-height: 36px;
-        }
-        .monthly-side-date {
-            font-size: 11px;
-            font-weight: 900;
-            color: #64748B;
-            white-space: nowrap;
-        }
-        .monthly-side-desc {
-            min-width: 0;
-            font-size: 12px;
-            line-height: 1.25;
-            font-weight: 800;
-            color: #0F172A;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .monthly-side-note {
-            margin-top: 3px;
-            font-size: 10px;
-            line-height: 1.25;
-            font-weight: 700;
-            color: #94A3B8;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .monthly-side-value {
-            text-align: right;
-            font-size: 12px;
-            font-weight: 900;
-            white-space: nowrap;
-        }
-        .monthly-side-empty {
-            color: #CBD5E1;
-            font-size: 12px;
-            font-weight: 800;
-        }
-        .monthly-side-divider {
-            width: 1px;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            background: #EEF2F7;
-        }
-        .monthly-side-total-row td {
-            background: #F8FAFC;
-            border-top: 1px solid #DDE6F0;
-        }
-        .monthly-side-total {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 12px;
-            font-weight: 900;
         }
         .status-toggle {
             display: flex;
@@ -1581,6 +1498,10 @@
             background:
                 linear-gradient(135deg, rgba(248, 250, 252, 0.94) 0%, rgba(232, 243, 239, 0.94) 48%, rgba(233, 237, 250, 0.94) 100%);
             backdrop-filter: blur(18px);
+            touch-action: manipulation;
+        }
+        #login-screen * {
+            touch-action: manipulation;
         }
         #login-screen.hidden {
             display: none;
@@ -2058,6 +1979,214 @@
         .mdetails-launch-value {
             font-weight: 800;
             white-space: nowrap;
+        }
+        .annual-matrix-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        #annual-hierarchy-detail {
+            border: 1px solid #DDE6F0;
+            border-radius: 20px;
+            background: #FFFFFF;
+            padding: 18px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.055);
+        }
+        .annual-matrix-headline {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+        }
+        .annual-matrix-title {
+            font-size: 17px;
+            line-height: 1.18;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .annual-matrix-subtitle {
+            margin-top: 4px;
+            font-size: 11px;
+            line-height: 1.45;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .annual-matrix-summary-pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 0 11px;
+            border-radius: 999px;
+            border: 1px solid #DDE6F0;
+            background: #F8FAFC;
+            color: #334155;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .annual-matrix-breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748B;
+        }
+        .annual-matrix-breadcrumb button {
+            min-height: 30px;
+            padding: 0 10px;
+            border-radius: 999px;
+            border: 1px solid #DDE6F0;
+            background: #FFFFFF;
+            color: #244A94;
+            font-weight: 900;
+        }
+        .annual-matrix-wrap {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            background: #FFFFFF;
+            overflow: auto;
+        }
+        .annual-matrix-table {
+            width: 100%;
+            min-width: 1960px;
+            border-collapse: collapse;
+            border-spacing: 0;
+            table-layout: fixed;
+        }
+        .annual-matrix-table th,
+        .annual-matrix-table td {
+            height: 54px;
+            padding: 10px 14px;
+            border-right: 1px solid #E8EEF6;
+            border-bottom: 1px solid #E8EEF6;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+            text-align: right;
+            vertical-align: middle;
+        }
+        .annual-matrix-table th:not(:first-child),
+        .annual-matrix-table td:not(:first-child) {
+            width: 122px;
+        }
+        .annual-matrix-table th:last-child,
+        .annual-matrix-table td:last-child {
+            width: 150px;
+        }
+        .annual-matrix-table th:last-child,
+        .annual-matrix-table td:last-child {
+            border-right: 0;
+        }
+        .annual-matrix-table th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            height: 48px;
+            background: #F6F8FB;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .annual-matrix-table th:first-child,
+        .annual-matrix-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            width: 340px;
+            min-width: 340px;
+            max-width: 340px;
+            text-align: left;
+            background: #FFFFFF;
+            box-shadow: 1px 0 0 #EEF2F7;
+        }
+        .annual-matrix-table th:first-child {
+            z-index: 3;
+            background: #F8FAFC;
+        }
+        .annual-matrix-table tr:hover td {
+            background: #F8FAFF;
+        }
+        .annual-matrix-group-row td,
+        .annual-matrix-group-row:hover td,
+        .annual-matrix-total-row td,
+        .annual-matrix-total-row:hover td {
+            background: #F8FAFC !important;
+        }
+        .annual-matrix-group-row td {
+            height: 46px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            color: #334155;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .annual-matrix-group-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border-radius: 999px;
+            padding: 5px 10px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+        }
+        .annual-matrix-group-label.in {
+            color: #1F7A5C;
+            border-color: #CFE7DC;
+            background: #F2FBF6;
+        }
+        .annual-matrix-group-label.out {
+            color: #B23A3A;
+            border-color: #F1C8C8;
+            background: #FFF6F6;
+        }
+        .annual-matrix-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            max-width: 100%;
+            color: #0F172A;
+            font-size: 13px;
+            font-weight: 900;
+            text-align: left;
+            white-space: normal;
+            line-height: 1.2;
+        }
+        .annual-matrix-name.can-drill {
+            color: #244A94;
+        }
+        .annual-matrix-name.can-drill:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .annual-matrix-sub {
+            display: block;
+            margin-top: 4px;
+            color: #94A3B8;
+            font-size: 11px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .annual-matrix-total {
+            color: #0F172A;
+            font-weight: 900;
+        }
+        .annual-matrix-money {
+            display: inline-flex;
+            width: 100%;
+            justify-content: flex-end;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0 !important;
+            overflow: visible;
+        }
+        .annual-matrix-zero {
+            color: #CBD5E1;
         }
         .hm-launch-list {
             display: grid;
@@ -4374,6 +4503,11 @@
             background: #EAF0FF;
             border-color: #C8D6EF;
         }
+        .reports-chip:disabled {
+            opacity: 0.38;
+            cursor: not-allowed;
+            background: #F8FAFC;
+        }
         .entries-month-chips {
             display: flex;
             flex-wrap: wrap;
@@ -5078,16 +5212,16 @@
                         <p class="reports-subtitle">Entenda o que aconteceu no mês ou no ano com a mesma leitura visual.</p>
                     </div>
                     <div class="pill-segment" role="tablist" aria-label="Tipo de relatório">
-                        <button type="button" id="reports-mode-monthly" class="pill-segment-btn active" onclick="setReportsMode('monthly')" aria-selected="true">
+                        <button type="button" id="reports-mode-monthly" class="pill-segment-btn" onclick="setReportsMode('monthly')" aria-selected="false">
                             <i data-lucide="calendar-days" class="w-4 h-4"></i>Mensal
                         </button>
-                        <button type="button" id="reports-mode-annual" class="pill-segment-btn" onclick="setReportsMode('annual')" aria-selected="false">
+                        <button type="button" id="reports-mode-annual" class="pill-segment-btn active" onclick="setReportsMode('annual')" aria-selected="true">
                             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>Anual
                         </button>
                     </div>
                 </section>
 
-                <div id="reports-monthly-panel" class="reports-mode-panel active space-y-8">
+                <div id="reports-monthly-panel" class="reports-mode-panel space-y-8">
                 <section class="monthly-ios-hero" aria-labelledby="monthly-ios-title">
                     <div>
                         <div class="monthly-ios-title-row">
@@ -5166,21 +5300,6 @@
                     <div class="reports-chart-frame"><canvas id="reports-monthly-chart"></canvas></div>
                 </section>
 
-                <section class="card-premium reports-compare-card" aria-labelledby="reports-monthly-compare-title">
-                    <div class="reports-card-head">
-                        <div>
-                            <h4 id="reports-monthly-compare-title">Comparar com</h4>
-                            <p>Escolha uma referência para medir o mês atual.</p>
-                        </div>
-                        <div class="pill-segment compact">
-                            <button type="button" id="monthly-compare-prev" class="pill-segment-btn active" onclick="setMonthlyCompareMode('prev')">Mês anterior</button>
-                            <button type="button" id="monthly-compare-last-year" class="pill-segment-btn" onclick="setMonthlyCompareMode('lastYear')">Ano passado</button>
-                            <button type="button" id="monthly-compare-avg3" class="pill-segment-btn" onclick="setMonthlyCompareMode('avg3')">Média 3 meses</button>
-                        </div>
-                    </div>
-                    <div id="reports-monthly-compare-grid" class="reports-insight-grid"></div>
-                </section>
-
                 <section class="card-premium cash-projection-shell reports-hidden-legacy-projection" aria-labelledby="cash-projection-title">
                     <div class="cash-projection-head">
                         <div>
@@ -5227,36 +5346,6 @@
 
                 <section id="analise-hierarquica-mensal"></section>
 
-                <section class="card-premium monthly-side-card" aria-labelledby="monthly-side-title">
-                    <div class="monthly-daily-head">
-                        <div>
-                            <h4 id="monthly-side-title" class="monthly-daily-title">Entradas x saídas do mês</h4>
-                            <p id="monthly-side-sub" class="monthly-daily-sub">Lançamentos realizados lado a lado para conferir o mês mais rápido.</p>
-                        </div>
-                    </div>
-                    <div class="table-mobile-scroll custom-scrollbar">
-                        <table class="monthly-side-table">
-                            <thead>
-                                <tr>
-                                    <th colspan="3" class="flow-income-text">Entradas</th>
-                                    <th class="monthly-side-divider" aria-hidden="true"></th>
-                                    <th colspan="3" class="flow-expense-text">Saídas</th>
-                                </tr>
-                                <tr>
-                                    <th>Dia</th>
-                                    <th>Destino / detalhe</th>
-                                    <th class="text-right">Valor</th>
-                                    <th class="monthly-side-divider" aria-hidden="true"></th>
-                                    <th>Dia</th>
-                                    <th>Destino / detalhe</th>
-                                    <th class="text-right">Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody id="monthly-side-table-body"></tbody>
-                        </table>
-                    </div>
-                </section>
-
                 <div class="card-premium monthly-daily-card h-[520px] lg:h-[700px] flex flex-col">
                     <div class="monthly-daily-head">
                         <div>
@@ -5277,7 +5366,7 @@
             </div>
 
             <!-- RELATÓRIO ANUAL -->
-                <div id="reports-annual-panel" class="reports-mode-panel space-y-8">
+                <div id="reports-annual-panel" class="reports-mode-panel active space-y-8">
                 <section class="monthly-ios-hero reports-annual-hero" aria-labelledby="reports-annual-title">
                     <div>
                         <div class="monthly-ios-title-row">
@@ -5322,6 +5411,7 @@
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-temporal-flow">Fluxo</label>
                                 <select id="annual-temporal-flow">
+                                    <option value="TODOS">Entradas e Saídas</option>
                                     <option value="SAÍDA">Saídas</option>
                                     <option value="ENTRADA">Entradas</option>
                                 </select>
@@ -5359,6 +5449,7 @@
                             </div>
                         </div>
                     </div>
+                    <div id="annual-hierarchy-detail"></div>
                     <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
                         <div class="xl:col-span-3 h-[520px]">
                             <canvas id="chartAnnualTemporal"></canvas>
@@ -5369,10 +5460,11 @@
                                     <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
                                         <tr>
                                             <th class="px-4 py-3">Período</th>
-                                            <th class="px-4 py-3 text-right">Total</th>
+                                            <th class="px-4 py-3 text-right">Entradas</th>
+                                            <th class="px-4 py-3 text-right">Aporte de Capital</th>
+                                            <th class="px-4 py-3 text-right">Saídas</th>
+                                            <th class="px-4 py-3 text-right">Saldo</th>
                                             <th class="px-4 py-3 text-right">Lançamentos</th>
-                                            <th class="px-4 py-3 text-right">Média</th>
-                                            <th class="px-4 py-3 text-right">Variação</th>
                                             <th class="px-4 py-3 text-right">Abrir</th>
                                         </tr>
                                     </thead>
@@ -5381,7 +5473,6 @@
                             </div>
                         </div>
                     </div>
-                    <div id="annual-hierarchy-detail"></div>
                 </div>
                 <section class="card-premium reports-insights-card" aria-labelledby="reports-annual-ranking-title">
                     <div class="reports-card-head">
@@ -6110,7 +6201,7 @@
         let subcategoriaFiltroSelecionada = '';
         let destinoExcluidoMensal = '';
         let destinosFiltroSelecionados = [];
-        let annualTemporalFlow = 'SAÍDA';
+        let annualTemporalFlow = 'TODOS';
         let annualTemporalMode = 'MESES';
         let annualTemporalYear = new Date().getFullYear();
         let annualNavCategoryId = '';
@@ -6118,8 +6209,12 @@
         let annualNavDestinationId = '';
         let annualNavAccountId = '';
         let annualExcludedDestinationId = '';
+        let annualHierarchyLevel = 'category';
+        let annualHierarchyCategory = '';
+        let annualHierarchySubCategory = '';
+        let annualHierarchyDestination = '';
         let currentTab = 'reports';
-        let reportsMode = 'monthly';
+        let reportsMode = 'annual';
         let monthlyCompareMode = 'prev';
         let projectionMode = 'pending';
         let projectionPeriod = 7;
@@ -7837,90 +7932,207 @@
         function renderAnnualHierarchyDetail(entries) {
             const host = document.getElementById('annual-hierarchy-detail');
             if(!host) return;
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             const baseEntries = (Array.isArray(entries) ? entries : []).map(e => {
                 const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((e || {}).destinationId, e || {});
+                const type = normalizeFlowType((e || {}).type) === FLOW_IN ? 'entrada' : 'saida';
+                const rawAmount = Number((e || {}).amount || 0) || 0;
+                const amount = annualTemporalFlow === 'TODOS' && type === 'saida' ? -rawAmount : rawAmount;
                 return {
                     categoria: String((cat || {}).name || 'Sem categoria'),
                     subcategoria: String((sub || {}).name || 'Sem subcategoria'),
                     destino: String((dst || {}).name || 'Sem destino'),
-                    valor: Number((e || {}).amount || 0) || 0,
+                    valor: amount,
                     data: String((e || {}).date || ''),
                     descricao: String((e || {}).description || ''),
                     status: String((e || {}).status || 'REALIZADO'),
-                    tipo: normalizeFlowType((e || {}).type) === 'ENTRADA' ? 'entrada' : 'saida',
+                    tipo: type,
                     conta: getAccountNameById((e || {}).accountId)
                 };
             });
+
             if(!baseEntries.length) {
                 host.innerHTML = `<div class="hm-empty">Nenhum lançamento encontrado para o detalhamento atual.</div>`;
                 return;
             }
-            const grouped = new Map();
-            baseEntries.forEach((item) => {
-                if(!grouped.has(item.categoria)) grouped.set(item.categoria, { total: 0, count: 0, subs: new Map() });
-                const catRef = grouped.get(item.categoria);
-                catRef.total += item.valor;
-                catRef.count += 1;
-                if(!catRef.subs.has(item.subcategoria)) catRef.subs.set(item.subcategoria, { total: 0, count: 0, destinos: new Map() });
-                const subRef = catRef.subs.get(item.subcategoria);
-                subRef.total += item.valor;
-                subRef.count += 1;
-                if(!subRef.destinos.has(item.destino)) subRef.destinos.set(item.destino, { total: 0, count: 0, items: [] });
-                const dstRef = subRef.destinos.get(item.destino);
-                dstRef.total += item.valor;
-                dstRef.count += 1;
-                dstRef.items.push(item);
+
+            if(annualHierarchyCategory && !baseEntries.some(item => item.categoria === annualHierarchyCategory)) {
+                annualHierarchyLevel = 'category';
+                annualHierarchyCategory = '';
+                annualHierarchySubCategory = '';
+                annualHierarchyDestination = '';
+            }
+            if(annualHierarchySubCategory && !baseEntries.some(item => item.categoria === annualHierarchyCategory && item.subcategoria === annualHierarchySubCategory)) {
+                annualHierarchyLevel = 'subcategory';
+                annualHierarchySubCategory = '';
+                annualHierarchyDestination = '';
+            }
+            if(annualHierarchyDestination && !baseEntries.some(item => item.categoria === annualHierarchyCategory && item.subcategoria === annualHierarchySubCategory && item.destino === annualHierarchyDestination)) {
+                annualHierarchyLevel = 'destination';
+                annualHierarchyDestination = '';
+            }
+
+            const scopedEntries = baseEntries.filter(item =>
+                (!annualHierarchyCategory || item.categoria === annualHierarchyCategory) &&
+                (!annualHierarchySubCategory || item.subcategoria === annualHierarchySubCategory) &&
+                (!annualHierarchyDestination || item.destino === annualHierarchyDestination)
+            );
+            const currentLevel = annualHierarchyDestination ? 'launch' : annualHierarchySubCategory ? 'destination' : annualHierarchyCategory ? 'subcategory' : 'category';
+            annualHierarchyLevel = currentLevel;
+            const dimensionKey = currentLevel === 'category' ? 'categoria' : currentLevel === 'subcategory' ? 'subcategoria' : currentLevel === 'destination' ? 'destino' : 'descricao';
+            const levelLabel = currentLevel === 'category' ? 'Categoria' : currentLevel === 'subcategory' ? 'Subcategoria' : currentLevel === 'destination' ? 'Destino' : 'Lançamento';
+            const canDrill = currentLevel !== 'launch';
+
+            const rowsMap = new Map();
+            scopedEntries.forEach((item, index) => {
+                const monthIndex = Math.max(0, Math.min(11, Number(String(item.data || '').slice(5, 7)) - 1));
+                const label = currentLevel === 'launch'
+                    ? `${formatDateBRV2(item.data)} - ${item.conta || 'Sem conta'}`
+                    : item[dimensionKey];
+                const flowGroup = item.tipo === 'entrada' ? 'entrada' : 'saida';
+                const key = currentLevel === 'launch' ? `${flowGroup}-${item.data}-${index}-${item.descricao}` : `${flowGroup}-${label}`;
+                if(!rowsMap.has(key)) {
+                    rowsMap.set(key, {
+                        label,
+                        flow: flowGroup,
+                        sub: currentLevel === 'launch' ? `${item.descricao || 'Sem descrição'} | ${item.destino || 'Sem destino'}` : '',
+                        months: Array(12).fill(0),
+                        count: 0,
+                        total: 0
+                    });
+                }
+                const row = rowsMap.get(key);
+                row.months[monthIndex] += item.valor;
+                row.total += item.valor;
+                row.count += 1;
             });
-            const detailsHtml = Array.from(grouped.entries()).sort((a, b) => b[1].total - a[1].total).map(([categoria, catData]) => {
-                const subsHtml = Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total).map(([subcategoria, subData]) => {
-                    const destinosHtml = Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total).map(([destino, dstData]) => {
-                        const launchItems = [...dstData.items].sort((a, b) => (b.data || '').localeCompare(a.data || '') || ((Number(b.valor) || 0) - (Number(a.valor) || 0)));
-                        return `<details class="mdetails-level mdetails-l3">
-                            <summary>
-                                <span class="mdetails-title">${escapeHtml(destino)}</span>
-                                <span class="mdetails-meta">${formatBRL(dstData.total)} • ${dstData.count} lanç.</span>
-                            </summary>
-                            <div class="mdetails-inner">
-                                <div class="mdetails-launches">
-                                    ${launchItems.map(item => `
-                                        <div class="mdetails-launch-item">
-                                            <div class="mdetails-launch-date">${formatDateBRV2(item.data)}</div>
-                                            <div>
-                                                <div class="mdetails-launch-desc">${escapeHtml(item.descricao || '-')}</div>
-                                                <div class="text-[10px] text-slate-500 mt-1 uppercase tracking-[0.04em]">${escapeHtml(item.conta || 'Sem conta')}</div>
-                                            </div>
-                                            <div class="mdetails-launch-value ${item.tipo === 'saida' ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(item.valor)}</div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </details>`;
-                    }).join('');
-                    return `<details class="mdetails-level mdetails-l2">
-                        <summary>
-                            <span class="mdetails-title">${escapeHtml(subcategoria)}</span>
-                            <span class="mdetails-meta">${formatBRL(subData.total)} • ${subData.count} lanç.</span>
-                        </summary>
-                        <div class="mdetails-inner">${destinosHtml}</div>
-                    </details>`;
+            const rows = Array.from(rowsMap.values()).sort((a, b) => {
+                if(a.flow !== b.flow) return a.flow === 'entrada' ? -1 : 1;
+                return Math.abs(b.total) - Math.abs(a.total) || a.label.localeCompare(b.label, 'pt-BR', { sensitivity: 'base' });
+            });
+            const totals = monthNames.map((_, index) => rows.reduce((sum, row) => sum + (Number(row.months[index]) || 0), 0));
+            const grandTotal = rows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
+            const totalCount = rows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
+
+            const breadcrumbHtml = `
+                <div class="annual-matrix-breadcrumb" aria-label="Navegação do detalhamento hierárquico">
+                    <button type="button" onclick="setAnnualHierarchyPath('category')">Categorias</button>
+                    ${annualHierarchyCategory ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('subcategory')">${escapeHtml(annualHierarchyCategory)}</button>` : ''}
+                    ${annualHierarchySubCategory ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('destination')">${escapeHtml(annualHierarchySubCategory)}</button>` : ''}
+                    ${annualHierarchyDestination ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('launch')">${escapeHtml(annualHierarchyDestination)}</button>` : ''}
+                </div>
+            `;
+            const renderGroupHeader = (flow, groupRows) => {
+                if(!groupRows.length) return '';
+                const total = groupRows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
+                const count = groupRows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
+                const label = flow === 'entrada' ? 'Entradas' : 'Saídas';
+                const className = flow === 'entrada' ? 'in' : 'out';
+                const valueClass = flow === 'entrada' ? 'flow-income-text' : 'flow-expense-text';
+                const monthTotals = monthNames.map((_, index) => groupRows.reduce((sum, row) => sum + (Number(row.months[index]) || 0), 0));
+                const monthTotalCells = monthTotals.map(value => {
+                    const cellClass = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                    return `<td class="${cellClass}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
-                return `<details class="mdetails-level">
-                    <summary>
-                        <span class="mdetails-title">${escapeHtml(categoria)}</span>
-                        <span class="mdetails-meta">${formatBRL(catData.total)} • ${catData.count} lanç.</span>
-                    </summary>
-                    <div class="mdetails-inner">${subsHtml}</div>
-                </details>`;
+                return `<tr class="annual-matrix-group-row">
+                    <td><span class="annual-matrix-group-label ${className}">${label}</span></td>
+                    ${monthTotalCells}
+                    <td class="annual-matrix-total ${valueClass}"><span class="annual-matrix-money">${formatBRL(total)}</span></td>
+                </tr>`;
+            };
+            const renderRow = (row) => {
+                const encoded = encodeSafe(row.label);
+                const nameHtml = canDrill
+                    ? `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${escapeHtml(row.label)} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`
+                    : `<span class="annual-matrix-name">${escapeHtml(row.label)}</span>`;
+                const monthCells = row.months.map(value => {
+                    const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                    return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
+                }).join('');
+                const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                return `<tr>
+                    <td>${nameHtml}${row.sub ? `<span class="annual-matrix-sub">${escapeHtml(row.sub)}</span>` : `<span class="annual-matrix-sub">${row.count} lanç.</span>`}</td>
+                    ${monthCells}
+                    <td class="annual-matrix-total ${totalClass}"><span class="annual-matrix-money">${formatBRL(row.total)}</span></td>
+                </tr>`;
+            };
+            const incomeRows = rows.filter(row => row.flow === 'entrada');
+            const expenseRows = rows.filter(row => row.flow === 'saida');
+            const rowsHtml = [
+                renderGroupHeader('entrada', incomeRows),
+                incomeRows.map(renderRow).join(''),
+                renderGroupHeader('saida', expenseRows),
+                expenseRows.map(renderRow).join('')
+            ].join('');
+            const totalsHtml = totals.map(value => {
+                const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
             }).join('');
+
             host.innerHTML = `
                 <div class="space-y-4">
                     <div>
-                        <h4 class="text-sm font-black text-slate-900">Detalhamento Hierárquico</h4>
-                        <p class="text-[11px] text-slate-500 mt-1">Abra categoria, subcategoria e destino para ver descrição e banco/conta no último nível.</p>
+                        <div class="annual-matrix-headline">
+                            <div>
+                                <h4 class="annual-matrix-title">Detalhamento Hierárquico</h4>
+                                <p class="annual-matrix-subtitle">Tabela mensal navegável por categoria, subcategoria, destino e lançamentos.</p>
+                            </div>
+                            <span class="annual-matrix-summary-pill">${totalCount} lanç. | Total ${formatBRL(grandTotal)}</span>
+                        </div>
+                        <div class="annual-matrix-toolbar">
+                            ${breadcrumbHtml}
+                        </div>
                     </div>
-                    <div class="mdetails-wrap">${detailsHtml}</div>
+                    <div class="annual-matrix-wrap custom-scrollbar">
+                        <table class="annual-matrix-table">
+                            <thead>
+                                <tr>
+                                    <th>${levelLabel}</th>
+                                    ${monthNames.map(name => `<th>${name}</th>`).join('')}
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml || `<tr><td colspan="14" class="text-center annual-matrix-zero">Nenhum dado encontrado.</td></tr>`}
+                                <tr class="annual-matrix-total-row">
+                                    <td><span class="annual-matrix-name">Total</span></td>
+                                    ${totalsHtml}
+                                    <td class="annual-matrix-total ${grandTotal < 0 ? 'flow-expense-text' : 'flow-income-text'}"><span class="annual-matrix-money">${formatBRL(grandTotal)}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             `;
+            refreshLucideIcons();
+        }
+
+        function drillAnnualHierarchy(level, value) {
+            if(level === 'category') {
+                annualHierarchyCategory = value || '';
+                annualHierarchySubCategory = '';
+                annualHierarchyDestination = '';
+            } else if(level === 'subcategory') {
+                annualHierarchySubCategory = value || '';
+                annualHierarchyDestination = '';
+            } else if(level === 'destination') {
+                annualHierarchyDestination = value || '';
+            }
+            renderAnnualTemporalComparison(annualTemporalYear);
+        }
+
+        function setAnnualHierarchyPath(level) {
+            if(level === 'category') {
+                annualHierarchyCategory = '';
+                annualHierarchySubCategory = '';
+                annualHierarchyDestination = '';
+            } else if(level === 'subcategory') {
+                annualHierarchySubCategory = '';
+                annualHierarchyDestination = '';
+            } else if(level === 'destination') {
+                annualHierarchyDestination = '';
+            }
+            renderAnnualTemporalComparison(annualTemporalYear);
         }
         function applyMonthlySelectionFiltersToEntries(entries) {
             return (entries || []).filter(e => {
@@ -10803,60 +11015,6 @@
             if (insightsHost) insightsHost.innerHTML = insights.join('');
         }
 
-        function renderMonthlySideBySide(entries, incR, expR) {
-            const body = document.getElementById('monthly-side-table-body');
-            const sub = document.getElementById('monthly-side-sub');
-            if (!body) return;
-
-            const realized = (Array.isArray(entries) ? entries : [])
-                .filter(entry => entry && entry.status === 'REALIZADO')
-                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || String(a.description || '').localeCompare(String(b.description || ''), 'pt-BR', { sensitivity: 'base' }));
-            const incomes = realized.filter(entry => normalizeFlowType(entry.type) === FLOW_IN);
-            const expenses = realized.filter(entry => normalizeFlowType(entry.type) !== FLOW_IN);
-            const rowCount = Math.max(incomes.length, expenses.length);
-
-            if (sub) {
-                sub.innerText = `${incomes.length} entrada(s) e ${expenses.length} saída(s) realizadas no filtro atual.`;
-            }
-
-            const renderCell = (entry, flowClass) => {
-                if (!entry) return '<td colspan="3"><span class="monthly-side-empty">-</span></td>';
-                const day = String(entry.date || '').slice(8, 10) || '--';
-                const destination = getDestinationLabelById(entry.destinationId) || '-';
-                const detail = String(entry.description || '').trim();
-                return `<td colspan="3">
-                    <div class="monthly-side-entry">
-                        <span class="monthly-side-date">${escapeHtml(day)}</span>
-                        <span>
-                            <span class="monthly-side-desc">${escapeHtml(destination)}</span>
-                            <span class="monthly-side-note">${escapeHtml(detail || 'Sem descrição')}</span>
-                        </span>
-                        <span class="monthly-side-value ${flowClass}">${formatBRL(Number(entry.amount) || 0)}</span>
-                    </div>
-                </td>`;
-            };
-
-            if (!rowCount) {
-                body.innerHTML = '<tr><td colspan="7" class="px-8 py-10 text-center text-slate-400 font-bold">Sem lançamentos realizados para o filtro atual</td></tr>';
-                return;
-            }
-
-            let html = '';
-            for (let i = 0; i < rowCount; i++) {
-                html += `<tr>
-                    ${renderCell(incomes[i], 'flow-income-text')}
-                    <td class="monthly-side-divider" aria-hidden="true"></td>
-                    ${renderCell(expenses[i], 'flow-expense-text')}
-                </tr>`;
-            }
-            html += `<tr class="monthly-side-total-row">
-                <td colspan="3"><div class="monthly-side-total flow-income-text"><span>Total entradas</span><span>${formatBRL(incR)}</span></div></td>
-                <td class="monthly-side-divider" aria-hidden="true"></td>
-                <td colspan="3"><div class="monthly-side-total flow-expense-text"><span>Total saídas</span><span>${formatBRL(expR)}</span></div></td>
-            </tr>`;
-            body.innerHTML = html;
-        }
-
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -10958,7 +11116,6 @@
                 monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
             }
 
-            renderMonthlySideBySide(entries, incR, expR);
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP);
             clearMonthlyCategoryCharts();
         }
@@ -11321,7 +11478,7 @@
                 if (el) el.value = value;
             };
             setValue('entry-search', destinationName);
-            setValue('filter-type', annualTemporalFlow);
+            setValue('filter-type', annualTemporalFlow === 'TODOS' ? '' : annualTemporalFlow);
             setValue('filter-status', 'REALIZADO');
             setValue('filter-account', annualNavAccountId || '');
             if (String(startIso || '').slice(0, 7) === String(endIso || '').slice(0, 7)) {
@@ -11374,8 +11531,13 @@
             modeEl.onchange = () => { annualTemporalMode = modeEl.value; renderAnnualTemporalComparison(year); };
             yearEl.onchange = () => { annualTemporalYear = Number(yearEl.value) || fallbackYear; renderAnnualTemporalComparison(year); };
 
+            const isAllAnnualFlows = annualTemporalFlow === 'TODOS';
             const selectedAnnualFlow = annualTemporalFlow === 'ENTRADA' ? FLOW_IN : FLOW_OUT;
-            const baseFlowEntries = getAnalyticalEntries(state.entries).filter(e => e.status === 'REALIZADO' && normalizeFlowType(e.type) === selectedAnnualFlow);
+            const annualTemporalFlowLabel = isAllAnnualFlows ? 'entradas e saídas' : annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas';
+            const baseFlowEntries = getAnalyticalEntries(state.entries).filter(e =>
+                e.status === 'REALIZADO' &&
+                (isAllAnnualFlows || normalizeFlowType(e.type) === selectedAnnualFlow)
+            );
 
             const validCatIds = new Set(baseFlowEntries.map(e => e.categoryId).filter(Boolean));
             const catOptions = state.categories
@@ -11461,7 +11623,10 @@
                 periods = monthNames.map((label, m) => {
                     const prefix = `${annualTemporalYear}-${String(m + 1).padStart(2, '0')}`;
                     const monthEntries = filtered.filter(e => (e.date || '').startsWith(prefix));
-                    const total = monthEntries.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                    const inTotal = monthEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && !isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
+                    const capitalTotal = monthEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
+                    const outTotal = monthEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_OUT ? acc + (Number(e.amount) || 0) : acc, 0);
+                    const total = inTotal + capitalTotal - outTotal;
                     const lastDay = new Date(annualTemporalYear, m + 1, 0).getDate();
                     return {
                         label,
@@ -11469,31 +11634,40 @@
                         startIso: `${prefix}-01`,
                         endIso: `${prefix}-${String(lastDay).padStart(2, '0')}`,
                         value: total,
+                        inTotal,
+                        capitalTotal,
+                        outTotal,
                         count: monthEntries.length,
                         average: monthEntries.length ? total / monthEntries.length : 0
                     };
                 });
                 values = periods.map(item => item.value);
-                summaryEl.innerText = `Comparativo mensal de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} em ${annualTemporalYear}.`;
+                summaryEl.innerText = `Comparativo mensal de ${annualTemporalFlowLabel} em ${annualTemporalYear}.`;
             } else {
                 const years = validYears;
                 labels = years.map(String);
                 periods = years.map(y => {
                     const prefix = `${y}-`;
                     const yearEntries = filtered.filter(e => (e.date || '').startsWith(prefix));
-                    const total = yearEntries.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+                    const inTotal = yearEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && !isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
+                    const capitalTotal = yearEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
+                    const outTotal = yearEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_OUT ? acc + (Number(e.amount) || 0) : acc, 0);
+                    const total = inTotal + capitalTotal - outTotal;
                     return {
                         label: String(y),
                         detail: 'Ano completo',
                         startIso: `${y}-01-01`,
                         endIso: `${y}-12-31`,
                         value: total,
+                        inTotal,
+                        capitalTotal,
+                        outTotal,
                         count: yearEntries.length,
                         average: yearEntries.length ? total / yearEntries.length : 0
                     };
                 });
                 values = periods.map(item => item.value);
-                summaryEl.innerText = `Comparativo anual de ${annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas'} entre anos.`;
+                summaryEl.innerText = `Comparativo anual de ${annualTemporalFlowLabel} entre anos.`;
             }
 
             const navParts = [];
@@ -11514,49 +11688,73 @@
                 const supplierName = dstOptions.find(d => d.id === annualNavDestinationId)?.name || 'Fornecedor selecionado';
                 summaryEl.innerText = `${supplierName}: comparação mês a mês em ${annualTemporalYear}. Clique em "Ver" para abrir os lançamentos do período.`;
             } else if(annualTemporalMode === 'MESES' && !annualNavDestinationId) {
-                summaryEl.innerText = `Escolha um destino/fornecedor para ver quanto gastou em Jan, Fev, Mar e nos demais meses de ${annualTemporalYear}.`;
+                summaryEl.innerText = `Escolha um destino/fornecedor para ver ${annualTemporalFlowLabel} em Jan, Fev, Mar e nos demais meses de ${annualTemporalYear}.`;
             }
             if(navParts.length) summaryEl.innerText += ` Filtro: ${navParts.filter(Boolean).join(' > ')}.`;
             if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
             renderAnnualHierarchyDetail(filtered);
 
-            if(values.every(v => v === 0)) {
-                tableBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
+            if(periods.every(item => item.count === 0)) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
                 if(window.aTemporalChart) window.aTemporalChart.destroy();
                 return;
             }
 
-            tableBody.innerHTML = periods.map((item, idx) => {
-                const current = values[idx] || 0;
-                const prev = idx > 0 ? (values[idx - 1] || 0) : 0;
-                const varText = formatVariation(current, prev);
-                const valueClass = isCapitalView ? 'flow-capital-text' : annualTemporalFlow === 'ENTRADA' ? 'flow-income-text' : 'flow-expense-text';
+            tableBody.innerHTML = periods.map((item) => {
+                const current = Number(item.value) || 0;
+                const saldoClass = current < 0 ? 'flow-expense-text' : current > 0 ? 'flow-income-text' : 'annual-compare-muted';
                 return `<tr class="table-row">
                     <td class="px-4 py-3">
                         <div class="annual-compare-period">${escapeHtml(item.label)}</div>
                         <div class="annual-compare-sub">${escapeHtml(item.detail)}</div>
                     </td>
-                    <td class="px-4 py-3 text-right"><span class="annual-compare-value ${valueClass}">${formatBRL(current)}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-value flow-income-text">${formatBRL(item.inTotal || 0)}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-value flow-capital-text">${formatBRL(item.capitalTotal || 0)}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-value flow-expense-text">${formatBRL(item.outTotal || 0)}</span></td>
+                    <td class="px-4 py-3 text-right"><span class="annual-compare-value ${saldoClass}">${formatBRL(current)}</span></td>
                     <td class="px-4 py-3 text-right"><span class="annual-compare-muted">${item.count}</span></td>
-                    <td class="px-4 py-3 text-right"><span class="annual-compare-muted">${item.count ? formatBRL(item.average) : '-'}</span></td>
-                    <td class="px-4 py-3 text-right"><span class="annual-compare-muted">${varText}</span></td>
                     <td class="px-4 py-3 text-right"><button type="button" class="annual-compare-open" onclick="openAnnualTemporalPeriodInEntries('${item.startIso}', '${item.endIso}')">Ver</button></td>
                 </tr>`;
             }).join('');
 
-            const chartColor = isCapitalView ? '#8FD19E' : annualTemporalFlow === 'ENTRADA' ? '#0F8A67' : '#C94A34';
+            const chartColor = isAllAnnualFlows ? values.map(value => value < 0 ? '#C94A34' : '#0F8A67') : isCapitalView ? '#8FD19E' : annualTemporalFlow === 'ENTRADA' ? '#0F8A67' : '#C94A34';
+            const annualTemporalDatasets = isAllAnnualFlows
+                ? [
+                    {
+                        label: 'Entradas',
+                        data: periods.map(item => item.inTotal || 0),
+                        backgroundColor: '#0F8A67',
+                        borderRadius: 8,
+                        maxBarThickness: 42
+                    },
+                    {
+                        label: 'Aporte de Capital',
+                        data: periods.map(item => item.capitalTotal || 0),
+                        backgroundColor: '#8FD19E',
+                        borderRadius: 8,
+                        maxBarThickness: 42
+                    },
+                    {
+                        label: 'Saídas',
+                        data: periods.map(item => item.outTotal || 0),
+                        backgroundColor: '#C94A34',
+                        borderRadius: 8,
+                        maxBarThickness: 42
+                    }
+                ]
+                : [{
+                    label: annualTemporalFlow === 'ENTRADA' ? 'Entradas' : 'Saídas',
+                    data: values,
+                    backgroundColor: chartColor,
+                    borderRadius: 8,
+                    maxBarThickness: 42
+                }];
             if(window.aTemporalChart) window.aTemporalChart.destroy();
             window.aTemporalChart = new Chart(chartEl.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels,
-                    datasets: [{
-                        label: annualTemporalFlow === 'ENTRADA' ? 'Entradas' : 'Saídas',
-                        data: values,
-                        backgroundColor: chartColor,
-                        borderRadius: 8,
-                        maxBarThickness: 42
-                    }]
+                    datasets: annualTemporalDatasets
                 },
                 options: {
                     maintainAspectRatio: false,
@@ -11571,7 +11769,7 @@
                         x: { grid: { display: false } }
                     },
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: isAllAnnualFlows },
                         tooltip: getReadableTooltipConfig((ctx) => formatBRL(ctx.raw || 0))
                     }
                 }
@@ -15016,6 +15214,10 @@
             return !document.getElementById('login-screen')?.classList.contains('hidden');
         }
 
+        function isLoginUserField(target) {
+            return target && target.id === 'login-user';
+        }
+
         function updateLoginDots() {
             const hiddenInput = document.getElementById('login-pass-hidden');
             const dots = Array.from(document.querySelectorAll('#login-pass-dots .login-dot'));
@@ -15086,6 +15288,19 @@
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
         document.addEventListener('keydown', (event) => {
             if (isLoginOpen()) {
+                if (isLoginUserField(event.target)) {
+                    const userValue = String(event.target.value || '').trim().toLowerCase();
+                    if (/^\d$/.test(event.key) && userValue === LOGIN_USER) {
+                        event.preventDefault();
+                        appendLoginDigit(event.key);
+                        return;
+                    }
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        submitLogin();
+                    }
+                    return;
+                }
                 if (/^\d$/.test(event.key)) {
                     event.preventDefault();
                     appendLoginDigit(event.key);
@@ -15106,6 +15321,19 @@
             if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
             if (!document.getElementById('db-modal')?.classList.contains('hidden')) closeModal('db-modal');
         });
+        document.addEventListener('dblclick', (event) => {
+            if (!isLoginOpen()) return;
+            event.preventDefault();
+        }, { passive: false });
+        let lastLoginTouchAt = 0;
+        document.addEventListener('touchend', (event) => {
+            if (!isLoginOpen()) return;
+            const now = Date.now();
+            if (now - lastLoginTouchAt < 320 && !isLoginUserField(event.target)) {
+                event.preventDefault();
+            }
+            lastLoginTouchAt = now;
+        }, { passive: false });
         document.addEventListener('mousedown', (event) => {
             const shell = document.querySelector('#entry-modal .combobox-shell');
             if (!shell || shell.contains(event.target)) return;
