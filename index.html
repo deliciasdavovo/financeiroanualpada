@@ -1053,6 +1053,89 @@
             font-weight: 900;
             white-space: nowrap;
         }
+        .monthly-side-card {
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .monthly-side-table {
+            min-width: 920px;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .monthly-side-table th {
+            padding: 12px 14px;
+            font-size: 11px !important;
+            font-weight: 900 !important;
+            color: #64748B !important;
+            white-space: nowrap;
+        }
+        .monthly-side-table td {
+            padding: 10px 14px;
+            border-top: 1px solid #EEF2F7;
+            vertical-align: top;
+        }
+        .monthly-side-entry {
+            display: grid;
+            grid-template-columns: 52px minmax(0, 1fr) 116px;
+            gap: 10px;
+            align-items: start;
+            min-height: 36px;
+        }
+        .monthly-side-date {
+            font-size: 11px;
+            font-weight: 900;
+            color: #64748B;
+            white-space: nowrap;
+        }
+        .monthly-side-desc {
+            min-width: 0;
+            font-size: 12px;
+            line-height: 1.25;
+            font-weight: 800;
+            color: #0F172A;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .monthly-side-note {
+            margin-top: 3px;
+            font-size: 10px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: #94A3B8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .monthly-side-value {
+            text-align: right;
+            font-size: 12px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .monthly-side-empty {
+            color: #CBD5E1;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .monthly-side-divider {
+            width: 1px;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            background: #EEF2F7;
+        }
+        .monthly-side-total-row td {
+            background: #F8FAFC;
+            border-top: 1px solid #DDE6F0;
+        }
+        .monthly-side-total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 12px;
+            font-weight: 900;
+        }
         .status-toggle {
             display: flex;
             background: #F3F4F6;
@@ -5143,6 +5226,36 @@
                 </section>
 
                 <section id="analise-hierarquica-mensal"></section>
+
+                <section class="card-premium monthly-side-card" aria-labelledby="monthly-side-title">
+                    <div class="monthly-daily-head">
+                        <div>
+                            <h4 id="monthly-side-title" class="monthly-daily-title">Entradas x saídas do mês</h4>
+                            <p id="monthly-side-sub" class="monthly-daily-sub">Lançamentos realizados lado a lado para conferir o mês mais rápido.</p>
+                        </div>
+                    </div>
+                    <div class="table-mobile-scroll custom-scrollbar">
+                        <table class="monthly-side-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="3" class="flow-income-text">Entradas</th>
+                                    <th class="monthly-side-divider" aria-hidden="true"></th>
+                                    <th colspan="3" class="flow-expense-text">Saídas</th>
+                                </tr>
+                                <tr>
+                                    <th>Dia</th>
+                                    <th>Destino / detalhe</th>
+                                    <th class="text-right">Valor</th>
+                                    <th class="monthly-side-divider" aria-hidden="true"></th>
+                                    <th>Dia</th>
+                                    <th>Destino / detalhe</th>
+                                    <th class="text-right">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-side-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
 
                 <div class="card-premium monthly-daily-card h-[520px] lg:h-[700px] flex flex-col">
                     <div class="monthly-daily-head">
@@ -10690,6 +10803,60 @@
             if (insightsHost) insightsHost.innerHTML = insights.join('');
         }
 
+        function renderMonthlySideBySide(entries, incR, expR) {
+            const body = document.getElementById('monthly-side-table-body');
+            const sub = document.getElementById('monthly-side-sub');
+            if (!body) return;
+
+            const realized = (Array.isArray(entries) ? entries : [])
+                .filter(entry => entry && entry.status === 'REALIZADO')
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')) || String(a.description || '').localeCompare(String(b.description || ''), 'pt-BR', { sensitivity: 'base' }));
+            const incomes = realized.filter(entry => normalizeFlowType(entry.type) === FLOW_IN);
+            const expenses = realized.filter(entry => normalizeFlowType(entry.type) !== FLOW_IN);
+            const rowCount = Math.max(incomes.length, expenses.length);
+
+            if (sub) {
+                sub.innerText = `${incomes.length} entrada(s) e ${expenses.length} saída(s) realizadas no filtro atual.`;
+            }
+
+            const renderCell = (entry, flowClass) => {
+                if (!entry) return '<td colspan="3"><span class="monthly-side-empty">-</span></td>';
+                const day = String(entry.date || '').slice(8, 10) || '--';
+                const destination = getDestinationLabelById(entry.destinationId) || '-';
+                const detail = String(entry.description || '').trim();
+                return `<td colspan="3">
+                    <div class="monthly-side-entry">
+                        <span class="monthly-side-date">${escapeHtml(day)}</span>
+                        <span>
+                            <span class="monthly-side-desc">${escapeHtml(destination)}</span>
+                            <span class="monthly-side-note">${escapeHtml(detail || 'Sem descrição')}</span>
+                        </span>
+                        <span class="monthly-side-value ${flowClass}">${formatBRL(Number(entry.amount) || 0)}</span>
+                    </div>
+                </td>`;
+            };
+
+            if (!rowCount) {
+                body.innerHTML = '<tr><td colspan="7" class="px-8 py-10 text-center text-slate-400 font-bold">Sem lançamentos realizados para o filtro atual</td></tr>';
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < rowCount; i++) {
+                html += `<tr>
+                    ${renderCell(incomes[i], 'flow-income-text')}
+                    <td class="monthly-side-divider" aria-hidden="true"></td>
+                    ${renderCell(expenses[i], 'flow-expense-text')}
+                </tr>`;
+            }
+            html += `<tr class="monthly-side-total-row">
+                <td colspan="3"><div class="monthly-side-total flow-income-text"><span>Total entradas</span><span>${formatBRL(incR)}</span></div></td>
+                <td class="monthly-side-divider" aria-hidden="true"></td>
+                <td colspan="3"><div class="monthly-side-total flow-expense-text"><span>Total saídas</span><span>${formatBRL(expR)}</span></div></td>
+            </tr>`;
+            body.innerHTML = html;
+        }
+
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -10791,6 +10958,7 @@
                 monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
             }
 
+            renderMonthlySideBySide(entries, incR, expR);
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP);
             clearMonthlyCategoryCharts();
         }
