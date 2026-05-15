@@ -7361,17 +7361,6 @@
                 );
             }).join('');
         }
-        function getMonthlyDetailedExportGrouping() {
-            const choice = window.prompt(
-                'Relatório mensal\n\nComo deseja agrupar os lançamentos detalhados?\n\n1 = Por conta\n2 = Por categoria\n3 = Por fluxo (entrada e saída)\n\nDigite 1, 2 ou 3:',
-                '3'
-            );
-            if (choice === null) return null;
-            const normalized = String(choice || '').trim();
-            if (normalized === '1') return 'account';
-            if (normalized === '2') return 'category';
-            return 'flow';
-        }
         function getMonthlyDetailedExportGroupingLabel(grouping) {
             if (grouping === 'account') return 'Por conta';
             if (grouping === 'category') return 'Por categoria';
@@ -7414,7 +7403,17 @@
             return Array.from(grouped.entries())
                 .sort(([a], [b]) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }))
                 .map(([accountName, groupEntries]) => {
-                    const rows = sortExportEntries(groupEntries).map((entry) => {
+                    const rows = [...groupEntries].sort((a, b) => {
+                        const namesA = getExportHierarchyNames(a);
+                        const namesB = getExportHierarchyNames(b);
+                        const subCmp = namesA.subCategory.localeCompare(namesB.subCategory, 'pt-BR', { sensitivity: 'base' });
+                        if (subCmp) return subCmp;
+                        const dstCmp = namesA.destination.localeCompare(namesB.destination, 'pt-BR', { sensitivity: 'base' });
+                        if (dstCmp) return dstCmp;
+                        const dateCmp = String(a.date || '').localeCompare(String(b.date || ''));
+                        if (dateCmp) return dateCmp;
+                        return (Number(b.amount) || 0) - (Number(a.amount) || 0);
+                    }).map((entry) => {
                         const flow = normalizeFlowType(entry.type);
                         const meta = getFlowMetaV2(flow);
                         const names = getExportHierarchyNames(entry);
@@ -7453,7 +7452,17 @@
             return Array.from(grouped.entries())
                 .sort(([a], [b]) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }))
                 .map(([categoryName, groupEntries]) => {
-                    const rows = sortExportEntries(groupEntries).map((entry) => {
+                    const rows = [...groupEntries].sort((a, b) => {
+                        const namesA = getExportHierarchyNames(a);
+                        const namesB = getExportHierarchyNames(b);
+                        const subCmp = namesA.subCategory.localeCompare(namesB.subCategory, 'pt-BR', { sensitivity: 'base' });
+                        if (subCmp) return subCmp;
+                        const dstCmp = namesA.destination.localeCompare(namesB.destination, 'pt-BR', { sensitivity: 'base' });
+                        if (dstCmp) return dstCmp;
+                        const dateCmp = String(a.date || '').localeCompare(String(b.date || ''));
+                        if (dateCmp) return dateCmp;
+                        return (Number(b.amount) || 0) - (Number(a.amount) || 0);
+                    }).map((entry) => {
                         const flow = normalizeFlowType(entry.type);
                         const meta = getFlowMetaV2(flow);
                         const names = getExportHierarchyNames(entry);
@@ -7509,8 +7518,17 @@
                 );
             }).join('');
         }
-        function shouldIncludeCompleteExport(reportName) {
-            return window.confirm(`${reportName}\n\nDeseja incluir todos os lançamentos detalhados no PDF?\n\nOK = relatório completo\nCancelar = relatório resumido`);
+        async function shouldIncludeCompleteExport(reportName) {
+            return showAppConfirmDialog({
+                title: reportName,
+                message: [
+                    'Deseja incluir todos os lançamentos detalhados no PDF?',
+                    'Completo inclui a lista de lançamentos. Resumido exporta apenas as análises principais.'
+                ],
+                confirmLabel: 'Relatório completo',
+                cancelLabel: 'Relatório resumido',
+                icon: 'file-down'
+            });
         }
         function buildMonthlyHierarchyTableV2Legacy(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
@@ -7764,7 +7782,7 @@
                 setTimeout(printReport, 250);
             }
         }
-        function exportCurrentReportPDF() {
+        async function exportCurrentReportPDF() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
             let tableHtml = '<p>Sem dados para exportação.</p>';
@@ -7784,9 +7802,8 @@
                     buildExportSectionV2('Lançamentos por Fluxo', rows.length ? buildFlowGroupedLaunchTables(rows) : buildEmptyPrintCard('Sem lançamentos no filtro atual.'))
                 ].join('');
             } else if (currentTab === 'reports' && reportsMode === 'monthly') {
-                const includeComplete = shouldIncludeCompleteExport('Relatório mensal');
-                const detailedGrouping = includeComplete ? getMonthlyDetailedExportGrouping() : 'flow';
-                if (includeComplete && detailedGrouping === null) return;
+                const includeComplete = await shouldIncludeCompleteExport('Relatório mensal');
+                const detailedGrouping = 'category';
                 const detailedGroupingLabel = getMonthlyDetailedExportGroupingLabel(detailedGrouping);
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
@@ -7823,7 +7840,7 @@
                     includeComplete ? buildExportSectionV2(`Relatório Completo - Lançamentos (${detailedGroupingLabel})`, entries.length ? buildMonthlyDetailedLaunchTables(entries, detailedGrouping) : buildEmptyPrintCard('Sem lançamentos detalhados no período/filtro selecionado.')) : ''
                 ].join('');
             } else if (currentTab === 'reports' && reportsMode === 'annual') {
-                const includeComplete = shouldIncludeCompleteExport('Relatório anual');
+                const includeComplete = await shouldIncludeCompleteExport('Relatório anual');
                 const selectedYear = Number(document.getElementById('reports-annual-year')?.value || document.getElementById('annual-temporal-year')?.value);
                 const year = selectedYear || annualTemporalYear || new Date().getFullYear();
                 const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -7925,6 +7942,69 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+        function showAppConfirmDialog({
+            title = 'Confirmar ação',
+            message = '',
+            confirmLabel = 'Confirmar',
+            cancelLabel = 'Cancelar',
+            icon = 'circle-help',
+            tone = 'default'
+        } = {}) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay fixed inset-0 z-[10020] flex items-center justify-center p-4';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                const messageLines = Array.isArray(message)
+                    ? message
+                    : String(message || '').split('\n').filter(line => line.trim() !== '');
+                const accentClass = tone === 'danger' ? 'text-red-600 bg-red-50 border-red-100' : 'text-blue-700 bg-blue-50 border-blue-100';
+                overlay.innerHTML = `
+                    <div class="modal-shell modal-shell-db">
+                        <div class="modal-head">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-10 h-10 rounded-xl border ${accentClass} inline-flex items-center justify-center shrink-0">
+                                    <i data-lucide="${escapeHtml(icon)}" class="w-5 h-5"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="modal-head-title">${escapeHtml(title)}</p>
+                                    <p class="modal-head-sub">Escolha como deseja continuar.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="modal-close-btn" data-dialog-cancel aria-label="Fechar">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="space-y-2 text-[12px] font-bold text-slate-600 leading-5">
+                                ${messageLines.map(line => `<p>${escapeHtml(line)}</p>`).join('')}
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="treasury-secondary-btn flex-1" data-dialog-cancel>${escapeHtml(cancelLabel)}</button>
+                                <button type="button" class="modal-btn-primary" data-dialog-confirm>${escapeHtml(confirmLabel)}</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const cleanup = (value) => {
+                    document.removeEventListener('keydown', handleKeydown);
+                    overlay.remove();
+                    resolve(value);
+                };
+                const handleKeydown = (event) => {
+                    if (event.key === 'Escape') cleanup(false);
+                    if (event.key === 'Enter') cleanup(true);
+                };
+                overlay.addEventListener('click', (event) => {
+                    if (event.target === overlay || event.target.closest('[data-dialog-cancel]')) cleanup(false);
+                    if (event.target.closest('[data-dialog-confirm]')) cleanup(true);
+                });
+                document.addEventListener('keydown', handleKeydown);
+                document.body.appendChild(overlay);
+                refreshLucideIcons();
+                window.setTimeout(() => overlay.querySelector('[data-dialog-confirm]')?.focus(), 50);
+            });
+        }
         function isCapitalContributionName(value) {
             const normalized = normalizeDestinationLookupLabel(value);
             return normalized.includes('aporte') && normalized.includes('capital');
@@ -14167,16 +14247,19 @@
                     .filter(action => action.shouldRealize)
                     .map(action => ({ ...action.existing, status: 'REALIZADO' }));
                 if (entryIdsToSkip.size > 0) {
-                    const confirmMessage = [
-                        `Encontrei ${entryIdsToSkip.size} lancamento(s) da conciliacao com mesma data, fluxo e valor ja cadastrado(s) em alguma conta.`,
+                    const shouldReuseExisting = await showAppConfirmDialog({
+                        title: 'Conferir lançamentos encontrados',
+                        message: [
+                        `Encontrei ${entryIdsToSkip.size} lançamento(s) da conciliação com mesma data, fluxo e valor já cadastrado(s) em alguma conta.`,
                         pendingToRealize.length > 0
-                            ? `${pendingToRealize.length} lancamento(s) existente(s) estao pendentes e serao marcados como REALIZADO.`
-                            : 'Os lancamentos existentes ja estao realizados.',
-                        '',
-                        'OK = nao importar esses duplicados e usar os lancamentos existentes.',
-                        'Cancelar = importar tudo mesmo.'
-                    ].join('\n');
-                    const shouldReuseExisting = confirm(confirmMessage);
+                            ? `${pendingToRealize.length} lançamento(s) existente(s) estão pendentes e serão marcados como realizado.`
+                            : 'Os lançamentos existentes já estão realizados.',
+                        'Usar existentes evita importar duplicados. Importar tudo mantém as novas linhas da conciliação.'
+                        ],
+                        confirmLabel: 'Usar existentes',
+                        cancelLabel: 'Importar tudo',
+                        icon: 'badge-check'
+                    });
                     if (!shouldReuseExisting) {
                         entryIdsToSkip.clear();
                         pendingToRealize.length = 0;
