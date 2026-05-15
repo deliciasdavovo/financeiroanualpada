@@ -5474,15 +5474,6 @@
                         </div>
                     </div>
                 </div>
-                <section class="card-premium reports-insights-card" aria-labelledby="reports-annual-ranking-title">
-                    <div class="reports-card-head">
-                        <div>
-                            <h4 id="reports-annual-ranking-title">Insights</h4>
-                            <p>Ranking dos pontos mais importantes do ano.</p>
-                        </div>
-                    </div>
-                    <div id="reports-annual-ranking" class="reports-insight-grid"></div>
-                </section>
             </div>
             </div>
 
@@ -6989,8 +6980,11 @@
         }
         function buildPrintableShell(title, subtitle, tableHtml) {
             return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <style>
-                body{font-family:Arial,sans-serif;color:#0f172a;padding:24px;}
+                body{font-family:'Manrope',Arial,sans-serif;color:#0f172a;padding:24px;}
                 h1{margin:0 0 4px;font-size:20px;}
                 p{margin:0 0 14px;color:#475569;font-size:12px;}
                 table{width:100%;border-collapse:collapse;font-size:12px;}
@@ -7140,10 +7134,13 @@
         }
         function buildPrintableShellV2(title, subtitle, tableHtml) {
             return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <style>
                 @page{size:A4 portrait;margin:14mm;}
                 *{box-sizing:border-box;}
-                body{font-family:Arial,sans-serif;color:#0f172a;padding:0;margin:0;background:#fff;}
+                body{font-family:'Manrope',Arial,sans-serif;color:#0f172a;padding:0;margin:0;background:#fff;}
                 h1{margin:0 0 4px;font-size:20px;}
                 p{margin:0 0 14px;color:#475569;font-size:12px;}
                 table{width:100%;border-collapse:collapse;font-size:11px;}
@@ -7363,6 +7360,121 @@
                     flowRows.length
                 );
             }).join('');
+        }
+        function getMonthlyDetailedExportGrouping() {
+            const choice = window.prompt(
+                'Relatório mensal\n\nComo deseja agrupar os lançamentos detalhados?\n\n1 = Por conta\n2 = Por categoria\n3 = Por fluxo (entrada e saída)\n\nDigite 1, 2 ou 3:',
+                '3'
+            );
+            if (choice === null) return null;
+            const normalized = String(choice || '').trim();
+            if (normalized === '1') return 'account';
+            if (normalized === '2') return 'category';
+            return 'flow';
+        }
+        function getMonthlyDetailedExportGroupingLabel(grouping) {
+            if (grouping === 'account') return 'Por conta';
+            if (grouping === 'category') return 'Por categoria';
+            return 'Por fluxo';
+        }
+        function buildDetailedLaunchGroupSection(title, groupedEntries, columnsHtml, bodyRows, columnCount) {
+            const entries = groupedEntries || [];
+            const totalIn = entries
+                .filter(e => normalizeFlowType(e.type) === FLOW_IN)
+                .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const totalOut = entries
+                .filter(e => normalizeFlowType(e.type) === FLOW_OUT)
+                .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const net = totalIn - totalOut;
+            return `<div class="flow-section">
+                <div class="flow-section-head">
+                    <p class="flow-section-title">${escapeHtml(title || 'Sem grupo')}</p>
+                    <span class="flow-section-meta">${entries.length} lanç. | Entradas ${formatBRL(totalIn)} | Saídas ${formatBRL(totalOut)} | Saldo ${formatBRL(net)}</span>
+                </div>
+                <table><thead><tr>${columnsHtml}</tr></thead><tbody>${bodyRows || `<tr><td colspan="${columnCount}" class="c muted">Sem lançamentos neste grupo.</td></tr>`}</tbody></table>
+            </div>`;
+        }
+        function buildAccountGroupedLaunchTables(entries) {
+            const grouped = new Map();
+            (entries || []).forEach((entry) => {
+                const accountName = getAccountNameById((entry || {}).accountId);
+                if (!grouped.has(accountName)) grouped.set(accountName, []);
+                grouped.get(accountName).push(entry);
+            });
+            const columns = [
+                '<th>Data</th>',
+                '<th>Fluxo</th>',
+                '<th>Categoria</th>',
+                '<th>Subcategoria</th>',
+                '<th>Destino</th>',
+                '<th>Descrição</th>',
+                '<th class="c">Status</th>',
+                '<th class="r">Valor</th>'
+            ].join('');
+            return Array.from(grouped.entries())
+                .sort(([a], [b]) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }))
+                .map(([accountName, groupEntries]) => {
+                    const rows = sortExportEntries(groupEntries).map((entry) => {
+                        const flow = normalizeFlowType(entry.type);
+                        const meta = getFlowMetaV2(flow);
+                        const names = getExportHierarchyNames(entry);
+                        return `<tr>
+                            <td>${formatDateBRV2(entry.date)}</td>
+                            <td class="${meta.className}">${escapeHtml(meta.label)}</td>
+                            <td>${escapeHtml(names.category)}</td>
+                            <td>${escapeHtml(names.subCategory)}</td>
+                            <td>${escapeHtml(names.destination)}</td>
+                            <td>${escapeHtml(entry.description || '')}</td>
+                            <td class="c">${escapeHtml(entry.status || '-')}</td>
+                            <td class="r ${meta.className}">${formatSignedBRLV2(entry.amount, flow)}</td>
+                        </tr>`;
+                    }).join('');
+                    return buildDetailedLaunchGroupSection(accountName, groupEntries, columns, rows, 8);
+                }).join('');
+        }
+        function buildCategoryGroupedLaunchTables(entries) {
+            const grouped = new Map();
+            (entries || []).forEach((entry) => {
+                const names = getExportHierarchyNames(entry);
+                const categoryName = names.category || 'Sem categoria';
+                if (!grouped.has(categoryName)) grouped.set(categoryName, []);
+                grouped.get(categoryName).push(entry);
+            });
+            const columns = [
+                '<th>Data</th>',
+                '<th>Fluxo</th>',
+                '<th>Conta</th>',
+                '<th>Subcategoria</th>',
+                '<th>Destino</th>',
+                '<th>Descrição</th>',
+                '<th class="c">Status</th>',
+                '<th class="r">Valor</th>'
+            ].join('');
+            return Array.from(grouped.entries())
+                .sort(([a], [b]) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }))
+                .map(([categoryName, groupEntries]) => {
+                    const rows = sortExportEntries(groupEntries).map((entry) => {
+                        const flow = normalizeFlowType(entry.type);
+                        const meta = getFlowMetaV2(flow);
+                        const names = getExportHierarchyNames(entry);
+                        return `<tr>
+                            <td>${formatDateBRV2(entry.date)}</td>
+                            <td class="${meta.className}">${escapeHtml(meta.label)}</td>
+                            <td>${escapeHtml(getExportAccountName(entry))}</td>
+                            <td>${escapeHtml(names.subCategory)}</td>
+                            <td>${escapeHtml(names.destination)}</td>
+                            <td>${escapeHtml(entry.description || '')}</td>
+                            <td class="c">${escapeHtml(entry.status || '-')}</td>
+                            <td class="r ${meta.className}">${formatSignedBRLV2(entry.amount, flow)}</td>
+                        </tr>`;
+                    }).join('');
+                    return buildDetailedLaunchGroupSection(categoryName, groupEntries, columns, rows, 8);
+                }).join('');
+        }
+        function buildMonthlyDetailedLaunchTables(entries, grouping) {
+            if (grouping === 'account') return buildAccountGroupedLaunchTables(entries);
+            if (grouping === 'category') return buildCategoryGroupedLaunchTables(entries);
+            return buildFlowGroupedLaunchTables(entries);
         }
         function buildFlowHierarchySummaryByCategory(entries) {
             return [FLOW_IN, FLOW_OUT].map((flow) => {
@@ -7645,7 +7757,12 @@
             win.document.write(buildPrintableShellV2(title, subtitle, tableHtml));
             win.document.close();
             win.focus();
-            setTimeout(() => win.print(), 250);
+            const printReport = () => win.print();
+            if (win.document.fonts?.ready) {
+                win.document.fonts.ready.then(printReport).catch(() => setTimeout(printReport, 250));
+            } else {
+                setTimeout(printReport, 250);
+            }
         }
         function exportCurrentReportPDF() {
             let title = '';
@@ -7668,6 +7785,9 @@
                 ].join('');
             } else if (currentTab === 'reports' && reportsMode === 'monthly') {
                 const includeComplete = shouldIncludeCompleteExport('Relatório mensal');
+                const detailedGrouping = includeComplete ? getMonthlyDetailedExportGrouping() : 'flow';
+                if (includeComplete && detailedGrouping === null) return;
+                const detailedGroupingLabel = getMonthlyDetailedExportGroupingLabel(detailedGrouping);
                 const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
                 const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
                 const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
@@ -7683,7 +7803,8 @@
                         ['Período', filter],
                         ['Fluxo', fluxoSelecionado || 'TODOS'],
                         ['Categoria', categoriaFiltroSelecionada || 'Todas'],
-                        ['Formato', includeComplete ? 'Completo' : 'Resumido']
+                        ['Formato', includeComplete ? 'Completo' : 'Resumido'],
+                        ['Detalhamento', includeComplete ? detailedGroupingLabel : 'Não incluído']
                     ]),
                     buildExportSectionV2('Resumo', buildExportKpiCardsV2([
                         { label: 'Entradas realizadas', value: formatBRL(incReal), className: 'flow-in' },
@@ -7699,7 +7820,7 @@
                     ])),
                     buildExportSectionV2('Entradas e Saídas por Destino', entries.length ? buildFlowHierarchySummaryByCategory(entries) : buildEmptyPrintCard('Sem dados para exportação no período/filtro selecionado.')),
                     buildExportSectionV2('Resumo Diário', buildMonthlyDailyExportTableV2(filter, entries)),
-                    includeComplete ? buildExportSectionV2('Relatório Completo - Lançamentos', entries.length ? buildFlowGroupedLaunchTables(entries) : buildEmptyPrintCard('Sem lançamentos detalhados no período/filtro selecionado.')) : ''
+                    includeComplete ? buildExportSectionV2(`Relatório Completo - Lançamentos (${detailedGroupingLabel})`, entries.length ? buildMonthlyDetailedLaunchTables(entries, detailedGrouping) : buildEmptyPrintCard('Sem lançamentos detalhados no período/filtro selecionado.')) : ''
                 ].join('');
             } else if (currentTab === 'reports' && reportsMode === 'annual') {
                 const includeComplete = shouldIncludeCompleteExport('Relatório anual');
@@ -11343,14 +11464,6 @@
             const captionEl = document.getElementById('reports-annual-caption');
             if (captionEl) captionEl.innerText = `${year} com ${yearEntries.length} lançamento(s) cadastrados.`;
 
-            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-            const rankedByNet = data
-                .map((item, idx) => ({ ...item, label: monthNames[idx] }))
-                .filter(item => item.inc > 0 || item.exp > 0);
-            const best = [...rankedByNet].sort((a, b) => b.bal - a.bal)[0];
-            const worst = [...rankedByNet].sort((a, b) => a.bal - b.bal)[0];
-            const topIn = [...rankedByNet].sort((a, b) => b.inc - a.inc)[0];
-            const topOut = [...rankedByNet].sort((a, b) => b.exp - a.exp)[0];
             const previousYearSummary = summarizeFinancialEntries(getRealizedEntriesForPrefix(`${year - 1}-`));
             const twoYearAvg = [year - 1, year - 2]
                 .map(y => summarizeFinancialEntries(getRealizedEntriesForPrefix(`${y}-`)))
@@ -13675,13 +13788,13 @@
             strictCounts: new Map(),
             movementCounts: new Map(),
             movementDestinationCounts: new Map(),
-            movementDestinationLabels: new Map()
+            movementDestinationLabels: new Map(),
+            movementEntries: new Map()
         };
 
         function getReconExistingMatchCache() {
             const entries = Array.isArray(state.entries) ? state.entries : [];
-            const cutoffDate = addLocalDays(parseIsoDateLocal(getTodayIsoDate()) || new Date(), -30);
-            const cutoffIso = formatLocalDate(cutoffDate);
+            const cutoffIso = 'ALL';
             const isFresh = reconExistingMatchCache.accountId === 'ALL'
                 && reconExistingMatchCache.cutoffIso === cutoffIso
                 && reconExistingMatchCache.entriesRef === state.entries
@@ -13692,10 +13805,11 @@
             const movementCounts = new Map();
             const movementDestinationCounts = new Map();
             const movementDestinationLabels = new Map();
+            const movementEntries = new Map();
 
             entries.forEach(existing => {
                 const existingDate = String((existing || {}).date || '');
-                if (!existingDate || existingDate < cutoffIso) return;
+                if (!existingDate) return;
                 const strictKey = buildEntryDuplicateKey(existing);
                 const movementKey = buildEntryReconMatchKey(existing, false);
                 const movementDestinationKey = buildEntryReconMatchKey(existing, true);
@@ -13705,6 +13819,8 @@
                 strictCounts.set(strictKey, (strictCounts.get(strictKey) || 0) + 1);
                 movementCounts.set(movementKey, (movementCounts.get(movementKey) || 0) + 1);
                 movementDestinationCounts.set(movementDestinationKey, (movementDestinationCounts.get(movementDestinationKey) || 0) + 1);
+                if (!movementEntries.has(movementKey)) movementEntries.set(movementKey, []);
+                movementEntries.get(movementKey).push(existing);
                 if (!movementDestinationLabels.has(movementKey)) movementDestinationLabels.set(movementKey, new Map());
                 const labelsByDestination = movementDestinationLabels.get(movementKey);
                 if (!labelsByDestination.has(destinationId)) labelsByDestination.set(destinationId, new Set());
@@ -13719,9 +13835,20 @@
                 strictCounts,
                 movementCounts,
                 movementDestinationCounts,
-                movementDestinationLabels
+                movementDestinationLabels,
+                movementEntries
             };
             return reconExistingMatchCache;
+        }
+
+        function getReconExistingMovementMatches(entry) {
+            const movementKey = buildEntryReconMatchKey(entry, false);
+            const cache = getReconExistingMatchCache();
+            const matches = (cache.movementEntries.get(movementKey) || [])
+                .filter(existing => String(existing?.id || '') !== String(entry?.id || ''));
+            const pending = matches.filter(existing => String(existing.status || '').toUpperCase() === 'PENDENTE');
+            const realized = matches.filter(existing => String(existing.status || '').toUpperCase() === 'REALIZADO');
+            return { matches, pending, realized };
         }
 
         function getReconExistingMatchMeta(entry, accountIdOverride = '') {
@@ -13732,6 +13859,7 @@
             const strictMatches = cache.strictCounts.get(strictKey) || 0;
             const sameDestinationMatches = cache.movementDestinationCounts.get(movementWithDestinationKey) || 0;
             const totalMovementMatches = cache.movementCounts.get(movementKey) || 0;
+            const movementMatches = getReconExistingMovementMatches(entry);
             const otherDestinationMatches = Math.max(0, totalMovementMatches - sameDestinationMatches);
             const currentDestinationId = String((entry || {}).destinationId ?? (entry || {}).destination_id ?? '');
             const labelsByDestination = cache.movementDestinationLabels.get(movementKey) || new Map();
@@ -13753,6 +13881,9 @@
                 sameDestinationMatches,
                 otherDestinationMatches,
                 otherDestinationLabels,
+                totalMovementMatches,
+                pendingMatches: movementMatches.pending.length,
+                realizedMatches: movementMatches.realized.length,
                 status
             };
         }
@@ -13765,11 +13896,25 @@
                     note: 'Escolha um destino valido antes de importar.'
                 };
             }
-            if (meta.status === 'exact') {
+            if (meta.status === 'exact' && meta.pendingMatches === 0) {
                 return {
                     badgeClass: 'bg-green-50 text-green-700 border border-green-200',
                     badgeText: 'Ja lancado',
                     note: 'Esse lancamento ja existe no historico geral com mesmo destino e descricao.'
+                };
+            }
+            if (meta.pendingMatches > 0) {
+                return {
+                    badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
+                    badgeText: 'Pendente encontrado',
+                    note: 'Ja existe lancamento com mesma data, fluxo e valor em alguma conta. Ao importar, posso marcar o antigo como realizado e nao criar duplicado.'
+                };
+            }
+            if (meta.realizedMatches > 0) {
+                return {
+                    badgeClass: 'bg-green-50 text-green-700 border border-green-200',
+                    badgeText: 'Realizado encontrado',
+                    note: 'Ja existe lancamento realizado com mesma data, fluxo e valor em alguma conta. Ao importar, posso ignorar esta linha.'
                 };
             }
             if (meta.status === 'conflict') {
@@ -14003,12 +14148,56 @@
                         status: batchStatus,
                     };
                 });
-                const duplicateAgainstExisting = newEntries.filter(entry => getReconExistingMatchMeta(entry, accId).strictMatches > 0);
-                const entriesToImport = newEntries;
+                const reuseByExistingId = new Map();
+                const entryIdsToSkip = new Set();
+                newEntries.forEach(entry => {
+                    const matchesMeta = getReconExistingMovementMatches(entry);
+                    const chosenExisting = matchesMeta.pending[0] || matchesMeta.realized[0] || matchesMeta.matches[0];
+                    if (!chosenExisting) return;
+                    entryIdsToSkip.add(String(entry.id || ''));
+                    const existingId = String(chosenExisting.id || '');
+                    if (!existingId || reuseByExistingId.has(existingId)) return;
+                    reuseByExistingId.set(existingId, {
+                        existing: chosenExisting,
+                        shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
+                    });
+                });
+                const reuseActions = Array.from(reuseByExistingId.values());
+                const pendingToRealize = reuseActions
+                    .filter(action => action.shouldRealize)
+                    .map(action => ({ ...action.existing, status: 'REALIZADO' }));
+                if (entryIdsToSkip.size > 0) {
+                    const confirmMessage = [
+                        `Encontrei ${entryIdsToSkip.size} lancamento(s) da conciliacao com mesma data, fluxo e valor ja cadastrado(s) em alguma conta.`,
+                        pendingToRealize.length > 0
+                            ? `${pendingToRealize.length} lancamento(s) existente(s) estao pendentes e serao marcados como REALIZADO.`
+                            : 'Os lancamentos existentes ja estao realizados.',
+                        '',
+                        'OK = nao importar esses duplicados e usar os lancamentos existentes.',
+                        'Cancelar = importar tudo mesmo.'
+                    ].join('\n');
+                    const shouldReuseExisting = confirm(confirmMessage);
+                    if (!shouldReuseExisting) {
+                        entryIdsToSkip.clear();
+                        pendingToRealize.length = 0;
+                    } else if (pendingToRealize.length > 0) {
+                        if (summaryEl) summaryEl.innerText = `Marcando ${pendingToRealize.length} existente(s) como realizado(s)...`;
+                        const realizeResult = await cloudSaveBatched('entries', pendingToRealize, 200);
+                        if (!realizeResult?.ok) {
+                            alert(`Nao foi possivel marcar os lancamentos existentes como realizados.\n\nDetalhe: ${String(realizeResult?.error?.message || 'Erro desconhecido.')}`);
+                            return;
+                        }
+                    }
+                }
+                const duplicateAgainstExisting = newEntries.filter(entry => entryIdsToSkip.has(String(entry.id || '')));
+                const entriesToImport = newEntries.filter(entry => !entryIdsToSkip.has(String(entry.id || '')));
                 if (entriesToImport.length === 0) {
                     if (summaryEl) {
                         summaryEl.innerText = 'Nenhum lançamento disponível para importar.';
                     }
+                    alert(`Conciliacao concluida.\n\n${duplicateAgainstExisting.length} lancamento(s) ja existiam e foram reaproveitados.${pendingToRealize.length > 0 ? `\n${pendingToRealize.length} pendente(s) marcado(s) como realizado(s).` : ''}`);
+                    await refreshCloudState({ silent: false });
+                    cancelRecon(); render(); switchTab('entries');
                     return;
                 }
                 if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
@@ -14031,8 +14220,9 @@
                     if (importedNow !== entriesToImport.length) {
                         alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
                     } else {
-                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nDuplicados importados: ${duplicateAgainstExisting.length}.` : '';
-                        alert(`Importação concluída.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}`);
+                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nReaproveitados existentes: ${duplicateAgainstExisting.length}.` : '';
+                        const realizedNote = pendingToRealize.length > 0 ? `\nPendentes marcados como realizados: ${pendingToRealize.length}.` : '';
+                        alert(`Importacao concluida.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}${realizedNote}`);
                     }
                 }
                 await refreshCloudState({ silent: false });
