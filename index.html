@@ -102,6 +102,11 @@
             border-top: 4px solid var(--primary-blue);
             background: #EDF3FF;
         }
+        .kpi-card-forecast {
+            --kpi-glow: 214, 158, 46;
+            border-top: 4px solid #D69E2E;
+            background: #FFF8DB;
+        }
         .kpi-card-header {
             display: flex;
             justify-content: space-between;
@@ -128,6 +133,10 @@
         .kpi-card-balance .kpi-icon {
             background: var(--bg-blue-soft);
             color: var(--primary-blue);
+        }
+        .kpi-card-forecast .kpi-icon {
+            background: #FFF3BF;
+            color: #9A6700;
         }
         .kpi-card .text-\[9px\].font-black {
             color: #4B5563 !important;
@@ -489,6 +498,57 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 11px;
+        }
+        .monthly-kpi-primary {
+            display: block;
+            margin-top: 8px;
+            font-size: 28px !important;
+            line-height: 1.08;
+            font-weight: 900 !important;
+        }
+        .monthly-kpi-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(148, 163, 184, 0.18);
+            font-size: 12px;
+            font-weight: 800;
+            color: #64748B;
+        }
+        .monthly-kpi-secondary strong {
+            color: #334155;
+            font-size: 14px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+        .monthly-kpi-mode-tag {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 5px;
+            min-height: 24px;
+            padding: 0 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 850;
+        }
+        .monthly-kpi-mode-tag.realized {
+            background: #EAF0FF;
+            color: #244A94;
+        }
+        .monthly-kpi-mode-tag.forecast {
+            background: #FFF3BF;
+            color: #9A6700;
+        }
+        .monthly-kpi-compact-note {
+            margin-top: 10px;
+            font-size: 11px;
+            line-height: 1.35;
+            font-weight: 800;
+            color: #7A5A09;
         }
         .monthly-kpi-label {
             font-size: 11px;
@@ -1476,16 +1536,266 @@
         #loading-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(242, 244, 247, 0.92);
-            backdrop-filter: blur(8px);
+            background: #F3F6FA;
             z-index: 9999;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+        .page-loader {
+            position: absolute;
+            inset: 0;
+            z-index: 80;
+            display: none;
+            background: rgba(243, 246, 250, 0.92);
+            backdrop-filter: blur(10px);
+            padding: 24px;
+            overflow: auto;
+        }
+        .page-loader.active {
+            display: block;
+            animation: loaderFadeIn 180ms var(--ease-premium);
+        }
+        .page-loader.is-leaving {
+            animation: loaderFadeOut 220ms ease-in forwards;
+        }
+        .page-loader-surface {
+            max-width: 1180px;
+            margin: 0 auto;
+            display: grid;
+            gap: 16px;
+        }
+        .loader-skeleton-head,
+        .loader-skeleton-card,
+        .loader-skeleton-table {
+            border: 1px solid #E3EAF3;
+            border-radius: 20px;
+            background: #FFFFFF;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+            overflow: hidden;
+        }
+        .loader-skeleton-head {
+            min-height: 118px;
+            padding: 20px;
+        }
+        .loader-skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .loader-skeleton-card {
+            height: 142px;
+            padding: 16px;
+        }
+        .loader-skeleton-table {
+            min-height: 330px;
+            padding: 18px;
+        }
+        .skeleton-line,
+        .skeleton-pill,
+        .skeleton-block {
+            display: block;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 46%, #EEF2F7 100%);
+            background-size: 220% 100%;
+            animation: skeletonPulse 1.35s ease-in-out infinite;
+        }
+        .skeleton-pill {
+            width: 112px;
+            height: 28px;
+        }
+        .skeleton-line {
+            height: 14px;
+            margin-top: 12px;
+        }
+        .skeleton-line.short { width: 38%; }
+        .skeleton-line.mid { width: 62%; }
+        .skeleton-line.long { width: 86%; }
+        .skeleton-block {
+            height: 76px;
+            border-radius: 14px;
+            margin-top: 18px;
+        }
+        .loader-progress-card {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 90;
+            width: min(440px, calc(100vw - 36px));
+            border: 1px solid #DDE6F0;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
+            padding: 20px;
+        }
+        .loader-progress-top {
             display: flex;
-            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .loader-spinner,
+        .loader-check {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            flex: 0 0 auto;
         }
-        #loading-overlay p {
-            animation: loadingPulse var(--dur-slow) var(--ease-premium) infinite alternate;
+        .loader-spinner {
+            border: 3px solid #E2E8F0;
+            border-top-color: var(--primary-blue);
+            animation: spin 850ms linear infinite;
+        }
+        .loader-check {
+            display: none;
+            color: #FFFFFF;
+            background: var(--primary-green);
+            transform: scale(0.92);
+            animation: loaderCheckPop 320ms var(--ease-premium) forwards;
+        }
+        .loader-progress-card.complete .loader-spinner {
+            display: none;
+        }
+        .loader-progress-card.complete .loader-check {
+            display: inline-flex;
+        }
+        .loader-title {
+            font-size: 15px;
+            line-height: 1.2;
+            font-weight: 900;
+            color: #0F172A;
+        }
+        .loader-subtitle {
+            margin-top: 5px;
+            font-size: 12px;
+            line-height: 1.45;
+            font-weight: 700;
+            color: #64748B;
+        }
+        .loader-progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: #EEF2F7;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+        .loader-progress-fill {
+            display: block;
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
+            transition: width 280ms var(--ease-premium);
+        }
+        .loader-steps {
+            display: grid;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        .loader-step {
+            display: grid;
+            grid-template-columns: 22px minmax(0, 1fr);
+            gap: 8px;
+            align-items: center;
+            min-height: 26px;
+            color: #94A3B8;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .loader-step-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            border: 1px solid #DDE6F0;
+            background: #FFFFFF;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+        }
+        .loader-step.active {
+            color: #244A94;
+        }
+        .loader-step.active .loader-step-dot {
+            border-color: #BFCEF0;
+            background: #EAF0FF;
+        }
+        .loader-step.active .loader-step-dot::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--primary-blue);
+            animation: loaderDotPulse 700ms ease-in-out infinite alternate;
+        }
+        .loader-step.done {
+            color: #1F7A5C;
+        }
+        .loader-step.done .loader-step-dot {
+            border-color: #CFE7DC;
+            background: #F2FBF6;
+            color: #1F7A5C;
+        }
+        .loader-step.done .loader-step-dot::before {
+            content: "✓";
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 900;
+        }
+        .loader-result {
+            display: none;
+            margin-top: 14px;
+            border: 1px solid #DDE6F0;
+            border-radius: 16px;
+            background: #F8FAFF;
+            padding: 12px;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .loader-progress-card.complete .loader-result {
+            display: block;
+        }
+        @keyframes loaderFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes loaderFadeOut {
+            to { opacity: 0; }
+        }
+        @keyframes skeletonPulse {
+            from { background-position: 120% 0; }
+            to { background-position: -120% 0; }
+        }
+        @keyframes loaderCheckPop {
+            to { transform: scale(1); }
+        }
+        @keyframes loaderDotPulse {
+            from { transform: scale(0.76); opacity: 0.55; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (max-width: 760px) {
+            .page-loader {
+                padding: 14px;
+            }
+            .loader-skeleton-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .loader-skeleton-card {
+                height: 112px;
+            }
+            .loader-progress-card {
+                top: 46%;
+                padding: 16px;
+                border-radius: 20px;
+            }
         }
         #login-screen {
             position: fixed;
@@ -2059,6 +2369,9 @@
             border-spacing: 0;
             table-layout: fixed;
         }
+        .annual-matrix-table-compact {
+            min-width: 720px;
+        }
         .annual-matrix-table th,
         .annual-matrix-table td {
             height: 54px;
@@ -2187,6 +2500,180 @@
         }
         .annual-matrix-zero {
             color: #CBD5E1;
+        }
+        .annual-mobile-list {
+            display: none;
+        }
+        .annual-mobile-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .annual-mobile-group.in {
+            color: #1F7A5C;
+            border-color: #CFE7DC;
+            background: #F2FBF6;
+        }
+        .annual-mobile-group.out {
+            color: #B23A3A;
+            border-color: #F1C8C8;
+            background: #FFF6F6;
+        }
+        .annual-mobile-card {
+            border: 1px solid #E5ECF4;
+            border-radius: 16px;
+            background: #FFFFFF;
+            padding: 14px;
+        }
+        .annual-mobile-card-head {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: start;
+        }
+        .annual-mobile-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 100%;
+            color: #0F172A;
+            font-size: 13px;
+            line-height: 1.25;
+            font-weight: 900;
+            text-align: left;
+        }
+        .annual-mobile-title.can-drill {
+            color: #244A94;
+        }
+        .annual-mobile-sub {
+            margin-top: 4px;
+            color: #94A3B8;
+            font-size: 11px;
+            line-height: 1.35;
+            font-weight: 700;
+        }
+        .annual-mobile-total {
+            font-size: 12px;
+            line-height: 1.25;
+            font-weight: 900;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .annual-mobile-months {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .annual-mobile-month {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-width: 0;
+            border: 1px solid #EEF2F7;
+            border-radius: 12px;
+            background: #F8FAFC;
+            padding: 8px 10px;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .annual-mobile-month b {
+            color: #64748B;
+            font-weight: 900;
+        }
+        .annual-mobile-empty {
+            margin-top: 10px;
+            border: 1px dashed #D8E2EE;
+            border-radius: 12px;
+            background: #F8FAFC;
+            padding: 10px;
+            color: #94A3B8;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+        }
+        .annual-mobile-total-card {
+            background: #F8FAFF;
+            border-color: #DDE6F0;
+        }
+        @media (max-width: 767px) {
+            #annual-hierarchy-detail {
+                padding: 14px;
+                border-radius: 18px;
+                overflow: hidden;
+            }
+            #annual-hierarchy-detail .space-y-4 > * + * {
+                margin-top: 12px !important;
+            }
+            .annual-matrix-headline {
+                display: grid;
+                gap: 10px;
+            }
+            .annual-matrix-title {
+                font-size: 20px;
+                line-height: 1.15;
+            }
+            .annual-matrix-subtitle {
+                font-size: 12px;
+            }
+            .annual-matrix-summary-pill {
+                width: 100%;
+                justify-content: center;
+                min-height: 36px;
+                font-size: 12px;
+            }
+            .annual-matrix-toolbar {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .annual-matrix-breadcrumb {
+                flex-wrap: nowrap;
+                min-width: max-content;
+            }
+            .annual-matrix-breadcrumb button {
+                min-height: 34px;
+                padding: 0 12px;
+                font-size: 12px;
+            }
+            #annual-hierarchy-detail .reports-month-chips {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            #annual-hierarchy-detail .reports-chip {
+                flex: 0 0 auto;
+            }
+            .annual-matrix-wrap {
+                display: none;
+            }
+            .annual-mobile-list {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .annual-mobile-card-head {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .annual-mobile-total {
+                justify-self: start;
+                font-size: 13px;
+            }
+            .annual-mobile-months {
+                grid-template-columns: 1fr;
+            }
         }
         .hm-launch-list {
             display: grid;
@@ -4178,12 +4665,12 @@
         #monthly #sum-inc-real,
         #monthly #sum-exp-real,
         #monthly #month-bal-r {
-            font-size: 24px !important;
+            font-size: 28px !important;
             line-height: 1.08;
         }
         #monthly #sum-inc-pend,
         #monthly #sum-exp-pend {
-            font-size: 16px !important;
+            font-size: 14px !important;
             line-height: 1.15;
         }
         #monthly .cash-projection-shell {
@@ -4503,6 +4990,21 @@
             background: #EAF0FF;
             border-color: #C8D6EF;
         }
+        .projection-control-card .reports-control-row {
+            padding: 6px;
+            border: 1px solid #E5ECF4;
+            border-radius: 18px;
+            background: #F8FAFC;
+        }
+        .projection-control-card .reports-chip {
+            background: #FFFFFF;
+        }
+        .projection-control-card .reports-chip.active {
+            color: #FFFFFF;
+            background: #0F172A;
+            border-color: #0F172A;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+        }
         .reports-chip:disabled {
             opacity: 0.38;
             cursor: not-allowed;
@@ -4559,12 +5061,42 @@
             color: #728096;
         }
         .reports-chart-frame {
+            position: relative;
             height: 320px;
             padding: 18px 20px 22px;
         }
         .reports-chart-frame canvas {
             width: 100% !important;
             height: 100% !important;
+        }
+        .reports-empty-state {
+            position: absolute;
+            inset: 18px 20px 22px;
+            display: grid;
+            place-items: center;
+            align-content: center;
+            gap: 6px;
+            border: 1px dashed #CBD5E1;
+            border-radius: 18px;
+            background: #F8FAFC;
+            color: #64748B;
+            text-align: center;
+            padding: 18px;
+            pointer-events: none;
+        }
+        .reports-empty-state.hidden {
+            display: none;
+        }
+        .reports-empty-state strong {
+            color: #0F172A;
+            font-size: 13px;
+            font-weight: 900;
+        }
+        .reports-empty-state span {
+            max-width: 320px;
+            font-size: 12px;
+            line-height: 1.45;
+            font-weight: 700;
         }
         .reports-summary-grid {
             display: grid;
@@ -5022,9 +5554,20 @@
         </div>
     </section>
 
-    <div id="loading-overlay">
-        <div class="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="font-black text-xs uppercase tracking-widest text-slate-400">Aguardando o pãozinho crescer...</p>
+    <div id="loading-overlay" aria-live="polite">
+        <div class="loader-progress-card" id="initial-loader-card">
+            <div class="loader-progress-top">
+                <span class="loader-spinner" aria-hidden="true"></span>
+                <span class="loader-check" aria-hidden="true"><i data-lucide="check" class="w-5 h-5"></i></span>
+                <div>
+                    <p class="loader-title" id="initial-loader-title">Preparando o financeiro</p>
+                    <p class="loader-subtitle" id="initial-loader-subtitle">Conectando com a nuvem e montando a primeira tela.</p>
+                </div>
+            </div>
+            <div class="loader-progress-track"><span class="loader-progress-fill" id="initial-loader-progress"></span></div>
+            <div class="loader-steps" id="initial-loader-steps"></div>
+            <div class="loader-result" id="initial-loader-result"></div>
+        </div>
     </div>
 
     <!-- SIDEBAR -->
@@ -5090,7 +5633,58 @@
             </div>
         </header>
 
-        <div id="main-scroll" class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll">
+        <div id="main-scroll" class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll relative">
+            <div id="page-loader" class="page-loader" aria-live="polite" aria-hidden="true">
+                <div class="page-loader-surface">
+                    <section class="loader-skeleton-head">
+                        <span class="skeleton-pill"></span>
+                        <span class="skeleton-line long"></span>
+                        <span class="skeleton-line mid"></span>
+                    </section>
+                    <div class="loader-skeleton-grid">
+                        <article class="loader-skeleton-card">
+                            <span class="skeleton-pill"></span>
+                            <span class="skeleton-line long"></span>
+                            <span class="skeleton-line short"></span>
+                        </article>
+                        <article class="loader-skeleton-card">
+                            <span class="skeleton-pill"></span>
+                            <span class="skeleton-line long"></span>
+                            <span class="skeleton-line short"></span>
+                        </article>
+                        <article class="loader-skeleton-card">
+                            <span class="skeleton-pill"></span>
+                            <span class="skeleton-line long"></span>
+                            <span class="skeleton-line short"></span>
+                        </article>
+                        <article class="loader-skeleton-card">
+                            <span class="skeleton-pill"></span>
+                            <span class="skeleton-line long"></span>
+                            <span class="skeleton-line short"></span>
+                        </article>
+                    </div>
+                    <section class="loader-skeleton-table">
+                        <span class="skeleton-line mid"></span>
+                        <span class="skeleton-block"></span>
+                        <span class="skeleton-line long"></span>
+                        <span class="skeleton-line long"></span>
+                        <span class="skeleton-line mid"></span>
+                    </section>
+                </div>
+                <div class="loader-progress-card" id="page-loader-card">
+                    <div class="loader-progress-top">
+                        <span class="loader-spinner" aria-hidden="true"></span>
+                        <span class="loader-check" aria-hidden="true"><i data-lucide="check" class="w-5 h-5"></i></span>
+                        <div>
+                            <p class="loader-title" id="page-loader-title">Carregando visão</p>
+                            <p class="loader-subtitle" id="page-loader-subtitle">Preparando os dados da tela.</p>
+                        </div>
+                    </div>
+                    <div class="loader-progress-track"><span class="loader-progress-fill" id="page-loader-progress"></span></div>
+                    <div class="loader-steps" id="page-loader-steps"></div>
+                    <div class="loader-result" id="page-loader-result"></div>
+                </div>
+            </div>
             
             <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
@@ -5144,7 +5738,7 @@
                         <div class="entries-filter-report-card">
                             <p class="entries-filter-report-label">Saldo</p>
                             <p id="entries-filter-total-net" class="entries-filter-report-value flow-balance-text">R$ 0,00</p>
-                            <p id="entries-filter-report-count" class="entries-filter-report-note">0 lançamento(s) no filtro</p>
+                            <p id="entries-filter-report-count" class="entries-filter-report-note">Nenhum lançamento no filtro</p>
                         </div>
                     </div>
                     <div id="entries-selection-panel" class="hidden w-full border-t border-slate-100 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3">
@@ -5228,12 +5822,12 @@
                             <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="calendar-check-2" class="w-5 h-5"></i></span>
                             <div>
                                 <p class="monthly-ios-eyebrow">Relatório mensal</p>
-                                <h4 id="monthly-ios-title" class="monthly-ios-title">Leitura rápida do caixa do mês</h4>
-                                <p class="monthly-ios-sub">Veja o que já aconteceu, o que ainda está pendente e onde o dinheiro mais entrou ou saiu, sem precisar procurar em várias telas.</p>
+                                <h4 id="monthly-ios-title" class="monthly-ios-title">Mês selecionado</h4>
+                                <p id="monthly-period-status" class="monthly-ios-sub">Dados do período ativo.</p>
                             </div>
                         </div>
                         <div class="monthly-ios-meta">
-                            <span id="monthly-record-count" class="monthly-ios-pill"><i data-lucide="list-checks" class="w-3.5 h-3.5"></i>0 lançamento(s)</span>
+                            <span id="monthly-record-count" class="monthly-ios-pill"><i data-lucide="list-checks" class="w-3.5 h-3.5"></i>Nenhum lançamento</span>
                             <span id="monthly-balance-mood" class="monthly-ios-pill"><i data-lucide="activity" class="w-3.5 h-3.5"></i>Saldo em leitura</span>
                         </div>
                     </div>
@@ -5243,7 +5837,7 @@
                             <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
                             <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
                         </div>
-                        <p id="monthly-period-caption" class="monthly-period-caption">Escolha mês e ano para atualizar toda a análise.</p>
+                        <p id="monthly-period-caption" class="monthly-period-caption">Use mês e ano para trocar o período.</p>
                         <div id="reports-month-chips" class="reports-month-chips" aria-label="Meses do ano"></div>
                         <input type="hidden" id="monthly-filter">
                     </div>
@@ -5252,52 +5846,63 @@
                 <div class="monthly-kpi-grid">
                     <div class="card-premium kpi-card kpi-card-income monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="monthly-kpi-title">Entradas do mês</p>
+                            <p class="monthly-kpi-title">Entradas</p>
                             <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
                         </div>
-                        <div class="monthly-kpi-value-row">
-                            <div><p class="monthly-kpi-label">Realizado</p><p id="sum-inc-real" class="text-xl font-black flow-income-text">R$ 0,00</p></div>
-                            <div class="border-t border-slate-50 pt-3"><p class="monthly-kpi-label">Pendente</p><p id="sum-inc-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
+                        <p id="sum-inc-real" class="monthly-kpi-primary flow-income-text">R$ 0,00</p>
+                        <div class="monthly-kpi-secondary">
+                            <span>A receber</span>
+                            <strong id="sum-inc-pend">R$ 0,00</strong>
                         </div>
-                        <p class="monthly-kpi-note">Receitas confirmadas e valores que ainda precisam entrar.</p>
                     </div>
                     <div class="card-premium kpi-card kpi-card-expense monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="monthly-kpi-title">Saídas do mês</p>
+                            <p class="monthly-kpi-title">Saídas</p>
                             <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
                         </div>
-                        <div class="monthly-kpi-value-row">
-                            <div><p class="monthly-kpi-label">Realizado</p><p id="sum-exp-real" class="text-xl font-black flow-expense-text">R$ 0,00</p></div>
-                            <div class="border-t border-slate-50 pt-3"><p class="monthly-kpi-label">Pendente</p><p id="sum-exp-pend" class="text-sm font-black text-slate-500">R$ 0,00</p></div>
+                        <p id="sum-exp-real" class="monthly-kpi-primary flow-expense-text">R$ 0,00</p>
+                        <div class="monthly-kpi-secondary">
+                            <span>A pagar</span>
+                            <strong id="sum-exp-pend">R$ 0,00</strong>
                         </div>
-                        <p class="monthly-kpi-note">Despesas pagas e compromissos futuros do período.</p>
                     </div>
                     <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="monthly-kpi-title">Saldo do mês</p>
+                            <div>
+                                <p class="monthly-kpi-title">Saldo realizado</p>
+                                <span class="monthly-kpi-mode-tag realized">Pago e recebido</span>
+                            </div>
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
-                        <p id="month-bal-r" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
-                        <p class="monthly-kpi-note">Diferença entre entradas e saídas já realizadas.</p>
+                        <p id="month-bal-r" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
                     </div>
-                    <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
+                    <div class="card-premium kpi-card kpi-card-forecast monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <p class="monthly-kpi-title">Resultado</p>
+                            <div>
+                                <p class="monthly-kpi-title">Resultado previsto</p>
+                                <span class="monthly-kpi-mode-tag forecast">Inclui pendências</span>
+                            </div>
                             <span class="kpi-icon"><i data-lucide="activity" class="w-4 h-4"></i></span>
                         </div>
-                        <p id="reports-month-result" class="text-2xl font-black flow-balance-text">R$ 0,00</p>
-                        <p id="reports-month-result-note" class="monthly-kpi-note">Realizado + pendente do mês.</p>
+                        <p id="reports-month-result" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                        <p id="reports-month-result-note" class="monthly-kpi-compact-note">Sem pendências no período.</p>
                     </div>
                 </div>
 
                 <section class="card-premium reports-chart-card" aria-labelledby="reports-monthly-chart-title">
                     <div class="reports-card-head">
                         <div>
-                            <h4 id="reports-monthly-chart-title">Gráfico mensal</h4>
-                            <p>Entradas e saídas realizadas por dia.</p>
+                            <h4 id="reports-monthly-chart-title">Fluxo diário</h4>
+                            <p id="reports-monthly-chart-subtitle">Entradas e saídas realizadas por dia.</p>
                         </div>
                     </div>
-                    <div class="reports-chart-frame"><canvas id="reports-monthly-chart"></canvas></div>
+                    <div class="reports-chart-frame">
+                        <canvas id="reports-monthly-chart"></canvas>
+                        <div id="reports-monthly-empty" class="reports-empty-state hidden">
+                            <strong>Nenhum movimento realizado neste período.</strong>
+                            <span>Cadastre um lançamento realizado ou escolha outro mês.</span>
+                        </div>
+                    </div>
                 </section>
 
                 <section class="card-premium cash-projection-shell reports-hidden-legacy-projection" aria-labelledby="cash-projection-title">
@@ -5319,7 +5924,7 @@
                             <p class="cash-projection-note">Recebimentos já lançados como pendentes no período selecionado.</p>
                             <div class="cash-projection-breakdown">
                                 <span id="cash-projection-in-pending" class="cash-projection-pill">Valor pendente: R$ 0,00</span>
-                                <span id="cash-projection-in-average" class="cash-projection-pill">0 lançamento(s)</span>
+                                <span id="cash-projection-in-average" class="cash-projection-pill">Nenhum lançamento</span>
                             </div>
                             <p class="cash-projection-hint">Clique para ver por dia</p>
                         </article>
@@ -5329,7 +5934,7 @@
                             <p class="cash-projection-note">Compromissos já lançados como pendentes no período selecionado.</p>
                             <div class="cash-projection-breakdown">
                                 <span id="cash-projection-out-pending" class="cash-projection-pill">Valor pendente: R$ 0,00</span>
-                                <span id="cash-projection-out-average" class="cash-projection-pill">0 lançamento(s)</span>
+                                <span id="cash-projection-out-average" class="cash-projection-pill">Nenhum lançamento</span>
                             </div>
                             <p class="cash-projection-hint">Clique para ver por dia</p>
                         </article>
@@ -5493,9 +6098,9 @@
                 <section class="projection-control-card">
                     <div id="projection-pending-controls" class="reports-control-row">
                         <span class="reports-control-label">Prazo</span>
-                        <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">7 dias</button>
-                        <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">15 dias</button>
-                        <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">30 dias</button>
+                        <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">Próximos 7 dias</button>
+                        <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">Próximos 15 dias</button>
+                        <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">Próximos 30 dias</button>
                         <button type="button" id="projection-period-custom" class="reports-chip" onclick="setProjectionPeriod('custom')">Personalizado</button>
                         <input id="projection-custom-days" class="reports-small-input hidden" type="number" min="1" max="365" value="45" onchange="renderProjection()" aria-label="Dias personalizados">
                     </div>
@@ -6204,6 +6809,7 @@
         let annualHierarchyCategory = '';
         let annualHierarchySubCategory = '';
         let annualHierarchyDestination = '';
+        let annualHierarchyLaunchMonth = '';
         let currentTab = 'reports';
         let reportsMode = 'annual';
         let monthlyCompareMode = 'prev';
@@ -6765,19 +7371,186 @@
             }
         }
 
+        const loaderStepPresets = {
+            initial: ['Conectando com a nuvem', 'Carregando cadastros', 'Carregando lancamentos', 'Sincronizando metas', 'Montando a tela inicial'],
+            reports: ['Lendo lancamentos do periodo', 'Calculando totais e saldos', 'Montando graficos', 'Preparando detalhamento'],
+            entries: ['Aplicando filtros', 'Somando entradas e saidas', 'Organizando a tabela', 'Preparando paginacao'],
+            projection: ['Lendo pendencias', 'Calculando fluxo futuro', 'Montando cenarios', 'Atualizando grafico'],
+            treasury: ['Carregando vendas', 'Calculando caixa da loja', 'Organizando historico', 'Atualizando painel'],
+            database: ['Lendo estrutura', 'Organizando categorias', 'Montando listas', 'Preparando edicao'],
+            reconciliation: ['Preparando conciliacao', 'Carregando contas', 'Validando estrutura', 'Liberando importacao'],
+            goals: ['Carregando metas', 'Calculando progresso', 'Organizando historico', 'Atualizando painel']
+        };
+
+        const waitMs = (ms) => new Promise(resolve => window.setTimeout(resolve, ms));
+        const nextFrame = () => new Promise(resolve => window.requestAnimationFrame(() => resolve()));
+        let pageLoaderRunId = 0;
+
+        function getTabLoadingTitle(tabId) {
+            const labels = {
+                entries: 'Carregando lancamentos',
+                reports: 'Carregando relatorios',
+                projection: 'Carregando projecao',
+                reconciliation: 'Preparando conciliacao',
+                treasury: 'Carregando vendas',
+                database: 'Carregando banco de dados',
+                goals: 'Carregando metas'
+            };
+            return labels[tabId] || 'Carregando visao';
+        }
+
+        function getLoadingResultText(tabId) {
+            const totalEntries = getAnalyticalEntries(state.entries).length;
+            const accountCount = Array.isArray(state.accounts) ? state.accounts.length : 0;
+            const goalCount = Array.isArray(goalsData) ? goalsData.length : 0;
+            if (tabId === 'entries') return `${totalEntries} lancamento(s) prontos para consulta.`;
+            if (tabId === 'reports') return `${totalEntries} lancamento(s) analisados nos relatorios.`;
+            if (tabId === 'projection') return 'Projecao atualizada com base nas pendencias cadastradas.';
+            if (tabId === 'database') return `${accountCount} conta(s) e cadastros carregados.`;
+            if (tabId === 'goals') return `${goalCount} meta(s) pronta(s) para acompanhar.`;
+            return 'Tela pronta com os dados mais recentes.';
+        }
+
+        function updateLoaderPanel(scope, options = {}) {
+            const prefix = scope === 'initial' ? 'initial-loader' : 'page-loader';
+            const card = document.getElementById(`${prefix}-card`);
+            const title = document.getElementById(`${prefix}-title`);
+            const subtitle = document.getElementById(`${prefix}-subtitle`);
+            const progress = document.getElementById(`${prefix}-progress`);
+            const stepsHost = document.getElementById(`${prefix}-steps`);
+            const result = document.getElementById(`${prefix}-result`);
+            if(!card || !stepsHost) return;
+            const steps = options.steps || loaderStepPresets.initial;
+            const activeIndex = Math.max(0, Math.min(steps.length - 1, Number(options.activeIndex || 0)));
+            const doneUntil = Number(options.doneUntil ?? activeIndex - 1);
+            const complete = Boolean(options.complete);
+            if(title) title.innerText = options.title || (scope === 'initial' ? 'Preparando o financeiro' : 'Carregando visao');
+            if(subtitle) subtitle.innerText = options.subtitle || steps[activeIndex] || 'Preparando dados.';
+            if(progress) {
+                const value = complete ? 100 : Math.max(4, Math.min(96, Number(options.progress || ((activeIndex + 1) / steps.length) * 86)));
+                progress.style.width = `${value}%`;
+            }
+            stepsHost.innerHTML = steps.map((step, index) => {
+                const status = complete || index <= doneUntil ? 'done' : index === activeIndex ? 'active' : '';
+                return `<div class="loader-step ${status}"><span class="loader-step-dot"></span><span>${escapeHtml(step)}</span></div>`;
+            }).join('');
+            card.classList.toggle('complete', complete);
+            if(result) result.innerText = options.result || '';
+            refreshLucideIcons();
+        }
+
+        function showPageLoader(options = {}) {
+            const loader = document.getElementById('page-loader');
+            if(!loader) return;
+            loader.classList.remove('is-leaving');
+            loader.classList.add('active');
+            loader.setAttribute('aria-hidden', 'false');
+            updateLoaderPanel('page', {
+                title: options.title || 'Carregando visao',
+                subtitle: options.subtitle || 'A estrutura da tela ja esta pronta. Agora estou preenchendo os dados.',
+                steps: options.steps || loaderStepPresets.reports,
+                activeIndex: 0,
+                doneUntil: -1,
+                progress: 10
+            });
+        }
+
+        async function completePageLoader(options = {}) {
+            const loader = document.getElementById('page-loader');
+            if(!loader || !loader.classList.contains('active')) return;
+            if(options.runId && options.runId !== pageLoaderRunId) return;
+            updateLoaderPanel('page', {
+                title: options.title || 'Tela pronta',
+                subtitle: options.subtitle || 'A consulta foi concluida.',
+                steps: options.steps || loaderStepPresets.reports,
+                complete: true,
+                result: options.result || getLoadingResultText(currentTab)
+            });
+            await waitMs(Number(options.holdMs || 420));
+            if(options.runId && options.runId !== pageLoaderRunId) return;
+            loader.classList.add('is-leaving');
+            await waitMs(230);
+            if(options.runId && options.runId !== pageLoaderRunId) return;
+            loader.classList.remove('active', 'is-leaving');
+            loader.setAttribute('aria-hidden', 'true');
+        }
+
+        async function runPageLoader(tabId, work) {
+            const runId = ++pageLoaderRunId;
+            const steps = loaderStepPresets[tabId] || loaderStepPresets.reports;
+            showPageLoader({ title: getTabLoadingTitle(tabId), steps });
+            await nextFrame();
+            let workDone = false;
+            for (let index = 0; index < steps.length; index++) {
+                if (runId !== pageLoaderRunId) return;
+                updateLoaderPanel('page', {
+                    title: getTabLoadingTitle(tabId),
+                    subtitle: steps[index],
+                    steps,
+                    activeIndex: index,
+                    doneUntil: index - 1,
+                    progress: 12 + (index / steps.length) * 70
+                });
+                await waitMs(70);
+                if (runId !== pageLoaderRunId) return;
+                if (!workDone && index === Math.max(1, Math.floor(steps.length / 2))) {
+                    workDone = true;
+                    work();
+                    await nextFrame();
+                }
+            }
+            if (!workDone) {
+                work();
+                await nextFrame();
+            }
+            if (runId !== pageLoaderRunId) return;
+            await completePageLoader({ steps, result: getLoadingResultText(tabId), runId });
+        }
+
+        async function finishInitialLoader(resultText) {
+            updateLoaderPanel('initial', {
+                title: 'Financeiro pronto',
+                subtitle: 'A tela inicial foi montada.',
+                steps: loaderStepPresets.initial,
+                complete: true,
+                result: resultText || getLoadingResultText(currentTab)
+            });
+            await waitMs(520);
+            const overlay = document.getElementById('loading-overlay');
+            if(overlay) overlay.style.display = 'none';
+        }
+
         async function initCloud() {
             if (!sbClient) {
                 console.error("Supabase client não disponível.");
-                document.getElementById('loading-overlay').style.display = 'none';
+                await finishInitialLoader('Modo offline ativado.');
                 setSyncStatus('offline');
                 return;
             }
 
             try {
                 setSyncStatus('syncing');
+                updateLoaderPanel('initial', {
+                    title: 'Sincronizando dados',
+                    subtitle: 'Conectando com a nuvem.',
+                    steps: loaderStepPresets.initial,
+                    activeIndex: 0,
+                    doneUntil: -1,
+                    progress: 10
+                });
                 // Tenta carregar dados do Supabase
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], storeDailyMovements: [], dailyBalances: [] };
-                for(const t of STATE_TABLES) {
+                for(let tableIndex = 0; tableIndex < STATE_TABLES.length; tableIndex++) {
+                    const t = STATE_TABLES[tableIndex];
+                    const loaderIndex = t === 'entries' || t === 'storeDailyMovements' || t === 'dailyBalances' ? 2 : 1;
+                    updateLoaderPanel('initial', {
+                        title: 'Sincronizando dados',
+                        subtitle: `Carregando ${t}.`,
+                        steps: loaderStepPresets.initial,
+                        activeIndex: loaderIndex,
+                        doneUntil: Math.max(0, loaderIndex - 1),
+                        progress: 16 + (tableIndex / Math.max(1, STATE_TABLES.length)) * 58
+                    });
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
@@ -6794,15 +7567,31 @@
                 lastCloudStateSignature = getCloudStateSignature(state);
                 lastCloudRefreshAt = Date.now();
                 setSyncStatus('synced');
-                document.getElementById('loading-overlay').style.display = 'none';
                 updateBackupIndicator();
+                updateLoaderPanel('initial', {
+                    title: 'Sincronizando dados',
+                    subtitle: 'Carregando metas.',
+                    steps: loaderStepPresets.initial,
+                    activeIndex: 3,
+                    doneUntil: 2,
+                    progress: 82
+                });
                 await loadGoalsFromCloud();
+                updateLoaderPanel('initial', {
+                    title: 'Montando tela',
+                    subtitle: 'Calculando totais, graficos e tabelas.',
+                    steps: loaderStepPresets.initial,
+                    activeIndex: 4,
+                    doneUntil: 3,
+                    progress: 94
+                });
                 render();
+                await finishInitialLoader(`${getAnalyticalEntries(state.entries).length} lancamento(s) sincronizados.`);
             } catch (err) {
                 console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
-                document.getElementById('loading-overlay').style.display = 'none';
                 render();
+                await finishInitialLoader('Nao foi possivel sincronizar agora. Abrindo em modo offline.');
             }
         }
 
@@ -6970,6 +7759,20 @@
         }
 
         const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        function formatLaunchCount(count) {
+            const safeCount = Math.max(0, Number(count) || 0);
+            if (safeCount === 0) return 'Nenhum lançamento';
+            if (safeCount === 1) return '1 lançamento';
+            return `${safeCount} lançamentos`;
+        }
+        function formatLaunchCountLower(count) {
+            const text = formatLaunchCount(count);
+            return text.charAt(0).toLowerCase() + text.slice(1);
+        }
+        function capitalizeFirst(text) {
+            const value = String(text || '');
+            return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+        }
         const formatChartBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', {
             style: 'currency',
             currency: 'BRL',
@@ -7498,7 +8301,15 @@
                     ref.total += Number(entry.amount) || 0;
                     ref.count += 1;
                 });
-                const sorted = Array.from(grouped.values()).sort((a, b) => b.total - a.total);
+                const sorted = Array.from(grouped.values()).sort((a, b) => {
+                    const categoryCmp = String(a.category || '').localeCompare(String(b.category || ''), 'pt-BR', { sensitivity: 'base' });
+                    if (categoryCmp) return categoryCmp;
+                    const subCategoryCmp = String(a.subCategory || '').localeCompare(String(b.subCategory || ''), 'pt-BR', { sensitivity: 'base' });
+                    if (subCategoryCmp) return subCategoryCmp;
+                    const destinationCmp = String(a.destination || '').localeCompare(String(b.destination || ''), 'pt-BR', { sensitivity: 'base' });
+                    if (destinationCmp) return destinationCmp;
+                    return b.total - a.total;
+                });
                 const total = sorted.reduce((acc, item) => acc + item.total, 0);
                 const bodyRows = sorted.map((item) => {
                     const meta = getFlowMetaV2(flow);
@@ -7517,6 +8328,70 @@
                     sorted.reduce((acc, item) => acc + item.count, 0)
                 );
             }).join('');
+        }
+        function buildAnnualCategoryMatrixExport(entries) {
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const grouped = new Map();
+            (entries || []).forEach((entry) => {
+                const flow = normalizeFlowType(entry.type);
+                if (flow !== FLOW_IN && flow !== FLOW_OUT) return;
+                const monthIndex = Math.max(0, Math.min(11, Number(String(entry.date || '').slice(5, 7)) - 1));
+                const names = getExportHierarchyNames(entry);
+                const category = names.category || 'Sem categoria';
+                const key = `${flow}::${category}`;
+                if (!grouped.has(key)) {
+                    grouped.set(key, {
+                        flow,
+                        category,
+                        months: Array(12).fill(0),
+                        total: 0,
+                        count: 0
+                    });
+                }
+                const ref = grouped.get(key);
+                const signedValue = flow === FLOW_OUT ? -(Number(entry.amount) || 0) : (Number(entry.amount) || 0);
+                ref.months[monthIndex] += signedValue;
+                ref.total += signedValue;
+                ref.count += 1;
+            });
+            const rows = Array.from(grouped.values()).sort((a, b) => {
+                if (a.flow !== b.flow) return a.flow === FLOW_IN ? -1 : 1;
+                return a.category.localeCompare(b.category, 'pt-BR', { sensitivity: 'base' });
+            });
+            const renderMoneyCell = (value) => {
+                const className = value < 0 ? 'flow-out' : value > 0 ? 'flow-in' : 'muted';
+                if (!value) return '<td class="r muted">-</td>';
+                const prefix = value > 0 ? '+ ' : '- ';
+                return `<td class="r ${className}">${prefix}${formatBRL(Math.abs(value))}</td>`;
+            };
+            const renderGroupHeader = (flow) => {
+                const flowRows = rows.filter(row => row.flow === flow);
+                if (!flowRows.length) return '';
+                const meta = getFlowMetaV2(flow);
+                const monthTotals = monthNames.map((_, index) => flowRows.reduce((acc, row) => acc + (Number(row.months[index]) || 0), 0));
+                const total = flowRows.reduce((acc, row) => acc + (Number(row.total) || 0), 0);
+                const count = flowRows.reduce((acc, row) => acc + (Number(row.count) || 0), 0);
+                return `<tr>
+                    <td><strong class="${meta.className}">${meta.label}s</strong><span class="muted"> ${count} lanç.</span></td>
+                    ${monthTotals.map(renderMoneyCell).join('')}
+                    ${renderMoneyCell(total)}
+                </tr>`;
+            };
+            const renderRow = (row) => `<tr>
+                <td>${escapeHtml(row.category)}<span class="muted"> ${row.count} lanç.</span></td>
+                ${row.months.map(renderMoneyCell).join('')}
+                ${renderMoneyCell(row.total)}
+            </tr>`;
+            const monthlyTotals = monthNames.map((_, index) => rows.reduce((acc, row) => acc + (Number(row.months[index]) || 0), 0));
+            const grandTotal = rows.reduce((acc, row) => acc + (Number(row.total) || 0), 0);
+            const rowsHtml = [
+                renderGroupHeader(FLOW_IN),
+                rows.filter(row => row.flow === FLOW_IN).map(renderRow).join(''),
+                renderGroupHeader(FLOW_OUT),
+                rows.filter(row => row.flow === FLOW_OUT).map(renderRow).join(''),
+                `<tr><td><strong>Total</strong></td>${monthlyTotals.map(renderMoneyCell).join('')}${renderMoneyCell(grandTotal)}</tr>`
+            ].join('');
+            return `<div class="print-card"><table><thead><tr><th>Categoria</th>${monthNames.map(name => `<th class="r">${name}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>${rowsHtml || '<tr><td colspan="14" class="c muted">Sem dados no ano.</td></tr>'}</tbody></table></div>`;
         }
         async function shouldIncludeCompleteExport(reportName) {
             return showAppConfirmDialog({
@@ -7871,7 +8746,7 @@
                     buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r flow-in">Entradas (+)</th><th class="r flow-out">Saídas (-)</th><th class="r">Saldo</th></tr></thead><tbody>
                         ${data.map(r => `<tr><td>${r.month}</td><td class="r flow-in">+ ${formatBRL(r.inc)}</td><td class="r flow-out">- ${formatBRL(r.exp)}</td><td class="r ${r.bal >= 0 ? 'flow-in' : 'flow-out'}">${r.bal >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(r.bal))}</td></tr>`).join('')}
                     </tbody></table></div>`),
-                    buildExportSectionV2('Entradas e Saídas por Destino', realizedYearEntries.length ? buildFlowHierarchySummaryByCategory(realizedYearEntries) : buildEmptyPrintCard('Sem lançamentos realizados neste ano.')),
+                    buildExportSectionV2('Detalhamento por Mês e Categoria', realizedYearEntries.length ? buildAnnualCategoryMatrixExport(realizedYearEntries) : buildEmptyPrintCard('Sem lançamentos realizados neste ano.')),
                     includeComplete ? buildExportSectionV2('Relatório Completo - Lançamentos', yearEntries.length ? buildFlowGroupedLaunchTables(yearEntries) : buildEmptyPrintCard('Sem lançamentos detalhados neste ano.')) : ''
                 ].join('');
             } else {
@@ -8183,9 +9058,27 @@
             const dimensionKey = currentLevel === 'category' ? 'categoria' : currentLevel === 'subcategory' ? 'subcategoria' : currentLevel === 'destination' ? 'destino' : 'descricao';
             const levelLabel = currentLevel === 'category' ? 'Categoria' : currentLevel === 'subcategory' ? 'Subcategoria' : currentLevel === 'destination' ? 'Destino' : 'Lançamento';
             const canDrill = currentLevel !== 'launch';
+            const availableLaunchMonths = currentLevel === 'launch'
+                ? monthNames.map((name, index) => {
+                    const count = scopedEntries.filter(item => Number(String(item.data || '').slice(5, 7)) === index + 1).length;
+                    return { name, index, count };
+                }).filter(item => item.count > 0)
+                : [];
+            if (currentLevel !== 'launch') {
+                annualHierarchyLaunchMonth = '';
+            } else if (!availableLaunchMonths.some(item => String(item.index) === String(annualHierarchyLaunchMonth))) {
+                annualHierarchyLaunchMonth = String((availableLaunchMonths[0] || {}).index ?? 0);
+            }
+            const selectedLaunchMonthIndex = currentLevel === 'launch' ? Number(annualHierarchyLaunchMonth || 0) : null;
+            const visibleMonthIndexes = currentLevel === 'launch'
+                ? [selectedLaunchMonthIndex]
+                : monthNames.map((_, index) => index);
+            const visibleScopedEntries = currentLevel === 'launch'
+                ? scopedEntries.filter(item => Number(String(item.data || '').slice(5, 7)) === selectedLaunchMonthIndex + 1)
+                : scopedEntries;
 
             const rowsMap = new Map();
-            scopedEntries.forEach((item, index) => {
+            visibleScopedEntries.forEach((item, index) => {
                 const monthIndex = Math.max(0, Math.min(11, Number(String(item.data || '').slice(5, 7)) - 1));
                 const label = currentLevel === 'launch'
                     ? `${formatDateBRV2(item.data)} - ${item.conta || 'Sem conta'}`
@@ -8211,7 +9104,7 @@
                 if(a.flow !== b.flow) return a.flow === 'entrada' ? -1 : 1;
                 return Math.abs(b.total) - Math.abs(a.total) || a.label.localeCompare(b.label, 'pt-BR', { sensitivity: 'base' });
             });
-            const totals = monthNames.map((_, index) => rows.reduce((sum, row) => sum + (Number(row.months[index]) || 0), 0));
+            const totals = visibleMonthIndexes.map(index => rows.reduce((sum, row) => sum + (Number(row.months[index]) || 0), 0));
             const grandTotal = rows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
             const totalCount = rows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
 
@@ -8223,6 +9116,11 @@
                     ${annualHierarchyDestination ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('launch')">${escapeHtml(annualHierarchyDestination)}</button>` : ''}
                 </div>
             `;
+            const monthSelectorHtml = currentLevel === 'launch' && availableLaunchMonths.length
+                ? `<div class="reports-month-chips" aria-label="Mês dos lançamentos">
+                    ${availableLaunchMonths.map(item => `<button type="button" class="reports-chip ${String(item.index) === String(annualHierarchyLaunchMonth) ? 'active' : ''}" onclick="setAnnualHierarchyLaunchMonth('${item.index}')">${item.name} (${item.count})</button>`).join('')}
+                </div>`
+                : '';
             const renderGroupHeader = (flow, groupRows) => {
                 if(!groupRows.length) return '';
                 const total = groupRows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
@@ -8230,7 +9128,7 @@
                 const label = flow === 'entrada' ? 'Entradas' : 'Saídas';
                 const className = flow === 'entrada' ? 'in' : 'out';
                 const valueClass = flow === 'entrada' ? 'flow-income-text' : 'flow-expense-text';
-                const monthTotals = monthNames.map((_, index) => groupRows.reduce((sum, row) => sum + (Number(row.months[index]) || 0), 0));
+                const monthTotals = visibleMonthIndexes.map(index => groupRows.reduce((sum, row) => sum + (Number(row.months[index]) || 0), 0));
                 const monthTotalCells = monthTotals.map(value => {
                     const cellClass = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                     return `<td class="${cellClass}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
@@ -8246,7 +9144,7 @@
                 const nameHtml = canDrill
                     ? `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${escapeHtml(row.label)} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`
                     : `<span class="annual-matrix-name">${escapeHtml(row.label)}</span>`;
-                const monthCells = row.months.map(value => {
+                const monthCells = visibleMonthIndexes.map(index => row.months[index]).map(value => {
                     const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                     return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
@@ -8269,6 +9167,62 @@
                 const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
             }).join('');
+            const formatMobileValue = (value) => {
+                const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                return `<span class="${className}">${value ? formatBRL(value) : '-'}</span>`;
+            };
+            const renderMobileMonths = (row) => {
+                const monthItems = visibleMonthIndexes
+                    .map(index => ({ name: monthNames[index], value: Number(row.months[index]) || 0 }))
+                    .filter(item => item.value !== 0);
+                if(!monthItems.length) return `<div class="annual-mobile-empty">Sem movimento nos meses visiveis.</div>`;
+                return `<div class="annual-mobile-months">
+                    ${monthItems.map(item => `<div class="annual-mobile-month"><b>${item.name}</b>${formatMobileValue(item.value)}</div>`).join('')}
+                </div>`;
+            };
+            const renderMobileGroup = (flow, groupRows) => {
+                if(!groupRows.length) return '';
+                const total = groupRows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
+                const count = groupRows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
+                const label = flow === 'entrada' ? 'Entradas' : 'Saidas';
+                const className = flow === 'entrada' ? 'in' : 'out';
+                return `<div class="annual-mobile-group ${className}"><span>${label} (${count})</span><strong>${formatBRL(total)}</strong></div>`;
+            };
+            const renderMobileRow = (row) => {
+                const encoded = encodeSafe(row.label);
+                const titleHtml = canDrill
+                    ? `<button type="button" class="annual-mobile-title can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${escapeHtml(row.label)} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`
+                    : `<span class="annual-mobile-title">${escapeHtml(row.label)}</span>`;
+                const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                return `<article class="annual-mobile-card">
+                    <div class="annual-mobile-card-head">
+                        <div>
+                            ${titleHtml}
+                            ${row.sub ? `<p class="annual-mobile-sub">${escapeHtml(row.sub)}</p>` : `<p class="annual-mobile-sub">${row.count} lanc.</p>`}
+                        </div>
+                        <strong class="annual-mobile-total ${totalClass}">${row.total ? formatBRL(row.total) : '-'}</strong>
+                    </div>
+                    ${renderMobileMonths(row)}
+                </article>`;
+            };
+            const mobileRowsHtml = [
+                renderMobileGroup('entrada', incomeRows),
+                incomeRows.map(renderMobileRow).join(''),
+                renderMobileGroup('saida', expenseRows),
+                expenseRows.map(renderMobileRow).join(''),
+                `<article class="annual-mobile-card annual-mobile-total-card">
+                    <div class="annual-mobile-card-head">
+                        <div>
+                            <span class="annual-mobile-title">Total</span>
+                            <p class="annual-mobile-sub">${totalCount} lancamento(s) no recorte atual</p>
+                        </div>
+                        <strong class="annual-mobile-total ${grandTotal < 0 ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(grandTotal)}</strong>
+                    </div>
+                    <div class="annual-mobile-months">
+                        ${visibleMonthIndexes.map((index, position) => `<div class="annual-mobile-month"><b>${monthNames[index]}</b>${formatMobileValue(totals[position])}</div>`).join('')}
+                    </div>
+                </article>`
+            ].join('');
 
             host.innerHTML = `
                 <div class="space-y-4">
@@ -8283,25 +9237,29 @@
                         <div class="annual-matrix-toolbar">
                             ${breadcrumbHtml}
                         </div>
+                        ${monthSelectorHtml}
                     </div>
                     <div class="annual-matrix-wrap custom-scrollbar">
-                        <table class="annual-matrix-table">
+                        <table class="annual-matrix-table ${currentLevel === 'launch' ? 'annual-matrix-table-compact' : ''}">
                             <thead>
                                 <tr>
                                     <th>${levelLabel}</th>
-                                    ${monthNames.map(name => `<th>${name}</th>`).join('')}
+                                    ${visibleMonthIndexes.map(index => `<th>${monthNames[index]}</th>`).join('')}
                                     <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${rowsHtml || `<tr><td colspan="14" class="text-center annual-matrix-zero">Nenhum dado encontrado.</td></tr>`}
+                                ${rowsHtml || `<tr><td colspan="${visibleMonthIndexes.length + 2}" class="text-center annual-matrix-zero">Nenhum dado encontrado.</td></tr>`}
                                 <tr class="annual-matrix-total-row">
                                     <td><span class="annual-matrix-name">Total</span></td>
                                     ${totalsHtml}
                                     <td class="annual-matrix-total ${grandTotal < 0 ? 'flow-expense-text' : 'flow-income-text'}"><span class="annual-matrix-money">${formatBRL(grandTotal)}</span></td>
                                 </tr>
-                            </tbody>
-                        </table>
+                        </tbody>
+                    </table>
+                </div>
+                    <div class="annual-mobile-list">
+                        ${rows.length ? mobileRowsHtml : `<div class="annual-mobile-empty">Nenhum dado encontrado.</div>`}
                     </div>
                 </div>
             `;
@@ -8313,11 +9271,14 @@
                 annualHierarchyCategory = value || '';
                 annualHierarchySubCategory = '';
                 annualHierarchyDestination = '';
+                annualHierarchyLaunchMonth = '';
             } else if(level === 'subcategory') {
                 annualHierarchySubCategory = value || '';
                 annualHierarchyDestination = '';
+                annualHierarchyLaunchMonth = '';
             } else if(level === 'destination') {
                 annualHierarchyDestination = value || '';
+                annualHierarchyLaunchMonth = '';
             }
             renderAnnualTemporalComparison(annualTemporalYear);
         }
@@ -8327,12 +9288,19 @@
                 annualHierarchyCategory = '';
                 annualHierarchySubCategory = '';
                 annualHierarchyDestination = '';
+                annualHierarchyLaunchMonth = '';
             } else if(level === 'subcategory') {
                 annualHierarchySubCategory = '';
                 annualHierarchyDestination = '';
+                annualHierarchyLaunchMonth = '';
             } else if(level === 'destination') {
                 annualHierarchyDestination = '';
+                annualHierarchyLaunchMonth = '';
             }
+            renderAnnualTemporalComparison(annualTemporalYear);
+        }
+        function setAnnualHierarchyLaunchMonth(monthIndex) {
+            annualHierarchyLaunchMonth = String(monthIndex || '0');
             renderAnnualTemporalComparison(annualTemporalYear);
         }
         function applyMonthlySelectionFiltersToEntries(entries) {
@@ -8830,7 +9798,7 @@
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
             if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
-            render();
+            runPageLoader(tabId, render);
         }
 
         function render() {
@@ -8928,9 +9896,11 @@
         function setReportsMode(mode) {
             reportsMode = mode === 'annual' ? 'annual' : 'monthly';
             updateReportsModeUI();
-            if (reportsMode === 'annual') renderAnnual();
-            else renderMonthly();
-            refreshLucideIcons();
+            runPageLoader('reports', () => {
+                if (reportsMode === 'annual') renderAnnual();
+                else renderMonthly();
+                refreshLucideIcons();
+            });
         }
 
         function populateReportsMonthChips() {
@@ -10486,7 +11456,7 @@
                 totalNetEl.innerText = formatBRL(totalNet);
                 totalNetEl.className = `entries-filter-report-value ${totalNet >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
-            if (countEl) countEl.innerText = `${filtered.length} lançamento(s) no filtro`;
+            if (countEl) countEl.innerText = `${formatLaunchCount(filtered.length)} no filtro`;
         }
 
         function getTransferReviewMarkup(entryId, isPossibleTransfer) {
@@ -11058,9 +12028,9 @@
             setText('cash-projection-out', formatBRL(projectedOut));
             setText('cash-projection-net', formatBRL(projectedNet));
             setText('cash-projection-in-pending', `Valor pendente: ${formatBRL(pendingIn)}`);
-            setText('cash-projection-in-average', `${pendingInCount} lançamento(s)`);
+            setText('cash-projection-in-average', formatLaunchCount(pendingInCount));
             setText('cash-projection-out-pending', `Valor pendente: ${formatBRL(pendingOut)}`);
-            setText('cash-projection-out-average', `${pendingOutCount} lançamento(s)`);
+            setText('cash-projection-out-average', formatLaunchCount(pendingOutCount));
             setText('cash-projection-status', isAttention ? 'Atenção' : 'Positivo');
             setText(
                 'cash-projection-net-note',
@@ -11136,12 +12106,22 @@
             const resultNoteEl = document.getElementById('reports-month-result-note');
             if (resultEl) {
                 resultEl.innerText = formatBRL(totalProjected);
-                resultEl.className = `text-2xl font-black ${totalProjected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
+                resultEl.className = `monthly-kpi-primary ${totalProjected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
-            if (resultNoteEl) resultNoteEl.innerText = `Inclui ${formatBRL(incP)} a receber e ${formatBRL(expP)} a pagar.`;
+            if (resultNoteEl) resultNoteEl.innerText = (incP || expP)
+                ? `${formatBRL(incP)} a receber - ${formatBRL(expP)} a pagar`
+                : 'Sem pendências no período.';
 
             const labels = Array.from({ length: dailyInReal.length }, (_, idx) => String(idx + 1).padStart(2, '0'));
             const chartEl = document.getElementById('reports-monthly-chart');
+            const emptyEl = document.getElementById('reports-monthly-empty');
+            const chartSubtitleEl = document.getElementById('reports-monthly-chart-subtitle');
+            const hasRealizedDailyData = dailyInReal.some(value => Number(value) > 0) || dailyOutReal.some(value => Number(value) > 0);
+            if (emptyEl) emptyEl.classList.toggle('hidden', hasRealizedDailyData);
+            if (chartEl) chartEl.style.opacity = hasRealizedDailyData ? '1' : '0';
+            if (chartSubtitleEl) chartSubtitleEl.innerText = hasRealizedDailyData
+                ? 'Entradas e saídas realizadas por dia.'
+                : 'Sem movimentos realizados no mês selecionado.';
             if (chartEl && window.Chart) {
                 if (window.reportsMonthlyChart) window.reportsMonthlyChart.destroy();
                 window.reportsMonthlyChart = new Chart(chartEl.getContext('2d'), {
@@ -11261,6 +12241,8 @@
             renderAnaliseHierarquicaMensal(monthEntries);
 
             const balR = incR - expR;
+            const monthlyTitleEl = document.getElementById('monthly-ios-title');
+            const monthlyStatusEl = document.getElementById('monthly-period-status');
             const periodCaptionEl = document.getElementById('monthly-period-caption');
             const recordCountEl = document.getElementById('monthly-record-count');
             const balanceMoodEl = document.getElementById('monthly-balance-mood');
@@ -11268,8 +12250,11 @@
             const monthName = Number(monthLabel)
                 ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
                 : 'período selecionado';
-            if (periodCaptionEl) periodCaptionEl.innerText = `Mostrando ${monthName} com ${entries.length} lançamento(s) após os filtros da análise mensal.`;
-            if (recordCountEl) recordCountEl.innerHTML = `<i data-lucide="list-checks" class="w-3.5 h-3.5"></i>${entries.length} lançamento(s)`;
+            const activePeriodLabel = capitalizeFirst(monthName);
+            if (monthlyTitleEl) monthlyTitleEl.innerText = activePeriodLabel;
+            if (monthlyStatusEl) monthlyStatusEl.innerText = `${formatLaunchCount(entries.length)} no período ativo.`;
+            if (periodCaptionEl) periodCaptionEl.innerText = `Período ativo: ${activePeriodLabel}.`;
+            if (recordCountEl) recordCountEl.innerHTML = `<i data-lucide="list-checks" class="w-3.5 h-3.5"></i>${formatLaunchCount(entries.length)}`;
             if (balanceMoodEl) {
                 const moodText = balR >= 0 ? 'Caixa positivo no realizado' : 'Caixa negativo no realizado';
                 balanceMoodEl.innerHTML = `<i data-lucide="${balR >= 0 ? 'activity' : 'circle-alert'}" class="w-3.5 h-3.5"></i>${moodText}`;
@@ -11278,13 +12263,14 @@
             const balEl = document.getElementById('month-bal-r');
             if(balEl) { 
                 balEl.innerText = formatBRL(balR); 
-                balEl.className = `text-2xl font-black ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; 
+                balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; 
             }
 
             let html = '', cumulative = 0;
             const maxDailyReal = Math.max(...dailyInReal, ...dailyOutReal, 0);
+            const hasRealizedDailyData = maxDailyReal > 0;
             const getDailyWidth = (value) => maxDailyReal > 0 ? Math.max(0, Math.round((Number(value || 0) / maxDailyReal) * 100)) : 0;
-            for(let d = 1; d <= daysInMonth; d++) {
+            if (hasRealizedDailyData) for(let d = 1; d <= daysInMonth; d++) {
                 const dInc = dailyInReal[d - 1] || 0;
                 const dExp = dailyOutReal[d - 1] || 0;
                 const dBal = dInc - dExp;
@@ -11314,7 +12300,7 @@
             }
             const monthlyDailyTableEl = document.getElementById('monthly-daily-table');
             if (monthlyDailyTableEl) {
-                monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase">Sem dados para os filtros selecionados</td></tr>';
+                monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold">Nenhum movimento realizado neste período. Cadastre um lançamento realizado ou escolha outro mês.</td></tr>';
             }
 
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP);
