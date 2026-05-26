@@ -1,0 +1,27 @@
+{
+  "name": "Delícias da Vovó · Gestão Financeira",
+  "short_name": "Fin. Vovó",
+  "description": "Gestão financeira premium para Delícias da Vovó",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F2F4F7",
+  "theme_color": "#1F7A5C",
+  "lang": "pt-BR",
+  "orientation": "portrait-primary",
+  "categories": ["finance", "business"],
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
