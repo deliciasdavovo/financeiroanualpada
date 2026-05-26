@@ -1,4 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" rx="100" fill="#1F7A5C"/>
-  <text x="256" y="315" font-family="Arial, sans-serif" font-size="210" font-weight="bold" fill="white" text-anchor="middle">R$</text>
+  <rect width="512" height="512" fill="#0C5C38"/>
+  <g transform="translate(256,256)" fill="#EDD9A3">
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(0)"/>
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(51.43)"/>
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(102.86)"/>
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(154.29)"/>
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(205.71)"/>
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(257.14)"/>
+    <rect x="-29" y="-125" width="58" height="154" rx="29" transform="rotate(308.57)"/>
+  </g>
 </svg>
