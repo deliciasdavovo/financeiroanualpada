@@ -4283,6 +4283,7 @@
                 padding-bottom: calc(8px + env(safe-area-inset-bottom)) !important;
             }
         }
+        .entries-mobile-list { display: none; }
         @media (max-width: 767px) {
             header {
                 height: 72px !important;
@@ -4330,6 +4331,81 @@
             .entry-destination-desc {
                 word-break: normal;
                 overflow-wrap: anywhere;
+            }
+            #entries .table-mobile-scroll { display: none; }
+            .entries-mobile-list {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                padding: 10px;
+            }
+            .entry-mobile-card {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                padding: 13px 14px;
+                cursor: pointer;
+                transition: border-color var(--dur-fast) var(--ease-premium);
+                -webkit-tap-highlight-color: transparent;
+            }
+            .entry-mobile-card:active { border-color: #c0ccd8; }
+            .entry-mobile-card.is-pending { opacity: 0.55; }
+            .entry-mobile-top {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-bottom: 3px;
+            }
+            .entry-mobile-date {
+                font-size: 11px;
+                color: var(--text-muted);
+                font-weight: 700;
+                letter-spacing: 0.02em;
+            }
+            .entry-mobile-value {
+                font-size: 15px;
+                font-weight: 800;
+                letter-spacing: -0.01em;
+            }
+            .entry-mobile-destination {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text-primary);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 6px;
+            }
+            .entry-mobile-desc {
+                font-size: 11px;
+                color: var(--text-muted);
+                margin-top: -4px;
+                margin-bottom: 6px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .entry-mobile-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 6px;
+            }
+            .entry-mobile-account-name {
+                font-size: 11px;
+                color: var(--text-secondary);
+                font-weight: 500;
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .entry-mobile-actions {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                flex-shrink: 0;
             }
             #mobile-nav {
                 gap: 4px !important;
@@ -4474,7 +4550,7 @@
                 font-size: 16px;
             }
             #treasury .table-mobile-scroll {
-                overflow-x: hidden;
+                overflow-x: auto;
             }
             #treasury-mv-table,
             #treasury-bal-main-table {
@@ -4487,7 +4563,11 @@
             #treasury-bal-main-table td {
                 padding-left: 8px !important;
                 padding-right: 8px !important;
-                font-size: 10px !important;
+                font-size: 12px !important;
+            }
+            #treasury-mv-table th:nth-child(5),
+            #treasury-mv-table td:nth-child(5) {
+                display: none;
             }
             #treasury-bal-main-table th:nth-child(2),
             #treasury-bal-main-table td:nth-child(2),
@@ -5768,6 +5848,7 @@
                 </div>
 
                 <div class="card-premium overflow-hidden">
+                    <div id="entries-mobile-list" class="entries-mobile-list"></div>
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="entries-table" class="w-full text-left">
                             <caption class="sr-only">Tabela de lançamentos financeiros com filtros, seleção em lote e ações por linha.</caption>
@@ -7786,6 +7867,14 @@
             currency: 'BRL',
             maximumFractionDigits: 0
         });
+        const formatChartBRLCompact = (v) => {
+            const n = Number(v) || 0;
+            const abs = Math.abs(n);
+            const sign = n < 0 ? '-' : '';
+            if (abs >= 1_000_000) return sign + (abs / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' M';
+            if (abs >= 10_000)    return sign + (abs / 1_000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + ' K';
+            return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+        };
         function getExportTimestamp() {
             return new Date().toLocaleString('pt-BR', { hour12: false });
         }
@@ -10213,7 +10302,7 @@
                     },
                     scales: {
                         y: {
-                            ticks: { callback: (value) => formatChartBRL(value) },
+                            ticks: { callback: (value) => formatChartBRLCompact(value) },
                             grid: { color: 'rgba(148,163,184,0.16)' }
                         },
                         x: { grid: { display: false } }
@@ -10474,7 +10563,7 @@
                         },
                         scales: {
                             y: {
-                                ticks: { callback: (value) => formatChartBRL(value) },
+                                ticks: { callback: (value) => formatChartBRLCompact(value) },
                                 grid: { color: 'rgba(148,163,184,0.16)' }
                             },
                             x: { grid: { display: false } }
@@ -11496,6 +11585,41 @@
             </div>`;
         }
 
+        function renderEntriesMobileList(pageItems, duplicateMeta) {
+            const container = document.getElementById('entries-mobile-list');
+            if (!container) return;
+            if (!pageItems.length) {
+                container.innerHTML = '<div class="p-8 text-center text-xs font-black uppercase tracking-widest opacity-30">Nenhum registro encontrado</div>';
+                return;
+            }
+            container.innerHTML = pageItems.map(e => {
+                const isEntrada = e.type === 'ENTRADA';
+                const isRealizado = e.status === 'REALIZADO';
+                const valueClass = isRealizado ? (isEntrada ? 'flow-income-text' : 'flow-expense-text') : 'text-slate-400';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const sign = isEntrada ? '+' : '−';
+                const destinationName = getDestinationById(e.destinationId)?.name || 'Sem destino';
+                const accountName = getAccountNameById(String((e.accountId ?? e.account_id) || '')) || 'Sem conta';
+                const descLine = e.description ? `<p class="entry-mobile-desc">${escapeHtml(e.description)}</p>` : '';
+                const dupIcon = duplicateMeta.duplicateIds.has(e.id) ? '<span class="dup-icon ml-1" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : '';
+                return `<article class="entry-mobile-card${!isRealizado ? ' is-pending' : ''}" onclick="handleEntryRowClick(event, '${e.id}')">
+                    <div class="entry-mobile-top">
+                        <span class="entry-mobile-date">${formatDateBRV2(e.date)}${dupIcon}</span>
+                        <span class="entry-mobile-value ${valueClass}">${sign} ${formatBRL(Math.abs(Number(e.amount) || 0))}</span>
+                    </div>
+                    <p class="entry-mobile-destination">${escapeHtml(destinationName)}</p>
+                    ${descLine}
+                    <div class="entry-mobile-meta">
+                        <span class="entry-mobile-account-name">${escapeHtml(accountName)}</span>
+                        <div class="entry-mobile-actions">
+                            <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status">${e.status}</button>
+                            <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                </article>`;
+            }).join('');
+        }
+
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
             if(!body) return;
@@ -11588,6 +11712,7 @@
             updateEntriesSummaryAndSelection(pageItems);
             renderEntriesPagination(totalRecords, totalPages, pageItems.length);
 
+            renderEntriesMobileList(pageItems, duplicateMeta);
             body.innerHTML = pageItems.map((e, i) => {
                 const dstOptionsByType = getValidDestinationsByFlow(e.type);
                 const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
@@ -11783,6 +11908,7 @@
             selectedEntryIds = new Set(Array.from(selectedEntryIds).filter((id) => allEntryIds.has(String(id || ''))));
             updateEntriesSummaryAndSelection(pageItems);
             renderEntriesPagination(totalRecords, totalPages, pageItems.length);
+            renderEntriesMobileList(pageItems, duplicateMeta);
 
             body.innerHTML = pageItems.map((e, i) => {
                 const dstOptions = getDestinationOptionsForFlow(e.type);
@@ -12146,7 +12272,7 @@
                         interaction: { mode: 'index', intersect: false },
                         scales: {
                             x: { grid: { display: false } },
-                            y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { callback: value => formatChartBRL(value) } }
+                            y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { callback: value => formatChartBRLCompact(value) } }
                         },
                         plugins: {
                             legend: { position: 'top' },
@@ -12627,7 +12753,7 @@
                                 ticks: {
                                     stepSize: annualStep,
                                     maxTicksLimit: 6,
-                                    callback: (value) => formatChartBRL(value)
+                                    callback: (value) => formatChartBRLCompact(value)
                                 }
                             } 
                         },
@@ -12951,7 +13077,7 @@
                         y: {
                             beginAtZero: true,
                             grid: { borderDash: [4,4] },
-                            ticks: { callback: (value) => formatChartBRL(value) }
+                            ticks: { callback: (value) => formatChartBRLCompact(value) }
                         },
                         x: { grid: { display: false } }
                     },
@@ -13111,7 +13237,7 @@
                     interaction: { mode: 'index', intersect: false },
                     scales: {
                         x: { grid: { display: false } },
-                        y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { callback: value => formatChartBRL(value) } }
+                        y: { beginAtZero: true, grid: { borderDash: [4, 4] }, ticks: { callback: value => formatChartBRLCompact(value) } }
                     },
                     plugins: {
                         legend: { position: 'top' },
