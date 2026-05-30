@@ -5808,7 +5808,7 @@
                         <div class="entries-filter-item">
                             <label for="filter-barcode" class="label-mini">Código de Barras</label>
                             <div style="position:relative">
-                                <input type="text" id="filter-barcode" inputmode="numeric" placeholder="Cole os 44 ou 47 dígitos..." oninput="onFilterBarcodeInput(this.value)" style="padding-right:2.2rem;font-family:'JetBrains Mono',monospace;font-size:11px">
+                                <input type="text" id="filter-barcode" inputmode="numeric" placeholder="Cole os 44 ou 47 dígitos..." oninput="onFilterBarcodeInput(this.value)" onfocus="clearFilterBarcodeIfNeeded()" style="padding-right:2.2rem;font-family:'JetBrains Mono',monospace;font-size:11px">
                                 <i data-lucide="barcode" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#94a3b8;pointer-events:none"></i>
                             </div>
                             <p id="filter-barcode-feedback" class="field-help"></p>
@@ -16267,7 +16267,7 @@
             updateEntryRecurrenceVisibility(Boolean(id));
             document.getElementById('entry-modal')?.classList.remove('hidden');
             window.setTimeout(() => {
-                document.getElementById('form-date')?.focus();
+                document.getElementById('form-dst-search')?.focus();
             }, 0);
             refreshLucideIcons();
         }
@@ -17522,6 +17522,16 @@
         }
 
         // Campo de código de barras dedicado nos filtros
+        function clearFilterBarcodeIfNeeded() {
+            const el = document.getElementById('filter-barcode');
+            if (el && el.value.trim()) {
+                el.value = '';
+                const fb = document.getElementById('filter-barcode-feedback');
+                if (fb) fb.textContent = '';
+                document.getElementById('filter-value-exact').value = '';
+                queueRenderEntries();
+            }
+        }
         function onFilterBarcodeInput(val) {
             const fb = document.getElementById('filter-barcode-feedback');
             const digits = val.replace(/\D/g, '');
