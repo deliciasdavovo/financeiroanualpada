@@ -14504,12 +14504,19 @@
         }
 
         function normalizeReconLines(rawText) {
+            const headerLineRe = /^(data|hist[óo]rico|valor|documento|agên?cia|ag\.?|conta|saldo|banco|per[íü]odo|extrato|lançamento|número|débito|crédito|debit|credit|descrição|tipo|balancete|demonstrativo)\b/i;
             const lines = String(rawText || '')
                 .split(/\r?\n/)
                 .map(l => l.replace(/\u00a0/g, ' ').trim())
                 .filter(l => l.length > 0)
-                .filter(l => !/^(data|hist[oó]rico|valor|documento)\b/i.test(l))
-                .filter(l => !/^\d+\s*\/\s*\d+$/.test(l));
+                .filter(l => !headerLineRe.test(l))
+                .filter(l => !/^\d+\s*\/\s*\d+$/.test(l))
+                .filter(l => {
+                    const hasDate = /\d{1,2}[\/\-]\d{1,2}([\/\-]\d{2,4})?/.test(l);
+                    const hasMoney = /\d[\d.,]*,\d{2}\b/.test(l);
+                    const hasTab = l.includes('\t');
+                    return hasDate || hasMoney || hasTab;
+                });
 
             const merged = [];
             lines.forEach(line => {
