@@ -17483,12 +17483,16 @@
                 barcode = digits;
             } else if (digits.length === 47) {
                 // Reconstruct 44-digit barcode from 47-digit linha digitável (bank boleto)
-                barcode = digits.substring(0, 4) +
-                          digits.substring(4, 9) +
-                          digits.substring(10, 20) +
-                          digits.substring(21, 31) +
-                          digits[32] +
-                          digits.substring(33, 47);
+                // Barcode layout: [0-3]=bank+currency [4]=check [5-8]=due [9-18]=value [19-43]=free
+                // Linha digitável: campo1[0-9]=bank+cur+free[0-4]+chk1, campo2[10-20]=free[5-14]+chk2,
+                //                  campo3[21-31]=free[15-24]+chk3, verif[32]=check, due+val[33-46]
+                barcode = digits.substring(0, 4) +    // bank + currency
+                          digits[32] +                // barcode check digit
+                          digits.substring(33, 37) +  // due date factor (4 digits)
+                          digits.substring(37, 47) +  // value (10 digits)
+                          digits.substring(4, 9) +    // free field part 1 (5 digits)
+                          digits.substring(10, 20) +  // free field part 2 (10 digits)
+                          digits.substring(21, 31);   // free field part 3 (10 digits)
                 if (barcode.length !== 44) return null;
             } else if (digits.length === 48) {
                 // Concessionária (utility): value at positions 4..14
@@ -17497,12 +17501,13 @@
             } else {
                 return null;
             }
-            const dueFactor = parseInt(barcode.substring(20, 24), 10);
-            const valueStr = barcode.substring(24, 34);
+            // FEBRABAN 44-digit barcode: [5-8]=due date factor, [9-18]=value
+            const dueFactor = parseInt(barcode.substring(5, 9), 10);
+            const valueStr = barcode.substring(9, 19);
             const amount = parseInt(valueStr, 10) / 100;
             let date = null;
             if (dueFactor > 0) {
-                const baseDate = new Date(1997, 9, 7); // Oct 7, 1997
+                const baseDate = new Date(1997, 9, 7); // Oct 7, 1997 (FEBRABAN base)
                 baseDate.setDate(baseDate.getDate() + dueFactor);
                 const y = baseDate.getFullYear();
                 const m = String(baseDate.getMonth() + 1).padStart(2, '0');
