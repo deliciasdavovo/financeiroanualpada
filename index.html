@@ -17484,17 +17484,11 @@
                     const searchEl = document.getElementById('entry-search');
                     const badge = document.getElementById('entry-search-barcode-badge');
                     _barcodeFilterActive = true;
-                    // Build search term from decoded amount
+                    // Filtra só pelo valor — não aplica filtro de data porque o lançamento
+                    // pode ter sido registrado em data diferente do vencimento do boleto
                     if (result.amount) {
                         const amountStr = result.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         if (searchEl) searchEl.value = amountStr;
-                    }
-                    // Set date filter if due date found
-                    if (result.date) {
-                        const dateStartEl = document.getElementById('filter-date-start');
-                        const dateEndEl = document.getElementById('filter-date-end');
-                        if (dateStartEl) dateStartEl.value = result.date;
-                        if (dateEndEl) dateEndEl.value = result.date;
                     }
                     if (badge) badge.style.display = 'inline-block';
                     queueRenderEntries();
@@ -17511,12 +17505,8 @@
             _barcodeFilterActive = false;
             const searchEl = document.getElementById('entry-search');
             const badge = document.getElementById('entry-search-barcode-badge');
-            const dateStartEl = document.getElementById('filter-date-start');
-            const dateEndEl = document.getElementById('filter-date-end');
             if (searchEl) searchEl.value = '';
             if (badge) badge.style.display = 'none';
-            if (dateStartEl) dateStartEl.value = '';
-            if (dateEndEl) dateEndEl.value = '';
             queueRenderEntries();
         }
 
