@@ -11705,7 +11705,7 @@
                 const accountName = getAccountNameById(String((e.accountId ?? e.account_id) || '')) || 'Sem conta';
                 const descLine = e.description ? `<p class="entry-mobile-desc">${escapeHtml(e.description)}</p>` : '';
                 const dupIcon = duplicateMeta.duplicateIds.has(e.id) ? '<span class="dup-icon ml-1" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : '';
-                return `<article class="entry-mobile-card${!isRealizado ? ' is-pending' : ''}" onclick="handleEntryRowClick(event, '${e.id}')">
+                return `<article class="entry-mobile-card${!isRealizado ? ' is-pending' : ''}">
                     <div class="entry-mobile-top">
                         <span class="entry-mobile-date">${formatDateBRV2(e.date)}${dupIcon}</span>
                         <span class="entry-mobile-value ${valueClass}">${sign} ${formatBRL(Math.abs(Number(e.amount) || 0))}</span>
@@ -11715,6 +11715,7 @@
                     <div class="entry-mobile-meta">
                         <span class="entry-mobile-account-name">${escapeHtml(accountName)}</span>
                         <div class="entry-mobile-actions">
+                            <button type="button" onclick="openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lançamento"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                             <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status">${e.status}</button>
                             <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
@@ -11844,7 +11845,7 @@
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
                 
-                return `<tr class="table-row ${isPossibleTransfer ? 'entry-row-transfer' : ''} ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lançamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
+                return `<tr class="table-row ${isPossibleTransfer ? 'entry-row-transfer' : ''} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lançamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
                         <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lançamento de ${escapeHtml(formatDateBRV2(e.date))}">
                     </td>
@@ -11903,6 +11904,9 @@
                     <td class="px-6 py-4 text-center">
                         <div class="entry-cell-main center">
                             <div class="entry-actions-wrap">
+                                <button type="button" onclick="event.stopPropagation(); openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lançamento">
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                </button>
                                 <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lançamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
                                 <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -12042,7 +12046,7 @@
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
 
-                return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" role="button" tabindex="0" onclick="handleEntryRowClick(event, '${e.id}')" onkeydown="handleEntryRowKeydown(event, '${e.id}', this)" aria-label="Abrir lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
+                return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
                         <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lancamento de ${escapeHtml(formatDateBRV2(e.date))}">
                     </td>
@@ -12108,6 +12112,9 @@
                     <td class="px-6 py-4 text-center">
                         <div class="entry-cell-main center">
                             <div class="entry-actions-wrap">
+                                <button type="button" onclick="event.stopPropagation(); openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lancamento">
+                                    <i data-lucide="pencil" class="w-4 h-4"></i>
+                                </button>
                                 <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lancamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
                                 <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lancamento">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
