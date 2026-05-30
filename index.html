@@ -17683,18 +17683,40 @@
             }
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
             const buffer = await file.arrayBuffer();
-            let text = '';
+            let allLines = [];
             try {
                 const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    text += content.items.map(item => item.str).join(' ') + '\n';
+                    // Group items by Y coordinate (row) then sort by X (left→right)
+                    // transform[5] = Y, transform[4] = X (PDF coords, Y grows upward)
+                    const rowMap = new Map();
+                    for (const item of content.items) {
+                        if (!item.str || !item.str.trim()) continue;
+                        const x = item.transform[4];
+                        const y = Math.round(item.transform[5]); // round to group nearby items
+                        // Cluster rows within 3pt tolerance
+                        let rowKey = null;
+                        for (const k of rowMap.keys()) {
+                            if (Math.abs(k - y) <= 3) { rowKey = k; break; }
+                        }
+                        if (rowKey === null) { rowKey = y; rowMap.set(rowKey, []); }
+                        rowMap.get(rowKey).push({ x, str: item.str });
+                    }
+                    // Sort rows top→bottom (higher Y = higher on page in PDF coords)
+                    const sortedRows = [...rowMap.entries()]
+                        .sort((a, b) => b[0] - a[0])
+                        .map(([, items]) =>
+                            items.sort((a, b) => a.x - b.x).map(it => it.str).join('\t')
+                        );
+                    allLines.push(...sortedRows);
                 }
             } catch (e) {
                 alert('Erro ao ler o PDF. Verifique se o arquivo não está protegido por senha.');
                 return;
             }
+            const text = allLines.join('\n');
             if (!text.trim()) {
                 alert('O PDF não contém texto legível (pode ser uma imagem escaneada).');
                 return;
@@ -17743,7 +17765,6 @@
             document.getElementById('excel-col-date').innerHTML = colOptions;
             document.getElementById('excel-col-amount').innerHTML = colOptions;
             document.getElementById('excel-col-desc').innerHTML = colOptionsOptional;
-            // Auto-detect common header names
             const guess = (keywords) => {
                 const idx = headers.findIndex(h => keywords.some(k => h.toLowerCase().includes(k)));
                 return idx >= 0 ? String(idx) : '0';
@@ -17751,10 +17772,53 @@
             document.getElementById('excel-col-date').value = guess(['data', 'date', 'dt', 'venc']);
             document.getElementById('excel-col-amount').value = guess(['valor', 'value', 'amount', 'quantia', 'vlr', 'r$']);
             document.getElementById('excel-col-desc').value = guess(['desc', 'histórico', 'histor', 'memo', 'obs', 'descr', 'detail']);
+            // Build preview table of first 5 rows
             const previewEl = document.getElementById('excel-mapping-preview');
-            if (previewEl) previewEl.textContent = `${_excelData.rows.length} linha(s) encontrada(s) na planilha. Confirme o mapeamento das colunas.`;
+            if (previewEl && _excelData) {
+                const sample = _excelData.rows.slice(0, 4);
+                const ths = headers.map(h => `<th style="padding:2px 8px;text-align:left;font-size:10px;font-weight:700;background:#f1f5f9;white-space:nowrap">${escapeHtml(h || '—')}</th>`).join('');
+                const trs = sample.map(row =>
+                    `<tr>${headers.map((_, i) => `<td style="padding:2px 8px;font-size:10px;border-top:1px solid #e2e8f0;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${escapeHtml(String(row[i] ?? ''))}</td>`).join('')}</tr>`
+                ).join('');
+                previewEl.innerHTML = `<p style="font-size:11px;color:#64748b;margin-bottom:6px">${_excelData.rows.length} linha(s) — primeiras linhas da planilha:</p><div style="overflow:auto;border:1px solid #e2e8f0;border-radius:8px"><table style="border-collapse:collapse;width:100%"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+            }
             modal.classList.remove('hidden');
             refreshLucideIcons();
+        }
+
+        function normalizeExcelDate(rawDate) {
+            if (!rawDate && rawDate !== 0) return null;
+            if (rawDate instanceof Date) {
+                if (isNaN(rawDate.getTime())) return null;
+                const y = rawDate.getFullYear();
+                const m = String(rawDate.getMonth() + 1).padStart(2, '0');
+                const d = String(rawDate.getDate()).padStart(2, '0');
+                return `${d}/${m}/${y}`;
+            }
+            const s = String(rawDate).trim();
+            // Already DD/MM/YYYY or DD/MM/YY
+            if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) return s;
+            // YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+                const [y, m, d] = s.split('-');
+                return `${d}/${m}/${y}`;
+            }
+            // DD-MM-YYYY
+            if (/^\d{1,2}-\d{1,2}-\d{2,4}$/.test(s)) return s.replace(/-/g, '/');
+            return null;
+        }
+
+        function normalizeExcelAmount(rawAmount) {
+            if (rawAmount === null || rawAmount === undefined || rawAmount === '') return null;
+            if (typeof rawAmount === 'number') {
+                // Convert JS number to Brazilian format string the parser understands
+                const formatted = rawAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                return { str: formatted, negative: rawAmount < 0 };
+            }
+            const s = String(rawAmount).trim().replace(/\s/g, '');
+            if (!s) return null;
+            const negative = s.startsWith('-') || (s.startsWith('(') && s.endsWith(')'));
+            return { str: s, negative };
         }
 
         function confirmExcelMapping() {
@@ -17770,29 +17834,21 @@
                 const rawDate = row[colDate];
                 const rawAmount = row[colAmount];
                 const rawDesc = colDesc !== null ? String(row[colDesc] || '') : '';
-                if (rawDate == null || rawDate === '' || rawAmount == null || rawAmount === '') continue;
-                // Normalize date
-                let dateStr = '';
-                if (rawDate instanceof Date) {
-                    const y = rawDate.getFullYear();
-                    const m = String(rawDate.getMonth()+1).padStart(2,'0');
-                    const d = String(rawDate.getDate()).padStart(2,'0');
-                    dateStr = `${d}/${m}/${y}`;
+                const dateStr = normalizeExcelDate(rawDate);
+                const amountObj = normalizeExcelAmount(rawAmount);
+                if (!dateStr || !amountObj) continue;
+                // Determine flow label for parser (D=débito/saída, C=crédito/entrada)
+                let flowToken = '';
+                if (typeMode === 'auto') {
+                    flowToken = amountObj.negative ? 'D' : 'C';
                 } else {
-                    dateStr = String(rawDate).trim();
+                    flowToken = typeMode === 'SAÍDA' ? 'D' : 'C';
                 }
-                // Normalize amount
-                let amountStr = String(rawAmount).replace(/\s/g,'');
-                const sign = amountStr.startsWith('-') ? '-' : '+';
-                amountStr = amountStr.replace(/[^\d,.-]/g,'');
-                // Build a line similar to bank statement text
-                const typeLabel = typeMode === 'auto'
-                    ? (sign === '-' ? 'Débito' : 'Crédito')
-                    : (typeMode === 'SAÍDA' ? 'Débito' : 'Crédito');
-                lines.push([dateStr, amountStr, rawDesc || typeLabel].join('\t'));
+                // Format: "DD/MM/YYYY\tDESC\tVALOR\tD_OR_C"
+                lines.push([dateStr, rawDesc || (flowToken === 'D' ? 'Débito' : 'Crédito'), amountObj.str, flowToken].join('\t'));
             }
             if (!lines.length) {
-                alert('Nenhuma linha válida encontrada com os mapeamentos selecionados.');
+                alert('Nenhuma linha válida encontrada com os mapeamentos selecionados. Verifique se as colunas estão corretas.');
                 _excelData = null;
                 return;
             }
