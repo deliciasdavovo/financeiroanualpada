@@ -20,6 +20,12 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+    <!-- Barcode scanner (ZXing) -->
+    <script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
+    <!-- PDF reader (PDF.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Excel reader (SheetJS) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
     <style>
         :root {
@@ -6463,6 +6469,17 @@
                         </div>
                         <button onclick="processPaste()" class="bg-slate-900 text-white px-10 h-[50px] rounded-xl font-black text-xs uppercase shadow-xl hover:bg-black transition-all">Analisar</button>
                     </div>
+                    <!-- Import buttons -->
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <label class="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 hover:border-slate-400 text-slate-700 px-5 h-[42px] rounded-xl font-bold text-xs uppercase shadow-sm hover:shadow transition-all">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i> Importar Excel / CSV
+                            <input type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="importExcel(this)">
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 hover:border-slate-400 text-slate-700 px-5 h-[42px] rounded-xl font-bold text-xs uppercase shadow-sm hover:shadow transition-all">
+                            <i data-lucide="file-text" class="w-4 h-4 text-red-500"></i> Importar PDF
+                            <input type="file" accept=".pdf" class="hidden" onchange="importPDF(this)">
+                        </label>
+                    </div>
                 </div>
 
                 <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
@@ -6590,6 +6607,25 @@
             <form id="entry-form" class="modal-body space-y-5">
                 <input type="hidden" id="entry-id">
                 <div id="entry-form-feedback" class="form-feedback hidden" role="alert" aria-live="assertive"></div>
+
+                <!-- BOLETO SCANNER -->
+                <div id="boleto-scanner-block" class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black uppercase text-slate-500 tracking-wider">Importar Boleto</span>
+                        <button type="button" onclick="toggleBoletoScanner()" id="boleto-scanner-toggle" class="text-xs text-slate-400 hover:text-slate-700 font-semibold transition-colors" aria-expanded="false">Mostrar ▼</button>
+                    </div>
+                    <div id="boleto-scanner-content" class="hidden space-y-3">
+                        <div>
+                            <label for="boleto-code-input" class="label-mini">Código de Barras / Linha Digitável</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="boleto-code-input" inputmode="numeric" autocomplete="off" placeholder="Cole ou digite os 44 ou 47 dígitos..." class="flex-1" oninput="onBoletoCodeInput(this.value)" style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;">
+                                <button type="button" onclick="openCameraScanner()" title="Escanear com câmera" class="px-3 py-2 bg-slate-800 text-white rounded-xl hover:bg-black transition-colors flex items-center gap-1 text-xs font-bold whitespace-nowrap"><i data-lucide="camera" class="w-4 h-4"></i></button>
+                            </div>
+                            <p id="boleto-code-feedback" class="field-help mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal-grid-2">
                     <div class="flex-1">
                         <label for="form-date" class="label-mini">Data</label>
@@ -6675,6 +6711,79 @@
                     <button type="button" id="delete-btn-modal" class="modal-btn-danger hidden" onclick="confirmDeleteFromModal()">Excluir</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL CÂMERA SCANNER -->
+    <div id="camera-scanner-modal" class="hidden modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
+        <div class="modal-shell" style="max-width:480px;width:100%">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title">Escanear Boleto</h3>
+                    <p class="modal-head-sub">Aponte a câmera para o código de barras.</p>
+                </div>
+                <button onclick="closeCameraScanner()" class="modal-close-btn" type="button" aria-label="Fechar">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="modal-body space-y-4">
+                <div class="relative bg-black rounded-2xl overflow-hidden" style="aspect-ratio:4/3">
+                    <video id="camera-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+                    <div id="camera-overlay-line" class="absolute inset-x-8" style="top:50%;height:2px;background:rgba(239,68,68,0.85);box-shadow:0 0 8px rgba(239,68,68,0.7)"></div>
+                </div>
+                <p id="camera-scanner-status" class="text-xs text-center text-slate-500 font-medium">Inicializando câmera...</p>
+                <div class="flex gap-3">
+                    <label class="flex-1 flex items-center justify-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-3 rounded-xl font-bold text-xs uppercase transition-all">
+                        <i data-lucide="image" class="w-4 h-4"></i> Usar imagem
+                        <input type="file" accept="image/*" class="hidden" onchange="scanBarcodeFromImage(this)">
+                    </label>
+                    <button type="button" onclick="closeCameraScanner()" class="flex-1 bg-slate-900 text-white px-4 py-3 rounded-xl font-bold text-xs uppercase">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL MAPEAMENTO EXCEL -->
+    <div id="excel-mapping-modal" class="hidden modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
+        <div class="modal-shell" style="max-width:560px;width:100%">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title">Mapear Colunas</h3>
+                    <p class="modal-head-sub">Informe quais colunas da planilha correspondem a cada campo.</p>
+                </div>
+                <button onclick="closeModal('excel-mapping-modal')" class="modal-close-btn" type="button" aria-label="Fechar">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="modal-body space-y-5">
+                <p id="excel-mapping-preview" class="text-xs text-slate-500"></p>
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="label-mini">Coluna de Data</label>
+                        <select id="excel-col-date"></select>
+                    </div>
+                    <div>
+                        <label class="label-mini">Coluna de Valor</label>
+                        <select id="excel-col-amount"></select>
+                    </div>
+                    <div>
+                        <label class="label-mini">Coluna de Descrição (opcional)</label>
+                        <select id="excel-col-desc"><option value="">(nenhuma)</option></select>
+                    </div>
+                    <div>
+                        <label class="label-mini">Tipo (Entrada/Saída)</label>
+                        <select id="excel-col-type">
+                            <option value="auto">Detectar pelo sinal do valor (+ entrada, - saída)</option>
+                            <option value="SAÍDA">Tudo como Saída</option>
+                            <option value="ENTRADA">Tudo como Entrada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="confirmExcelMapping()" class="modal-btn-primary flex-1">Importar</button>
+                    <button type="button" onclick="closeModal('excel-mapping-modal')" class="modal-btn-danger flex-1">Cancelar</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -17378,6 +17487,288 @@
                 navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
+
+        // =====================================================================
+        // BOLETO SCANNER
+        // =====================================================================
+
+        function toggleBoletoScanner() {
+            const content = document.getElementById('boleto-scanner-content');
+            const btn = document.getElementById('boleto-scanner-toggle');
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            content.classList.toggle('hidden', expanded);
+            btn.setAttribute('aria-expanded', String(!expanded));
+            btn.textContent = expanded ? 'Mostrar ▼' : 'Ocultar ▲';
+            if (!expanded) refreshLucideIcons();
+        }
+
+        function parseBoletoBarcode(input) {
+            const digits = input.replace(/\D/g, '');
+            let barcode;
+            if (digits.length === 44) {
+                barcode = digits;
+            } else if (digits.length === 47) {
+                // Reconstruct 44-digit barcode from 47-digit linha digitável (bank boleto)
+                barcode = digits.substring(0, 4) +
+                          digits.substring(4, 9) +
+                          digits.substring(10, 20) +
+                          digits.substring(21, 31) +
+                          digits[32] +
+                          digits.substring(33, 47);
+                if (barcode.length !== 44) return null;
+            } else if (digits.length === 48) {
+                // Concessionária (utility): value at positions 4..14
+                const amount = parseInt(digits.substring(4, 15), 10) / 100;
+                return { amount: amount > 0 ? amount : null, date: null };
+            } else {
+                return null;
+            }
+            const dueFactor = parseInt(barcode.substring(20, 24), 10);
+            const valueStr = barcode.substring(24, 34);
+            const amount = parseInt(valueStr, 10) / 100;
+            let date = null;
+            if (dueFactor > 0) {
+                const baseDate = new Date(1997, 9, 7); // Oct 7, 1997
+                baseDate.setDate(baseDate.getDate() + dueFactor);
+                const y = baseDate.getFullYear();
+                const m = String(baseDate.getMonth() + 1).padStart(2, '0');
+                const d = String(baseDate.getDate()).padStart(2, '0');
+                date = `${y}-${m}-${d}`;
+            }
+            return { amount: amount > 0 ? amount : null, date };
+        }
+
+        function onBoletoCodeInput(val) {
+            const fb = document.getElementById('boleto-code-feedback');
+            const digits = val.replace(/\D/g, '');
+            if (digits.length < 44) {
+                if (fb) fb.textContent = digits.length > 0 ? `${digits.length} dígito(s) — aguardando 44 ou 47...` : '';
+                return;
+            }
+            const result = parseBoletoBarcode(digits);
+            if (!result) {
+                if (fb) { fb.textContent = 'Código inválido.'; fb.style.color = 'var(--soft-red)'; }
+                return;
+            }
+            let applied = [];
+            if (result.amount && result.amount > 0) {
+                const valueEl = document.getElementById('form-value');
+                if (valueEl) {
+                    valueEl.value = result.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    setEntryFieldError('form-value', '');
+                    applied.push(`Valor: R$ ${valueEl.value}`);
+                }
+            }
+            if (result.date) {
+                const dateEl = document.getElementById('form-date');
+                if (dateEl) {
+                    dateEl.value = result.date;
+                    setEntryFieldError('form-date', '');
+                    applied.push(`Vencimento: ${result.date.split('-').reverse().join('/')}`);
+                }
+            }
+            if (fb) {
+                if (applied.length) {
+                    fb.textContent = '✓ ' + applied.join(' · ');
+                    fb.style.color = 'var(--primary-green)';
+                } else {
+                    fb.textContent = 'Código lido, mas sem valor/vencimento definido.';
+                    fb.style.color = 'var(--text-secondary)';
+                }
+            }
+        }
+
+        // Camera scanner state
+        let _cameraReader = null;
+        let _cameraStream = null;
+
+        function openCameraScanner() {
+            const modal = document.getElementById('camera-scanner-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            refreshLucideIcons();
+            const statusEl = document.getElementById('camera-scanner-status');
+            if (!window.ZXing) {
+                if (statusEl) statusEl.textContent = 'Biblioteca de scanner não carregada. Use a digitação manual.';
+                return;
+            }
+            try {
+                _cameraReader = new ZXing.BrowserMultiFormatReader();
+                if (statusEl) statusEl.textContent = 'Iniciando câmera...';
+                _cameraReader.decodeFromVideoDevice(null, 'camera-video', (result, err) => {
+                    if (result) {
+                        const text = result.getText();
+                        const parsed = parseBoletoBarcode(text);
+                        if (parsed) {
+                            document.getElementById('boleto-code-input').value = text;
+                            onBoletoCodeInput(text);
+                            closeCameraScanner();
+                        } else if (statusEl) {
+                            statusEl.textContent = 'Código lido, ajustando...';
+                        }
+                    }
+                });
+                if (statusEl) statusEl.textContent = 'Aponte para o código de barras do boleto.';
+            } catch (e) {
+                if (statusEl) statusEl.textContent = 'Câmera indisponível. Use imagem ou digitação manual.';
+            }
+        }
+
+        function closeCameraScanner() {
+            try { if (_cameraReader) { _cameraReader.reset(); _cameraReader = null; } } catch(e) {}
+            document.getElementById('camera-scanner-modal')?.classList.add('hidden');
+        }
+
+        function scanBarcodeFromImage(input) {
+            const file = input.files[0];
+            if (!file || !window.ZXing) return;
+            const url = URL.createObjectURL(file);
+            const statusEl = document.getElementById('camera-scanner-status');
+            const reader = new ZXing.BrowserMultiFormatReader();
+            if (statusEl) statusEl.textContent = 'Analisando imagem...';
+            reader.decodeFromImageUrl(url).then(result => {
+                const text = result.getText();
+                document.getElementById('boleto-code-input').value = text;
+                onBoletoCodeInput(text);
+                closeCameraScanner();
+            }).catch(() => {
+                if (statusEl) statusEl.textContent = 'Não foi possível ler o código. Tente digitação manual.';
+            }).finally(() => { URL.revokeObjectURL(url); input.value = ''; });
+        }
+
+        // =====================================================================
+        // IMPORTAÇÃO PDF
+        // =====================================================================
+
+        async function importPDF(input) {
+            const file = input.files[0];
+            if (!file) return;
+            input.value = '';
+            if (!window.pdfjsLib) {
+                alert('Biblioteca de PDF não carregada. Tente novamente em alguns segundos.');
+                return;
+            }
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            const buffer = await file.arrayBuffer();
+            let text = '';
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    text += content.items.map(item => item.str).join(' ') + '\n';
+                }
+            } catch (e) {
+                alert('Erro ao ler o PDF. Verifique se o arquivo não está protegido por senha.');
+                return;
+            }
+            if (!text.trim()) {
+                alert('O PDF não contém texto legível (pode ser uma imagem escaneada).');
+                return;
+            }
+            const pasteArea = document.getElementById('recon-paste-area');
+            if (pasteArea) pasteArea.value = text;
+            processPaste();
+        }
+
+        // =====================================================================
+        // IMPORTAÇÃO EXCEL / CSV
+        // =====================================================================
+
+        let _excelData = null;
+
+        function importExcel(input) {
+            const file = input.files[0];
+            if (!file) return;
+            input.value = '';
+            if (!window.XLSX) {
+                alert('Biblioteca de Excel não carregada. Tente novamente em alguns segundos.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const workbook = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+                if (!rows || rows.length < 2) {
+                    alert('Planilha vazia ou sem dados suficientes.');
+                    return;
+                }
+                const headers = rows[0].map(h => String(h || '').trim());
+                _excelData = { headers, rows: rows.slice(1) };
+                openExcelMappingModal(headers);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function openExcelMappingModal(headers) {
+            const modal = document.getElementById('excel-mapping-modal');
+            if (!modal) return;
+            const colOptions = headers.map((h, i) => `<option value="${i}">${h || `Coluna ${i+1}`}</option>`).join('');
+            const colOptionsOptional = `<option value="">(nenhuma)</option>` + colOptions;
+            document.getElementById('excel-col-date').innerHTML = colOptions;
+            document.getElementById('excel-col-amount').innerHTML = colOptions;
+            document.getElementById('excel-col-desc').innerHTML = colOptionsOptional;
+            // Auto-detect common header names
+            const guess = (keywords) => {
+                const idx = headers.findIndex(h => keywords.some(k => h.toLowerCase().includes(k)));
+                return idx >= 0 ? String(idx) : '0';
+            };
+            document.getElementById('excel-col-date').value = guess(['data', 'date', 'dt', 'venc']);
+            document.getElementById('excel-col-amount').value = guess(['valor', 'value', 'amount', 'quantia', 'vlr', 'r$']);
+            document.getElementById('excel-col-desc').value = guess(['desc', 'histórico', 'histor', 'memo', 'obs', 'descr', 'detail']);
+            const previewEl = document.getElementById('excel-mapping-preview');
+            if (previewEl) previewEl.textContent = `${_excelData.rows.length} linha(s) encontrada(s) na planilha. Confirme o mapeamento das colunas.`;
+            modal.classList.remove('hidden');
+            refreshLucideIcons();
+        }
+
+        function confirmExcelMapping() {
+            if (!_excelData) return;
+            const colDate = parseInt(document.getElementById('excel-col-date').value, 10);
+            const colAmount = parseInt(document.getElementById('excel-col-amount').value, 10);
+            const colDescVal = document.getElementById('excel-col-desc').value;
+            const colDesc = colDescVal !== '' ? parseInt(colDescVal, 10) : null;
+            const typeMode = document.getElementById('excel-col-type').value;
+            closeModal('excel-mapping-modal');
+            const lines = [];
+            for (const row of _excelData.rows) {
+                const rawDate = row[colDate];
+                const rawAmount = row[colAmount];
+                const rawDesc = colDesc !== null ? String(row[colDesc] || '') : '';
+                if (rawDate == null || rawDate === '' || rawAmount == null || rawAmount === '') continue;
+                // Normalize date
+                let dateStr = '';
+                if (rawDate instanceof Date) {
+                    const y = rawDate.getFullYear();
+                    const m = String(rawDate.getMonth()+1).padStart(2,'0');
+                    const d = String(rawDate.getDate()).padStart(2,'0');
+                    dateStr = `${d}/${m}/${y}`;
+                } else {
+                    dateStr = String(rawDate).trim();
+                }
+                // Normalize amount
+                let amountStr = String(rawAmount).replace(/\s/g,'');
+                const sign = amountStr.startsWith('-') ? '-' : '+';
+                amountStr = amountStr.replace(/[^\d,.-]/g,'');
+                // Build a line similar to bank statement text
+                const typeLabel = typeMode === 'auto'
+                    ? (sign === '-' ? 'Débito' : 'Crédito')
+                    : (typeMode === 'SAÍDA' ? 'Débito' : 'Crédito');
+                lines.push([dateStr, amountStr, rawDesc || typeLabel].join('\t'));
+            }
+            if (!lines.length) {
+                alert('Nenhuma linha válida encontrada com os mapeamentos selecionados.');
+                _excelData = null;
+                return;
+            }
+            const pasteArea = document.getElementById('recon-paste-area');
+            if (pasteArea) pasteArea.value = lines.join('\n');
+            _excelData = null;
+            processPaste();
+        }
+
     </script>
 </body>
 </html>
