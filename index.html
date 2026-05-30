@@ -5797,7 +5797,13 @@
                         </div>
                     </div>
                     <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
-                        <div class="entries-filter-item"><label for="entry-search" class="label-mini">Pesquisar</label><input type="text" id="entry-search" placeholder="Busque por data, valor, cliente ou descrição..." oninput="queueRenderEntries()"></div>
+                        <div class="entries-filter-item">
+                            <label for="entry-search" class="label-mini">Pesquisar</label>
+                            <div style="position:relative">
+                                <input type="text" id="entry-search" placeholder="Busque por valor, cliente, data — ou cole um código de barras..." oninput="onEntrySearchInput(this.value)" style="padding-right:2.5rem">
+                                <span id="entry-search-barcode-badge" title="Busca por código de barras ativa — clique para limpar" onclick="clearBarcodeFilter()" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;background:#1F7A5C;color:#fff;font-size:9px;font-weight:900;padding:2px 7px;border-radius:999px;letter-spacing:.05em;white-space:nowrap">BOLETO ×</span>
+                            </div>
+                        </div>
                         <div class="entries-filter-item" style="grid-column: 1 / -1;">
                             <label for="filter-month" class="label-mini">Mês inteiro</label>
                             <div class="entries-month-filter">
@@ -17465,6 +17471,54 @@
         // =====================================================================
         // BOLETO SCANNER
         // =====================================================================
+
+        // Busca de lançamento por código de barras no campo de pesquisa
+        let _barcodeFilterActive = false;
+
+        function onEntrySearchInput(val) {
+            const digits = val.replace(/\D/g, '');
+            if (digits.length >= 44) {
+                const result = parseBoletoBarcode(digits);
+                if (result && (result.amount || result.date)) {
+                    // Apply barcode filter: set value in search and date filters
+                    const searchEl = document.getElementById('entry-search');
+                    const badge = document.getElementById('entry-search-barcode-badge');
+                    _barcodeFilterActive = true;
+                    // Build search term from decoded amount
+                    if (result.amount) {
+                        const amountStr = result.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        if (searchEl) searchEl.value = amountStr;
+                    }
+                    // Set date filter if due date found
+                    if (result.date) {
+                        const dateStartEl = document.getElementById('filter-date-start');
+                        const dateEndEl = document.getElementById('filter-date-end');
+                        if (dateStartEl) dateStartEl.value = result.date;
+                        if (dateEndEl) dateEndEl.value = result.date;
+                    }
+                    if (badge) badge.style.display = 'inline-block';
+                    queueRenderEntries();
+                    return;
+                }
+            }
+            _barcodeFilterActive = false;
+            const badge = document.getElementById('entry-search-barcode-badge');
+            if (badge) badge.style.display = 'none';
+            queueRenderEntries();
+        }
+
+        function clearBarcodeFilter() {
+            _barcodeFilterActive = false;
+            const searchEl = document.getElementById('entry-search');
+            const badge = document.getElementById('entry-search-barcode-badge');
+            const dateStartEl = document.getElementById('filter-date-start');
+            const dateEndEl = document.getElementById('filter-date-end');
+            if (searchEl) searchEl.value = '';
+            if (badge) badge.style.display = 'none';
+            if (dateStartEl) dateStartEl.value = '';
+            if (dateEndEl) dateEndEl.value = '';
+            queueRenderEntries();
+        }
 
         function toggleBoletoScanner() {
             const content = document.getElementById('boleto-scanner-content');
