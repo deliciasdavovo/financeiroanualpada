@@ -7565,35 +7565,9 @@
         }
 
         async function runPageLoader(tabId, work) {
-            const runId = ++pageLoaderRunId;
-            const steps = loaderStepPresets[tabId] || loaderStepPresets.reports;
-            showPageLoader({ title: getTabLoadingTitle(tabId), steps });
+            ++pageLoaderRunId;
+            work();
             await nextFrame();
-            let workDone = false;
-            for (let index = 0; index < steps.length; index++) {
-                if (runId !== pageLoaderRunId) return;
-                updateLoaderPanel('page', {
-                    title: getTabLoadingTitle(tabId),
-                    subtitle: steps[index],
-                    steps,
-                    activeIndex: index,
-                    doneUntil: index - 1,
-                    progress: 12 + (index / steps.length) * 70
-                });
-                await waitMs(70);
-                if (runId !== pageLoaderRunId) return;
-                if (!workDone && index === Math.max(1, Math.floor(steps.length / 2))) {
-                    workDone = true;
-                    work();
-                    await nextFrame();
-                }
-            }
-            if (!workDone) {
-                work();
-                await nextFrame();
-            }
-            if (runId !== pageLoaderRunId) return;
-            await completePageLoader({ steps, result: getLoadingResultText(tabId), runId });
         }
 
         async function finishInitialLoader(resultText) {
