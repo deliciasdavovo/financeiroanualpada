@@ -5798,11 +5798,20 @@
                     </div>
                     <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
                         <div class="entries-filter-item">
-                            <label for="entry-search" class="label-mini">Pesquisar</label>
+                            <label for="filter-desc" class="label-mini">Descrição / Destino</label>
+                            <input type="text" id="filter-desc" placeholder="Busque por descrição ou destino..." oninput="queueRenderEntries()">
+                        </div>
+                        <div class="entries-filter-item">
+                            <label for="filter-value-exact" class="label-mini">Valor (R$)</label>
+                            <input type="text" id="filter-value-exact" inputmode="decimal" placeholder="Ex: 387,91" oninput="queueRenderEntries()">
+                        </div>
+                        <div class="entries-filter-item">
+                            <label for="filter-barcode" class="label-mini">Código de Barras</label>
                             <div style="position:relative">
-                                <input type="text" id="entry-search" placeholder="Busque por valor, cliente, data — ou cole um código de barras..." oninput="onEntrySearchInput(this.value)" style="padding-right:2.5rem">
-                                <span id="entry-search-barcode-badge" title="Busca por código de barras ativa — clique para limpar" onclick="clearBarcodeFilter()" style="display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;background:#1F7A5C;color:#fff;font-size:9px;font-weight:900;padding:2px 7px;border-radius:999px;letter-spacing:.05em;white-space:nowrap">BOLETO ×</span>
+                                <input type="text" id="filter-barcode" inputmode="numeric" placeholder="Cole os 44 ou 47 dígitos..." oninput="onFilterBarcodeInput(this.value)" style="padding-right:2.2rem;font-family:'JetBrains Mono',monospace;font-size:11px">
+                                <i data-lucide="barcode" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#94a3b8;pointer-events:none"></i>
                             </div>
+                            <p id="filter-barcode-feedback" class="field-help"></p>
                         </div>
                         <div class="entries-filter-item" style="grid-column: 1 / -1;">
                             <label for="filter-month" class="label-mini">Mês inteiro</label>
@@ -7291,7 +7300,9 @@
 
         function resetEntriesFilters() {
             const map = {
-                'entry-search': '',
+                'filter-desc': '',
+                'filter-value-exact': '',
+                'filter-barcode': '',
                 'filter-month': '',
                 'filter-date-start': '',
                 'filter-date-end': '',
@@ -8095,7 +8106,8 @@
             <div class="mdetails-wrap">${detailsHtml}</div>`;
         }
         function getEntriesForExport() {
-            const search = normalizeEntrySearchText(document.getElementById('entry-search')?.value || '');
+            const descSearch = normalizeEntrySearchText(document.getElementById('filter-desc')?.value || '');
+            const valueSearch = parseEntryValueFilter(document.getElementById('filter-value-exact')?.value || '');
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             const typeFilter = document.getElementById('filter-type')?.value || '';
@@ -8104,14 +8116,15 @@
             const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
 
             const base = state.entries.filter(e => {
-                const matchesSearch = !search || getEntrySearchHaystack(e).includes(search);
+                const matchesDesc = !descSearch || getEntryDescHaystack(e).includes(descSearch);
+                const matchesValue = valueSearch === null || Math.abs(Number(e.amount) || 0).toFixed(2) === valueSearch.toFixed(2);
                 const matchesStart = !dateStart || e.date >= dateStart;
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || normalizeFlowType(e.type) === normalizeFlowType(typeFilter);
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
             const dupMeta = getDuplicateMeta(base);
             const filtered = duplicateFilter === 'ONLY'
@@ -10833,7 +10846,8 @@
 
         function getEntriesFilterSnapshot() {
             return {
-                search: normalizeEntrySearchText(document.getElementById('entry-search')?.value || ''),
+                descSearch: normalizeEntrySearchText(document.getElementById('filter-desc')?.value || ''),
+                valueSearch: parseEntryValueFilter(document.getElementById('filter-value-exact')?.value || ''),
                 dateStart: document.getElementById('filter-date-start')?.value || '',
                 dateEnd: document.getElementById('filter-date-end')?.value || '',
                 typeFilter: document.getElementById('filter-type')?.value || '',
@@ -11713,7 +11727,8 @@
             const body = document.getElementById('entries-table-body');
             if(!body) return;
             closeEntryDestinationCombobox();
-            const search = normalizeEntrySearchText(document.getElementById('entry-search')?.value || '');
+            const descSearch = normalizeEntrySearchText(document.getElementById('filter-desc')?.value || '');
+            const valueSearch = parseEntryValueFilter(document.getElementById('filter-value-exact')?.value || '');
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             syncEntriesMonthControl(dateStart, dateEnd);
@@ -11725,7 +11740,8 @@
             const duplicateSummaryEl = document.getElementById('entries-dup-summary');
             if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY');
             const queryKey = [
-                search,
+                descSearch,
+                String(valueSearch),
                 dateStart,
                 dateEnd,
                 typeFilter,
@@ -11741,14 +11757,15 @@
             }
 
             const baseFiltered = state.entries.filter(e => {
-                const matchesSearch = !search || getEntrySearchHaystack(e).includes(search);
+                const matchesDesc = !descSearch || getEntryDescHaystack(e).includes(descSearch);
+                const matchesValue = valueSearch === null || Math.abs(Number(e.amount) || 0).toFixed(2) === valueSearch.toFixed(2);
                 const matchesStart = !dateStart || e.date >= dateStart;
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || e.type === typeFilter;
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
             const duplicateMeta = getDuplicateMeta(baseFiltered);
 
@@ -11905,7 +11922,8 @@
             const body = document.getElementById('entries-table-body');
             if (!body) return;
             closeEntryDestinationCombobox();
-            const search = normalizeEntrySearchText(document.getElementById('entry-search')?.value || '');
+            const descSearch = normalizeEntrySearchText(document.getElementById('filter-desc')?.value || '');
+            const valueSearch = parseEntryValueFilter(document.getElementById('filter-value-exact')?.value || '');
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             syncEntriesMonthControl(dateStart, dateEnd);
@@ -11918,7 +11936,8 @@
             if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY' || duplicateFilter === 'TRANSFER');
 
             const queryKey = [
-                search,
+                descSearch,
+                String(valueSearch),
                 dateStart,
                 dateEnd,
                 typeFilter,
@@ -11934,14 +11953,15 @@
             }
 
             const baseFiltered = state.entries.filter((e) => {
-                const matchesSearch = !search || getEntrySearchHaystack(e).includes(search);
+                const matchesDesc = !descSearch || getEntryDescHaystack(e).includes(descSearch);
+                const matchesValue = valueSearch === null || Math.abs(Number(e.amount) || 0).toFixed(2) === valueSearch.toFixed(2);
                 const matchesStart = !dateStart || e.date >= dateStart;
                 const matchesEnd = !dateEnd || e.date <= dateEnd;
                 const matchesType = !typeFilter || e.type === typeFilter;
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                return matchesSearch && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
             });
 
             const duplicateMeta = getDuplicateMeta(baseFiltered);
@@ -12879,7 +12899,7 @@
                 const el = document.getElementById(id);
                 if (el) el.value = value;
             };
-            setValue('entry-search', destinationName);
+            setValue('filter-desc', destinationName);
             setValue('filter-type', annualTemporalFlow === 'TODOS' ? '' : annualTemporalFlow);
             setValue('filter-status', 'REALIZADO');
             setValue('filter-account', annualNavAccountId || '');
@@ -17472,41 +17492,50 @@
         // BOLETO SCANNER
         // =====================================================================
 
-        // Busca de lançamento por código de barras no campo de pesquisa
-        let _barcodeFilterActive = false;
-
-        function onEntrySearchInput(val) {
-            const digits = val.replace(/\D/g, '');
-            if (digits.length >= 44) {
-                const result = parseBoletoBarcode(digits);
-                if (result && (result.amount || result.date)) {
-                    // Apply barcode filter: set value in search and date filters
-                    const searchEl = document.getElementById('entry-search');
-                    const badge = document.getElementById('entry-search-barcode-badge');
-                    _barcodeFilterActive = true;
-                    // Filtra só pelo valor — não aplica filtro de data porque o lançamento
-                    // pode ter sido registrado em data diferente do vencimento do boleto
-                    if (result.amount) {
-                        const amountStr = result.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        if (searchEl) searchEl.value = amountStr;
-                    }
-                    if (badge) badge.style.display = 'inline-block';
-                    queueRenderEntries();
-                    return;
-                }
-            }
-            _barcodeFilterActive = false;
-            const badge = document.getElementById('entry-search-barcode-badge');
-            if (badge) badge.style.display = 'none';
-            queueRenderEntries();
+        // Helpers para os novos filtros separados
+        function parseEntryValueFilter(raw) {
+            if (!raw || !raw.trim()) return null;
+            const val = parseValueRobust(raw);
+            return isNaN(val) || val <= 0 ? null : val;
         }
 
-        function clearBarcodeFilter() {
-            _barcodeFilterActive = false;
-            const searchEl = document.getElementById('entry-search');
-            const badge = document.getElementById('entry-search-barcode-badge');
-            if (searchEl) searchEl.value = '';
-            if (badge) badge.style.display = 'none';
+        function getEntryDescHaystack(entry) {
+            const destination = getDestinationById((entry || {}).destinationId);
+            const description = String(
+                (entry || {}).description ??
+                (entry || {}).descricao ??
+                (entry || {}).desc ??
+                (entry || {}).notes ??
+                (entry || {}).observacao ?? ''
+            );
+            return normalizeEntrySearchText([
+                description,
+                (destination || {}).name || '',
+            ].join(' '));
+        }
+
+        // Campo de código de barras dedicado nos filtros
+        function onFilterBarcodeInput(val) {
+            const fb = document.getElementById('filter-barcode-feedback');
+            const digits = val.replace(/\D/g, '');
+            if (!digits) {
+                if (fb) fb.textContent = '';
+                document.getElementById('filter-value-exact').value = '';
+                queueRenderEntries();
+                return;
+            }
+            if (digits.length < 44) {
+                if (fb) { fb.textContent = `${digits.length} dígito(s) — aguardando 44 ou 47...`; fb.style.color = ''; }
+                return;
+            }
+            const result = parseBoletoBarcode(digits);
+            if (!result || !result.amount) {
+                if (fb) { fb.textContent = 'Código inválido.'; fb.style.color = 'var(--soft-red)'; }
+                return;
+            }
+            const amountStr = result.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('filter-value-exact').value = amountStr;
+            if (fb) { fb.textContent = `✓ Valor: R$ ${amountStr}`; fb.style.color = 'var(--primary-green)'; }
             queueRenderEntries();
         }
 
