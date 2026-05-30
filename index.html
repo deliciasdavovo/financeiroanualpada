@@ -5803,7 +5803,7 @@
                         </div>
                         <div class="entries-filter-item">
                             <label for="filter-value-exact" class="label-mini">Valor (R$)</label>
-                            <input type="text" id="filter-value-exact" inputmode="decimal" placeholder="Ex: 387,91" oninput="queueRenderEntries()">
+                            <input type="text" id="filter-value-exact" inputmode="numeric" placeholder="Ex: 38791" oninput="this.value=formatAmountFromDigits(this.value);queueRenderEntries()">
                         </div>
                         <div class="entries-filter-item">
                             <label for="filter-barcode" class="label-mini">Código de Barras</label>
