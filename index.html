@@ -3533,31 +3533,6 @@
             border-color: #C7D2FE;
             color: #1D4ED8;
         }
-        .suggest-dest-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            border: 1px solid #A7F3D0;
-            background: #ECFDF5;
-            color: #1F7A5C;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            user-select: none;
-            transition: background 150ms, border-color 150ms;
-        }
-        .suggest-dest-btn:hover {
-            background: #D1FAE5;
-            border-color: #6EE7B7;
-        }
-        .combobox-option.is-suggestion .combobox-option-title::before {
-            content: "\2733 ";
-            color: #1F7A5C;
-            font-size: 10px;
-        }
         .recon-note-btn {
             width: 28px;
             height: 28px;
@@ -11403,74 +11378,7 @@
                 refreshEntryRowInlineUI(entryId);
             }, 120);
         }
-        function getSuggestedDestinations(entry, maxResults) {
-            if (!entry) return [];
-            maxResults = maxResults || 5;
-            var validDests = getValidDestinationsForEntry(entry);
-            var nonGeneric = validDests.filter(function(d) { return !isGenericReconDestination(d); });
-            var freq = {};
-            var descNorm = normalizeReconText(entry.description || '');
-            var descTokens = descNorm ? new Set(descNorm.split(' ').filter(Boolean)) : new Set();
-            (state.entries || []).forEach(function(ent) {
-                if (!ent || ent.id === entry.id) return;
-                if (ent.type !== entry.type) return;
-                var dstId = String(ent.destinationId || '');
-                if (!dstId) return;
-                var dst = nonGeneric.find(function(d) { return String(d.id || '') === dstId; });
-                if (!dst) return;
-                var w = 1;
-                if (descNorm) {
-                    var entNorm = normalizeReconText(ent.description || '');
-                    var entTokens = entNorm.split(' ').filter(Boolean);
-                    var matches = entTokens.filter(function(t) { return t.length >= 4 && descTokens.has(t); }).length;
-                    if (matches >= 2) w = 5;
-                    else if (matches === 1) w = 2;
-                }
-                freq[dstId] = (freq[dstId] || 0) + w;
-            });
-            var inferredId = inferDestinationFromDescription(entry.description || '', nonGeneric, entry.type || '');
-            var scores = Object.assign({}, freq);
-            if (inferredId) scores[inferredId] = (scores[inferredId] || 0) + 100;
-            var sorted = Object.keys(scores).sort(function(a, b) { return scores[b] - scores[a]; });
-            return sorted.slice(0, maxResults).map(function(id) {
-                return nonGeneric.find(function(d) { return String(d.id || '') === id; });
-            }).filter(Boolean);
-        }
-
-        function openDestinationSuggestions(entryId) {
-            var entry = (state.entries || []).find(function(e) { return String(e.id || '') === String(entryId || ''); });
-            if (!entry) return;
-            var suggestions = getSuggestedDestinations(entry, 5);
-            if (!suggestions.length) {
-                openEntryDestinationCombobox(entryId, '');
-                return;
-            }
-            var options = getValidDestinationsForEntry(entry);
-            entryDestinationComboboxState.entryId = String(entryId || '');
-            entryDestinationComboboxState.inputId = 'entry-dst-' + entryId;
-            entryDestinationComboboxState.panelId = 'entry-dst-panel-' + entryId;
-            entryDestinationComboboxState.options = options;
-            entryDestinationComboboxState.filteredOptions = suggestions;
-            entryDestinationComboboxState.highlightedIndex = 0;
-            entryDestinationComboboxState.isOpen = true;
-            var panelEl = document.getElementById('entry-dst-panel-' + entryId);
-            var inputEl = document.getElementById('entry-dst-' + entryId);
-            if (!panelEl || !inputEl) return;
-            inputEl.setAttribute('aria-expanded', 'true');
-            panelEl.classList.remove('hidden');
-            panelEl.innerHTML = '<div style="padding:6px 12px 4px;font-size:10px;font-weight:700;color:#1F7A5C;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #E2E8F0;margin-bottom:2px;">&#x2733; Sugestões pelo histórico</div>'
-                + suggestions.map(function(item, index) {
-                    var isActive = index === 0;
-                    var eid = String(entryId || '');
-                    var did = String((item || {}).id || '');
-                    return '<button type="button" class="combobox-option is-suggestion ' + (isActive ? 'is-active' : '') + '" role="option" aria-selected="' + (isActive ? 'true' : 'false') + '" onmousedown="event.preventDefault()" onclick="selectEntryDestinationComboboxOption(&quot;' + eid + '&quot;, &quot;' + did + '&quot;)">'
-                        + '<span class="combobox-option-title">' + escapeHtml(getDestinationLabel(item)) + '</span>'
-                        + '<span class="combobox-option-meta">' + escapeHtml(getDestinationDisplayLabel(item)) + '</span>'
-                        + '</button>';
-                }).join('');
-            inputEl.focus();
-        }
-        function moveEntryDestinationComboboxHighlight(entryId, step) {
+                function moveEntryDestinationComboboxHighlight(entryId, step) {
             const currentId = String(entryDestinationComboboxState.entryId || '');
             if (!entryDestinationComboboxState.isOpen || currentId !== String(entryId || '')) {
                 const inputEl = document.getElementById(`entry-dst-${entryId}`);
@@ -12272,7 +12180,6 @@
                     : transferReviewStatus === 'dismissed'
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
-                const isGenericDest = /consultar/i.test(destinationMainLabel) || /consultar/i.test(destinationDisplayLabel);
 
                 return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
@@ -12314,7 +12221,6 @@
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
                                     ...
                                 </button>
-                                ${isGenericDest ? `<button type=\"button\" class=\"suggest-dest-btn entry-action-btn\" onclick=\"event.stopPropagation(); openDestinationSuggestions('${e.id}')\" title=\"Sugerir destino pelo historico\" aria-label=\"Sugerir destino\">&#x2733;</button>` : ''}
                             
                             </div>
                             <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
