@@ -11461,7 +11461,9 @@
             panelEl.innerHTML = '<div style="padding:6px 12px 4px;font-size:10px;font-weight:700;color:#1F7A5C;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #E2E8F0;margin-bottom:2px;">&#x2733; Sugestões pelo histórico</div>'
                 + suggestions.map(function(item, index) {
                     var isActive = index === 0;
-                    return '<button type="button" class="combobox-option is-suggestion ' + (isActive ? 'is-active' : '') + '" role="option" aria-selected="' + (isActive ? 'true' : 'false') + '" onmousedown="event.preventDefault()" onclick="selectEntryDestinationComboboxOption('' + String(entryId || '') + '', '' + String((item || {}).id || '') + '')">'
+                    var eid = String(entryId || '');
+                    var did = String((item || {}).id || '');
+                    return '<button type="button" class="combobox-option is-suggestion ' + (isActive ? 'is-active' : '') + '" role="option" aria-selected="' + (isActive ? 'true' : 'false') + '" onmousedown="event.preventDefault()" onclick="selectEntryDestinationComboboxOption(&quot;' + eid + '&quot;, &quot;' + did + '&quot;)">'
                         + '<span class="combobox-option-title">' + escapeHtml(getDestinationLabel(item)) + '</span>'
                         + '<span class="combobox-option-meta">' + escapeHtml(getDestinationDisplayLabel(item)) + '</span>'
                         + '</button>';
