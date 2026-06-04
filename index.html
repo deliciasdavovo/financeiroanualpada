@@ -5651,6 +5651,29 @@
         .goals-cell-value { font-size: 12px; font-weight: 800; white-space: nowrap; }
         .goals-cell-meta-col { text-align: center; }
         .goals-matrix-row-linked:hover { background: #F0F4FF; }
+
+        /* ─── GOALS TREE ─── */
+        .goals-tree-row { border-bottom: 1px solid #F1F5F9; transition: background var(--dur-fast) var(--ease-premium); }
+        .goals-tree-row:last-child { border-bottom: none; }
+        .goals-tree-cat { background: #FAFBFC; cursor: pointer; }
+        .goals-tree-cat:hover { background: #F0F4FF; }
+        .goals-tree-sub { background: #fff; cursor: pointer; }
+        .goals-tree-sub:hover { background: #F8FAFC; }
+        .goals-tree-dest { background: #FDFEFF; }
+        .goals-tree-dest:hover { background: #F8FAFC; }
+        .goals-tree-name-cell { display: flex; align-items: center; gap: 6px; white-space: nowrap; padding: 10px 12px; }
+        .goals-tree-cat-cell { font-weight: 800; font-size: 13px; color: var(--text-primary); border-left: 3px solid #CBD5E1; }
+        .goals-tree-sub-cell { font-size: 12px; padding-left: 28px !important; border-left: 3px solid #E2E8F0; }
+        .goals-tree-dest-cell { font-size: 12px; padding-left: 48px !important; color: var(--text-secondary); border-left: 3px solid #F1F5F9; }
+        .goals-tree-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+        .goals-tree-toggle { display: flex; align-items: center; color: #94A3B8; flex-shrink: 0; }
+        .goals-cell-zero { color: #CBD5E1; font-size: 12px; }
+        .goals-detail-link {
+            width: 22px; height: 22px; border-radius: 6px; border: 1px solid #CBD5E1;
+            background: transparent; display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #64748B; transition: all var(--dur-fast) var(--ease-premium); flex-shrink: 0;
+        }
+        .goals-detail-link:hover { border-color: #2F4F9D; color: #2F4F9D; background: #EEF2FF; }
         .goals-add-goal-btn {
             width: 22px; height: 22px; border-radius: 6px; border: 1px dashed #CBD5E1;
             background: transparent; display: inline-flex; align-items: center; justify-content: center;
@@ -16974,7 +16997,9 @@
         let goalsViewSelectedGoal = null;
         let goalsViewSelectedMonth = null;
         let goalsViewYear = String(new Date().getFullYear());
-        let goalsMonthWindowOffset = 0; // how many months back from current month (0 = current at right)
+        let goalsMonthWindowOffset = 0;
+        let goalsExpandedCategories = new Set();
+        let goalsExpandedSubcategories = new Set();
 
         function loadGoals() {
             try { goalsData = JSON.parse(localStorage.getItem('metas_goals_v1') || '[]'); }
@@ -17342,28 +17367,105 @@
             }
         }
 
+        function goalsToggleCategory(catId) {
+            if (goalsExpandedCategories.has(catId)) goalsExpandedCategories.delete(catId);
+            else goalsExpandedCategories.add(catId);
+            renderGoals();
+        }
+
+        function goalsToggleSubcategory(subId) {
+            if (goalsExpandedSubcategories.has(subId)) goalsExpandedSubcategories.delete(subId);
+            else goalsExpandedSubcategories.add(subId);
+            renderGoals();
+        }
+
+        function goalsBuildHierarchyTree(months) {
+            const goalMap = new Map();
+            goalsData.forEach(g => goalMap.set(`${g.hierarchyType}:${g.hierarchyId}`, g));
+
+            const getActual = (hType, hId, flow, m) => goalsCalcActualForDest(hType, hId, flow, m);
+
+            return state.categories.map(cat => {
+                const catFlow = getGoalCategoryFlowType(cat);
+                const catId = String(cat.id);
+                const catGoal = goalMap.get(`category:${catId}`) || null;
+                const catActuals = months.map(m => getActual('category', catId, catFlow, m));
+                const hasCatData = catActuals.some(v => v > 0) || !!catGoal;
+
+                const subs = state.subCategories
+                    .filter(s => getGoalSubCategoryCategoryId(s) === catId)
+                    .map(sub => {
+                        const subFlow = getGoalSubCategoryFlowType(sub);
+                        const subId = String(sub.id);
+                        const subGoal = goalMap.get(`subcategory:${subId}`) || null;
+                        const subActuals = months.map(m => getActual('subcategory', subId, subFlow, m));
+                        const hasSubData = subActuals.some(v => v > 0) || !!subGoal;
+
+                        const dests = state.destinations
+                            .filter(d => getGoalDestinationSubCategoryId(d) === subId)
+                            .map(dest => {
+                                const destId = String(dest.id);
+                                const destFlow = getGoalDestinationFlowType(dest);
+                                const destGoal = goalMap.get(`destination:${destId}`) || null;
+                                const destActuals = months.map(m => getActual('destination', destId, destFlow, m));
+                                const hasDestData = destActuals.some(v => v > 0) || !!destGoal;
+                                return { id: destId, name: dest.name, flow: destFlow, goal: destGoal, actuals: destActuals, hasData: hasDestData };
+                            })
+                            .filter(d => d.hasData);
+
+                        return { id: subId, name: sub.name, flow: subFlow, goal: subGoal, actuals: subActuals, hasData: hasSubData || dests.length > 0, dests };
+                    })
+                    .filter(s => s.hasData);
+
+                return { id: catId, name: cat.name, flow: catFlow, goal: catGoal, actuals: catActuals, hasData: hasCatData || subs.length > 0, subs };
+            }).filter(c => c.hasData);
+        }
+
+        function goalsRenderTreeCells(actuals, goal, flow, months, currentYYYYMM) {
+            return months.map((m, i) => {
+                const isCurrent = m === currentYYYYMM;
+                const cls = isCurrent ? ' goals-month-current-col' : '';
+                const actual = actuals[i];
+                const isEx = getGoalNormalizedType(flow) === FLOW_OUT;
+                const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
+
+                const prog = goal && goalsIsApplicable(goal, m) ? calcGoalProgress(goal, m) : null;
+                const sc = prog ? getGoalStatusStyle(prog.status, flow) : null;
+
+                const actualColor = sc ? sc.color : (actual > 0 ? typeColor : '#CBD5E1');
+                const actualHtml = actual > 0
+                    ? `<span class="goals-cell-value" style="color:${actualColor}">${formatBRL(actual)}</span>`
+                    : `<span class="goals-cell-zero">—</span>`;
+
+                let metaHtml;
+                if (prog) {
+                    const pct = Math.round(prog.rawPct);
+                    metaHtml = `<span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${pct}%</span>`;
+                } else {
+                    metaHtml = `<span class="goals-cell-zero">—</span>`;
+                }
+
+                return `<td class="goals-matrix-cell${cls}">${actualHtml}</td><td class="goals-matrix-cell goals-cell-meta-col${cls}">${metaHtml}</td>`;
+            }).join('');
+        }
+
         function renderGoalsTable(kpiEl, gridEl) {
             const now = new Date();
             const currentYYYYMM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
             const months = goalsGetWindowMonths();
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-            const getMonthName = yyyyMM => { const [y, m] = yyyyMM.split('-'); return `${monthNames[Number(m)-1]}/${y.slice(2)}`; };
+            const getMonthName = yyyyMM => { const [, m] = yyyyMM.split('-'); return monthNames[Number(m)-1]; };
+            const getMonthYear = yyyyMM => { const [y, m] = yyyyMM.split('-'); return `${monthNames[Number(m)-1]}/${y.slice(2)}`; };
 
-            const allGoals = goalsData;
-            const allRows = goalsGetAllHierarchyRows();
-
-            // Filter rows that have a goal OR have any spending in visible months
-            const visibleRows = allRows.filter(row => {
-                if (row.goal) return true;
-                return months.some(m => goalsCalcActualForDest(row.hierarchyType, row.hierarchyId, row.flow, m) > 0);
-            });
+            const tree = goalsBuildHierarchyTree(months);
+            const colSpan = 1 + months.length * 2 + 1;
 
             if (kpiEl) {
-                const goalsWithProgress = allGoals.map(g => calcGoalProgress(g, currentYYYYMM));
-                const total = allGoals.length;
-                const ok   = goalsWithProgress.filter(p => p.status === 'ok' || p.status === 'rev_ok').length;
-                const attn = goalsWithProgress.filter(p => p.status === 'warn' || p.status === 'danger' || p.status === 'rev_danger').length;
-                const over = goalsWithProgress.filter(p => p.status === 'over').length;
+                const progs = goalsData.map(g => calcGoalProgress(g, currentYYYYMM));
+                const total = goalsData.length;
+                const ok   = progs.filter(p => p.status === 'ok' || p.status === 'rev_ok').length;
+                const attn = progs.filter(p => p.status === 'warn' || p.status === 'danger' || p.status === 'rev_danger').length;
+                const over = progs.filter(p => p.status === 'over').length;
                 kpiEl.innerHTML = `
                     <div class="kpi-card p-5" style="border-top:4px solid #2F4F9D;background:#EEF2FF">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total</p>
@@ -17389,77 +17491,93 @@
 
             if (!gridEl) return;
 
-            const canGoBack = true;
             const canGoForward = goalsMonthWindowOffset > 0;
-            const windowLabel = `${getMonthName(months[0])} – ${getMonthName(months[months.length - 1])}`;
+            const windowLabel = `${getMonthYear(months[0])} – ${getMonthYear(months[months.length - 1])}`;
 
             const headerCols = months.map(m => {
                 const isCurrent = m === currentYYYYMM;
                 return `<th class="goals-matrix-month-th${isCurrent ? ' goals-month-current-col' : ''}" colspan="2">${getMonthName(m)}${isCurrent ? ' ◆' : ''}</th>`;
             }).join('');
-
             const subHeaderCols = months.map(m => {
-                const isCurrent = m === currentYYYYMM;
-                const cls = isCurrent ? ' goals-month-current-col' : '';
+                const cls = m === currentYYYYMM ? ' goals-month-current-col' : '';
                 return `<th class="goals-matrix-sub-th${cls}">Real.</th><th class="goals-matrix-sub-th${cls}">Meta</th>`;
             }).join('');
 
-            const rows = visibleRows.map(row => {
-                const isEx = getGoalNormalizedType(row.flow) === FLOW_OUT;
-                const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
-                const typeLabel = isEx ? 'Desp.' : 'Rec.';
-                const hasGoal = !!row.goal;
-                const goalId = row.goal?.id || '';
+            let rows = '';
 
-                const clickAttr = hasGoal
-                    ? `onclick="goalsOpenDetail('${goalId}')" style="cursor:pointer"`
-                    : `style="cursor:default"`;
+            if (!tree.length) {
+                rows = `<tr><td colspan="${colSpan}" class="text-center text-slate-400 text-sm py-10">Nenhum lançamento neste período.</td></tr>`;
+            } else {
+                tree.forEach(cat => {
+                    const isExpCat = goalsExpandedCategories.has(cat.id);
+                    const isEx = getGoalNormalizedType(cat.flow) === FLOW_OUT;
+                    const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
+                    const expandIcon = isExpCat ? 'chevron-down' : 'chevron-right';
+                    const hasSubs = cat.subs.length > 0;
+                    const hasGoal = !!cat.goal;
+                    const goalId = cat.goal?.id || '';
 
-                const cells = months.map(m => {
-                    const isCurrent = m === currentYYYYMM;
-                    const cls = isCurrent ? ' goals-month-current-col' : '';
+                    const goalChevron = hasGoal
+                        ? `<button class="goals-detail-link" onclick="event.stopPropagation();goalsOpenDetail('${goalId}')" title="Ver detalhes da meta"><i data-lucide="target" class="w-3.5 h-3.5"></i></button>`
+                        : `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('category','${cat.id}','${cat.flow}')" title="Criar meta para esta categoria"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
 
-                    const actual = hasGoal && goalsIsApplicable(row.goal, m)
-                        ? calcGoalProgress(row.goal, m).actual
-                        : goalsCalcActualForDest(row.hierarchyType, row.hierarchyId, row.flow, m);
+                    rows += `<tr class="goals-tree-row goals-tree-cat" onclick="goalsToggleCategory('${cat.id}')">
+                        <td class="goals-tree-name-cell goals-tree-cat-cell">
+                            <span class="goals-tree-toggle">${hasSubs ? `<i data-lucide="${expandIcon}" class="w-3.5 h-3.5"></i>` : '<span class="w-3.5 h-3.5 inline-block"></span>'}</span>
+                            <span class="goals-tree-name">${cat.name}</span>
+                            <span class="goals-matrix-type-badge" style="background:${typeColor}18;color:${typeColor}">${isEx ? 'Desp.' : 'Rec.'}</span>
+                            ${goalChevron}
+                        </td>
+                        ${goalsRenderTreeCells(cat.actuals, cat.goal, cat.flow, months, currentYYYYMM)}
+                        <td class="goals-matrix-chevron-cell"></td>
+                    </tr>`;
 
-                    const prog = hasGoal && goalsIsApplicable(row.goal, m) ? calcGoalProgress(row.goal, m) : null;
-                    const sc = prog ? getGoalStatusStyle(prog.status, row.flow) : null;
+                    if (isExpCat) {
+                        cat.subs.forEach(sub => {
+                            const isExpSub = goalsExpandedSubcategories.has(sub.id);
+                            const subEx = getGoalNormalizedType(sub.flow) === FLOW_OUT;
+                            const subColor = subEx ? '#B23A3A' : '#1F7A5C';
+                            const subExpandIcon = isExpSub ? 'chevron-down' : 'chevron-right';
+                            const hasDests = sub.dests.length > 0;
+                            const subHasGoal = !!sub.goal;
+                            const subGoalId = sub.goal?.id || '';
 
-                    const actualColor = sc ? sc.color : (actual > 0 ? (isEx ? '#B23A3A' : '#1F7A5C') : '#94A3B8');
-                    const actualHtml = actual > 0
-                        ? `<span class="goals-cell-value" style="color:${actualColor}">${formatBRL(actual)}</span>`
-                        : `<span class="goals-cell-dash">—</span>`;
+                            const subGoalChevron = subHasGoal
+                                ? `<button class="goals-detail-link" onclick="event.stopPropagation();goalsOpenDetail('${subGoalId}')" title="Ver detalhes da meta"><i data-lucide="target" class="w-3.5 h-3.5"></i></button>`
+                                : `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('subcategory','${sub.id}','${sub.flow}')" title="Criar meta"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
 
-                    let metaHtml;
-                    if (prog) {
-                        const pct = Math.round(prog.rawPct);
-                        metaHtml = `<span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${pct}%</span>`;
-                    } else if (!hasGoal) {
-                        const safeH = row.hierarchyType.replace(/'/g, '');
-                        const safeId = row.hierarchyId.replace(/'/g, '');
-                        const safeFlow = String(row.flow).replace(/'/g, '');
-                        metaHtml = `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('${safeH}','${safeId}','${safeFlow}')" title="Criar meta"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
-                    } else {
-                        metaHtml = `<span class="goals-cell-dash">—</span>`;
+                            rows += `<tr class="goals-tree-row goals-tree-sub" onclick="goalsToggleSubcategory('${sub.id}')">
+                                <td class="goals-tree-name-cell goals-tree-sub-cell">
+                                    <span class="goals-tree-toggle">${hasDests ? `<i data-lucide="${subExpandIcon}" class="w-3.5 h-3.5"></i>` : '<span class="w-3.5 h-3.5 inline-block"></span>'}</span>
+                                    <span class="goals-tree-name">${sub.name}</span>
+                                    ${subGoalChevron}
+                                </td>
+                                ${goalsRenderTreeCells(sub.actuals, sub.goal, sub.flow, months, currentYYYYMM)}
+                                <td class="goals-matrix-chevron-cell"></td>
+                            </tr>`;
+
+                            if (isExpSub) {
+                                sub.dests.forEach(dest => {
+                                    const destHasGoal = !!dest.goal;
+                                    const destGoalId = dest.goal?.id || '';
+                                    const destGoalChevron = destHasGoal
+                                        ? `<button class="goals-detail-link" onclick="event.stopPropagation();goalsOpenDetail('${destGoalId}')" title="Ver detalhes da meta"><i data-lucide="target" class="w-3.5 h-3.5"></i></button>`
+                                        : `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('destination','${dest.id}','${dest.flow}')" title="Criar meta"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
+
+                                    rows += `<tr class="goals-tree-row goals-tree-dest">
+                                        <td class="goals-tree-name-cell goals-tree-dest-cell">
+                                            <span class="goals-tree-name">${dest.name}</span>
+                                            ${destGoalChevron}
+                                        </td>
+                                        ${goalsRenderTreeCells(dest.actuals, dest.goal, dest.flow, months, currentYYYYMM)}
+                                        <td class="goals-matrix-chevron-cell"></td>
+                                    </tr>`;
+                                });
+                            }
+                        });
                     }
-
-                    return `<td class="goals-matrix-cell${cls}">${actualHtml}</td><td class="goals-matrix-cell${cls} goals-cell-meta-col">${metaHtml}</td>`;
-                }).join('');
-
-                const chevron = hasGoal
-                    ? `<i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>`
-                    : `<span></span>`;
-
-                return `<tr class="goals-matrix-row${hasGoal ? ' goals-matrix-row-linked' : ''}" ${clickAttr} title="${hasGoal ? 'Ver detalhes' : row.name}">
-                    <td class="goals-matrix-name-cell">
-                        <span class="goals-matrix-name-label">${row.name}</span>
-                        <span class="goals-matrix-type-badge" style="background:${typeColor}18;color:${typeColor}">${typeLabel}</span>
-                    </td>
-                    ${cells}
-                    <td class="goals-matrix-chevron-cell">${chevron}</td>
-                </tr>`;
-            }).join('') || `<tr><td colspan="${2 + months.length * 2 + 1}" class="text-center text-slate-400 text-sm py-10">Nenhum lançamento ou meta neste período.</td></tr>`;
+                });
+            }
 
             gridEl.className = '';
             gridEl.innerHTML = `
