@@ -5600,6 +5600,9 @@
 
         /* ─── GOALS MATRIX TABLE ─── */
         .goals-matrix-wrap { display: flex; flex-direction: column; gap: 12px; }
+        .goals-matrix-window-nav {
+            display: flex; align-items: center; gap: 8px;
+        }
         .goals-matrix-year-nav {
             display: flex; align-items: center; gap: 8px;
         }
@@ -5611,6 +5614,7 @@
         .goals-year-btn:hover:not(:disabled) { background: #F1F5F9; color: var(--text-primary); }
         .goals-year-btn:disabled { opacity: 0.4; cursor: default; }
         .goals-year-label { font-size: 14px; font-weight: 800; color: var(--text-primary); min-width: 48px; text-align: center; }
+        .goals-window-label { min-width: 140px; font-size: 13px; }
         .goals-matrix-scroll { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); }
         .goals-matrix-table {
             width: 100%; border-collapse: collapse; background: var(--bg-card);
@@ -5624,7 +5628,8 @@
         }
         .goals-matrix-name-th { min-width: 160px; }
         .goals-matrix-amount-th { min-width: 100px; text-align: right; }
-        .goals-matrix-month-th { min-width: 54px; text-align: center; padding: 10px 6px; }
+        .goals-matrix-month-th { min-width: 110px; text-align: center; padding: 10px 6px; }
+        .goals-matrix-sub-th { padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: .03em; min-width: 80px; border-top: 1px solid #F1F5F9; }
         .goals-matrix-chevron-th { width: 32px; }
         .goals-matrix-row {
             border-bottom: 1px solid #F1F5F9; cursor: pointer;
@@ -5643,6 +5648,15 @@
         .goals-month-current-col { background: #EEF2FF !important; }
         .goals-matrix-chevron-cell { padding: 10px 10px; text-align: center; }
         .goals-cell-dash { color: #CBD5E1; font-weight: 600; }
+        .goals-cell-value { font-size: 12px; font-weight: 800; white-space: nowrap; }
+        .goals-cell-meta-col { text-align: center; }
+        .goals-matrix-row-linked:hover { background: #F0F4FF; }
+        .goals-add-goal-btn {
+            width: 22px; height: 22px; border-radius: 6px; border: 1px dashed #CBD5E1;
+            background: transparent; display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #94A3B8; transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .goals-add-goal-btn:hover { border-color: #2F4F9D; color: #2F4F9D; background: #EEF2FF; }
         .goals-status-pill {
             display: inline-block; font-size: 11px; font-weight: 800; padding: 2px 7px;
             border-radius: 999px; white-space: nowrap;
@@ -16960,6 +16974,7 @@
         let goalsViewSelectedGoal = null;
         let goalsViewSelectedMonth = null;
         let goalsViewYear = String(new Date().getFullYear());
+        let goalsMonthWindowOffset = 0; // how many months back from current month (0 = current at right)
 
         function loadGoals() {
             try { goalsData = JSON.parse(localStorage.getItem('metas_goals_v1') || '[]'); }
@@ -17251,6 +17266,59 @@
             return Array.from({ length: 12 }, (_, i) => `${year}-${String(i + 1).padStart(2, '0')}`);
         }
 
+        function goalsGetWindowMonths() {
+            const now = new Date();
+            const baseDate = new Date(now.getFullYear(), now.getMonth() - goalsMonthWindowOffset, 1);
+            const months = [];
+            for (let i = 3; i >= 0; i--) {
+                const d = new Date(baseDate.getFullYear(), baseDate.getMonth() - i, 1);
+                months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+            }
+            return months;
+        }
+
+        function goalsSlideWindow(delta) {
+            const now = new Date();
+            const newOffset = goalsMonthWindowOffset + delta;
+            if (newOffset < 0) return;
+            goalsMonthWindowOffset = newOffset;
+            renderGoals();
+        }
+
+        function goalsCalcActualForDest(hierarchyType, hierarchyId, flowType, yyyyMM) {
+            const [yr, mn] = yyyyMM.split('-').map(Number);
+            if (!yr || !mn) return 0;
+            const start = `${yyyyMM}-01`;
+            const end   = `${yyyyMM}-${String(new Date(yr, mn, 0).getDate()).padStart(2, '0')}`;
+            const destIds = getGoalDestinationIds(hierarchyType, hierarchyId);
+            const targetFlow = getGoalNormalizedType(flowType);
+            return state.entries
+                .filter(e => getGoalNormalizedType(e.type) === targetFlow && e.date >= start && e.date <= end && destIds.has(getGoalEntryDestinationId(e)))
+                .reduce((s, e) => s + (Number(e.amount) || 0), 0);
+        }
+
+        function goalsGetAllHierarchyRows() {
+            const rows = [];
+            const goalMap = new Map(goalsData.map(g => [`${g.hierarchyType}:${g.hierarchyId}`, g]));
+
+            state.categories.forEach(cat => {
+                const flow = getGoalCategoryFlowType(cat);
+                const key = `category:${cat.id}`;
+                rows.push({ hierarchyType: 'category', hierarchyId: String(cat.id), name: cat.name, flow, goal: goalMap.get(key) || null });
+            });
+            state.subCategories.forEach(sub => {
+                const flow = getGoalSubCategoryFlowType(sub);
+                const key = `subcategory:${sub.id}`;
+                rows.push({ hierarchyType: 'subcategory', hierarchyId: String(sub.id), name: sub.name, flow, goal: goalMap.get(key) || null });
+            });
+            state.destinations.forEach(dest => {
+                const flow = getGoalDestinationFlowType(dest);
+                const key = `destination:${dest.id}`;
+                rows.push({ hierarchyType: 'destination', hierarchyId: String(dest.id), name: dest.name, flow, goal: goalMap.get(key) || null });
+            });
+            return rows;
+        }
+
         function goalsIsApplicable(goal, yyyyMM) {
             if (goal.recurring) return true;
             return goal.targetMonth === yyyyMM;
@@ -17277,17 +17345,25 @@
         function renderGoalsTable(kpiEl, gridEl) {
             const now = new Date();
             const currentYYYYMM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            const months = goalsGetYearMonths(goalsViewYear);
+            const months = goalsGetWindowMonths();
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const getMonthName = yyyyMM => { const [y, m] = yyyyMM.split('-'); return `${monthNames[Number(m)-1]}/${y.slice(2)}`; };
 
             const allGoals = goalsData;
+            const allRows = goalsGetAllHierarchyRows();
+
+            // Filter rows that have a goal OR have any spending in visible months
+            const visibleRows = allRows.filter(row => {
+                if (row.goal) return true;
+                return months.some(m => goalsCalcActualForDest(row.hierarchyType, row.hierarchyId, row.flow, m) > 0);
+            });
 
             if (kpiEl) {
-                const progs = allGoals.map(g => calcGoalProgress(g, currentYYYYMM));
+                const goalsWithProgress = allGoals.map(g => calcGoalProgress(g, currentYYYYMM));
                 const total = allGoals.length;
-                const ok   = progs.filter(p => p.status === 'ok' || p.status === 'rev_ok').length;
-                const attn = progs.filter(p => p.status === 'warn' || p.status === 'danger' || p.status === 'rev_danger').length;
-                const over = progs.filter(p => p.status === 'over').length;
+                const ok   = goalsWithProgress.filter(p => p.status === 'ok' || p.status === 'rev_ok').length;
+                const attn = goalsWithProgress.filter(p => p.status === 'warn' || p.status === 'danger' || p.status === 'rev_danger').length;
+                const over = goalsWithProgress.filter(p => p.status === 'over').length;
                 kpiEl.innerHTML = `
                     <div class="kpi-card p-5" style="border-top:4px solid #2F4F9D;background:#EEF2FF">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Total</p>
@@ -17313,77 +17389,95 @@
 
             if (!gridEl) return;
 
-            if (allGoals.length === 0) {
-                gridEl.className = '';
-                gridEl.innerHTML = `
-                    <div class="goals-empty">
-                        <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="target" class="w-8 h-8 text-slate-300"></i>
-                        </div>
-                        <p class="font-bold text-slate-700 mb-1">Nenhuma meta cadastrada</p>
-                        <p class="text-sm text-slate-400 mb-5">Crie metas para monitorar orçamentos e receitas por categoria.</p>
-                        <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase">+ Nova Meta</button>
-                    </div>`;
-                refreshLucideIcons();
-                return;
-            }
+            const canGoBack = true;
+            const canGoForward = goalsMonthWindowOffset > 0;
+            const windowLabel = `${getMonthName(months[0])} – ${getMonthName(months[months.length - 1])}`;
 
-            const yearInt = parseInt(goalsViewYear, 10);
-            const prevYear = String(yearInt - 1);
-            const nextYear = String(yearInt + 1);
-            const isCurrentYear = goalsViewYear === String(now.getFullYear());
-
-            const headerCols = months.map((m, i) => {
+            const headerCols = months.map(m => {
                 const isCurrent = m === currentYYYYMM;
-                return `<th class="goals-matrix-month-th${isCurrent ? ' goals-month-current-col' : ''}">${monthNames[i]}</th>`;
+                return `<th class="goals-matrix-month-th${isCurrent ? ' goals-month-current-col' : ''}" colspan="2">${getMonthName(m)}${isCurrent ? ' ◆' : ''}</th>`;
             }).join('');
 
-            const rows = allGoals.map(goal => {
-                const name = getGoalHierarchyName(goal);
-                const isEx = getGoalNormalizedType(goal.type) === FLOW_OUT;
+            const subHeaderCols = months.map(m => {
+                const isCurrent = m === currentYYYYMM;
+                const cls = isCurrent ? ' goals-month-current-col' : '';
+                return `<th class="goals-matrix-sub-th${cls}">Real.</th><th class="goals-matrix-sub-th${cls}">Meta</th>`;
+            }).join('');
+
+            const rows = visibleRows.map(row => {
+                const isEx = getGoalNormalizedType(row.flow) === FLOW_OUT;
                 const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
                 const typeLabel = isEx ? 'Desp.' : 'Rec.';
+                const hasGoal = !!row.goal;
+                const goalId = row.goal?.id || '';
+
+                const clickAttr = hasGoal
+                    ? `onclick="goalsOpenDetail('${goalId}')" style="cursor:pointer"`
+                    : `style="cursor:default"`;
 
                 const cells = months.map(m => {
                     const isCurrent = m === currentYYYYMM;
-                    const applicable = goalsIsApplicable(goal, m);
-                    if (!applicable) return `<td class="goals-matrix-cell${isCurrent ? ' goals-month-current-col' : ''}"><span class="goals-cell-dash">—</span></td>`;
-                    const prog = calcGoalProgress(goal, m);
-                    const sc = getGoalStatusStyle(prog.status, goal.type);
-                    const pctRounded = Math.round(prog.rawPct);
-                    return `<td class="goals-matrix-cell${isCurrent ? ' goals-month-current-col' : ''}">
-                        <span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${pctRounded}%</span>
-                    </td>`;
+                    const cls = isCurrent ? ' goals-month-current-col' : '';
+
+                    const actual = hasGoal && goalsIsApplicable(row.goal, m)
+                        ? calcGoalProgress(row.goal, m).actual
+                        : goalsCalcActualForDest(row.hierarchyType, row.hierarchyId, row.flow, m);
+
+                    const prog = hasGoal && goalsIsApplicable(row.goal, m) ? calcGoalProgress(row.goal, m) : null;
+                    const sc = prog ? getGoalStatusStyle(prog.status, row.flow) : null;
+
+                    const actualColor = sc ? sc.color : (actual > 0 ? (isEx ? '#B23A3A' : '#1F7A5C') : '#94A3B8');
+                    const actualHtml = actual > 0
+                        ? `<span class="goals-cell-value" style="color:${actualColor}">${formatBRL(actual)}</span>`
+                        : `<span class="goals-cell-dash">—</span>`;
+
+                    let metaHtml;
+                    if (prog) {
+                        const pct = Math.round(prog.rawPct);
+                        metaHtml = `<span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${pct}%</span>`;
+                    } else if (!hasGoal) {
+                        const safeH = row.hierarchyType.replace(/'/g, '');
+                        const safeId = row.hierarchyId.replace(/'/g, '');
+                        const safeFlow = String(row.flow).replace(/'/g, '');
+                        metaHtml = `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('${safeH}','${safeId}','${safeFlow}')" title="Criar meta"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
+                    } else {
+                        metaHtml = `<span class="goals-cell-dash">—</span>`;
+                    }
+
+                    return `<td class="goals-matrix-cell${cls}">${actualHtml}</td><td class="goals-matrix-cell${cls} goals-cell-meta-col">${metaHtml}</td>`;
                 }).join('');
 
-                return `<tr class="goals-matrix-row" onclick="goalsOpenDetail('${goal.id}')" title="Ver detalhes de ${name}">
+                const chevron = hasGoal
+                    ? `<i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>`
+                    : `<span></span>`;
+
+                return `<tr class="goals-matrix-row${hasGoal ? ' goals-matrix-row-linked' : ''}" ${clickAttr} title="${hasGoal ? 'Ver detalhes' : row.name}">
                     <td class="goals-matrix-name-cell">
-                        <span class="goals-matrix-name-label">${name}</span>
+                        <span class="goals-matrix-name-label">${row.name}</span>
                         <span class="goals-matrix-type-badge" style="background:${typeColor}18;color:${typeColor}">${typeLabel}</span>
                     </td>
-                    <td class="goals-matrix-amount-cell">${formatBRL(goal.amount)}</td>
                     ${cells}
-                    <td class="goals-matrix-chevron-cell"><i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i></td>
+                    <td class="goals-matrix-chevron-cell">${chevron}</td>
                 </tr>`;
-            }).join('');
+            }).join('') || `<tr><td colspan="${2 + months.length * 2 + 1}" class="text-center text-slate-400 text-sm py-10">Nenhum lançamento ou meta neste período.</td></tr>`;
 
             gridEl.className = '';
             gridEl.innerHTML = `
                 <div class="goals-matrix-wrap">
-                    <div class="goals-matrix-year-nav">
-                        <button type="button" onclick="goalsNavYear(-1)" class="goals-year-btn"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <span class="goals-year-label">${goalsViewYear}</span>
-                        <button type="button" onclick="goalsNavYear(1)" class="goals-year-btn" ${isCurrentYear ? 'disabled' : ''}><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    <div class="goals-matrix-window-nav">
+                        <button type="button" onclick="goalsSlideWindow(1)" class="goals-year-btn" title="Meses anteriores"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <span class="goals-year-label goals-window-label">${windowLabel}</span>
+                        <button type="button" onclick="goalsSlideWindow(-1)" class="goals-year-btn" title="Próximos meses" ${canGoForward ? '' : 'disabled'}><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
                     <div class="goals-matrix-scroll">
                         <table class="goals-matrix-table">
                             <thead>
                                 <tr>
-                                    <th class="goals-matrix-name-th">Meta</th>
-                                    <th class="goals-matrix-amount-th">Valor</th>
+                                    <th class="goals-matrix-name-th" rowspan="2">Item</th>
                                     ${headerCols}
-                                    <th class="goals-matrix-chevron-th"></th>
+                                    <th class="goals-matrix-chevron-th" rowspan="2"></th>
                                 </tr>
+                                <tr>${subHeaderCols}</tr>
                             </thead>
                             <tbody>${rows}</tbody>
                         </table>
@@ -17392,12 +17486,17 @@
             refreshLucideIcons();
         }
 
-        function goalsNavYear(delta) {
-            const now = new Date();
-            const newYear = parseInt(goalsViewYear, 10) + delta;
-            if (newYear > now.getFullYear()) return;
-            goalsViewYear = String(newYear);
-            renderGoals();
+        function openGoalModalForRow(hierarchyType, hierarchyId, flow) {
+            openGoalModal();
+            requestAnimationFrame(() => {
+                const typeVal = getGoalNormalizedType(flow) === FLOW_IN ? 'ENTRADA' : 'SAÍDA';
+                selectGoalType(typeVal);
+                const levelEl = document.getElementById('goal-level-sel');
+                if (levelEl) { levelEl.value = hierarchyType; updateGoalHierarchyOptions(); }
+                const itemEl = document.getElementById('goal-item-sel');
+                if (itemEl) itemEl.value = hierarchyId;
+                renderGoalHistorySuggestion();
+            });
         }
 
         function goalsOpenDetail(goalId) {
