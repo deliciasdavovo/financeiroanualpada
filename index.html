@@ -12272,8 +12272,7 @@
                     : transferReviewStatus === 'dismissed'
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
-                const currentDest = (state.destinations || []).find(d => String(d.id || '') === String(e.destinationId || ''));
-                const isGenericDest = currentDest ? isGenericReconDestination(currentDest) : false;
+                const isGenericDest = /consultar/i.test(destinationMainLabel) || /consultar/i.test(destinationDisplayLabel);
 
                 return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="px-4 py-4 text-center">
