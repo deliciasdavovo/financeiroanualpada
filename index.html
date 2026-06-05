@@ -5725,13 +5725,38 @@
         .goals-detail-pct-col { padding: 12px; text-align: center; }
         .goals-detail-thead { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
 
-        /* ─── GOALS LAUNCHES ─── */
+        /* ─── GOALS LAUNCHES (legacy, kept for reference) ─── */
         .goals-launches-date { padding: 10px 12px; white-space: nowrap; color: var(--text-secondary); font-size: 12px; }
         .goals-launches-desc { padding: 10px 12px; font-weight: 600; font-size: 13px; color: var(--text-primary); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .goals-launches-dest { padding: 10px 12px; font-size: 12px; white-space: nowrap; }
         .goals-launches-amount { padding: 10px 12px; text-align: right; font-weight: 800; font-size: 13px; white-space: nowrap; }
         .goals-launches-row { border-bottom: 1px solid #F1F5F9; }
         .goals-launches-row:last-child { border-bottom: none; }
+
+        /* ─── GOALS DAILY VIEW ─── */
+        .goals-daily-table { min-width: 520px; }
+        .goals-daily-row { border-bottom: 1px solid #F1F5F9; transition: background var(--dur-fast) var(--ease-premium); }
+        .goals-daily-row:last-child { border-bottom: none; }
+        .goals-daily-row:hover { background: #F8FAFC; }
+        .goals-daily-row-today { background: #EEF2FF !important; }
+        .goals-daily-row-today:hover { background: #E0E9FF !important; }
+        .goals-daily-row-future { background: #FAFBFC; opacity: 0.75; }
+        .goals-daily-row-future:hover { background: #F1F5F9; opacity: 1; }
+        .goals-daily-date-cell { padding: 9px 12px; white-space: nowrap; font-size: 13px; color: var(--text-primary); min-width: 110px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .goals-daily-weekday { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .goals-daily-expand-icon { color: #94A3B8; font-size: 11px; width: 14px; display: inline-block; }
+        .goals-daily-amount-cell { padding: 9px 12px; font-size: 12px; white-space: nowrap; min-width: 110px; }
+        .goals-daily-cum-cell { padding: 9px 12px; font-size: 12px; text-align: right; white-space: nowrap; color: var(--text-secondary); font-weight: 700; min-width: 100px; }
+        .goals-daily-cumgoal-cell { padding: 9px 12px; font-size: 12px; text-align: right; white-space: nowrap; color: var(--text-muted); min-width: 100px; }
+        .goals-daily-bar-cell { padding: 9px 12px; min-width: 120px; max-width: 180px; width: 100%; }
+        .goals-daily-bar-track { height: 8px; border-radius: 99px; background: #F1F5F9; overflow: hidden; border: 1px solid #E2E8F0; }
+        .goals-daily-bar-fill { height: 100%; border-radius: 99px; transition: width 400ms var(--ease-premium); }
+        .goals-pending-tag { font-size: 11px; font-weight: 700; color: #64748B; background: #F1F5F9; border-radius: 6px; padding: 1px 5px; white-space: nowrap; }
+        .goals-daily-expand-row { background: #F8FAFF; border-bottom: 1px solid #EEF2FF; }
+        .goals-daily-expand-indent { padding: 7px 12px; width: 110px; }
+        .goals-daily-expand-desc { padding: 7px 12px; font-size: 12px; color: var(--text-secondary); }
+        .goals-daily-expand-dest { font-size: 11px; color: var(--text-muted); }
+        .goals-daily-expand-amount { padding: 7px 12px; text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -11378,7 +11403,7 @@
                 refreshEntryRowInlineUI(entryId);
             }, 120);
         }
-                function moveEntryDestinationComboboxHighlight(entryId, step) {
+        function moveEntryDestinationComboboxHighlight(entryId, step) {
             const currentId = String(entryDestinationComboboxState.entryId || '');
             if (!entryDestinationComboboxState.isOpen || currentId !== String(entryId || '')) {
                 const inputEl = document.getElementById(`entry-dst-${entryId}`);
@@ -12221,7 +12246,6 @@
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
                                     ...
                                 </button>
-                            
                             </div>
                             <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
                         </div>
@@ -17766,6 +17790,14 @@
             renderGoals();
         }
 
+        let goalsExpandedDays = new Set();
+
+        function goalsToggleDay(dateStr) {
+            if (goalsExpandedDays.has(dateStr)) goalsExpandedDays.delete(dateStr);
+            else goalsExpandedDays.add(dateStr);
+            renderGoals();
+        }
+
         function renderGoalLaunches(kpiEl, gridEl) {
             if (!goalsViewSelectedGoal || !goalsViewSelectedMonth) { goalsBackToDetail(); return; }
             const goal = goalsViewSelectedGoal;
@@ -17775,55 +17807,151 @@
             const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
 
             const [yr, mn] = yyyyMM.split('-').map(Number);
+            const daysInMonth = new Date(yr, mn, 0).getDate();
+            const pad = n => String(n).padStart(2, '0');
             const start = `${yyyyMM}-01`;
-            const end   = `${yyyyMM}-${String(new Date(yr, mn, 0).getDate()).padStart(2, '0')}`;
+            const end   = `${yyyyMM}-${pad(daysInMonth)}`;
             const destIds = getGoalDestinationIds(goal.hierarchyType, goal.hierarchyId);
             const targetFlow = getGoalNormalizedType(goal.type);
 
-            const entries = state.entries.filter(e =>
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+            const isCurrentMonth = `${now.getFullYear()}-${pad(now.getMonth()+1)}` === yyyyMM;
+
+            const allEntries = state.entries.filter(e =>
                 getGoalNormalizedType(e.type) === targetFlow &&
                 e.date >= start && e.date <= end &&
                 destIds.has(getGoalEntryDestinationId(e))
-            ).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            );
+
+            // Agrupar por dia
+            const byDay = {};
+            allEntries.forEach(e => {
+                const d = (e.date || '').slice(8, 10);
+                if (!d) return;
+                if (!byDay[d]) byDay[d] = { realized: [], pending: [] };
+                const isPending = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
+                if (isPending) byDay[d].pending.push(e);
+                else byDay[d].realized.push(e);
+            });
 
             const prog = calcGoalProgress(goal, yyyyMM);
             const sc = getGoalStatusStyle(prog.status, goal.type);
+            const hasGoal = goal.amount > 0;
+            const dailyGoal = hasGoal ? goal.amount / daysInMonth : 0;
 
+            // KPI do mês inteiro
             if (kpiEl) {
                 const barPct = prog.rawPct > 0 ? Math.max(prog.pct, 3) : 0;
+                const dailyGoalHtml = hasGoal
+                    ? `<span class="text-xs text-slate-400 ml-3">Meta diária: <strong>${formatBRL(dailyGoal)}</strong></span>`
+                    : '';
                 kpiEl.innerHTML = `
                     <div class="kpi-card p-5 col-span-2 lg:col-span-4" style="border-top:4px solid ${sc.color}">
                         <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
                             <div>
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">${name} · ${goalMonthLabel(yyyyMM)}</p>
-                                <div class="flex items-baseline gap-2">
+                                <div class="flex items-baseline gap-2 flex-wrap">
                                     <span class="text-2xl font-black" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
-                                    <span class="text-slate-400 text-sm">/ ${formatBRL(prog.target)}</span>
-                                    <span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${Math.round(prog.rawPct)}%</span>
+                                    ${hasGoal ? `<span class="text-slate-400 text-sm">/ ${formatBRL(prog.target)}</span>
+                                    <span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${Math.round(prog.rawPct)}%</span>` : ''}
+                                    ${dailyGoalHtml}
                                 </div>
                             </div>
-                            <span class="text-sm font-bold" style="color:${sc.color}">${sc.label}</span>
+                            ${hasGoal ? `<span class="text-sm font-bold" style="color:${sc.color}">${sc.label}</span>` : ''}
                         </div>
-                        <div class="goal-progress-track">
+                        ${hasGoal ? `<div class="goal-progress-track">
                             <div class="goal-progress-fill" style="width:${barPct}%;background:${sc.color}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(prog.pct)}"></div>
-                        </div>
+                        </div>` : ''}
                     </div>`;
             }
 
             if (!gridEl) return;
 
-            const entriesHtml = entries.length === 0
-                ? `<tr><td colspan="4" class="text-center text-slate-400 text-sm py-8">Nenhum lançamento encontrado neste período.</td></tr>`
-                : entries.map(e => {
-                    const dest = state.destinations.find(d => String(d.id) === getGoalEntryDestinationId(e));
-                    const destName = dest?.name || '—';
-                    return `<tr class="goals-launches-row">
-                        <td class="goals-launches-date">${formatDateBRV2(e.date)}</td>
-                        <td class="goals-launches-desc">${e.description || destName}</td>
-                        <td class="goals-launches-dest text-slate-400">${destName}</td>
-                        <td class="goals-launches-amount" style="color:${typeColor}">${formatBRL(Number(e.amount) || 0)}</td>
-                    </tr>`;
-                }).join('');
+            const weekDays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+            let cumulativeReal = 0;
+            let dailyRows = '';
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dd = pad(day);
+                const dateStr = `${yyyyMM}-${dd}`;
+                const dayData = byDay[dd] || { realized: [], pending: [] };
+                const isFuture = dateStr > todayStr;
+                const isToday = dateStr === todayStr;
+                const dayOfWeek = weekDays[new Date(yr, mn - 1, day).getDay()];
+
+                const realizedDay = dayData.realized.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+                const pendingDay = dayData.pending.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+                const hasLaunches = dayData.realized.length + dayData.pending.length > 0;
+                const isExpanded = goalsExpandedDays.has(dateStr);
+
+                if (!isFuture) cumulativeReal += realizedDay;
+
+                const cumulativeGoal = dailyGoal * day;
+                let barColor = sc.color;
+                let barWidth = 0;
+
+                if (hasGoal && !isFuture && cumulativeGoal > 0) {
+                    const cumPct = (cumulativeReal / cumulativeGoal) * 100;
+                    barWidth = Math.min(cumPct, 100);
+                    if (isEx) {
+                        barColor = cumPct > 100 ? '#7F1D1D' : cumPct > 90 ? '#B23A3A' : cumPct > 70 ? '#D97706' : '#1F7A5C';
+                    } else {
+                        barColor = cumPct >= 90 ? '#1F7A5C' : cumPct >= 70 ? '#2F7FB3' : '#94A3B8';
+                    }
+                } else if (!hasGoal && realizedDay > 0) {
+                    barWidth = 100;
+                }
+
+                const rowClass = isToday ? 'goals-daily-row goals-daily-row-today' : isFuture ? 'goals-daily-row goals-daily-row-future' : 'goals-daily-row';
+                const clickAttr = hasLaunches ? `onclick="goalsToggleDay('${dateStr}')" style="cursor:pointer"` : '';
+
+                const realHtml = realizedDay > 0
+                    ? `<span style="color:${typeColor};font-weight:800">${formatBRL(realizedDay)}</span>`
+                    : `<span class="goals-cell-zero">—</span>`;
+
+                const pendHtml = pendingDay > 0
+                    ? `<span class="goals-pending-tag">↻ ${formatBRL(pendingDay)}</span>`
+                    : '';
+
+                const cumHtml = !isFuture && cumulativeReal > 0
+                    ? formatBRL(cumulativeReal)
+                    : `<span class="goals-cell-zero">—</span>`;
+
+                const cumGoalHtml = hasGoal && !isFuture
+                    ? formatBRL(cumulativeGoal)
+                    : `<span class="goals-cell-zero">—</span>`;
+
+                const barHtml = hasGoal && !isFuture
+                    ? `<div class="goals-daily-bar-track"><div class="goals-daily-bar-fill" style="width:${barWidth}%;background:${barColor}"></div></div>`
+                    : '';
+
+                const expandIcon = hasLaunches ? (isExpanded ? '▾' : '▸') : '';
+
+                dailyRows += `<tr class="${rowClass}" ${clickAttr}>
+                    <td class="goals-daily-date-cell">${expandIcon ? `<span class="goals-daily-expand-icon">${expandIcon}</span>` : ''}<strong>${dd}</strong> <span class="goals-daily-weekday">${dayOfWeek}</span>${isToday ? ' <span class="goals-detail-now-badge">Hoje</span>' : ''}</td>
+                    <td class="goals-daily-amount-cell">${realHtml}${pendHtml ? `<br>${pendHtml}` : ''}</td>
+                    <td class="goals-daily-cum-cell">${cumHtml}</td>
+                    ${hasGoal ? `<td class="goals-daily-cumgoal-cell">${cumGoalHtml}</td>` : ''}
+                    <td class="goals-daily-bar-cell">${barHtml}</td>
+                </tr>`;
+
+                if (isExpanded && hasLaunches) {
+                    const allDay = [...dayData.realized, ...dayData.pending].sort((a, b) => (a.description || '').localeCompare(b.description || ''));
+                    allDay.forEach(e => {
+                        const dest = state.destinations.find(d => String(d.id) === getGoalEntryDestinationId(e));
+                        const destName = dest?.name || '—';
+                        const isPend = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
+                        dailyRows += `<tr class="goals-daily-expand-row">
+                            <td class="goals-daily-expand-indent"></td>
+                            <td class="goals-daily-expand-desc" colspan="${hasGoal ? 2 : 1}">${isPend ? '<span class="goals-pending-tag">↻</span> ' : ''}${e.description || destName}<span class="goals-daily-expand-dest"> · ${destName}</span></td>
+                            <td class="goals-daily-expand-amount" colspan="${hasGoal ? 2 : 1}" style="color:${isPend ? '#94A3B8' : typeColor}">${formatBRL(Number(e.amount) || 0)}</td>
+                        </tr>`;
+                    });
+                }
+            }
+
+            const goalHeaderCol = hasGoal ? `<th class="goals-daily-cumgoal-cell goals-detail-thead">Meta acum.</th>` : '';
 
             gridEl.className = '';
             gridEl.innerHTML = `
@@ -17836,16 +17964,17 @@
                         <span class="goals-breadcrumb-current">${goalMonthLabel(yyyyMM)}</span>
                     </div>
                     <div class="goals-matrix-scroll">
-                        <table class="goals-matrix-table">
+                        <table class="goals-matrix-table goals-daily-table">
                             <thead>
                                 <tr>
-                                    <th class="goals-launches-date goals-detail-thead">Data</th>
-                                    <th class="goals-launches-desc goals-detail-thead">Descrição</th>
-                                    <th class="goals-launches-dest goals-detail-thead">Destino</th>
-                                    <th class="goals-launches-amount goals-detail-thead">Valor</th>
+                                    <th class="goals-daily-date-cell goals-detail-thead">Dia</th>
+                                    <th class="goals-daily-amount-cell goals-detail-thead">Realizado</th>
+                                    <th class="goals-daily-cum-cell goals-detail-thead">Acumulado</th>
+                                    ${goalHeaderCol}
+                                    <th class="goals-daily-bar-cell goals-detail-thead">Progresso acumulado</th>
                                 </tr>
                             </thead>
-                            <tbody>${entriesHtml}</tbody>
+                            <tbody>${dailyRows}</tbody>
                         </table>
                     </div>
                 </div>`;
