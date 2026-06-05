@@ -1402,10 +1402,15 @@
         @keyframes messagePushDown {
             to { opacity: 0; transform: translateY(10px) scale(0.98); }
         }
+        @media (max-width: 1023px) {
+            .app-toast-region {
+                bottom: calc(80px + env(safe-area-inset-bottom));
+            }
+        }
         @media (max-width: 640px) {
             .app-toast-region {
                 right: 16px;
-                bottom: 16px;
+                bottom: calc(80px + env(safe-area-inset-bottom));
             }
             .app-toast {
                 grid-template-columns: 34px minmax(0, 1fr) 30px;
@@ -1984,6 +1989,7 @@
             to { opacity: 1; letter-spacing: 0.22em; }
         }
         button, .quick-status-btn, .hm-item-card {
+            touch-action: manipulation;
             transition: transform var(--dur-fast) var(--ease-premium), box-shadow var(--dur-fast) var(--ease-premium), filter var(--dur-fast) var(--ease-premium);
         }
         button:hover, .quick-status-btn:hover, .hm-item-card:hover {
@@ -1991,6 +1997,14 @@
         }
         button:active, .quick-status-btn:active, .hm-item-card:active {
             transform: translateY(1px);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         /* Palette alignment for existing utility classes */
@@ -4247,11 +4261,12 @@
             }
             #mobile-nav {
                 display: grid !important;
-                grid-template-columns: repeat(6, minmax(0, 1fr));
+                grid-template-columns: repeat(7, minmax(0, 1fr));
                 gap: 6px;
             }
             .mobile-nav-btn {
                 height: 56px;
+                min-width: 44px;
                 border-radius: 12px;
                 display: flex;
                 flex-direction: column;
@@ -4259,10 +4274,17 @@
                 justify-content: center;
                 gap: 4px;
                 color: #9CA3AF;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
                 transition: all var(--dur-std) var(--ease-premium);
             }
+            .mobile-nav-btn:focus-visible {
+                outline: 2px solid #60A5FA;
+                outline-offset: 2px;
+                border-radius: 12px;
+            }
             .mobile-nav-label {
-                font-size: 9px;
+                font-size: 10px;
                 line-height: 1;
                 font-weight: 800;
                 letter-spacing: 0.04em;
@@ -4270,7 +4292,7 @@
             }
             .mobile-nav-btn.active {
                 color: #FFFFFF;
-                background: rgba(255,255,255,0.12);
+                background: rgba(255,255,255,0.15);
             }
             .mobile-main-scroll {
                 padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
@@ -4423,7 +4445,7 @@
                 border-radius: 10px !important;
             }
             .mobile-nav-label {
-                font-size: 8px !important;
+                font-size: 10px !important;
             }
             .entries-toolbar {
                 position: static;
@@ -4547,13 +4569,8 @@
             .modal-btn-danger {
                 width: 100%;
             }
-            #entry-modal input,
-            #entry-modal select,
-            #entry-modal textarea,
-            #db-modal input,
-            #db-modal select,
-            #db-modal textarea {
-                font-size: 16px;
+            input, select, textarea {
+                font-size: 16px !important;
             }
             #treasury .table-mobile-scroll {
                 overflow-x: auto;
@@ -5870,27 +5887,27 @@
             </div>
         </div>
 
-        <nav class="flex-1 px-4 space-y-2">
-            <button onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatórios</span>
+        <nav class="flex-1 px-4 space-y-2" aria-label="Navegação principal">
+            <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
+                <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
-            <button onclick="switchTab('projection')" id="nav-projection" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="chart-spline" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Projeção</span>
+            <button type="button" onclick="switchTab('projection')" id="nav-projection" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="chart-spline" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Projeção</span>
             </button>
-            <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
+            <button type="button" onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="receipt" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
             </button>
-            <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
+            <button type="button" onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="landmark" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
-            <button onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
+            <button type="button" onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
             </button>
-            <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
+            <button type="button" onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="database" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
             </button>
-            <button onclick="switchTab('goals')" id="nav-goals" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="target" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Metas</span>
+            <button type="button" onclick="switchTab('goals')" id="nav-goals" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="target" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Metas</span>
             </button>
         </nav>
     </aside>
@@ -6764,33 +6781,33 @@
         </div>
     </main>
 
-    <nav id="mobile-nav" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
-        <button onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros">
-            <i data-lucide="chart-no-axes-combined" class="w-5 h-5"></i>
+    <nav id="mobile-nav" aria-label="Navegação principal" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
+        <button type="button" onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros" aria-current="page">
+            <i data-lucide="chart-no-axes-combined" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Relat.</span>
         </button>
-        <button onclick="switchTab('projection')" id="mnav-projection" class="mobile-nav-btn" aria-label="Projeção financeira">
-            <i data-lucide="chart-spline" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('projection')" id="mnav-projection" class="mobile-nav-btn" aria-label="Projeção financeira">
+            <i data-lucide="chart-spline" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Proj.</span>
         </button>
-        <button onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
-            <i data-lucide="receipt" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
+            <i data-lucide="receipt" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Lanç.</span>
         </button>
-        <button onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
-            <i data-lucide="landmark" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
+            <i data-lucide="landmark" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Conc.</span>
         </button>
-        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
-            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
+            <i data-lucide="bar-chart-3" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Vendas</span>
         </button>
-        <button onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
-            <i data-lucide="database" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
+            <i data-lucide="database" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Banco</span>
         </button>
-        <button onclick="switchTab('goals')" id="mnav-goals" class="mobile-nav-btn" aria-label="Metas financeiras">
-            <i data-lucide="target" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('goals')" id="mnav-goals" class="mobile-nav-btn" aria-label="Metas financeiras">
+            <i data-lucide="target" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Metas</span>
         </button>
     </nav>
@@ -10163,14 +10180,14 @@
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.sidebar-btn').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
+            document.querySelectorAll('.mobile-nav-btn').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
             const target = document.getElementById(tabId);
             const nav = document.getElementById(`nav-${tabId}`);
             const mnav = document.getElementById(`mnav-${tabId}`);
             if(target) target.classList.add('active');
-            if(nav) nav.classList.add('active');
-            if(mnav) mnav.classList.add('active');
+            if(nav) { nav.classList.add('active'); nav.setAttribute('aria-current', 'page'); }
+            if(mnav) { mnav.classList.add('active'); mnav.setAttribute('aria-current', 'page'); }
             currentTab = tabId;
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
