@@ -17880,19 +17880,12 @@
         }
 
         function goalsDailyGetWindowMonths() {
-            // Retorna 4 meses baseado no offset (semelhante ao goalsGetWindowMonths)
             const now = new Date();
-            const baseYear = now.getFullYear();
-            const baseMonth = now.getMonth(); // 0-indexed
-            const pad = n => String(n).padStart(2, '0');
+            const baseDate = new Date(now.getFullYear(), now.getMonth() - goalsViewDailyWindowOffset, 1);
             const months = [];
-            // offset negativo = meses mais antigos, positivo = mais recentes
-            const startOffset = -3 + goalsViewDailyWindowOffset * 4;
-            for (let i = 0; i < 4; i++) {
-                const totalMonths = baseMonth + startOffset + i;
-                const yr = baseYear + Math.floor(totalMonths / 12);
-                const mo = ((totalMonths % 12) + 12) % 12;
-                months.push(`${yr}-${pad(mo + 1)}`);
+            for (let i = 3; i >= 0; i--) {
+                const d = new Date(baseDate.getFullYear(), baseDate.getMonth() - i, 1);
+                months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
             }
             return months;
         }
