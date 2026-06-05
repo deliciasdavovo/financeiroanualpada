@@ -3610,6 +3610,425 @@
             }
         }
 
+        /* ══════════════════ VENDER REDESIGN ══════════════════ */
+        .vender-redesign-grid {
+            display: grid;
+            grid-template-columns: 380px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+        .vender-entry-panel {
+            border: 1px solid #E5ECF4;
+            border-radius: 20px;
+            background: #FFFFFF;
+            overflow: hidden;
+            position: sticky;
+            top: 16px;
+        }
+        .vender-entry-panel form {
+            display: flex;
+            flex-direction: column;
+        }
+        .vender-entry-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid #EEF2F7;
+            background: linear-gradient(135deg, #FAFCFF 0%, #F6F9F8 100%);
+        }
+        .vender-eyebrow {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--primary-green);
+            margin-bottom: 4px;
+        }
+        .vender-entry-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.2;
+        }
+        .vender-entry-sub {
+            font-size: 11px;
+            color: #64748B;
+            line-height: 1.4;
+            margin-top: 3px;
+            min-height: 0;
+        }
+        .vender-date-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 0 0 auto;
+        }
+        .vender-date-input {
+            height: 38px !important;
+            padding: 0 10px !important;
+            font-size: 12px !important;
+            border-radius: 10px !important;
+            min-width: 148px;
+        }
+        .vender-unit-section {
+            padding: 14px 20px;
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .vender-unit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .vender-unit-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 12px;
+            border-radius: 14px;
+            border: 2px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #64748B;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .vender-unit-btn:hover {
+            border-color: #CBD5E1;
+            background: #F1F5F9;
+            color: #334155;
+        }
+        .vender-unit-btn.is-active {
+            border-color: var(--primary-green);
+            background: var(--bg-green-soft);
+            color: var(--primary-green);
+        }
+        .vender-fields-stack {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .vender-money-field {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .vender-money-field:last-child { border-bottom: none; }
+        .vender-money-icon {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vender-money-field.green .vender-money-icon { color: var(--primary-green); background: var(--bg-green-soft); }
+        .vender-money-field.blue .vender-money-icon { color: var(--primary-blue); background: var(--bg-blue-soft); }
+        .vender-money-field.red .vender-money-icon { color: var(--soft-red); background: #FDF2F2; }
+        .vender-money-content { flex: 1; min-width: 0; }
+        .vender-money-lbl {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #64748B;
+            display: block;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .vender-money-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 0 12px;
+            background: #FAFCFF;
+            transition: border-color 0.12s, box-shadow 0.12s;
+        }
+        .vender-money-row:focus-within {
+            border-color: var(--primary-green);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(31,122,92,0.08);
+        }
+        .vender-money-field.blue .vender-money-row:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(47,79,157,0.08);
+        }
+        .vender-money-field.red .vender-money-row:focus-within {
+            border-color: var(--soft-red);
+            box-shadow: 0 0 0 3px rgba(178,58,58,0.08);
+        }
+        .vender-currency {
+            font-size: 13px;
+            font-weight: 800;
+            color: #94A3B8;
+            flex: 0 0 auto;
+        }
+        .vender-amount-input {
+            flex: 1;
+            height: 44px;
+            border: none !important;
+            background: transparent !important;
+            font-size: 22px !important;
+            font-weight: 900 !important;
+            color: #0F172A !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            min-width: 0;
+        }
+        .vender-amount-input::-webkit-inner-spin-button,
+        .vender-amount-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+        .vender-total-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #EAF4EF 0%, #EEF2FF 100%);
+            border-bottom: 1px solid #D6EDE2;
+            flex-wrap: wrap;
+        }
+        .vender-total-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .vender-total-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748B;
+        }
+        .vender-total-val {
+            font-size: 24px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            transition: color 0.15s;
+        }
+        .vender-total-pills {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .vender-pill {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .vender-pill.green { background: var(--bg-green-soft); color: var(--primary-green); }
+        .vender-pill.blue { background: var(--bg-blue-soft); color: var(--primary-blue); }
+        .vender-pill.red { background: #FDF2F2; color: var(--soft-red); }
+        .vender-pill-op {
+            font-size: 12px;
+            font-weight: 900;
+            color: #94A3B8;
+        }
+        .vender-notes-wrap { border-bottom: 1px solid #EEF2F7; }
+        .vender-notes-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 11px 20px;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+        }
+        .vender-notes-toggle:hover { color: #334155; }
+        .vender-notes-toggle span { flex: 1; }
+        #vender-chevron { transition: transform 0.2s ease; }
+        #vender-chevron.open { transform: rotate(180deg); }
+        .vender-notes-body { padding: 0 20px 14px; }
+        .vender-notes-body input {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            border: 1.5px solid #E2E8F0;
+            background: #FAFCFF;
+            padding: 0 12px;
+            font-size: 12px;
+        }
+        .vender-form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 16px 20px;
+        }
+        .vender-save-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 48px;
+            border-radius: 14px;
+            background: #0F172A;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .vender-save-btn:hover { background: #1E293B; transform: translateY(-1px); }
+        .vender-save-btn:active { transform: translateY(0); }
+        .vender-history-panel {
+            border: 1px solid #E5ECF4;
+            border-radius: 20px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .vender-history-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #EEF2F7;
+            flex-wrap: wrap;
+        }
+        .vender-history-filters {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .vender-history-filters input,
+        .vender-history-filters select {
+            height: 36px !important;
+            font-size: 11px !important;
+            border-radius: 10px !important;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        .vender-entries-list {
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .vender-entry-card {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: #FAFCFF;
+            transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+        }
+        .vender-entry-card:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+            background: #FFFFFF;
+        }
+        .vender-entry-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .vender-entry-date-col {
+            flex: 0 0 auto;
+            min-width: 68px;
+        }
+        .vender-entry-date {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        .vender-unit-badge {
+            display: inline-block;
+            margin-top: 3px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+        .vender-unit-badge.matriz { background: var(--bg-green-soft); color: var(--primary-green); }
+        .vender-unit-badge.vila { background: var(--bg-blue-soft); color: var(--primary-blue); }
+        .vender-entry-amounts {
+            flex: 1;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .vender-entry-amount {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .vender-amount-label {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94A3B8;
+        }
+        .vender-amount-val { font-size: 12px; font-weight: 800; }
+        .vender-amount-val.green { color: var(--primary-green); }
+        .vender-amount-val.blue { color: var(--primary-blue); }
+        .vender-amount-val.red { color: var(--soft-red); }
+        .vender-entry-result-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: right;
+        }
+        .vender-result-label {
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94A3B8;
+        }
+        .vender-result-val { font-size: 16px; font-weight: 900; }
+        .vender-result-val.positive { color: #0F172A; }
+        .vender-result-val.negative { color: var(--soft-red); }
+        .vender-entry-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+        .vender-entry-notes-row {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #EEF2F7;
+            font-size: 11px;
+            color: #64748B;
+            line-height: 1.4;
+        }
+        .vender-empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+        @media (max-width: 900px) {
+            .vender-redesign-grid { grid-template-columns: 1fr; }
+            .vender-entry-panel { position: static; }
+        }
+        @media (max-width: 600px) {
+            .vender-total-banner { flex-direction: column; align-items: flex-start; }
+            .vender-total-pills { justify-content: flex-start; }
+            .vender-entry-top { flex-wrap: wrap; }
+        }
+
         .recon-destination-cell {
             display: flex;
             align-items: center;
@@ -6671,89 +7090,122 @@
                     </div>
                 </div>
 
-                <div class="treasury-form-grid">
-                    <section class="treasury-form-card">
-                        <div class="treasury-panel-head">
-                            <div>
-                                <h4 id="treasury-mv-form-title" class="treasury-panel-title">Novo fechamento</h4>
-                                <p id="treasury-mv-form-subtitle" class="treasury-panel-sub">Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.</p>
-                            </div>
-                        </div>
-                        <div class="treasury-form-body">
-                            <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input id="treasury-mv-edit-id" type="hidden">
+                <div class="vender-redesign-grid">
+                    <!-- Formulário de entrada rápida -->
+                    <section class="vender-entry-panel">
+                        <form id="treasury-movement-form">
+                            <input id="treasury-mv-edit-id" type="hidden">
+                            <input id="treasury-mv-unit" type="hidden" value="MATRIZ">
+                            <div class="vender-entry-header">
                                 <div>
+                                    <p class="vender-eyebrow">Fechamento rápido</p>
+                                    <h4 id="treasury-mv-form-title" class="vender-entry-title">Novo fechamento</h4>
+                                    <p id="treasury-mv-form-subtitle" class="vender-entry-sub"></p>
+                                </div>
+                                <div class="vender-date-box">
                                     <label class="label-mini" for="treasury-mv-date">Data</label>
-                                    <input id="treasury-mv-date" type="date" required>
+                                    <input id="treasury-mv-date" type="date" required class="vender-date-input">
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-unit">Unidade</label>
-                                    <select id="treasury-mv-unit" required>
-                                        <option value="MATRIZ">MATRIZ</option>
-                                        <option value="VILA_NOVA">VILA_NOVA</option>
-                                    </select>
+                            </div>
+                            <div class="vender-unit-section">
+                                <p class="label-mini">Unidade</p>
+                                <div class="vender-unit-grid">
+                                    <button type="button" class="vender-unit-btn is-active" data-unit="MATRIZ" onclick="selectVenderUnit('MATRIZ')">
+                                        <i data-lucide="store" class="w-5 h-5"></i>
+                                        <span>Matriz</span>
+                                    </button>
+                                    <button type="button" class="vender-unit-btn" data-unit="VILA_NOVA" onclick="selectVenderUnit('VILA_NOVA')">
+                                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                                        <span>Vila Nova</span>
+                                    </button>
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-cash">Venda em dinheiro</label>
-                                    <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
+                            </div>
+                            <div class="vender-fields-stack">
+                                <div class="vender-money-field green">
+                                    <div class="vender-money-icon"><i data-lucide="banknote" class="w-5 h-5"></i></div>
+                                    <div class="vender-money-content">
+                                        <label class="vender-money-lbl" for="treasury-mv-cash">Dinheiro</label>
+                                        <div class="vender-money-row">
+                                            <span class="vender-currency">R$</span>
+                                            <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0" class="vender-amount-input" oninput="updateVenderTotal()" placeholder="0,00">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-card">Venda em cartão</label>
-                                    <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
+                                <div class="vender-money-field blue">
+                                    <div class="vender-money-icon"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
+                                    <div class="vender-money-content">
+                                        <label class="vender-money-lbl" for="treasury-mv-card">Cartão</label>
+                                        <div class="vender-money-row">
+                                            <span class="vender-currency">R$</span>
+                                            <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0" class="vender-amount-input" oninput="updateVenderTotal()" placeholder="0,00">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-payments">Saídas / pagamentos do dia</label>
-                                    <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
+                                <div class="vender-money-field red">
+                                    <div class="vender-money-icon"><i data-lucide="arrow-up-circle" class="w-5 h-5"></i></div>
+                                    <div class="vender-money-content">
+                                        <label class="vender-money-lbl" for="treasury-mv-payments">Saídas</label>
+                                        <div class="vender-money-row">
+                                            <span class="vender-currency">R$</span>
+                                            <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0" class="vender-amount-input" oninput="updateVenderTotal()" placeholder="0,00">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="md:col-span-2">
-                                    <label class="label-mini" for="treasury-mv-notes">Observações</label>
-                                    <input id="treasury-mv-notes" type="text" placeholder="Ex.: sangria, fornecedor, ajuste de caixa...">
+                            </div>
+                            <div class="vender-total-banner">
+                                <div class="vender-total-left">
+                                    <span class="vender-total-label">Fechamento do dia</span>
+                                    <div id="vender-live-total" class="vender-total-val">R$ 0,00</div>
                                 </div>
-                                <div class="md:col-span-2 treasury-form-actions">
-                                    <button type="submit" class="modal-btn-primary"><span id="treasury-mv-submit-label">Salvar fechamento</span></button>
-                                    <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar edição</button>
+                                <div class="vender-total-pills">
+                                    <span id="vender-pill-cash" class="vender-pill green">Dinheiro R$ 0,00</span>
+                                    <span class="vender-pill-op">+</span>
+                                    <span id="vender-pill-card" class="vender-pill blue">Cartão R$ 0,00</span>
+                                    <span class="vender-pill-op">−</span>
+                                    <span id="vender-pill-out" class="vender-pill red">Saídas R$ 0,00</span>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="vender-notes-wrap">
+                                <button type="button" class="vender-notes-toggle" onclick="toggleVenderNotes()">
+                                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                                    <span id="vender-notes-toggle-label">Adicionar observação</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4" id="vender-chevron"></i>
+                                </button>
+                                <div id="vender-notes-body" class="vender-notes-body hidden">
+                                    <input id="treasury-mv-notes" type="text" placeholder="Ex.: sangria, fornecedor, ajuste de caixa..." maxlength="180">
+                                </div>
+                            </div>
+                            <div class="vender-form-actions">
+                                <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar</button>
+                                <button type="submit" class="vender-save-btn">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                    <span id="treasury-mv-submit-label">Salvar fechamento</span>
+                                </button>
+                            </div>
+                        </form>
                     </section>
 
-                    <section class="treasury-history-card">
-                        <div class="treasury-panel-head">
-                            <div>
-                                <h4 class="treasury-panel-title">Histórico de lançamentos</h4>
-                                <p class="treasury-panel-sub">Filtre por mês e unidade para localizar rapidamente um fechamento e editar com mais clareza.</p>
-                            </div>
-                        </div>
-                        <div class="treasury-history-toolbar">
-                            <div>
-                                <label class="label-mini" for="treasury-mv-filter-month">Filtrar por mês</label>
-                                <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-mv-filter-unit">Filtrar por unidade</label>
-                                <select id="treasury-mv-filter-unit" onchange="renderTreasuryMovements()">
-                                    <option value="">Todas</option>
-                                    <option value="MATRIZ">MATRIZ</option>
-                                    <option value="VILA_NOVA">VILA_NOVA</option>
-                                </select>
+                    <!-- Histórico de lançamentos -->
+                    <section class="vender-history-panel">
+                        <div class="vender-history-header">
+                            <h4 class="treasury-panel-title">Histórico de lançamentos</h4>
+                            <div class="vender-history-filters">
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-filter-month">Mês</label>
+                                    <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
+                                </div>
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-filter-unit">Unidade</label>
+                                    <select id="treasury-mv-filter-unit" onchange="renderTreasuryMovements()">
+                                        <option value="">Todas</option>
+                                        <option value="MATRIZ">Matriz</option>
+                                        <option value="VILA_NOVA">Vila Nova</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div id="treasury-mv-history-summary" class="treasury-history-summary">0 lançamento(s) encontrados.</div>
-                        <div class="table-mobile-scroll custom-scrollbar">
-                            <table id="treasury-mv-table" class="w-full text-left">
-                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Data</th>
-                                        <th class="px-4 py-3 text-right">Vendas</th>
-                                        <th class="px-4 py-3 text-right">Saídas</th>
-                                        <th class="px-4 py-3 text-right">Fechamento</th>
-                                        <th class="px-4 py-3">Observações</th>
-                                        <th class="px-4 py-3 text-center">Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="treasury-mv-history-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                            </table>
-                        </div>
+                        <div id="treasury-mv-history-body" class="vender-entries-list"></div>
                     </section>
                 </div>
 
@@ -10851,11 +11303,45 @@
             if (salesEl) salesEl.innerText = formatBRL(movementDay);
             if (closingEl) closingEl.innerText = formatBRL(closingDay);
         }
+        function selectVenderUnit(unit) {
+            const unitInput = document.getElementById('treasury-mv-unit');
+            if (unitInput) unitInput.value = unit;
+            document.querySelectorAll('.vender-unit-btn').forEach(btn => {
+                btn.classList.toggle('is-active', btn.dataset.unit === unit);
+            });
+        }
+        function updateVenderTotal() {
+            const cash = parseFloat(document.getElementById('treasury-mv-cash')?.value || 0) || 0;
+            const card = parseFloat(document.getElementById('treasury-mv-card')?.value || 0) || 0;
+            const out  = parseFloat(document.getElementById('treasury-mv-payments')?.value || 0) || 0;
+            const total = cash + card - out;
+            const totalEl   = document.getElementById('vender-live-total');
+            const cashPill  = document.getElementById('vender-pill-cash');
+            const cardPill  = document.getElementById('vender-pill-card');
+            const outPill   = document.getElementById('vender-pill-out');
+            if (totalEl) {
+                totalEl.textContent = formatBRL(total);
+                totalEl.style.color = total < 0 ? 'var(--soft-red)' : '#0F172A';
+            }
+            if (cashPill) cashPill.textContent = `Dinheiro ${formatBRL(cash)}`;
+            if (cardPill) cardPill.textContent = `Cartão ${formatBRL(card)}`;
+            if (outPill)  outPill.textContent  = `Saídas ${formatBRL(out)}`;
+        }
+        function toggleVenderNotes() {
+            const body    = document.getElementById('vender-notes-body');
+            const chevron = document.getElementById('vender-chevron');
+            const label   = document.getElementById('vender-notes-toggle-label');
+            if (!body) return;
+            const wasHidden = body.classList.contains('hidden');
+            body.classList.toggle('hidden', !wasHidden);
+            if (chevron) chevron.classList.toggle('open', wasHidden);
+            if (label) label.textContent = wasHidden ? 'Ocultar observação' : 'Adicionar observação';
+            if (wasHidden) setTimeout(() => document.getElementById('treasury-mv-notes')?.focus(), 50);
+        }
         function resetTreasuryMovementForm(options = {}) {
             const { keepDate = true } = options;
             const editIdEl = document.getElementById('treasury-mv-edit-id');
             const dateEl = document.getElementById('treasury-mv-date');
-            const unitEl = document.getElementById('treasury-mv-unit');
             const cashEl = document.getElementById('treasury-mv-cash');
             const cardEl = document.getElementById('treasury-mv-card');
             const paymentsEl = document.getElementById('treasury-mv-payments');
@@ -10868,15 +11354,22 @@
 
             if (editIdEl) editIdEl.value = '';
             if (dateEl && (!keepDate || !dateEl.value)) dateEl.value = today;
-            if (unitEl && !unitEl.value) unitEl.value = 'MATRIZ';
             if (cashEl) cashEl.value = '0';
             if (cardEl) cardEl.value = '0';
             if (paymentsEl) paymentsEl.value = '0';
             if (notesEl) notesEl.value = '';
             if (titleEl) titleEl.innerText = 'Novo fechamento';
-            if (subtitleEl) subtitleEl.innerText = 'Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.';
+            if (subtitleEl) subtitleEl.innerText = '';
             if (submitLabelEl) submitLabelEl.innerText = 'Salvar fechamento';
             if (cancelBtnEl) cancelBtnEl.classList.add('hidden');
+            selectVenderUnit('MATRIZ');
+            updateVenderTotal();
+            const notesBody    = document.getElementById('vender-notes-body');
+            const notesChevron = document.getElementById('vender-chevron');
+            const notesLabel   = document.getElementById('vender-notes-toggle-label');
+            if (notesBody)    notesBody.classList.add('hidden');
+            if (notesChevron) notesChevron.classList.remove('open');
+            if (notesLabel)   notesLabel.textContent = 'Adicionar observação';
         }
         function startTreasuryMovementEdit(id) {
             const item = (state.storeDailyMovements || []).find(entry => String(entry.id || '') === String(id || ''));
@@ -10884,7 +11377,6 @@
             const totals = getMovementTotals(item);
             document.getElementById('treasury-mv-edit-id').value = String(item.id || '');
             document.getElementById('treasury-mv-date').value = String(item.date || '');
-            document.getElementById('treasury-mv-unit').value = String(item.unit || 'MATRIZ');
             document.getElementById('treasury-mv-cash').value = String(totals.cashIn || 0);
             document.getElementById('treasury-mv-card').value = String(totals.cardIn || 0);
             document.getElementById('treasury-mv-payments').value = String(totals.paymentsOut || 0);
@@ -10893,6 +11385,16 @@
             document.getElementById('treasury-mv-form-subtitle').innerText = `Revise os valores de ${String(item.unit || '').replace('_', ' ')} em ${formatDateBRV2(item.date)}.`;
             document.getElementById('treasury-mv-submit-label').innerText = 'Salvar alterações';
             document.getElementById('treasury-mv-cancel-edit').classList.remove('hidden');
+            selectVenderUnit(String(item.unit || 'MATRIZ'));
+            updateVenderTotal();
+            if (item.notes) {
+                const notesBody    = document.getElementById('vender-notes-body');
+                const notesChevron = document.getElementById('vender-chevron');
+                const notesLabel   = document.getElementById('vender-notes-toggle-label');
+                if (notesBody)    notesBody.classList.remove('hidden');
+                if (notesChevron) notesChevron.classList.add('open');
+                if (notesLabel)   notesLabel.textContent = 'Ocultar observação';
+            }
             document.getElementById('treasury-mv-date')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             document.getElementById('treasury-mv-date')?.focus();
         }
@@ -10903,6 +11405,7 @@
             const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
             const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
             const historyBody = document.getElementById('treasury-mv-history-body');
+            const summaryEl = document.getElementById('treasury-mv-history-summary');
             if (!historyBody) return;
 
             const filtered = (state.storeDailyMovements || [])
@@ -10913,32 +11416,51 @@
                     return String(b.date || '').localeCompare(String(a.date || ''));
                 });
 
+            if (summaryEl) summaryEl.textContent = `${filtered.length} lançamento(s) encontrados.`;
+
             if (!filtered.length) {
-                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem fechamentos para os filtros aplicados</td></tr>';
+                historyBody.innerHTML = '<div class="vender-empty-state">Nenhum fechamento para os filtros aplicados.</div>';
             } else {
                 historyBody.innerHTML = filtered.map(item => {
                     const totals = getMovementTotals(item);
-                    const resultClass = totals.dailyResult < 0 ? 'text-red-600' : 'text-slate-700';
-                    return `<tr class="table-row">
-                        <td class="px-4 py-3">
-                            <div class="treasury-cell-main text-slate-700">${escapeHtml(formatDateBRV2(item.date))}</div>
-                            <div class="treasury-cell-sub">${escapeHtml(item.unit || '-')}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(item.unit || '-')}</td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} • Cartão: ${formatBRL(totals.cardIn)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main ${resultClass}">${formatBRL(totals.dailyResult)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="h-7 w-7 inline-flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200" title="Excluir movimento" aria-label="Excluir movimento">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
-                        </td>
-                    </tr>`;
+                    const isNeg = totals.dailyResult < 0;
+                    const unitClass = item.unit === 'VILA_NOVA' ? 'vila' : 'matriz';
+                    const unitLabel = item.unit === 'VILA_NOVA' ? 'Vila Nova' : 'Matriz';
+                    return `<div class="vender-entry-card">
+                        <div class="vender-entry-top">
+                            <div class="vender-entry-date-col">
+                                <div class="vender-entry-date">${escapeHtml(formatDateBRV2(item.date))}</div>
+                                <span class="vender-unit-badge ${unitClass}">${unitLabel}</span>
+                            </div>
+                            <div class="vender-entry-amounts">
+                                <div class="vender-entry-amount">
+                                    <span class="vender-amount-label">Dinheiro</span>
+                                    <span class="vender-amount-val green">${formatBRL(totals.cashIn)}</span>
+                                </div>
+                                <div class="vender-entry-amount">
+                                    <span class="vender-amount-label">Cartão</span>
+                                    <span class="vender-amount-val blue">${formatBRL(totals.cardIn)}</span>
+                                </div>
+                                <div class="vender-entry-amount">
+                                    <span class="vender-amount-label">Saídas</span>
+                                    <span class="vender-amount-val red">${formatBRL(totals.paymentsOut)}</span>
+                                </div>
+                            </div>
+                            <div class="vender-entry-result-col">
+                                <span class="vender-result-label">Fechamento</span>
+                                <span class="vender-result-val ${isNeg ? 'negative' : 'positive'}">${formatBRL(totals.dailyResult)}</span>
+                            </div>
+                            <div class="vender-entry-actions">
+                                <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar" aria-label="Editar">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="treasury-action-btn danger" title="Excluir" aria-label="Excluir">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${item.notes ? `<div class="vender-entry-notes-row">${escapeHtml(item.notes)}</div>` : ''}
+                    </div>`;
                 }).join('');
             }
             refreshLucideIcons();
