@@ -1987,39 +1987,36 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 0 7px rgba(255,255,255,0.10), 0 22px 54px rgba(29,78,216,0.55);
+            box-shadow: 0 0 0 7px rgba(37,99,235,0.12), 0 22px 54px rgba(29,78,216,0.32);
             transition: background 0.28s ease, box-shadow 0.28s ease, transform 0.2s ease;
         }
         .lml-lock-wrap.unlocking {
             background: linear-gradient(145deg, #34d399 0%, #10b981 45%, #059669 100%);
-            box-shadow: 0 0 0 7px rgba(255,255,255,0.10), 0 22px 54px rgba(5,150,105,0.55);
+            box-shadow: 0 0 0 7px rgba(5,150,105,0.12), 0 22px 54px rgba(5,150,105,0.35);
             transform: scale(1.06);
         }
         .lml-lock-wrap svg { width: 40px; height: 40px; color: white; display: block; }
         .lml-app-name {
             font-size: 28px;
             font-weight: 900;
-            color: white;
+            color: #0F172A;
             letter-spacing: -0.02em;
-            text-shadow: 0 2px 14px rgba(0,0,0,0.35);
         }
         .lml-app-sub {
             font-size: 13px;
             font-weight: 500;
-            color: rgba(255,255,255,0.5);
+            color: #64748B;
             margin-top: -14px;
             letter-spacing: 0.03em;
         }
-        .lml-slide-area { width: 100%; max-width: 295px; }
+        .lml-slide-area { width: 100%; max-width: 310px; }
         .lml-slide-track {
             position: relative;
             width: 100%;
-            height: 46px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 23px;
-            border: 1px solid rgba(255,255,255,0.22);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            height: 62px;
+            background: rgba(15,23,42,0.06);
+            border-radius: 16px;
+            border: 1px solid rgba(15,23,42,0.12);
             display: flex;
             align-items: center;
             overflow: hidden;
@@ -2029,21 +2026,21 @@
         }
         .lml-slide-thumb {
             position: absolute;
-            left: 4px;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%);
+            left: 5px;
+            width: 52px;
+            height: 52px;
+            border-radius: 13px;
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.8);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.9);
             cursor: grab;
             z-index: 2;
             touch-action: none;
             will-change: left;
         }
-        .lml-slide-thumb svg { width: 18px; height: 18px; color: #444; }
+        .lml-slide-thumb svg { width: 22px; height: 22px; color: #334155; }
         @keyframes lmlShimmer {
             0%   { background-position: -280% center; }
             100% { background-position: 280% center; }
@@ -2058,13 +2055,13 @@
             font-weight: 500;
             letter-spacing: 0.01em;
             pointer-events: none;
-            padding-left: 46px;
+            padding-left: 62px;
             background: linear-gradient(90deg,
-                rgba(255,255,255,0.25) 0%,
-                rgba(255,255,255,0.25) 32%,
-                rgba(255,255,255,1)    50%,
-                rgba(255,255,255,0.25) 68%,
-                rgba(255,255,255,0.25) 100%
+                rgba(15,23,42,0.25) 0%,
+                rgba(15,23,42,0.25) 32%,
+                rgba(15,23,42,0.80) 50%,
+                rgba(15,23,42,0.25) 68%,
+                rgba(15,23,42,0.25) 100%
             );
             background-size: 280% auto;
             -webkit-background-clip: text;
@@ -2074,9 +2071,6 @@
             animation: lmlShimmer 2.4s linear infinite;
         }
         @media (max-width: 640px) {
-            #login-screen:not(.lml-revealed) {
-                background: linear-gradient(175deg, #1a2e4a 0%, #0d1d34 55%, #07101f 100%);
-            }
             #login-mobile-lock {
                 display: flex;
                 position: absolute;
@@ -17232,7 +17226,7 @@
             const thumb = document.getElementById('lml-slide-thumb');
             if (!track || !thumb) return;
 
-            const MARGIN = 4;
+            const MARGIN = 5;
             let isDragging = false;
             let startClientX = 0;
             let startLeft = MARGIN;
