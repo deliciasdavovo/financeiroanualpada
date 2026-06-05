@@ -1971,50 +1971,55 @@
             font-weight: 800;
             color: var(--soft-red);
         }
-        /* ── Mobile lock screen ── */
+        /* ── Mobile lock screen (iOS classic) ── */
         #login-mobile-lock { display: none; }
         .lml-top {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
         .lml-lock-wrap {
-            width: 88px;
-            height: 88px;
+            width: 96px;
+            height: 96px;
             border-radius: 50%;
-            background: var(--primary-blue);
+            background: linear-gradient(145deg, #4a84e0 0%, #2563eb 45%, #1a4fcc 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 16px 36px rgba(47,79,157,0.28);
-            transition: background 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 0 7px rgba(255,255,255,0.10), 0 22px 54px rgba(29,78,216,0.55);
+            transition: background 0.28s ease, box-shadow 0.28s ease, transform 0.2s ease;
         }
         .lml-lock-wrap.unlocking {
-            background: #16a34a;
-            box-shadow: 0 16px 36px rgba(22,163,74,0.30);
+            background: linear-gradient(145deg, #34d399 0%, #10b981 45%, #059669 100%);
+            box-shadow: 0 0 0 7px rgba(255,255,255,0.10), 0 22px 54px rgba(5,150,105,0.55);
+            transform: scale(1.06);
         }
-        .lml-lock-wrap svg { width: 40px; height: 40px; color: white; }
+        .lml-lock-wrap svg { width: 40px; height: 40px; color: white; display: block; }
         .lml-app-name {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 900;
-            color: #0F172A;
+            color: white;
             letter-spacing: -0.02em;
+            text-shadow: 0 2px 14px rgba(0,0,0,0.35);
         }
         .lml-app-sub {
             font-size: 13px;
-            font-weight: 600;
-            color: #64748B;
-            margin-top: -8px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.5);
+            margin-top: -14px;
+            letter-spacing: 0.03em;
         }
-        .lml-slide-area { width: 100%; max-width: 320px; }
+        .lml-slide-area { width: 100%; max-width: 295px; }
         .lml-slide-track {
             position: relative;
             width: 100%;
-            height: 60px;
-            background: rgba(15,23,42,0.08);
-            border-radius: 30px;
-            border: 1px solid rgba(15,23,42,0.14);
+            height: 46px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 23px;
+            border: 1px solid rgba(255,255,255,0.22);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             display: flex;
             align-items: center;
             overflow: hidden;
@@ -2024,36 +2029,54 @@
         }
         .lml-slide-thumb {
             position: absolute;
-            left: 6px;
-            width: 48px;
-            height: 48px;
+            left: 4px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            background: #0F172A;
+            background: linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 16px rgba(15,23,42,0.22);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.8);
             cursor: grab;
             z-index: 2;
             touch-action: none;
             will-change: left;
         }
-        .lml-slide-thumb svg { width: 20px; height: 20px; color: white; }
+        .lml-slide-thumb svg { width: 18px; height: 18px; color: #444; }
+        @keyframes lmlShimmer {
+            0%   { background-position: -280% center; }
+            100% { background-position: 280% center; }
+        }
         .lml-slide-text {
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: rgba(15,23,42,0.45);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
             pointer-events: none;
-            padding-left: 60px;
+            padding-left: 46px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0.25) 0%,
+                rgba(255,255,255,0.25) 32%,
+                rgba(255,255,255,1)    50%,
+                rgba(255,255,255,0.25) 68%,
+                rgba(255,255,255,0.25) 100%
+            );
+            background-size: 280% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: lmlShimmer 2.4s linear infinite;
         }
         @media (max-width: 640px) {
+            #login-screen:not(.lml-revealed) {
+                background: linear-gradient(175deg, #1a2e4a 0%, #0d1d34 55%, #07101f 100%);
+            }
             #login-mobile-lock {
                 display: flex;
                 position: absolute;
@@ -5935,11 +5958,12 @@
 
     <section id="login-screen" aria-label="Login inicial">
 
-        <!-- Mobile lock screen (≤640 px) -->
+        <!-- Mobile lock screen (≤640 px) — estilo iOS clássico -->
         <div id="login-mobile-lock" aria-hidden="true">
             <div class="lml-top">
                 <div class="lml-lock-wrap" id="lml-lock-wrap">
-                    <i data-lucide="lock" id="lml-lock-icon"></i>
+                    <div id="lml-icon-locked"><i data-lucide="lock"></i></div>
+                    <div id="lml-icon-unlocked" style="display:none"><i data-lucide="lock-open"></i></div>
                 </div>
                 <p class="lml-app-name">Financeiro</p>
                 <p class="lml-app-sub">Acesso seguro</p>
@@ -5949,7 +5973,7 @@
                     <div class="lml-slide-thumb" id="lml-slide-thumb">
                         <i data-lucide="chevron-right"></i>
                     </div>
-                    <span class="lml-slide-text">Deslize para desbloquear</span>
+                    <span class="lml-slide-text">deslize para desbloquear</span>
                 </div>
             </div>
         </div>
@@ -17208,46 +17232,55 @@
             const thumb = document.getElementById('lml-slide-thumb');
             if (!track || !thumb) return;
 
+            const MARGIN = 4;
             let isDragging = false;
             let startClientX = 0;
-            let startLeft = 6;
+            let startLeft = MARGIN;
 
             function getMaxSlide() {
-                return track.clientWidth - thumb.offsetWidth - 12;
+                return track.clientWidth - thumb.offsetWidth - MARGIN * 2;
+            }
+
+            function setLockIcon(unlocked) {
+                const el0 = document.getElementById('lml-icon-locked');
+                const el1 = document.getElementById('lml-icon-unlocked');
+                if (el0) el0.style.display = unlocked ? 'none' : '';
+                if (el1) el1.style.display = unlocked ? '' : 'none';
             }
 
             function applyProgress(deltaX) {
                 const maxSlide = getMaxSlide();
-                const newLeft = Math.max(6, Math.min(startLeft + deltaX, 6 + maxSlide));
+                const newLeft = Math.max(MARGIN, Math.min(startLeft + deltaX, MARGIN + maxSlide));
                 thumb.style.left = newLeft + 'px';
-                const progress = (newLeft - 6) / maxSlide;
+                const progress = (newLeft - MARGIN) / maxSlide;
                 const label = track.querySelector('.lml-slide-text');
-                if (label) label.style.opacity = String(Math.max(0, 1 - progress * 1.6));
+                if (label) label.style.opacity = String(Math.max(0, 1 - progress * 1.8));
                 const wrap = document.getElementById('lml-lock-wrap');
-                if (wrap) wrap.classList.toggle('unlocking', progress > 0.6);
+                if (wrap) wrap.classList.toggle('unlocking', progress > 0.5);
+                setLockIcon(progress > 0.5);
                 return progress;
             }
 
             function resetThumb() {
                 thumb.style.transition = 'left 0.32s cubic-bezier(0.22,1,0.36,1)';
-                thumb.style.left = '6px';
+                thumb.style.left = MARGIN + 'px';
                 const label = track.querySelector('.lml-slide-text');
                 if (label) { label.style.transition = 'opacity 0.32s ease'; label.style.opacity = '1'; }
                 const wrap = document.getElementById('lml-lock-wrap');
                 if (wrap) wrap.classList.remove('unlocking');
+                setLockIcon(false);
                 setTimeout(() => {
                     thumb.style.transition = '';
                     if (label) label.style.transition = '';
                 }, 340);
             }
 
-            function onDragEnd(clientX) {
+            function onDragEnd() {
                 if (!isDragging) return;
                 isDragging = false;
                 const maxSlide = getMaxSlide();
-                const currentLeft = parseFloat(thumb.style.left) || 6;
-                const progress = (currentLeft - 6) / maxSlide;
-                if (progress >= 0.8) {
+                const currentLeft = parseFloat(thumb.style.left) || MARGIN;
+                if ((currentLeft - MARGIN) / maxSlide >= 0.8) {
                     revealPinCard();
                 } else {
                     resetThumb();
@@ -17257,7 +17290,7 @@
             thumb.addEventListener('touchstart', (e) => {
                 isDragging = true;
                 startClientX = e.touches[0].clientX;
-                startLeft = parseFloat(thumb.style.left) || 6;
+                startLeft = parseFloat(thumb.style.left) || MARGIN;
                 e.stopPropagation();
             }, { passive: true });
 
@@ -17267,19 +17300,19 @@
                 e.preventDefault();
             }, { passive: false });
 
-            track.addEventListener('touchend', (e) => { onDragEnd(e.changedTouches[0].clientX); }, { passive: true });
+            track.addEventListener('touchend', () => { onDragEnd(); }, { passive: true });
 
             thumb.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 startClientX = e.clientX;
-                startLeft = parseFloat(thumb.style.left) || 6;
+                startLeft = parseFloat(thumb.style.left) || MARGIN;
                 e.preventDefault();
             });
             document.addEventListener('mousemove', (e) => {
                 if (!isDragging) return;
                 applyProgress(e.clientX - startClientX);
             });
-            document.addEventListener('mouseup', (e) => { onDragEnd(e.clientX); });
+            document.addEventListener('mouseup', () => { onDragEnd(); });
         }
 
         function initLoginScreen() {
