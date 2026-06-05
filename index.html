@@ -5874,6 +5874,29 @@
         .goals-detail-pct-col { padding: 12px; text-align: center; }
         .goals-detail-thead { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
 
+        /* ─── GOALS CARDS SECTION ─── */
+        .goals-cards-section { /* wrapper, sem padding próprio */ }
+        .goals-cards-wrap { display:flex; gap:12px; flex-wrap:wrap; }
+        .goals-card { background:#fff; border-radius:14px; box-shadow:0 1px 4px 0 rgba(30,41,59,.07); padding:16px 18px 14px; flex:1 1 220px; min-width:200px; max-width:340px; display:flex; flex-direction:column; gap:7px; transition:box-shadow var(--dur-fast) var(--ease-premium),transform var(--dur-fast) var(--ease-premium); }
+        .goals-card:hover { box-shadow:0 4px 16px 0 rgba(30,41,59,.12); transform:translateY(-1px); }
+        .goals-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+        .goals-card-title-wrap { display:flex; flex-direction:column; gap:3px; min-width:0; }
+        .goals-card-name { font-size:13px; font-weight:800; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+        .goals-card-type-badge { font-size:10px; font-weight:700; border-radius:99px; padding:1px 7px; align-self:flex-start; }
+        .goals-card-actions { display:flex; gap:3px; flex-shrink:0; }
+        .goals-card-btn { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:transparent; color:#94A3B8; cursor:pointer; transition:background var(--dur-fast) var(--ease-premium),color var(--dur-fast) var(--ease-premium); }
+        .goals-card-btn:hover { background:#F1F5F9; color:#475569; }
+        .goals-card-edit-btn:hover { background:#EEF2FF; color:#4F46E5; }
+        .goals-card-month { font-size:10px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.04em; }
+        .goals-card-amounts { display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+        .goals-card-actual { font-size:20px; font-weight:900; line-height:1; }
+        .goals-card-sep { font-size:13px; color:#CBD5E1; }
+        .goals-card-target { font-size:13px; color:#94A3B8; font-weight:600; }
+        .goals-card-pill { font-size:11px !important; }
+        .goals-card-bar-track { margin-top:2px; }
+        .goals-card-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .goals-card-remaining { font-size:11px; color:#94A3B8; }
+
         /* ─── GOALS LAUNCHES (legacy, kept for reference) ─── */
         .goals-launches-date { padding: 10px 12px; white-space: nowrap; color: var(--text-secondary); font-size: 12px; }
         .goals-launches-desc { padding: 10px 12px; font-weight: 600; font-size: 13px; color: var(--text-primary); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -6894,6 +6917,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="goals-cards-section" class="goals-cards-section"></div>
                 <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
                 <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
             </div>
@@ -17613,8 +17637,15 @@
             if (navEl) navEl.style.display = 'none';
             if (lblEl) lblEl.textContent = '';
 
+            const cardsEl = document.getElementById('goals-cards-section');
             const kpiEl = document.getElementById('goals-kpi-row');
             const gridEl = document.getElementById('goals-grid');
+
+            // Cards de metas sempre visíveis na visão de tabela
+            if (cardsEl) {
+                if (goalsViewLevel === 'table') renderGoalsCards(cardsEl);
+                else cardsEl.innerHTML = '';
+            }
 
             if (goalsViewLevel === 'table') {
                 renderGoalsTable(kpiEl, gridEl);
@@ -17677,6 +17708,64 @@
 
                 return { id: catId, name: cat.name, flow: catFlow, goal: catGoal, actuals: catActuals, hasData: hasCatData || subs.length > 0, subs };
             }).filter(c => c.hasData);
+        }
+
+        function renderGoalsCards(el) {
+            if (!el) return;
+            if (!goalsData.length) { el.innerHTML = ''; return; }
+
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const currentYYYYMM = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const mn = now.getMonth();
+            const monthLabel = `${monthNames[mn]}/${String(now.getFullYear()).slice(2)}`;
+
+            const cards = goalsData.map(goal => {
+                const prog = calcGoalProgress(goal, currentYYYYMM);
+                const sc = getGoalStatusStyle(prog.status, goal.type);
+                const name = getGoalHierarchyName(goal);
+                const isEx = getGoalNormalizedType(goal.type) === FLOW_OUT;
+                const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
+                const typeLabel = isEx ? 'Despesa' : 'Receita';
+                const barPct = prog.rawPct > 0 ? Math.max(prog.pct, 2) : 0;
+                const goalId = goal.id;
+
+                const hierarchyType = goal.hierarchyType;
+                const hierarchyId   = goal.hierarchyId;
+                const flowType      = goal.type;
+
+                return `<div class="goals-card" style="border-top:3px solid ${sc.color}">
+                    <div class="goals-card-header">
+                        <div class="goals-card-title-wrap">
+                            <span class="goals-card-name">${name}</span>
+                            <span class="goals-card-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
+                        </div>
+                        <div class="goals-card-actions">
+                            <button class="goals-card-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${name.replace(/'/g,"\\'")}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
+                            <button class="goals-card-btn" onclick="goalsOpenDetail('${goalId}')" title="Ver por mês"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i></button>
+                            <button class="goals-card-btn goals-card-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                    <div class="goals-card-month">${monthLabel}</div>
+                    <div class="goals-card-amounts">
+                        <span class="goals-card-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
+                        <span class="goals-card-sep">/</span>
+                        <span class="goals-card-target">${formatBRL(prog.target)}</span>
+                        <span class="goals-status-pill goals-card-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${Math.round(prog.rawPct)}%</span>
+                    </div>
+                    <div class="goal-progress-track goals-card-bar-track">
+                        <div class="goal-progress-fill" style="width:${barPct}%;background:${sc.color}"></div>
+                    </div>
+                    <div class="goals-card-footer">
+                        <span style="color:${sc.color};font-weight:700;font-size:11px">${sc.label}</span>
+                        ${prog.remaining > 0 ? `<span class="goals-card-remaining">${isEx ? 'Restam' : 'Faltam'} ${formatBRL(prog.remaining)}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+
+            el.innerHTML = `<div class="goals-cards-wrap">${cards}</div>`;
+            refreshLucideIcons();
         }
 
         function goalsRenderTreeCells(actuals, goal, flow, months, currentYYYYMM, hierarchyType, hierarchyId, itemName) {
