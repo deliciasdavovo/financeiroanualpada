@@ -6902,13 +6902,12 @@
                             <p class="text-xs text-slate-400 mt-0.5">Orçamentos e metas por categoria, subcategoria e destino.</p>
                         </div>
                         <div class="flex items-center gap-3 flex-wrap">
-                            <div class="goals-month-nav">
-                                <button type="button" onclick="goalsNavMonth(-1)" aria-label="Mês anterior">
-                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            <div class="pill-segment compact" role="tablist" aria-label="Modo de visualização de metas">
+                                <button type="button" id="goals-mode-cards" class="pill-segment-btn active" onclick="setGoalsDisplayMode('cards')" aria-selected="true">
+                                    <i data-lucide="layout-grid" class="w-4 h-4"></i>Cards
                                 </button>
-                                <span id="goals-month-label">—</span>
-                                <button type="button" onclick="goalsNavMonth(1)" aria-label="Próximo mês">
-                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                <button type="button" id="goals-mode-table" class="pill-segment-btn" onclick="setGoalsDisplayMode('table')" aria-selected="false">
+                                    <i data-lucide="table-2" class="w-4 h-4"></i>Tabela
                                 </button>
                             </div>
                             <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase shadow flex items-center gap-2">
@@ -17273,6 +17272,7 @@
         let goalsViewLevel = 'table';
         let goalsViewSelectedGoal = null;
         let goalsViewSelectedMonth = null;
+        let goalsDisplayMode = 'cards'; // 'cards' | 'table'
         let goalsViewYear = String(new Date().getFullYear());
         let goalsMonthWindowOffset = 0;
         let goalsExpandedCategories = new Set();
@@ -17631,21 +17631,44 @@
             return goal.targetMonth === yyyyMM;
         }
 
+        function setGoalsDisplayMode(mode) {
+            goalsDisplayMode = mode;
+            document.getElementById('goals-mode-cards')?.classList.toggle('active', mode === 'cards');
+            document.getElementById('goals-mode-cards')?.setAttribute('aria-selected', mode === 'cards');
+            document.getElementById('goals-mode-table')?.classList.toggle('active', mode === 'table');
+            document.getElementById('goals-mode-table')?.setAttribute('aria-selected', mode === 'table');
+            // Ao mudar de modo, volta para o nível de tabela
+            goalsViewLevel = 'table';
+            goalsViewSelectedGoal = null;
+            goalsViewSelectedMonth = null;
+            goalsViewSelectedMonths = [];
+            renderGoals();
+        }
+
         function renderGoals() {
             const navEl = document.querySelector('.goals-month-nav');
             const lblEl = document.getElementById('goals-month-label');
             if (navEl) navEl.style.display = 'none';
             if (lblEl) lblEl.textContent = '';
 
+            // Sincroniza o toggle visual com o estado atual
+            document.getElementById('goals-mode-cards')?.classList.toggle('active', goalsDisplayMode === 'cards');
+            document.getElementById('goals-mode-table')?.classList.toggle('active', goalsDisplayMode === 'table');
+
             const cardsEl = document.getElementById('goals-cards-section');
             const kpiEl = document.getElementById('goals-kpi-row');
             const gridEl = document.getElementById('goals-grid');
 
-            // Cards de metas sempre visíveis na visão de tabela
-            if (cardsEl) {
-                if (goalsViewLevel === 'table') renderGoalsCards(cardsEl);
-                else cardsEl.innerHTML = '';
+            // Modo CARDS: só mostra os cards, nada de tabela
+            if (goalsViewLevel === 'table' && goalsDisplayMode === 'cards') {
+                if (cardsEl) renderGoalsCards(cardsEl);
+                if (kpiEl) kpiEl.innerHTML = '';
+                if (gridEl) gridEl.innerHTML = '';
+                return;
             }
+
+            // Outros níveis (detail, launches) ou modo tabela: esconde cards
+            if (cardsEl) cardsEl.innerHTML = '';
 
             if (goalsViewLevel === 'table') {
                 renderGoalsTable(kpiEl, gridEl);
