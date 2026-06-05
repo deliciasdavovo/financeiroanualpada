@@ -8161,8 +8161,14 @@
             const startEl = document.getElementById('filter-date-start');
             const endEl = document.getElementById('filter-date-end');
             if (monthEl) monthEl.value = monthText;
-            if (startEl) startEl.value = formatLocalDate(first);
-            if (endEl) endEl.value = formatLocalDate(last);
+            if (startEl) {
+                if (startEl._flatpickr) startEl._flatpickr.setDate(formatLocalDate(first), false);
+                else startEl.value = formatLocalDate(first);
+            }
+            if (endEl) {
+                if (endEl._flatpickr) endEl._flatpickr.setDate(formatLocalDate(last), false);
+                else endEl.value = formatLocalDate(last);
+            }
             entriesPage = 1;
             renderEntries();
             populateEntriesMonthChips();
@@ -9019,7 +9025,7 @@
             if (!raw) return '-';
             const parts = raw.split('-');
             if (parts.length !== 3) return escapeHtml(raw);
-            return `${parts[2]}/${parts[1]}/${parts[0].slice(-2)}`;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
         function getAccountShortLabel(account) {
             const fullName = String((account || {}).name || '').trim();
@@ -10966,6 +10972,8 @@
                 flatpickr(input, {
                     locale: localePt,
                     dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd/m/Y',
                     allowInput: true,
                     disableMobile: true,
                     onChange: () => {
@@ -10974,6 +10982,17 @@
                     }
                 });
             });
+        }
+
+        function setFlatpickrValue(id, value) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el._flatpickr) {
+                if (value) el._flatpickr.setDate(value, false);
+                else el._flatpickr.clear(false);
+            } else {
+                el.value = value || '';
+            }
         }
 
         function updateBalance() {
@@ -11378,7 +11397,7 @@
             if (!item) return;
             const totals = getMovementTotals(item);
             document.getElementById('treasury-mv-edit-id').value = String(item.id || '');
-            document.getElementById('treasury-mv-date').value = String(item.date || '');
+            setFlatpickrValue('treasury-mv-date', String(item.date || ''));
             document.getElementById('treasury-mv-cash').value = String(totals.cashIn || 0);
             document.getElementById('treasury-mv-card').value = String(totals.cardIn || 0);
             document.getElementById('treasury-mv-payments').value = String(totals.paymentsOut || 0);
@@ -11398,7 +11417,8 @@
                 if (notesLabel)   notesLabel.textContent = 'Ocultar observação';
             }
             document.getElementById('treasury-mv-date')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            document.getElementById('treasury-mv-date')?.focus();
+            const _mvDateEl = document.getElementById('treasury-mv-date');
+            if (_mvDateEl) (_mvDateEl._flatpickr?.altInput || _mvDateEl).focus();
         }
         function cancelTreasuryMovementEdit() {
             resetTreasuryMovementForm({ keepDate: false });
@@ -13793,7 +13813,13 @@
             const destinationName = annualNavDestinationId ? (getDestinationById(annualNavDestinationId)?.name || '') : '';
             const setValue = (id, value) => {
                 const el = document.getElementById(id);
-                if (el) el.value = value;
+                if (!el) return;
+                if (el._flatpickr) {
+                    if (value) el._flatpickr.setDate(value, false);
+                    else el._flatpickr.clear(false);
+                } else {
+                    el.value = value;
+                }
             };
             setValue('filter-desc', destinationName);
             setValue('filter-type', annualTemporalFlow === 'TODOS' ? '' : annualTemporalFlow);
@@ -17220,15 +17246,15 @@
             if(id) {
                 const e = state.entries.find(x => x.id === id);
                 if(e) {
-                    document.getElementById('form-date').value = e.date;
+                    setFlatpickrValue('form-date', e.date);
                     document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     document.getElementById('form-desc').value = e.description || "";
                     populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, e.destinationId);
                     document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
                     toggleStatus(e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO');
                 }
-            } else { 
-                document.getElementById('form-date').value = formatLocalDate(new Date());
+            } else {
+                setFlatpickrValue('form-date', formatLocalDate(new Date()));
                 toggleStatus('REALIZADO');
             }
             updateEntryRecurrenceVisibility(Boolean(id));
@@ -19393,7 +19419,7 @@
             if (result.date) {
                 const dateEl = document.getElementById('form-date');
                 if (dateEl) {
-                    dateEl.value = result.date;
+                    setFlatpickrValue('form-date', result.date);
                     setEntryFieldError('form-date', '');
                     applied.push(`Vencimento: ${result.date.split('-').reverse().join('/')}`);
                 }
