@@ -5668,6 +5668,7 @@
         .goals-tree-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
         .goals-tree-toggle { display: flex; align-items: center; color: #94A3B8; flex-shrink: 0; }
         .goals-cell-zero { color: #CBD5E1; font-size: 12px; }
+        .goals-cell-clickable:hover { background: #EEF2FF !important; }
         .goals-detail-link {
             width: 22px; height: 22px; border-radius: 6px; border: 1px solid #CBD5E1;
             background: transparent; display: inline-flex; align-items: center; justify-content: center;
@@ -17025,6 +17026,11 @@
         let goalsMonthWindowOffset = 0;
         let goalsExpandedCategories = new Set();
         let goalsExpandedSubcategories = new Set();
+        // Estado para visão diária direta (sem passar pelo Nível 2)
+        let goalsViewHierarchyType = null;
+        let goalsViewHierarchyId = null;
+        let goalsViewHierarchyFlow = null;
+        let goalsViewHierarchyName = null;
 
         function loadGoals() {
             try { goalsData = JSON.parse(localStorage.getItem('metas_goals_v1') || '[]'); }
@@ -17446,7 +17452,7 @@
             }).filter(c => c.hasData);
         }
 
-        function goalsRenderTreeCells(actuals, goal, flow, months, currentYYYYMM) {
+        function goalsRenderTreeCells(actuals, goal, flow, months, currentYYYYMM, hierarchyType, hierarchyId, itemName) {
             return months.map((m, i) => {
                 const isCurrent = m === currentYYYYMM;
                 const cls = isCurrent ? ' goals-month-current-col' : '';
@@ -17470,7 +17476,17 @@
                     metaHtml = `<span class="goals-cell-zero">—</span>`;
                 }
 
-                return `<td class="goals-matrix-cell${cls}">${actualHtml}</td><td class="goals-matrix-cell goals-cell-meta-col${cls}">${metaHtml}</td>`;
+                const safeHT = (hierarchyType||'').replace(/'/g,"\'");
+                const safeHI = (hierarchyId||'').replace(/'/g,"\'");
+                const safeN  = (itemName||'').replace(/'/g,"\'");
+                const safeF  = String(flow||'').replace(/'/g,"\'");
+                const goalId = goal ? goal.id : '';
+                const clickable = actual > 0 || (goal && goalsIsApplicable(goal, m));
+                const tdClick = clickable
+                    ? `onclick="event.stopPropagation();goalsOpenDailyDirect('${safeHT}','${safeHI}','${safeF}','${safeN}','${m}','${goalId}')" style="cursor:pointer" title="Ver dia a dia de ${goalMonthLabel(m)}"`
+                    : '';
+
+                return `<td class="goals-matrix-cell${cls} goals-cell-clickable" ${tdClick}>${actualHtml}</td><td class="goals-matrix-cell goals-cell-meta-col${cls}${clickable ? ' goals-cell-clickable' : ''}" ${tdClick}>${metaHtml}</td>`;
             }).join('');
         }
 
@@ -17553,7 +17569,7 @@
                             <span class="goals-matrix-type-badge" style="background:${typeColor}18;color:${typeColor}">${isEx ? 'Desp.' : 'Rec.'}</span>
                             ${goalChevron}
                         </td>
-                        ${goalsRenderTreeCells(cat.actuals, cat.goal, cat.flow, months, currentYYYYMM)}
+                        ${goalsRenderTreeCells(cat.actuals, cat.goal, cat.flow, months, currentYYYYMM, 'category', cat.id, cat.name)}
                         <td class="goals-matrix-chevron-cell"></td>
                     </tr>`;
 
@@ -17561,7 +17577,6 @@
                         cat.subs.forEach(sub => {
                             const isExpSub = goalsExpandedSubcategories.has(sub.id);
                             const subEx = getGoalNormalizedType(sub.flow) === FLOW_OUT;
-                            const subColor = subEx ? '#B23A3A' : '#1F7A5C';
                             const subExpandIcon = isExpSub ? 'chevron-down' : 'chevron-right';
                             const hasDests = sub.dests.length > 0;
                             const subHasGoal = !!sub.goal;
@@ -17577,7 +17592,7 @@
                                     <span class="goals-tree-name">${sub.name}</span>
                                     ${subGoalChevron}
                                 </td>
-                                ${goalsRenderTreeCells(sub.actuals, sub.goal, sub.flow, months, currentYYYYMM)}
+                                ${goalsRenderTreeCells(sub.actuals, sub.goal, sub.flow, months, currentYYYYMM, 'subcategory', sub.id, sub.name)}
                                 <td class="goals-matrix-chevron-cell"></td>
                             </tr>`;
 
@@ -17594,7 +17609,7 @@
                                             <span class="goals-tree-name">${dest.name}</span>
                                             ${destGoalChevron}
                                         </td>
-                                        ${goalsRenderTreeCells(dest.actuals, dest.goal, dest.flow, months, currentYYYYMM)}
+                                        ${goalsRenderTreeCells(dest.actuals, dest.goal, dest.flow, months, currentYYYYMM, 'destination', dest.id, dest.name)}
                                         <td class="goals-matrix-chevron-cell"></td>
                                     </tr>`;
                                 });
@@ -17777,16 +17792,36 @@
             renderGoals();
         }
 
+        function goalsOpenDailyDirect(hierarchyType, hierarchyId, flow, name, yyyyMM, goalId) {
+            goalsViewHierarchyType = hierarchyType;
+            goalsViewHierarchyId = hierarchyId;
+            goalsViewHierarchyFlow = flow;
+            goalsViewHierarchyName = name;
+            goalsViewSelectedGoal = goalId ? (goalsData.find(g => g.id === goalId) || null) : null;
+            goalsViewSelectedMonth = yyyyMM;
+            goalsViewLevel = 'launches';
+            goalsExpandedDays = new Set();
+            renderGoals();
+        }
+
         function goalsBackToTable() {
             goalsViewLevel = 'table';
             goalsViewSelectedGoal = null;
             goalsViewSelectedMonth = null;
+            goalsViewHierarchyType = null;
+            goalsViewHierarchyId = null;
+            goalsViewHierarchyFlow = null;
+            goalsViewHierarchyName = null;
             renderGoals();
         }
 
         function goalsBackToDetail() {
             goalsViewLevel = 'detail';
             goalsViewSelectedMonth = null;
+            goalsViewHierarchyType = null;
+            goalsViewHierarchyId = null;
+            goalsViewHierarchyFlow = null;
+            goalsViewHierarchyName = null;
             renderGoals();
         }
 
@@ -17799,11 +17834,15 @@
         }
 
         function renderGoalLaunches(kpiEl, gridEl) {
-            if (!goalsViewSelectedGoal || !goalsViewSelectedMonth) { goalsBackToDetail(); return; }
-            const goal = goalsViewSelectedGoal;
+            if (!goalsViewSelectedMonth) { goalsBackToTable(); return; }
+            // Suporta acesso direto da tabela (sem passar pelo Nível 2)
+            const goal = goalsViewSelectedGoal || null;
+            const hierarchyType = goal ? goal.hierarchyType : (goalsViewHierarchyType || 'category');
+            const hierarchyId   = goal ? goal.hierarchyId   : (goalsViewHierarchyId   || '');
+            const flowType      = goal ? goal.type          : (goalsViewHierarchyFlow  || FLOW_OUT);
+            const name          = goal ? getGoalHierarchyName(goal) : (goalsViewHierarchyName || '—');
             const yyyyMM = goalsViewSelectedMonth;
-            const name = getGoalHierarchyName(goal);
-            const isEx = getGoalNormalizedType(goal.type) === FLOW_OUT;
+            const isEx = getGoalNormalizedType(flowType) === FLOW_OUT;
             const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
 
             const [yr, mn] = yyyyMM.split('-').map(Number);
@@ -17811,8 +17850,8 @@
             const pad = n => String(n).padStart(2, '0');
             const start = `${yyyyMM}-01`;
             const end   = `${yyyyMM}-${pad(daysInMonth)}`;
-            const destIds = getGoalDestinationIds(goal.hierarchyType, goal.hierarchyId);
-            const targetFlow = getGoalNormalizedType(goal.type);
+            const destIds = getGoalDestinationIds(hierarchyType, hierarchyId);
+            const targetFlow = getGoalNormalizedType(flowType);
 
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
@@ -17835,9 +17874,10 @@
                 else byDay[d].realized.push(e);
             });
 
-            const prog = calcGoalProgress(goal, yyyyMM);
-            const sc = getGoalStatusStyle(prog.status, goal.type);
-            const hasGoal = goal.amount > 0;
+            const prog = goal ? calcGoalProgress(goal, yyyyMM) : { actual: 0, target: 0, pct: 0, rawPct: 0, status: 'ok', remaining: 0 };
+            if (!goal) prog.actual = allEntries.filter(e => (e.status || 'REALIZADO').toUpperCase() !== 'PENDENTE').reduce((s, e) => s + (Number(e.amount) || 0), 0);
+            const sc = getGoalStatusStyle(prog.status, flowType);
+            const hasGoal = !!(goal && goal.amount > 0);
             const dailyGoal = hasGoal ? goal.amount / daysInMonth : 0;
 
             // KPI do mês inteiro
@@ -17959,8 +17999,7 @@
                     <div class="goals-breadcrumb">
                         <button type="button" onclick="goalsBackToTable()" class="goals-breadcrumb-btn">Metas</button>
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
-                        <button type="button" onclick="goalsBackToDetail()" class="goals-breadcrumb-btn">${name}</button>
-                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
+                        ${goal ? `<button type="button" onclick="goalsBackToDetail()" class="goals-breadcrumb-btn">${name}</button><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>` : `<span class="goals-breadcrumb-current">${name}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>`}
                         <span class="goals-breadcrumb-current">${goalMonthLabel(yyyyMM)}</span>
                     </div>
                     <div class="goals-matrix-scroll">
