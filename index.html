@@ -1971,6 +1971,110 @@
             font-weight: 800;
             color: var(--soft-red);
         }
+        /* ── Mobile lock screen ── */
+        #login-mobile-lock { display: none; }
+        .lml-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .lml-lock-wrap {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 36px rgba(47,79,157,0.28);
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        .lml-lock-wrap.unlocking {
+            background: #16a34a;
+            box-shadow: 0 16px 36px rgba(22,163,74,0.30);
+        }
+        .lml-lock-wrap svg { width: 40px; height: 40px; color: white; }
+        .lml-app-name {
+            font-size: 26px;
+            font-weight: 900;
+            color: #0F172A;
+            letter-spacing: -0.02em;
+        }
+        .lml-app-sub {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+            margin-top: -8px;
+        }
+        .lml-slide-area { width: 100%; max-width: 320px; }
+        .lml-slide-track {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            background: rgba(15,23,42,0.08);
+            border-radius: 30px;
+            border: 1px solid rgba(15,23,42,0.14);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        .lml-slide-thumb {
+            position: absolute;
+            left: 6px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #0F172A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(15,23,42,0.22);
+            cursor: grab;
+            z-index: 2;
+            touch-action: none;
+            will-change: left;
+        }
+        .lml-slide-thumb svg { width: 20px; height: 20px; color: white; }
+        .lml-slide-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(15,23,42,0.45);
+            pointer-events: none;
+            padding-left: 60px;
+        }
+        @media (max-width: 640px) {
+            #login-mobile-lock {
+                display: flex;
+                position: absolute;
+                inset: 0;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                padding: 96px 32px 68px;
+                z-index: 2;
+            }
+            #login-pin-card { display: none; }
+            #login-screen.lml-revealed #login-mobile-lock { display: none; }
+            #login-screen.lml-revealed #login-pin-card {
+                display: block;
+                animation: lmlSlideUp 300ms cubic-bezier(0.22,1,0.36,1);
+            }
+        }
+        @keyframes lmlSlideUp {
+            from { opacity: 0; transform: translateY(36px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         @media (max-width: 420px) {
             #login-screen {
                 padding: 16px;
@@ -5807,20 +5911,35 @@
 <body class="flex h-screen overflow-hidden">
 
     <section id="login-screen" aria-label="Login inicial">
-        <div class="login-card">
+
+        <!-- Mobile lock screen (≤640 px) -->
+        <div id="login-mobile-lock" aria-hidden="true">
+            <div class="lml-top">
+                <div class="lml-lock-wrap" id="lml-lock-wrap">
+                    <i data-lucide="lock" id="lml-lock-icon"></i>
+                </div>
+                <p class="lml-app-name">Financeiro</p>
+                <p class="lml-app-sub">Acesso seguro</p>
+            </div>
+            <div class="lml-slide-area">
+                <div class="lml-slide-track" id="lml-slide-track">
+                    <div class="lml-slide-thumb" id="lml-slide-thumb">
+                        <i data-lucide="chevron-right"></i>
+                    </div>
+                    <span class="lml-slide-text">Deslize para desbloquear</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-card" id="login-pin-card">
             <div class="login-brand">
                 <div class="login-brand-icon" aria-hidden="true">
                     <i data-lucide="lock-keyhole" class="w-5 h-5"></i>
                 </div>
                 <div>
                     <p class="login-eyebrow">Acesso seguro</p>
-                    <h1 class="login-title">Entrar no financeiro</h1>
+                    <h1 class="login-title">Digite o PIN</h1>
                 </div>
-            </div>
-
-            <div class="login-field">
-                <label class="label-mini" for="login-user">Usuário</label>
-                <input id="login-user" class="login-input" type="text" autocomplete="username" autocapitalize="none" placeholder="Digite seu usuário">
             </div>
 
             <div class="login-field">
@@ -16935,10 +17054,6 @@
             return !document.getElementById('login-screen')?.classList.contains('hidden');
         }
 
-        function isLoginUserField(target) {
-            return target && target.id === 'login-user';
-        }
-
         function updateLoginDots() {
             const hiddenInput = document.getElementById('login-pass-hidden');
             const dots = Array.from(document.querySelectorAll('#login-pass-dots .login-dot'));
@@ -16982,14 +17097,95 @@
         }
 
         function submitLogin() {
-            const user = String(document.getElementById('login-user')?.value || '').trim().toLowerCase();
-            if (user === LOGIN_USER && loginPassBuffer === LOGIN_PASS) {
+            if (loginPassBuffer === LOGIN_PASS) {
                 unlockApp();
                 return;
             }
             clearLoginPass();
-            setLoginError('Usuário ou senha incorretos.');
-            document.getElementById('login-user')?.focus();
+            setLoginError('PIN incorreto.');
+        }
+
+        function revealPinCard() {
+            document.getElementById('login-screen')?.classList.add('lml-revealed');
+        }
+
+        function initSlideToUnlock() {
+            const track = document.getElementById('lml-slide-track');
+            const thumb = document.getElementById('lml-slide-thumb');
+            if (!track || !thumb) return;
+
+            let isDragging = false;
+            let startClientX = 0;
+            let startLeft = 6;
+
+            function getMaxSlide() {
+                return track.clientWidth - thumb.offsetWidth - 12;
+            }
+
+            function applyProgress(deltaX) {
+                const maxSlide = getMaxSlide();
+                const newLeft = Math.max(6, Math.min(startLeft + deltaX, 6 + maxSlide));
+                thumb.style.left = newLeft + 'px';
+                const progress = (newLeft - 6) / maxSlide;
+                const label = track.querySelector('.lml-slide-text');
+                if (label) label.style.opacity = String(Math.max(0, 1 - progress * 1.6));
+                const wrap = document.getElementById('lml-lock-wrap');
+                if (wrap) wrap.classList.toggle('unlocking', progress > 0.6);
+                return progress;
+            }
+
+            function resetThumb() {
+                thumb.style.transition = 'left 0.32s cubic-bezier(0.22,1,0.36,1)';
+                thumb.style.left = '6px';
+                const label = track.querySelector('.lml-slide-text');
+                if (label) { label.style.transition = 'opacity 0.32s ease'; label.style.opacity = '1'; }
+                const wrap = document.getElementById('lml-lock-wrap');
+                if (wrap) wrap.classList.remove('unlocking');
+                setTimeout(() => {
+                    thumb.style.transition = '';
+                    if (label) label.style.transition = '';
+                }, 340);
+            }
+
+            function onDragEnd(clientX) {
+                if (!isDragging) return;
+                isDragging = false;
+                const maxSlide = getMaxSlide();
+                const currentLeft = parseFloat(thumb.style.left) || 6;
+                const progress = (currentLeft - 6) / maxSlide;
+                if (progress >= 0.8) {
+                    revealPinCard();
+                } else {
+                    resetThumb();
+                }
+            }
+
+            thumb.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startClientX = e.touches[0].clientX;
+                startLeft = parseFloat(thumb.style.left) || 6;
+                e.stopPropagation();
+            }, { passive: true });
+
+            track.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                applyProgress(e.touches[0].clientX - startClientX);
+                e.preventDefault();
+            }, { passive: false });
+
+            track.addEventListener('touchend', (e) => { onDragEnd(e.changedTouches[0].clientX); }, { passive: true });
+
+            thumb.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startClientX = e.clientX;
+                startLeft = parseFloat(thumb.style.left) || 6;
+                e.preventDefault();
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                applyProgress(e.clientX - startClientX);
+            });
+            document.addEventListener('mouseup', (e) => { onDragEnd(e.clientX); });
         }
 
         function initLoginScreen() {
@@ -17000,7 +17196,7 @@
             }
             document.body.classList.add('login-locked');
             updateLoginDots();
-            window.setTimeout(() => document.getElementById('login-user')?.focus(), 80);
+            initSlideToUnlock();
         }
 
         const mf = document.getElementById('monthly-filter');
@@ -17009,19 +17205,6 @@
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
         document.addEventListener('keydown', (event) => {
             if (isLoginOpen()) {
-                if (isLoginUserField(event.target)) {
-                    const userValue = String(event.target.value || '').trim().toLowerCase();
-                    if (/^\d$/.test(event.key) && userValue === LOGIN_USER) {
-                        event.preventDefault();
-                        appendLoginDigit(event.key);
-                        return;
-                    }
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        submitLogin();
-                    }
-                    return;
-                }
                 if (/^\d$/.test(event.key)) {
                     event.preventDefault();
                     appendLoginDigit(event.key);
@@ -17050,7 +17233,7 @@
         document.addEventListener('touchend', (event) => {
             if (!isLoginOpen()) return;
             const now = Date.now();
-            if (now - lastLoginTouchAt < 320 && !isLoginUserField(event.target)) {
+            if (now - lastLoginTouchAt < 320) {
                 event.preventDefault();
             }
             lastLoginTouchAt = now;
