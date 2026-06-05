@@ -7127,7 +7127,7 @@
                                         <label class="vender-money-lbl" for="treasury-mv-cash">Dinheiro</label>
                                         <div class="vender-money-row">
                                             <span class="vender-currency">R$</span>
-                                            <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0" class="vender-amount-input" oninput="updateVenderTotal()" placeholder="0,00">
+                                            <input id="treasury-mv-cash" type="text" inputmode="decimal" value="0" class="vender-amount-input" oninput="updateVenderTotal()" onfocus="this.select()" placeholder="0,00" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -7137,7 +7137,7 @@
                                         <label class="vender-money-lbl" for="treasury-mv-card">Cartão</label>
                                         <div class="vender-money-row">
                                             <span class="vender-currency">R$</span>
-                                            <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0" class="vender-amount-input" oninput="updateVenderTotal()" placeholder="0,00">
+                                            <input id="treasury-mv-card" type="text" inputmode="decimal" value="0" class="vender-amount-input" oninput="updateVenderTotal()" onfocus="this.select()" placeholder="0,00" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -7147,7 +7147,7 @@
                                         <label class="vender-money-lbl" for="treasury-mv-payments">Saídas</label>
                                         <div class="vender-money-row">
                                             <span class="vender-currency">R$</span>
-                                            <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0" class="vender-amount-input" oninput="updateVenderTotal()" placeholder="0,00">
+                                            <input id="treasury-mv-payments" type="text" inputmode="decimal" value="0" class="vender-amount-input" oninput="updateVenderTotal()" onfocus="this.select()" placeholder="0,00" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -11013,7 +11013,8 @@
             return date;
         }
         function toMoneyNumber(value) {
-            const parsed = Number(value);
+            const str = String(value ?? '').trim().replace(',', '.');
+            const parsed = Number(str);
             return Number.isFinite(parsed) ? parsed : 0;
         }
         function isCashAccount(account) {
@@ -11311,9 +11312,10 @@
             });
         }
         function updateVenderTotal() {
-            const cash = parseFloat(document.getElementById('treasury-mv-cash')?.value || 0) || 0;
-            const card = parseFloat(document.getElementById('treasury-mv-card')?.value || 0) || 0;
-            const out  = parseFloat(document.getElementById('treasury-mv-payments')?.value || 0) || 0;
+            const parseVal = v => parseFloat(String(v ?? '0').replace(',', '.')) || 0;
+            const cash = parseVal(document.getElementById('treasury-mv-cash')?.value);
+            const card = parseVal(document.getElementById('treasury-mv-card')?.value);
+            const out  = parseVal(document.getElementById('treasury-mv-payments')?.value);
             const total = cash + card - out;
             const totalEl   = document.getElementById('vender-live-total');
             const cashPill  = document.getElementById('vender-pill-cash');
