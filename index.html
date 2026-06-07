@@ -4202,6 +4202,61 @@
         .recon-toolbar-preview {
             min-width: 0;
         }
+        .recon-sheet-input {
+            width: 100%;
+            min-width: 0;
+            height: 34px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 9px;
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #0F172A;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .recon-sheet-input:hover {
+            border-color: #CBD5E1;
+            background: #FFFFFF;
+        }
+        .recon-sheet-input:focus {
+            border-color: #94A3B8;
+            box-shadow: 0 0 0 3px rgba(148,163,184,0.15);
+            background: #FFFFFF;
+        }
+        .recon-sheet-type-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            font-weight: 900;
+            font-size: 18px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+        .recon-sheet-type-entrada {
+            color: #16a34a;
+            border-color: #86efac;
+            background: #f0fdf4;
+        }
+        .recon-sheet-type-entrada:hover {
+            background: #dcfce7;
+            border-color: #4ade80;
+        }
+        .recon-sheet-type-saida {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+        .recon-sheet-type-saida:hover {
+            background: #fee2e2;
+            border-color: #f87171;
+        }
         .entry-destination-panel {
             border: 0;
             border-radius: 0;
@@ -7314,6 +7369,35 @@
                     </div>
                 </div>
 
+                <!-- PLANILHA MANUAL DE LANÇAMENTOS -->
+                <div class="card-premium p-6 lg:p-7 space-y-4">
+                    <div class="flex flex-wrap gap-3 items-center justify-between">
+                        <div>
+                            <p class="text-sm font-black uppercase text-slate-700">Planilha de Lançamentos</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Preencha manualmente e adicione à conciliação</p>
+                        </div>
+                        <button onclick="addReconSheetToRecon()" class="bg-[#E09132] text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase shadow-xl hover:bg-[#C57A22] transition-all">Adicionar à Conciliação</button>
+                    </div>
+                    <div class="table-mobile-scroll custom-scrollbar">
+                        <table class="w-full text-left" id="recon-sheet-table">
+                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
+                                <tr>
+                                    <th class="px-3 py-3 w-[130px]">Data</th>
+                                    <th class="px-3 py-3">Destino</th>
+                                    <th class="px-3 py-3 w-[130px] text-right">Valor</th>
+                                    <th class="px-3 py-3 w-[72px] text-center">+/−</th>
+                                    <th class="px-3 py-3 w-[220px]">Descrição</th>
+                                    <th class="px-3 py-3 w-[52px] text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recon-sheet-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                        </table>
+                    </div>
+                    <button onclick="addReconSheetRow()" class="flex items-center gap-2 text-slate-400 hover:text-slate-700 font-bold text-xs uppercase transition-all">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Linha
+                    </button>
+                </div>
+
                 <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl border border-blue-100 shadow-xl">
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
@@ -7887,6 +7971,7 @@
         const CLOUD_FOCUS_REFRESH_THROTTLE_MS = 15 * 1000;
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
+        let tempReconSheet = [];
         let entryFillDragMode = '';
         let destinationComboboxState = {
             inputId: '',
@@ -10839,6 +10924,7 @@
                 renderDatabase();
             } else if (currentTab === 'reconciliation') {
                 populateDropdown('recon-account-select', state.accounts);
+                initReconSheet();
             } else if (currentTab === 'goals') {
                 renderGoals();
             }
@@ -16384,6 +16470,105 @@
         function removeRecon(index) {
             tempRecon.splice(index, 1);
             renderReconPreview();
+        }
+
+        function initReconSheet() {
+            if (tempReconSheet.length === 0) addReconSheetRow();
+            else renderReconSheet();
+        }
+        function addReconSheetRow() {
+            tempReconSheet.push({ id: generateId(), date: '', destinationId: '', valor: '', type: 'SAÍDA', descricao: '' });
+            renderReconSheet();
+        }
+        function removeReconSheetRow(index) {
+            tempReconSheet.splice(index, 1);
+            if (tempReconSheet.length === 0) addReconSheetRow();
+            else renderReconSheet();
+        }
+        function updateReconSheetCell(index, field, value) {
+            if (!tempReconSheet[index]) return;
+            tempReconSheet[index][field] = value;
+        }
+        function toggleReconSheetType(index) {
+            if (!tempReconSheet[index]) return;
+            tempReconSheet[index].type = tempReconSheet[index].type === 'ENTRADA' ? 'SAÍDA' : 'ENTRADA';
+            renderReconSheet();
+        }
+        function renderReconSheet() {
+            const body = document.getElementById('recon-sheet-body');
+            if (!body) return;
+            const destinations = getValidDestinations();
+            body.innerHTML = tempReconSheet.map((row, i) => {
+                const isEntrada = row.type === 'ENTRADA';
+                const destOptions = `<option value="">— Destino —</option>` + destinations.map(d =>
+                    `<option value="${escapeHtml(String(d.id || ''))}" ${String(d.id) === String(row.destinationId) ? 'selected' : ''}>${escapeHtml(getDestinationDisplayLabel(d))}</option>`
+                ).join('');
+                return `<tr class="table-row" id="recon-sheet-row-${i}">
+                    <td class="px-3 py-2">
+                        <input type="date" class="recon-sheet-input font-mono" value="${escapeHtml(row.date)}" oninput="updateReconSheetCell(${i}, 'date', this.value)">
+                    </td>
+                    <td class="px-3 py-2">
+                        <select class="recon-sheet-input" onchange="updateReconSheetCell(${i}, 'destinationId', this.value)">${destOptions}</select>
+                    </td>
+                    <td class="px-3 py-2">
+                        <input type="text" class="recon-sheet-input text-right font-mono ${isEntrada ? 'text-green-700' : 'text-red-700'}" placeholder="0,00" value="${escapeHtml(row.valor)}" oninput="updateReconSheetCell(${i}, 'valor', this.value)">
+                    </td>
+                    <td class="px-3 py-2 text-center">
+                        <button type="button" onclick="toggleReconSheetType(${i})" class="recon-sheet-type-btn ${isEntrada ? 'recon-sheet-type-entrada' : 'recon-sheet-type-saida'}" title="${isEntrada ? 'Entrada — clique para mudar para Saída' : 'Saída — clique para mudar para Entrada'}">
+                            ${isEntrada ? '+' : '−'}
+                        </button>
+                    </td>
+                    <td class="px-3 py-2">
+                        <input type="text" class="recon-sheet-input" placeholder="Descrição" value="${escapeHtml(row.descricao)}" oninput="updateReconSheetCell(${i}, 'descricao', this.value)">
+                    </td>
+                    <td class="px-3 py-2 text-center">
+                        <button onclick="removeReconSheetRow(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            refreshLucideIcons();
+        }
+        function parseDateReconSheet(val) {
+            if (!val) return '';
+            const s = String(val).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+            const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+            if (m) {
+                const y = m[3].length === 2 ? '20' + m[3] : m[3];
+                return `${y}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+            }
+            return '';
+        }
+        function addReconSheetToRecon() {
+            const batchStatus = getReconBatchStatus();
+            const validDestinations = getValidDestinations();
+            const errors = [];
+            const newItems = [];
+            tempReconSheet.forEach((row, i) => {
+                const date = parseDateReconSheet(row.date);
+                if (!date) { errors.push(`Linha ${i + 1}: data inválida.`); return; }
+                const amount = parseValueRobust(row.valor);
+                if (!amount || amount <= 0) { errors.push(`Linha ${i + 1}: valor inválido.`); return; }
+                newItems.push({
+                    id: generateId(),
+                    date,
+                    amount,
+                    type: row.type,
+                    status: batchStatus,
+                    description: String(row.descricao || ''),
+                    destinationId: row.destinationId || getDefaultReconDestinationId(row.type, getReconAllowedDestinations({ type: row.type }, validDestinations))
+                });
+            });
+            if (errors.length) { alert('Corrija os erros antes de adicionar:\n\n' + errors.join('\n')); return; }
+            if (!newItems.length) { alert('Nenhum registro para adicionar.'); return; }
+            tempRecon = tempRecon.concat(newItems);
+            tempReconSheet = [];
+            addReconSheetRow();
+            renderReconPreview();
+            const preview = document.getElementById('recon-preview');
+            if (preview && !preview.classList.contains('hidden')) preview.scrollIntoView({ behavior: 'smooth' });
         }
 
         async function finalizeRecon() {
