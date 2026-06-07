@@ -3610,6 +3610,38 @@
             }
         }
 
+        /* ══════════════════ PLANEJAMENTO (tabs internas) ══════════════════ */
+        .plan-pill-nav {
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+            background: #F1F5F9;
+            border-radius: 16px;
+            width: fit-content;
+        }
+        .plan-pill-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .plan-pill-btn:hover { color: #334155; background: #E2E8F0; }
+        .plan-pill-btn.is-active {
+            background: #FFFFFF;
+            color: #0F172A;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+        }
+        .plan-section { display: block; }
+        .plan-section.hidden { display: none; }
+
         /* ══════════════════ VENDER REDESIGN ══════════════════ */
         .vender-redesign-grid {
             display: grid;
@@ -6470,8 +6502,8 @@
             <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
                 <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
-            <button type="button" onclick="switchTab('projection')" id="nav-projection" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="chart-spline" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Projeção</span>
+            <button type="button" onclick="switchTab('planejamento')" id="nav-planejamento" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="compass" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Planejamento</span>
             </button>
             <button type="button" onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="receipt" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
@@ -6484,9 +6516,6 @@
             </button>
             <button type="button" onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="database" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
-            </button>
-            <button type="button" onclick="switchTab('goals')" id="nav-goals" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="target" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Metas</span>
             </button>
         </nav>
     </aside>
@@ -6977,72 +7006,115 @@
             </div>
 
             <!-- PROJEÇÃO -->
-            <div id="projection" class="tab-content projection-tab space-y-8">
-                <section class="reports-shell-head" aria-labelledby="projection-title">
-                    <div>
-                        <p class="reports-eyebrow">Previsão financeira</p>
-                        <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
-                        <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
-                    </div>
-                    <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
-                        <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
-                        <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
-                    </div>
-                </section>
-                <section class="projection-control-card">
-                    <div id="projection-pending-controls" class="reports-control-row">
-                        <span class="reports-control-label">Prazo</span>
-                        <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">Próximos 7 dias</button>
-                        <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">Próximos 15 dias</button>
-                        <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">Próximos 30 dias</button>
-                        <button type="button" id="projection-period-custom" class="reports-chip" onclick="setProjectionPeriod('custom')">Personalizado</button>
-                        <input id="projection-custom-days" class="reports-small-input hidden" type="number" min="1" max="365" value="45" onchange="renderProjection()" aria-label="Dias personalizados">
-                    </div>
-                    <div id="projection-history-controls" class="reports-control-stack hidden">
-                        <div class="reports-control-row">
-                            <span class="reports-control-label">Base histórica</span>
-                            <button type="button" id="projection-history-1" class="reports-chip active" onclick="setProjectionHistoryMonths(1)">Mês passado</button>
-                            <button type="button" id="projection-history-2" class="reports-chip" onclick="setProjectionHistoryMonths(2)">Últimos 2 meses</button>
-                            <button type="button" id="projection-history-3" class="reports-chip" onclick="setProjectionHistoryMonths(3)">Últimos 3 meses</button>
-                            <button type="button" id="projection-history-6" class="reports-chip" onclick="setProjectionHistoryMonths(6)">Últimos 6 meses</button>
-                        </div>
-                        <div class="reports-control-row">
-                            <span class="reports-control-label">Prazo</span>
-                            <button type="button" id="projection-history-period-7" class="reports-chip active" onclick="setProjectionHistoryPeriod(7)">7 dias</button>
-                            <button type="button" id="projection-history-period-15" class="reports-chip" onclick="setProjectionHistoryPeriod(15)">15 dias</button>
-                            <button type="button" id="projection-history-period-30" class="reports-chip" onclick="setProjectionHistoryPeriod(30)">30 dias</button>
-                        </div>
-                    </div>
-                    <div class="reports-control-row" aria-label="Agrupamento do gráfico de projeção">
-                        <span class="reports-control-label">Mostrar gráfico por</span>
-                        <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
-                        <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
-                        <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
-                    </div>
-                </section>
-                <div class="reports-summary-grid">
-                    <article class="reports-summary-card in"><span><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i></span><p id="projection-card-in-label">Entradas previstas</p><strong id="projection-card-in">R$ 0,00</strong></article>
-                    <article class="reports-summary-card out"><span><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i></span><p id="projection-card-out-label">Saídas previstas</p><strong id="projection-card-out">R$ 0,00</strong></article>
-                    <article class="reports-summary-card net"><span><i data-lucide="chart-spline" class="w-4 h-4"></i></span><p id="projection-card-net-label">Saldo projetado</p><strong id="projection-card-net">R$ 0,00</strong></article>
+            <div id="planejamento" class="tab-content space-y-6">
+                <!-- Navegação interna -->
+                <div class="plan-pill-nav">
+                    <button type="button" id="plantab-projection" class="plan-pill-btn is-active" onclick="switchPlanTab('projection')">
+                        <i data-lucide="chart-spline" class="w-4 h-4"></i>
+                        <span>Projeção</span>
+                    </button>
+                    <button type="button" id="plantab-goals" class="plan-pill-btn" onclick="switchPlanTab('goals')">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>Metas</span>
+                    </button>
                 </div>
-                <section class="card-premium reports-chart-card">
-                    <div class="reports-card-head">
+
+                <!-- Seção: Projeção -->
+                <div id="plan-projection-section" class="plan-section space-y-8">
+                    <section class="reports-shell-head" aria-labelledby="projection-title">
                         <div>
-                            <h4 id="projection-chart-title">Saldo projetado</h4>
-                            <p id="projection-explain">Baseado nos lançamentos futuros pendentes já cadastrados.</p>
+                            <p class="reports-eyebrow">Previsão financeira</p>
+                            <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
+                            <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
+                        </div>
+                        <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
+                            <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
+                            <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
+                        </div>
+                    </section>
+                    <section class="projection-control-card">
+                        <div id="projection-pending-controls" class="reports-control-row">
+                            <span class="reports-control-label">Prazo</span>
+                            <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">Próximos 7 dias</button>
+                            <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">Próximos 15 dias</button>
+                            <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">Próximos 30 dias</button>
+                            <button type="button" id="projection-period-custom" class="reports-chip" onclick="setProjectionPeriod('custom')">Personalizado</button>
+                            <input id="projection-custom-days" class="reports-small-input hidden" type="number" min="1" max="365" value="45" onchange="renderProjection()" aria-label="Dias personalizados">
+                        </div>
+                        <div id="projection-history-controls" class="reports-control-stack hidden">
+                            <div class="reports-control-row">
+                                <span class="reports-control-label">Base histórica</span>
+                                <button type="button" id="projection-history-1" class="reports-chip active" onclick="setProjectionHistoryMonths(1)">Mês passado</button>
+                                <button type="button" id="projection-history-2" class="reports-chip" onclick="setProjectionHistoryMonths(2)">Últimos 2 meses</button>
+                                <button type="button" id="projection-history-3" class="reports-chip" onclick="setProjectionHistoryMonths(3)">Últimos 3 meses</button>
+                                <button type="button" id="projection-history-6" class="reports-chip" onclick="setProjectionHistoryMonths(6)">Últimos 6 meses</button>
+                            </div>
+                            <div class="reports-control-row">
+                                <span class="reports-control-label">Prazo</span>
+                                <button type="button" id="projection-history-period-7" class="reports-chip active" onclick="setProjectionHistoryPeriod(7)">7 dias</button>
+                                <button type="button" id="projection-history-period-15" class="reports-chip" onclick="setProjectionHistoryPeriod(15)">15 dias</button>
+                                <button type="button" id="projection-history-period-30" class="reports-chip" onclick="setProjectionHistoryPeriod(30)">30 dias</button>
+                            </div>
+                        </div>
+                        <div class="reports-control-row" aria-label="Agrupamento do gráfico de projeção">
+                            <span class="reports-control-label">Mostrar gráfico por</span>
+                            <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
+                            <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
+                            <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
+                        </div>
+                    </section>
+                    <div class="reports-summary-grid">
+                        <article class="reports-summary-card in"><span><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i></span><p id="projection-card-in-label">Entradas previstas</p><strong id="projection-card-in">R$ 0,00</strong></article>
+                        <article class="reports-summary-card out"><span><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i></span><p id="projection-card-out-label">Saídas previstas</p><strong id="projection-card-out">R$ 0,00</strong></article>
+                        <article class="reports-summary-card net"><span><i data-lucide="chart-spline" class="w-4 h-4"></i></span><p id="projection-card-net-label">Saldo projetado</p><strong id="projection-card-net">R$ 0,00</strong></article>
+                    </div>
+                    <section class="card-premium reports-chart-card">
+                        <div class="reports-card-head">
+                            <div>
+                                <h4 id="projection-chart-title">Saldo projetado</h4>
+                                <p id="projection-explain">Baseado nos lançamentos futuros pendentes já cadastrados.</p>
+                            </div>
+                        </div>
+                        <div class="reports-chart-frame"><canvas id="projection-chart"></canvas></div>
+                    </section>
+                    <section class="card-premium reports-insights-card">
+                        <div class="reports-card-head">
+                            <div>
+                                <h4 id="projection-list-title">Lançamentos usados na projeção</h4>
+                                <p id="projection-list-subtitle">Somente pendências futuras dentro do prazo escolhido.</p>
+                            </div>
+                        </div>
+                        <div id="projection-list" class="projection-list"></div>
+                    </section>
+                </div>
+
+                <!-- Seção: Metas -->
+                <div id="plan-goals-section" class="plan-section hidden space-y-6">
+                    <div class="card-premium p-6">
+                        <div class="flex flex-wrap gap-4 items-center justify-between">
+                            <div>
+                                <p class="text-base font-black text-slate-900">Controle de Metas</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Orçamentos e metas por categoria, subcategoria e destino.</p>
+                            </div>
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <div class="pill-segment compact" role="tablist" aria-label="Modo de visualização de metas">
+                                    <button type="button" id="goals-mode-cards" class="pill-segment-btn active" onclick="setGoalsDisplayMode('cards')" aria-selected="true">
+                                        <i data-lucide="layout-grid" class="w-4 h-4"></i>Cards
+                                    </button>
+                                    <button type="button" id="goals-mode-table" class="pill-segment-btn" onclick="setGoalsDisplayMode('table')" aria-selected="false">
+                                        <i data-lucide="table-2" class="w-4 h-4"></i>Tabela
+                                    </button>
+                                </div>
+                                <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase shadow flex items-center gap-2">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>Nova Meta
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="reports-chart-frame"><canvas id="projection-chart"></canvas></div>
-                </section>
-                <section class="card-premium reports-insights-card">
-                    <div class="reports-card-head">
-                        <div>
-                            <h4 id="projection-list-title">Lançamentos usados na projeção</h4>
-                            <p id="projection-list-subtitle">Somente pendências futuras dentro do prazo escolhido.</p>
-                        </div>
-                    </div>
-                    <div id="projection-list" class="projection-list"></div>
-                </section>
+                    <div id="goals-cards-section" class="goals-cards-section"></div>
+                    <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                    <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                </div>
             </div>
 
             <!-- TESOURARIA -->
@@ -7364,32 +7436,6 @@
             </div>
 
             <!-- METAS -->
-            <div id="goals" class="tab-content space-y-6">
-                <div class="card-premium p-6">
-                    <div class="flex flex-wrap gap-4 items-center justify-between">
-                        <div>
-                            <p class="text-base font-black text-slate-900">Controle de Metas</p>
-                            <p class="text-xs text-slate-400 mt-0.5">Orçamentos e metas por categoria, subcategoria e destino.</p>
-                        </div>
-                        <div class="flex items-center gap-3 flex-wrap">
-                            <div class="pill-segment compact" role="tablist" aria-label="Modo de visualização de metas">
-                                <button type="button" id="goals-mode-cards" class="pill-segment-btn active" onclick="setGoalsDisplayMode('cards')" aria-selected="true">
-                                    <i data-lucide="layout-grid" class="w-4 h-4"></i>Cards
-                                </button>
-                                <button type="button" id="goals-mode-table" class="pill-segment-btn" onclick="setGoalsDisplayMode('table')" aria-selected="false">
-                                    <i data-lucide="table-2" class="w-4 h-4"></i>Tabela
-                                </button>
-                            </div>
-                            <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase shadow flex items-center gap-2">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>Nova Meta
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="goals-cards-section" class="goals-cards-section"></div>
-                <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
-                <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-            </div>
         </div>
     </main>
 
@@ -7398,9 +7444,9 @@
             <i data-lucide="chart-no-axes-combined" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Relat.</span>
         </button>
-        <button type="button" onclick="switchTab('projection')" id="mnav-projection" class="mobile-nav-btn" aria-label="Projeção financeira">
-            <i data-lucide="chart-spline" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Proj.</span>
+        <button type="button" onclick="switchTab('planejamento')" id="mnav-planejamento" class="mobile-nav-btn" aria-label="Planejamento">
+            <i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i>
+            <span class="mobile-nav-label">Plan.</span>
         </button>
         <button type="button" onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
             <i data-lucide="receipt" class="w-5 h-5" aria-hidden="true"></i>
@@ -7417,10 +7463,6 @@
         <button type="button" onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
             <i data-lucide="database" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Banco</span>
-        </button>
-        <button type="button" onclick="switchTab('goals')" id="mnav-goals" class="mobile-nav-btn" aria-label="Metas financeiras">
-            <i data-lucide="target" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Metas</span>
         </button>
     </nav>
 
@@ -8407,11 +8449,10 @@
             initial: ['Conectando com a nuvem', 'Carregando cadastros', 'Carregando lancamentos', 'Sincronizando metas', 'Montando a tela inicial'],
             reports: ['Lendo lancamentos do periodo', 'Calculando totais e saldos', 'Montando graficos', 'Preparando detalhamento'],
             entries: ['Aplicando filtros', 'Somando entradas e saidas', 'Organizando a tabela', 'Preparando paginacao'],
-            projection: ['Lendo pendencias', 'Calculando fluxo futuro', 'Montando cenarios', 'Atualizando grafico'],
+            planejamento: ['Carregando planejamento', 'Calculando projecao', 'Organizando metas', 'Atualizando painel'],
             treasury: ['Carregando vendas', 'Calculando caixa da loja', 'Organizando historico', 'Atualizando painel'],
             database: ['Lendo estrutura', 'Organizando categorias', 'Montando listas', 'Preparando edicao'],
-            reconciliation: ['Preparando conciliacao', 'Carregando contas', 'Validando estrutura', 'Liberando importacao'],
-            goals: ['Carregando metas', 'Calculando progresso', 'Organizando historico', 'Atualizando painel']
+            reconciliation: ['Preparando conciliacao', 'Carregando contas', 'Validando estrutura', 'Liberando importacao']
         };
 
         const waitMs = (ms) => new Promise(resolve => window.setTimeout(resolve, ms));
@@ -8422,11 +8463,10 @@
             const labels = {
                 entries: 'Carregando lancamentos',
                 reports: 'Carregando relatorios',
-                projection: 'Carregando projecao',
+                planejamento: 'Carregando planejamento',
                 reconciliation: 'Preparando conciliacao',
                 treasury: 'Carregando vendas',
-                database: 'Carregando banco de dados',
-                goals: 'Carregando metas'
+                database: 'Carregando banco de dados'
             };
             return labels[tabId] || 'Carregando visao';
         }
@@ -8437,9 +8477,8 @@
             const goalCount = Array.isArray(goalsData) ? goalsData.length : 0;
             if (tabId === 'entries') return `${totalEntries} lancamento(s) prontos para consulta.`;
             if (tabId === 'reports') return `${totalEntries} lancamento(s) analisados nos relatorios.`;
-            if (tabId === 'projection') return 'Projecao atualizada com base nas pendencias cadastradas.';
+            if (tabId === 'planejamento') return `Planejamento pronto: projecao e ${goalCount} meta(s).`;
             if (tabId === 'database') return `${accountCount} conta(s) e cadastros carregados.`;
-            if (tabId === 'goals') return `${goalCount} meta(s) pronta(s) para acompanhar.`;
             return 'Tela pronta com os dados mais recentes.';
         }
 
@@ -10805,16 +10844,27 @@
             const titleMap = {
                 entries: 'Lançamentos',
                 reports: 'Relatórios financeiros',
-                projection: 'Projeção financeira',
+                planejamento: 'Planejamento',
                 reconciliation: 'Conciliação',
                 treasury: 'Relatório de Vendas',
-                database: 'Banco de Dados',
-                goals: 'Metas financeiras'
+                database: 'Banco de Dados'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
             if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
             runPageLoader(tabId, render);
+        }
+
+        function switchPlanTab(tab) {
+            window.currentPlanTab = tab;
+            document.querySelectorAll('.plan-pill-btn').forEach(btn => {
+                btn.classList.toggle('is-active', btn.id === `plantab-${tab}`);
+            });
+            document.querySelectorAll('.plan-section').forEach(sec => {
+                sec.classList.toggle('hidden', sec.id !== `plan-${tab}-section`);
+            });
+            if (tab === 'projection') renderProjection();
+            else renderGoals();
         }
 
         function render() {
@@ -10831,16 +10881,16 @@
                 renderMonthly();
                 renderAnnual();
                 updateReportsModeUI();
-            } else if (currentTab === 'projection') {
-                renderProjection();
+            } else if (currentTab === 'planejamento') {
+                const activePlan = window.currentPlanTab || 'projection';
+                if (activePlan === 'projection') renderProjection();
+                else renderGoals();
             } else if (currentTab === 'treasury') {
                 renderTreasury();
             } else if (currentTab === 'database') {
                 renderDatabase();
             } else if (currentTab === 'reconciliation') {
                 populateDropdown('recon-account-select', state.accounts);
-            } else if (currentTab === 'goals') {
-                renderGoals();
             }
             refreshLucideIcons();
             initPiggyMicroInteractions();
@@ -19194,7 +19244,7 @@
 
             saveGoals();
             closeModal('goals-modal');
-            if (currentTab === 'goals') renderGoals();
+            if (currentTab === 'planejamento' && window.currentPlanTab === 'goals') renderGoals();
 
             if (goal) {
                 const result = await upsertGoalToCloud(goal);
@@ -19226,7 +19276,7 @@
             goalsData = goalsData.filter(g => g.id !== id);
             saveGoals();
             closeModal('goals-modal');
-            if (currentTab === 'goals') renderGoals();
+            if (currentTab === 'planejamento' && window.currentPlanTab === 'goals') renderGoals();
             const result = await deleteGoalFromCloud(id);
             if (!result.ok) {
                 showAppToast('Meta removida localmente. Falha ao sincronizar com a nuvem.', { tone: 'danger' });
