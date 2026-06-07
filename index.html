@@ -7003,7 +7003,6 @@
                     <article class="reports-summary-card net"><span><i data-lucide="wallet" class="w-4 h-4"></i></span><p>Resultado anual</p><strong id="reports-annual-net">R$ 0,00</strong></article>
                     <article class="reports-summary-card avg"><span><i data-lucide="calendar-range" class="w-4 h-4"></i></span><p>Média mensal</p><strong id="reports-annual-avg">R$ 0,00</strong></article>
                 </div>
-                <div class="card-premium p-10 h-[450px] reports-chart-card"><div class="reports-card-head"><div><h4>Gráfico anual</h4><p>Comparação mês a mês de entradas e saídas.</p></div></div><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
                 <div class="card-premium overflow-hidden reports-legacy-annual-table hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="annual-main-table" class="w-full text-left">
@@ -13891,60 +13890,7 @@
                 <td class="px-12 py-5 text-right font-black ${d.bal>=0?'flow-balance-text':'flow-expense-text'}">${formatBRL(d.bal)}</td>
             </tr>`).join('');
             
-            const ctxEl = document.getElementById('chartAnnual');
-            if(ctxEl) {
-                if(window.aChart) window.aChart.destroy();
-                const annualInc = data.map(x => x.inc);
-                const annualIncOperational = data.map(x => Math.max((Number(x.inc) || 0) - (Number(x.aporte) || 0), 0));
-                const annualAporte = data.map(x => Number(x.aporte) || 0);
-                const annualExp = data.map(x => x.exp);
-                const annualMax = Math.max(...annualInc, ...annualExp, 0);
-                const annualAxisMax = annualMax > 0 ? Math.ceil(annualMax * 1.15) : 100;
-                const annualStep = Math.max(1, Math.ceil(annualAxisMax / 5));
-                window.aChart = new Chart(ctxEl.getContext('2d'), { 
-                    type: 'bar', 
-                    data: { 
-                        labels: monthNames, 
-                        datasets: [
-                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#0F8A67', borderRadius: 8, stack: 'entrada' }, 
-                            { label: 'Aporte de capital', data: annualAporte, backgroundColor: '#8FD19E', borderRadius: 8, stack: 'entrada' },
-                            { label: 'Saídas', data: annualExp, backgroundColor: '#C94A34', borderRadius: 8, stack: 'saida' }
-                        ] 
-                    }, 
-                    options: {
-                        maintainAspectRatio: false, 
-                        interaction: { mode: 'nearest', intersect: false },
-                        onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
-                        scales: { 
-                            x: { stacked: true, grid: { display: false } }, 
-                            y: {
-                                stacked: true,
-                                min: 0,
-                                max: annualAxisMax,
-                                grid: { borderDash: [5,5] },
-                                ticks: {
-                                    stepSize: annualStep,
-                                    maxTicksLimit: 6,
-                                    callback: (value) => formatChartBRLCompact(value)
-                                }
-                            } 
-                        },
-                        plugins: {
-                            legend: { position: 'top' },
-                            tooltip: getReadableTooltipConfig((ctx) => {
-                                const idx = Number(ctx.dataIndex || 0);
-                                const valorAtual = Number(ctx.raw || 0);
-                                const totalEntradas = Number(annualInc[idx] || 0);
-                                if (ctx.dataset.stack === 'entrada') {
-                                    return `${ctx.dataset.label}: ${formatBRL(valorAtual)} (Total Entradas ${formatBRL(totalEntradas)})`;
-                                }
-                                return `${ctx.dataset.label}: ${formatBRL(valorAtual)}`;
-                            })
-                        }
-                    } 
-                });
-                window.aChart.update();
-            }
+
             renderAnnualTemporalComparison(year);
             const yearEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`));
             renderAnnualReportExtras(year, data, yearEntries);
