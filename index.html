@@ -4289,6 +4289,36 @@
             background: #fee2e2;
             border-color: #f87171;
         }
+        .recon-sheet-fill-handle {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            border: 1px solid #CBD5E1;
+            background: #F1F5F9;
+            color: #94A3B8;
+            cursor: ns-resize;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            letter-spacing: -1px;
+            user-select: none;
+            flex: 0 0 auto;
+        }
+        .recon-sheet-fill-handle:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+            color: #2563EB;
+        }
+        .recon-sheet-filling td {
+            background: #EFF6FF !important;
+        }
+        .recon-sheet-filling td:first-child {
+            box-shadow: inset 2px 0 0 #3B82F6;
+        }
+        .recon-sheet-filling td:last-child {
+            box-shadow: inset -2px 0 0 #3B82F6;
+        }
         .entry-destination-panel {
             border: 0;
             border-radius: 0;
@@ -8014,6 +8044,7 @@
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
         let tempReconSheet = [];
+        let reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
         let entryFillDragMode = '';
         let destinationComboboxState = {
             inputId: '',
@@ -16554,24 +16585,38 @@
                     `<option value="${escapeHtml(String(d.id || ''))}" ${String(d.id) === String(row.destinationId) ? 'selected' : ''}>${escapeHtml(getDestinationDisplayLabel(d))}</option>`
                 ).join('');
                 return `<tr class="table-row" id="recon-sheet-row-${i}">
-                    <td class="px-3 py-2">
-                        <input type="date" class="recon-sheet-input font-mono" value="${escapeHtml(row.date)}" oninput="updateReconSheetCell(${i}, 'date', this.value)">
+                    <td class="px-3 py-2 w-[148px]">
+                        <div class="flex items-center gap-1.5">
+                            <input type="date" id="recon-sh-date-${i}" class="recon-sheet-input font-mono flex-1 min-w-0"
+                                value="${escapeHtml(row.date)}"
+                                oninput="updateReconSheetCell(${i}, 'date', this.value)"
+                                onkeydown="handleReconSheetKeydown(${i}, 'date', event)">
+                            <button type="button" class="recon-sheet-fill-handle" onmousedown="startReconSheetFill(${i}, event)" title="Arraste para baixo para copiar e incrementar datas">⠿</button>
+                        </div>
                     </td>
                     <td class="px-3 py-2">
-                        <select class="recon-sheet-input" onchange="updateReconSheetCell(${i}, 'destinationId', this.value)">${destOptions}</select>
+                        <select id="recon-sh-dst-${i}" class="recon-sheet-input"
+                            onchange="updateReconSheetCell(${i}, 'destinationId', this.value)"
+                            onkeydown="handleReconSheetKeydown(${i}, 'destinationId', event)">${destOptions}</select>
                     </td>
-                    <td class="px-3 py-2">
-                        <input type="text" class="recon-sheet-input text-right font-mono ${isEntrada ? 'text-green-700' : 'text-red-700'}" placeholder="0,00" value="${escapeHtml(row.valor)}" oninput="updateReconSheetCell(${i}, 'valor', this.value)">
+                    <td class="px-3 py-2 w-[130px]">
+                        <input type="text" id="recon-sh-val-${i}" class="recon-sheet-input text-right font-mono ${isEntrada ? 'text-green-700' : 'text-red-700'}" placeholder="0,00"
+                            value="${escapeHtml(row.valor)}"
+                            oninput="updateReconSheetCell(${i}, 'valor', this.value)"
+                            onkeydown="handleReconSheetKeydown(${i}, 'valor', event)">
                     </td>
-                    <td class="px-3 py-2 text-center">
-                        <button type="button" onclick="toggleReconSheetType(${i})" class="recon-sheet-type-btn ${isEntrada ? 'recon-sheet-type-entrada' : 'recon-sheet-type-saida'}" title="${isEntrada ? 'Entrada — clique para mudar para Saída' : 'Saída — clique para mudar para Entrada'}">
+                    <td class="px-3 py-2 w-[72px] text-center">
+                        <button type="button" onclick="toggleReconSheetType(${i})" class="recon-sheet-type-btn ${isEntrada ? 'recon-sheet-type-entrada' : 'recon-sheet-type-saida'}" title="${isEntrada ? 'Entrada — clique para Saída' : 'Saída — clique para Entrada'}">
                             ${isEntrada ? '+' : '−'}
                         </button>
                     </td>
-                    <td class="px-3 py-2">
-                        <input type="text" class="recon-sheet-input" placeholder="Descrição" value="${escapeHtml(row.descricao)}" oninput="updateReconSheetCell(${i}, 'descricao', this.value)">
+                    <td class="px-3 py-2 w-[220px]">
+                        <input type="text" id="recon-sh-desc-${i}" class="recon-sheet-input" placeholder="Descrição"
+                            value="${escapeHtml(row.descricao)}"
+                            oninput="updateReconSheetCell(${i}, 'descricao', this.value)"
+                            onkeydown="handleReconSheetKeydown(${i}, 'descricao', event)">
                     </td>
-                    <td class="px-3 py-2 text-center">
+                    <td class="px-3 py-2 w-[52px] text-center">
                         <button onclick="removeReconSheetRow(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
@@ -16619,6 +16664,104 @@
             renderReconPreview();
             const preview = document.getElementById('recon-preview');
             if (preview && !preview.classList.contains('hidden')) preview.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startReconSheetFill(index, event) {
+            event.preventDefault();
+            reconSheetFillState = { active: true, sourceIndex: index, currentIndex: index };
+            document.addEventListener('mousemove', onReconSheetFillMove, { passive: true });
+            document.addEventListener('mouseup', onReconSheetFillEnd);
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'ns-resize';
+        }
+        function onReconSheetFillMove(event) {
+            if (!reconSheetFillState.active) return;
+            let targetIndex = reconSheetFillState.sourceIndex;
+            document.querySelectorAll('[id^="recon-sheet-row-"]').forEach(row => {
+                const rect = row.getBoundingClientRect();
+                if (event.clientY >= rect.top && event.clientY <= rect.bottom) {
+                    const idx = parseInt(row.id.replace('recon-sheet-row-', ''), 10);
+                    if (!isNaN(idx) && idx >= reconSheetFillState.sourceIndex) targetIndex = idx;
+                }
+            });
+            if (targetIndex === reconSheetFillState.currentIndex) return;
+            reconSheetFillState.currentIndex = targetIndex;
+            document.querySelectorAll('[id^="recon-sheet-row-"]').forEach(row => {
+                const idx = parseInt(row.id.replace('recon-sheet-row-', ''), 10);
+                if (isNaN(idx)) return;
+                if (idx > reconSheetFillState.sourceIndex && idx <= targetIndex) row.classList.add('recon-sheet-filling');
+                else row.classList.remove('recon-sheet-filling');
+            });
+        }
+        function onReconSheetFillEnd() {
+            document.removeEventListener('mousemove', onReconSheetFillMove);
+            document.removeEventListener('mouseup', onReconSheetFillEnd);
+            document.body.style.userSelect = '';
+            document.body.style.cursor = '';
+            if (!reconSheetFillState.active) return;
+            const src = reconSheetFillState.sourceIndex;
+            const end = reconSheetFillState.currentIndex;
+            const sourceRow = tempReconSheet[src];
+            if (sourceRow && end > src) {
+                for (let i = src + 1; i <= end && i < tempReconSheet.length; i++) {
+                    tempReconSheet[i].type = sourceRow.type;
+                    tempReconSheet[i].destinationId = sourceRow.destinationId;
+                    tempReconSheet[i].valor = sourceRow.valor;
+                    tempReconSheet[i].descricao = sourceRow.descricao;
+                    if (sourceRow.date) {
+                        const d = new Date(sourceRow.date + 'T12:00:00');
+                        d.setDate(d.getDate() + (i - src));
+                        tempReconSheet[i].date = d.toISOString().slice(0, 10);
+                    }
+                }
+            }
+            reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
+            renderReconSheet();
+        }
+        function handleReconSheetKeydown(rowIndex, colName, event) {
+            const cols = ['date', 'destinationId', 'valor', 'descricao'];
+            const colIdx = cols.indexOf(colName);
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const dir = event.shiftKey ? -1 : 1;
+                const nextCol = colIdx + dir;
+                if (nextCol >= 0 && nextCol < cols.length) {
+                    focusReconSheetCell(rowIndex, cols[nextCol]);
+                } else if (nextCol >= cols.length) {
+                    if (rowIndex + 1 < tempReconSheet.length) {
+                        focusReconSheetCell(rowIndex + 1, cols[0]);
+                    } else {
+                        addReconSheetRow();
+                        setTimeout(() => focusReconSheetCell(rowIndex + 1, cols[0]), 40);
+                    }
+                } else if (rowIndex > 0) {
+                    focusReconSheetCell(rowIndex - 1, cols[cols.length - 1]);
+                }
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                if (rowIndex + 1 < tempReconSheet.length) {
+                    focusReconSheetCell(rowIndex + 1, colName);
+                } else {
+                    addReconSheetRow();
+                    setTimeout(() => focusReconSheetCell(rowIndex + 1, colName), 40);
+                }
+            } else if (event.key === 'ArrowDown') {
+                if (colName === 'date' || colName === 'valor' || colName === 'descricao') {
+                    event.preventDefault();
+                    focusReconSheetCell(rowIndex + 1, colName);
+                }
+            } else if (event.key === 'ArrowUp' && rowIndex > 0) {
+                if (colName === 'date' || colName === 'valor' || colName === 'descricao') {
+                    event.preventDefault();
+                    focusReconSheetCell(rowIndex - 1, colName);
+                }
+            }
+        }
+        function focusReconSheetCell(rowIndex, colName) {
+            if (rowIndex < 0 || rowIndex >= tempReconSheet.length) return;
+            const ids = { date: `recon-sh-date-${rowIndex}`, destinationId: `recon-sh-dst-${rowIndex}`, valor: `recon-sh-val-${rowIndex}`, descricao: `recon-sh-desc-${rowIndex}` };
+            const el = document.getElementById(ids[colName]);
+            if (el) { el.focus(); if (typeof el.select === 'function') el.select(); }
         }
 
         async function finalizeRecon() {
