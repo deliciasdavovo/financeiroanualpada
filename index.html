@@ -16700,15 +16700,7 @@
             const sourceRow = tempReconSheet[src];
             if (sourceRow && end > src) {
                 for (let i = src + 1; i <= end && i < tempReconSheet.length; i++) {
-                    tempReconSheet[i].type = sourceRow.type;
                     tempReconSheet[i].destinationId = sourceRow.destinationId;
-                    tempReconSheet[i].valor = sourceRow.valor;
-                    tempReconSheet[i].descricao = sourceRow.descricao;
-                    if (sourceRow.date) {
-                        const d = new Date(sourceRow.date + 'T12:00:00');
-                        d.setDate(d.getDate() + (i - src));
-                        tempReconSheet[i].date = d.toISOString().slice(0, 10);
-                    }
                 }
             }
             reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
@@ -16735,11 +16727,16 @@
                 }
             } else if (event.key === 'Enter') {
                 event.preventDefault();
-                if (rowIndex + 1 < tempReconSheet.length) {
-                    focusReconSheetCell(rowIndex + 1, colName);
+                const nextColEnter = colIdx + 1;
+                if (nextColEnter < cols.length) {
+                    focusReconSheetCell(rowIndex, cols[nextColEnter]);
                 } else {
-                    addReconSheetRow();
-                    setTimeout(() => focusReconSheetCell(rowIndex + 1, colName), 40);
+                    if (rowIndex + 1 < tempReconSheet.length) {
+                        focusReconSheetCell(rowIndex + 1, cols[0]);
+                    } else {
+                        addReconSheetRow();
+                        setTimeout(() => focusReconSheetCell(rowIndex + 1, cols[0]), 40);
+                    }
                 }
             } else if (event.key === 'ArrowDown') {
                 if (colName === 'date' || colName === 'valor' || colName === 'descricao') {
