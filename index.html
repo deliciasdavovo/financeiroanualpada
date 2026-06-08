@@ -6945,6 +6945,10 @@
                             <h4 id="reports-monthly-chart-title">Fluxo diário</h4>
                             <p id="reports-monthly-chart-subtitle">Entradas e saídas realizadas por dia.</p>
                         </div>
+                        <button type="button" id="daily-pend-toggle" class="daily-pend-toggle-btn" onclick="toggleDailyPending()" aria-pressed="false">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                            <span>Pendentes</span>
+                        </button>
                     </div>
                     <div class="reports-chart-frame">
                         <canvas id="reports-monthly-chart"></canvas>
@@ -7007,10 +7011,6 @@
                             <h4 class="monthly-daily-title">Tabela de fluxo diário</h4>
                             <p class="monthly-daily-sub">Entradas, saídas, líquido do dia e saldo acumulado.</p>
                         </div>
-                        <button type="button" id="daily-pend-toggle" class="daily-pend-toggle-btn" onclick="toggleDailyPending()" aria-pressed="false">
-                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                            <span>Pendentes</span>
-                        </button>
                     </div>
                     <div class="monthly-daily-scroll overflow-auto table-mobile-scroll custom-scrollbar">
                         <table id="monthly-daily-view" class="monthly-daily-table w-full text-left">
@@ -13380,7 +13380,7 @@
             </article>`;
         }
 
-        function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP) {
+        function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
             const totalProjected = (Number(incR) || 0) + (Number(incP) || 0) - (Number(expR) || 0) - (Number(expP) || 0);
             const resultEl = document.getElementById('reports-month-result');
             const resultNoteEl = document.getElementById('reports-month-result-note');
@@ -13396,23 +13396,32 @@
             const chartEl = document.getElementById('reports-monthly-chart');
             const emptyEl = document.getElementById('reports-monthly-empty');
             const chartSubtitleEl = document.getElementById('reports-monthly-chart-subtitle');
+            const hasPendingDailyData = (dailyInPend || []).some(v => Number(v) > 0) || (dailyOutPend || []).some(v => Number(v) > 0);
             const hasRealizedDailyData = dailyInReal.some(value => Number(value) > 0) || dailyOutReal.some(value => Number(value) > 0);
-            if (emptyEl) emptyEl.classList.toggle('hidden', hasRealizedDailyData);
-            if (chartEl) chartEl.style.opacity = hasRealizedDailyData ? '1' : '0';
+            const hasAnyData = hasRealizedDailyData || (dailyShowPending && hasPendingDailyData);
+            if (emptyEl) emptyEl.classList.toggle('hidden', hasAnyData);
+            if (chartEl) chartEl.style.opacity = hasAnyData ? '1' : '0';
             if (chartSubtitleEl) chartSubtitleEl.innerText = hasRealizedDailyData
-                ? 'Entradas e saídas realizadas por dia.'
-                : 'Sem movimentos realizados no mês selecionado.';
+                ? (dailyShowPending ? 'Entradas e saídas realizadas e pendentes por dia.' : 'Entradas e saídas realizadas por dia.')
+                : (dailyShowPending && hasPendingDailyData ? 'Lançamentos pendentes por dia.' : 'Sem movimentos realizados no mês selecionado.');
+            const pendToggleBtn = document.getElementById('daily-pend-toggle');
+            if (pendToggleBtn) {
+                pendToggleBtn.classList.toggle('is-active', dailyShowPending);
+                pendToggleBtn.setAttribute('aria-pressed', String(dailyShowPending));
+            }
             if (chartEl && window.Chart) {
                 if (window.reportsMonthlyChart) window.reportsMonthlyChart.destroy();
+                const datasets = [
+                    { label: 'Entradas', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 18 },
+                    { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
+                ];
+                if (dailyShowPending && dailyInPend) {
+                    datasets.push({ label: 'Entradas pendentes', data: dailyInPend, backgroundColor: '#86EFAC', borderRadius: 10, maxBarThickness: 14 });
+                    datasets.push({ label: 'Saídas pendentes', data: dailyOutPend || [], backgroundColor: '#FCA5A5', borderRadius: 10, maxBarThickness: 14 });
+                }
                 window.reportsMonthlyChart = new Chart(chartEl.getContext('2d'), {
                     type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [
-                            { label: 'Entradas', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 18 },
-                            { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
-                        ]
-                    },
+                    data: { labels, datasets },
                     options: {
                         maintainAspectRatio: false,
                         interaction: { mode: 'index', intersect: false },
@@ -13628,7 +13637,7 @@
                 monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold">Nenhum movimento realizado neste período. Cadastre um lançamento realizado ou escolha outro mês.</td></tr>';
             }
 
-            renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP);
+            renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend);
             clearMonthlyCategoryCharts();
         }
 
