@@ -1129,26 +1129,28 @@
             white-space: nowrap;
         }
         .daily-pend-toggle-btn {
-            display: flex;
+            display: inline-flex !important;
             align-items: center;
             gap: 6px;
             padding: 7px 14px;
-            border-radius: 999px;
-            border: 1.5px solid #E2E8F0;
-            font-size: 11px;
+            border-radius: 999px !important;
+            border: 1.5px solid #CBD5E1 !important;
+            font-size: 11px !important;
             font-weight: 700;
-            color: #64748B;
-            background: #F8FAFC;
+            color: #334155 !important;
+            background: #F1F5F9 !important;
             cursor: pointer;
             transition: all 180ms ease;
             white-space: nowrap;
             flex-shrink: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1;
         }
-        .daily-pend-toggle-btn:hover { border-color: #CBD5E1; background: #F1F5F9; }
+        .daily-pend-toggle-btn:hover { border-color: #94A3B8 !important; background: #E2E8F0 !important; }
         .daily-pend-toggle-btn.is-active {
-            background: #EFF6FF;
-            border-color: var(--primary-blue);
-            color: var(--primary-blue);
+            background: #EFF6FF !important;
+            border-color: var(--primary-blue) !important;
+            color: var(--primary-blue) !important;
         }
         .monthly-day-row.is-pend {
             background: #FAFBFF;
