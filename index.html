@@ -14538,19 +14538,63 @@
 
             const listEl = document.getElementById('projection-list');
             if (listEl) {
-                listEl.innerHTML = entries.length ? entries.map(entry => {
-                    const flow = normalizeFlowType(entry.type);
-                    const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
-                    const meta = [getAccountNameById(entry.accountId), entry.description || ''].filter(Boolean).join(' • ');
-                    return `<article class="projection-list-item">
-                        <span class="projection-list-date">${formatDateBRV2(entry.date)}</span>
-                        <div>
-                            <p class="projection-list-name">${escapeHtml(destination)}</p>
-                            <p class="projection-list-meta">${escapeHtml(meta)}</p>
-                        </div>
-                        <strong class="projection-list-value ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'} ${formatBRL(Number(entry.amount) || 0)}</strong>
-                    </article>`;
-                }).join('') : '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+                if (!entries.length) {
+                    listEl.innerHTML = '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+                } else {
+                    const rows = buckets.map(bucket => {
+                        const net = bucket.inc - bucket.exp;
+                        const periodDetail = bucket.startIso === bucket.endIso
+                            ? formatDateBRV2(bucket.startIso)
+                            : `${formatDateBRV2(bucket.startIso)} a ${formatDateBRV2(bucket.endIso)}`;
+                        return `<tr>
+                            <td>
+                                <div class="projection-table-date">${escapeHtml(bucket.label)}</div>
+                                <div class="projection-table-sub">${escapeHtml(periodDetail)}</div>
+                            </td>
+                            <td><span class="projection-table-value flow-income-text">${formatBRL(bucket.inc)}</span></td>
+                            <td><span class="projection-table-value flow-expense-text">${formatBRL(bucket.exp)}</span></td>
+                            <td><span class="projection-table-value ${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(net)}</span></td>
+                        </tr>`;
+                    }).join('');
+                    const tableHtml = `<div class="projection-table-wrap custom-scrollbar">
+                        <table class="projection-table" aria-label="Resumo da projeção por período">
+                            <thead>
+                                <tr>
+                                    <th>Período</th>
+                                    <th>Entradas</th>
+                                    <th>Saídas</th>
+                                    <th>Resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                                <tr class="projection-table-total">
+                                    <td>
+                                        <div class="projection-table-date">Total previsto</div>
+                                        <div class="projection-table-sub">${days} dias de pendências futuras</div>
+                                    </td>
+                                    <td><span class="projection-table-value flow-income-text">${formatBRL(summary.inc)}</span></td>
+                                    <td><span class="projection-table-value flow-expense-text">${formatBRL(summary.exp)}</span></td>
+                                    <td><span class="projection-table-value ${summary.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(summary.net)}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>`;
+                    const itemsHtml = entries.map(entry => {
+                        const flow = normalizeFlowType(entry.type);
+                        const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
+                        const meta = [getAccountNameById(entry.accountId), entry.description || ''].filter(Boolean).join(' • ');
+                        return `<article class="projection-list-item">
+                            <span class="projection-list-date">${formatDateBRV2(entry.date)}</span>
+                            <div>
+                                <p class="projection-list-name">${escapeHtml(destination)}</p>
+                                <p class="projection-list-meta">${escapeHtml(meta)}</p>
+                            </div>
+                            <strong class="projection-list-value ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'} ${formatBRL(Number(entry.amount) || 0)}</strong>
+                        </article>`;
+                    }).join('');
+                    listEl.innerHTML = tableHtml + itemsHtml;
+                }
             }
         }
 
