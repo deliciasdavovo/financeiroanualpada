@@ -7082,6 +7082,79 @@
                         </table>
                     </div>
                 </div>
+                <div class="card-premium p-8 space-y-6 annual-supplier-compare-card">
+                    <div class="flex flex-wrap items-end justify-between gap-4">
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900">Fornecedor mês a mês</h4>
+                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Escolha um destino/fornecedor para comparar janeiro, fevereiro, março e os demais meses.</p>
+                        </div>
+                        <div class="annual-filters-grid">
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-temporal-flow">Fluxo</label>
+                                <select id="annual-temporal-flow">
+                                    <option value="TODOS">Entradas e Saídas</option>
+                                    <option value="SAÍDA">Saídas</option>
+                                    <option value="ENTRADA">Entradas</option>
+                                </select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-temporal-mode">Modo</label>
+                                <select id="annual-temporal-mode">
+                                    <option value="MESES">Entre os meses do ano</option>
+                                    <option value="ANOS">Entre os anos</option>
+                                </select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-temporal-year">Ano Base</label>
+                                <select id="annual-temporal-year"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-nav-category">Categoria</label>
+                                <select id="annual-nav-category"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-nav-subcategory">Subcategoria</label>
+                                <select id="annual-nav-subcategory"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-nav-destination">Destino</label>
+                                <select id="annual-nav-destination"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-nav-account">Conta / Banco</label>
+                                <select id="annual-nav-account"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-exclude-destination">Excluir destino</label>
+                                <select id="annual-exclude-destination"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="annual-hierarchy-detail"></div>
+                    <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                        <div class="xl:col-span-3 h-[520px]">
+                            <canvas id="chartAnnualTemporal"></canvas>
+                        </div>
+                        <div class="xl:col-span-2 border border-slate-100 rounded-2xl overflow-hidden">
+                            <div class="table-mobile-scroll custom-scrollbar">
+                                <table id="annual-temporal-table" class="w-full text-left annual-compare-table">
+                                    <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
+                                        <tr>
+                                            <th class="px-4 py-3">Período</th>
+                                            <th class="px-4 py-3 text-right">Entradas</th>
+                                            <th class="px-4 py-3 text-right">Aporte de Capital</th>
+                                            <th class="px-4 py-3 text-right">Saídas</th>
+                                            <th class="px-4 py-3 text-right">Saldo</th>
+                                            <th class="px-4 py-3 text-right">Lançamentos</th>
+                                            <th class="px-4 py-3 text-right">Abrir</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
             </div>
@@ -13998,6 +14071,7 @@
             }
             const yearEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`));
             renderAnnualReportExtras(year, data, yearEntries);
+            renderAnnualTemporalComparison(year);
         }
         function formatVariation(current, prev) {
             if (!prev) return '-';
@@ -14006,8 +14080,42 @@
             return `${sign}${pct.toFixed(1).replace('.', ',')}%`;
         }
 
+        function openAnnualTemporalPeriodInEntries(startIso, endIso) {
+            const destinationName = annualNavDestinationId ? (getDestinationById(annualNavDestinationId)?.name || '') : '';
+            const setValue = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value;
+            };
+            setValue('filter-desc', destinationName);
+            setValue('filter-type', annualTemporalFlow === 'TODOS' ? '' : annualTemporalFlow);
+            setValue('filter-status', 'REALIZADO');
+            setValue('filter-account', annualNavAccountId || '');
+            if (String(startIso || '').slice(0, 7) === String(endIso || '').slice(0, 7)) {
+                setValue('filter-month', String(startIso || '').slice(0, 7));
+                setValue('filter-date-start', startIso || '');
+                setValue('filter-date-end', endIso || '');
+            } else {
+                setValue('filter-month', '');
+                setValue('filter-date-start', startIso || '');
+                setValue('filter-date-end', endIso || '');
+            }
+            switchTab('entries');
+            renderEntries();
+        }
+
         function renderAnnualTemporalComparison(year) {
-            return;
+            const flowEl = document.getElementById('annual-temporal-flow');
+            const modeEl = document.getElementById('annual-temporal-mode');
+            const yearEl = document.getElementById('annual-temporal-year');
+            const catEl = document.getElementById('annual-nav-category');
+            const subEl = document.getElementById('annual-nav-subcategory');
+            const dstEl = document.getElementById('annual-nav-destination');
+            const accountEl = document.getElementById('annual-nav-account');
+            const excludeDstEl = document.getElementById('annual-exclude-destination');
+            const tableBody = document.getElementById('annual-temporal-table-body');
+            const summaryEl = document.getElementById('annual-temporal-summary');
+            const chartEl = document.getElementById('chartAnnualTemporal');
+            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !accountEl || !excludeDstEl || !tableBody || !summaryEl || !chartEl) return;
 
             const validYears = Array.from(new Set(
                 getAnalyticalEntries(state.entries)
