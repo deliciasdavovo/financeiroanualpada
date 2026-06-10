@@ -1031,8 +1031,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 16px;
-            padding: 18px 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 14px 20px;
             border-bottom: 1px solid #E9EEF5;
             background: #FFFFFF;
         }
@@ -1126,6 +1127,49 @@
             color: #0F172A;
             font-weight: 900;
             white-space: nowrap;
+        }
+        .daily-pend-toggle-btn {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 999px !important;
+            border: 1.5px solid #CBD5E1 !important;
+            font-size: 11px !important;
+            font-weight: 700;
+            color: #334155 !important;
+            background: #F1F5F9 !important;
+            cursor: pointer;
+            transition: all 180ms ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1;
+        }
+        .daily-pend-toggle-btn:hover { border-color: #94A3B8 !important; background: #E2E8F0 !important; }
+        .daily-pend-toggle-btn.is-active {
+            background: #EFF6FF !important;
+            border-color: var(--primary-blue) !important;
+            color: var(--primary-blue) !important;
+        }
+        .monthly-day-row.is-pend {
+            background: #FAFBFF;
+        }
+        .monthly-day-row.is-pend td {
+            padding-top: 3px;
+            padding-bottom: 8px;
+            border-top: none !important;
+        }
+        .monthly-day-row.is-pend .monthly-flow-value { opacity: 0.75; }
+        .daily-pend-tag {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #94A3B8;
+            border: 1px dashed #CBD5E1;
+            padding: 2px 6px;
+            border-radius: 4px;
         }
         .status-toggle {
             display: flex;
@@ -1402,10 +1446,15 @@
         @keyframes messagePushDown {
             to { opacity: 0; transform: translateY(10px) scale(0.98); }
         }
+        @media (max-width: 1023px) {
+            .app-toast-region {
+                bottom: calc(80px + env(safe-area-inset-bottom));
+            }
+        }
         @media (max-width: 640px) {
             .app-toast-region {
                 right: 16px;
-                bottom: 16px;
+                bottom: calc(80px + env(safe-area-inset-bottom));
             }
             .app-toast {
                 grid-template-columns: 34px minmax(0, 1fr) 30px;
@@ -1966,6 +2015,127 @@
             font-weight: 800;
             color: var(--soft-red);
         }
+        /* ── Mobile lock screen (iOS classic) ── */
+        #login-mobile-lock { display: none; }
+        .lml-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .lml-lock-wrap {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #4a84e0 0%, #2563eb 45%, #1a4fcc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 7px rgba(37,99,235,0.12), 0 22px 54px rgba(29,78,216,0.32);
+            transition: background 0.28s ease, box-shadow 0.28s ease, transform 0.2s ease;
+        }
+        .lml-lock-wrap.unlocking {
+            background: linear-gradient(145deg, #34d399 0%, #10b981 45%, #059669 100%);
+            box-shadow: 0 0 0 7px rgba(5,150,105,0.12), 0 22px 54px rgba(5,150,105,0.35);
+            transform: scale(1.06);
+        }
+        .lml-lock-wrap svg { width: 40px; height: 40px; color: white; display: block; }
+        .lml-app-name {
+            font-size: 28px;
+            font-weight: 900;
+            color: #0F172A;
+            letter-spacing: -0.02em;
+        }
+        .lml-app-sub {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748B;
+            margin-top: -14px;
+            letter-spacing: 0.03em;
+        }
+        .lml-slide-area { width: 100%; max-width: 310px; }
+        .lml-slide-track {
+            position: relative;
+            width: 100%;
+            height: 62px;
+            background: rgba(15,23,42,0.06);
+            border-radius: 16px;
+            border: 1px solid rgba(15,23,42,0.12);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        .lml-slide-thumb {
+            position: absolute;
+            left: 5px;
+            width: 52px;
+            height: 52px;
+            border-radius: 13px;
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.9);
+            cursor: grab;
+            z-index: 2;
+            touch-action: none;
+            will-change: left;
+        }
+        .lml-slide-thumb svg { width: 22px; height: 22px; color: #334155; }
+        @keyframes lmlShimmer {
+            0%   { background-position: -280% center; }
+            100% { background-position: 280% center; }
+        }
+        .lml-slide-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            pointer-events: none;
+            padding-left: 62px;
+            background: linear-gradient(90deg,
+                rgba(15,23,42,0.25) 0%,
+                rgba(15,23,42,0.25) 32%,
+                rgba(15,23,42,0.80) 50%,
+                rgba(15,23,42,0.25) 68%,
+                rgba(15,23,42,0.25) 100%
+            );
+            background-size: 280% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: lmlShimmer 2.4s linear infinite;
+        }
+        @media (max-width: 640px) {
+            #login-mobile-lock {
+                display: flex;
+                position: absolute;
+                inset: 0;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                padding: 96px 32px 68px;
+                z-index: 2;
+            }
+            #login-pin-card { display: none; }
+            #login-screen.lml-revealed #login-mobile-lock { display: none; }
+            #login-screen.lml-revealed #login-pin-card {
+                display: block;
+                animation: lmlSlideUp 300ms cubic-bezier(0.22,1,0.36,1);
+            }
+        }
+        @keyframes lmlSlideUp {
+            from { opacity: 0; transform: translateY(36px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         @media (max-width: 420px) {
             #login-screen {
                 padding: 16px;
@@ -1984,6 +2154,7 @@
             to { opacity: 1; letter-spacing: 0.22em; }
         }
         button, .quick-status-btn, .hm-item-card {
+            touch-action: manipulation;
             transition: transform var(--dur-fast) var(--ease-premium), box-shadow var(--dur-fast) var(--ease-premium), filter var(--dur-fast) var(--ease-premium);
         }
         button:hover, .quick-status-btn:hover, .hm-item-card:hover {
@@ -1991,6 +2162,14 @@
         }
         button:active, .quick-status-btn:active, .hm-item-card:active {
             transform: translateY(1px);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         /* Palette alignment for existing utility classes */
@@ -3475,6 +3654,457 @@
             }
         }
 
+        /* ══════════════════ PLANEJAMENTO (tabs internas) ══════════════════ */
+        .plan-pill-nav {
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+            background: #F1F5F9;
+            border-radius: 16px;
+            width: fit-content;
+        }
+        .plan-pill-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .plan-pill-btn:hover { color: #334155; background: #E2E8F0; }
+        .plan-pill-btn.is-active {
+            background: #FFFFFF;
+            color: #0F172A;
+            box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+        }
+        .plan-section { display: block; }
+        .plan-section.hidden { display: none; }
+
+        /* ══════════════════ VENDER REDESIGN ══════════════════ */
+        .vender-redesign-grid {
+            display: grid;
+            grid-template-columns: 380px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+        .vender-entry-panel {
+            border: 1px solid #E5ECF4;
+            border-radius: 20px;
+            background: #FFFFFF;
+            overflow: hidden;
+            position: sticky;
+            top: 16px;
+        }
+        .vender-entry-panel form {
+            display: flex;
+            flex-direction: column;
+        }
+        .vender-entry-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid #EEF2F7;
+            background: linear-gradient(135deg, #FAFCFF 0%, #F6F9F8 100%);
+        }
+        .vender-eyebrow {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--primary-green);
+            margin-bottom: 4px;
+        }
+        .vender-entry-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.2;
+        }
+        .vender-entry-sub {
+            font-size: 11px;
+            color: #64748B;
+            line-height: 1.4;
+            margin-top: 3px;
+            min-height: 0;
+        }
+        .vender-date-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 0 0 auto;
+        }
+        .vender-date-input {
+            height: 38px !important;
+            padding: 0 10px !important;
+            font-size: 12px !important;
+            border-radius: 10px !important;
+            min-width: 148px;
+        }
+        .vender-unit-section {
+            padding: 14px 20px;
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .vender-unit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .vender-unit-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 14px 12px;
+            border-radius: 14px;
+            border: 2px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #64748B;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .vender-unit-btn:hover {
+            border-color: #CBD5E1;
+            background: #F1F5F9;
+            color: #334155;
+        }
+        .vender-unit-btn.is-active {
+            border-color: var(--primary-green);
+            background: var(--bg-green-soft);
+            color: var(--primary-green);
+        }
+        .vender-fields-stack {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid #EEF2F7;
+        }
+        .vender-money-field {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+        .vender-money-field:last-child { border-bottom: none; }
+        .vender-money-icon {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vender-money-field.green .vender-money-icon { color: var(--primary-green); background: var(--bg-green-soft); }
+        .vender-money-field.blue .vender-money-icon { color: var(--primary-blue); background: var(--bg-blue-soft); }
+        .vender-money-field.red .vender-money-icon { color: var(--soft-red); background: #FDF2F2; }
+        .vender-money-content { flex: 1; min-width: 0; }
+        .vender-money-lbl {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #64748B;
+            display: block;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .vender-money-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 0 12px;
+            background: #FAFCFF;
+            transition: border-color 0.12s, box-shadow 0.12s;
+        }
+        .vender-money-row:focus-within {
+            border-color: var(--primary-green);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(31,122,92,0.08);
+        }
+        .vender-money-field.blue .vender-money-row:focus-within {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(47,79,157,0.08);
+        }
+        .vender-money-field.red .vender-money-row:focus-within {
+            border-color: var(--soft-red);
+            box-shadow: 0 0 0 3px rgba(178,58,58,0.08);
+        }
+        .vender-currency {
+            font-size: 13px;
+            font-weight: 800;
+            color: #94A3B8;
+            flex: 0 0 auto;
+        }
+        .vender-amount-input {
+            flex: 1;
+            height: 44px;
+            border: none !important;
+            background: transparent !important;
+            font-size: 22px !important;
+            font-weight: 900 !important;
+            color: #0F172A !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            min-width: 0;
+        }
+        .vender-amount-input::-webkit-inner-spin-button,
+        .vender-amount-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+        .vender-total-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #EAF4EF 0%, #EEF2FF 100%);
+            border-bottom: 1px solid #D6EDE2;
+            flex-wrap: wrap;
+        }
+        .vender-total-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .vender-total-label {
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748B;
+        }
+        .vender-total-val {
+            font-size: 24px;
+            font-weight: 900;
+            color: #0F172A;
+            line-height: 1.1;
+            transition: color 0.15s;
+        }
+        .vender-total-pills {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .vender-pill {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .vender-pill.green { background: var(--bg-green-soft); color: var(--primary-green); }
+        .vender-pill.blue { background: var(--bg-blue-soft); color: var(--primary-blue); }
+        .vender-pill.red { background: #FDF2F2; color: var(--soft-red); }
+        .vender-pill-op {
+            font-size: 12px;
+            font-weight: 900;
+            color: #94A3B8;
+        }
+        .vender-notes-wrap { border-bottom: 1px solid #EEF2F7; }
+        .vender-notes-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 11px 20px;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+        }
+        .vender-notes-toggle:hover { color: #334155; }
+        .vender-notes-toggle span { flex: 1; }
+        #vender-chevron { transition: transform 0.2s ease; }
+        #vender-chevron.open { transform: rotate(180deg); }
+        .vender-notes-body { padding: 0 20px 14px; }
+        .vender-notes-body input {
+            width: 100%;
+            height: 40px;
+            border-radius: 10px;
+            border: 1.5px solid #E2E8F0;
+            background: #FAFCFF;
+            padding: 0 12px;
+            font-size: 12px;
+        }
+        .vender-form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 16px 20px;
+        }
+        .vender-save-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 48px;
+            border-radius: 14px;
+            background: #0F172A;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .vender-save-btn:hover { background: #1E293B; transform: translateY(-1px); }
+        .vender-save-btn:active { transform: translateY(0); }
+        .vender-history-panel {
+            border: 1px solid #E5ECF4;
+            border-radius: 20px;
+            background: #FFFFFF;
+            overflow: hidden;
+        }
+        .vender-history-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #EEF2F7;
+            flex-wrap: wrap;
+        }
+        .vender-history-filters {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .vender-history-filters input,
+        .vender-history-filters select {
+            height: 36px !important;
+            font-size: 11px !important;
+            border-radius: 10px !important;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+        }
+        .vender-entries-list {
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .vender-entry-card {
+            border: 1px solid #E5ECF4;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: #FAFCFF;
+            transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+        }
+        .vender-entry-card:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+            background: #FFFFFF;
+        }
+        .vender-entry-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .vender-entry-date-col {
+            flex: 0 0 auto;
+            min-width: 68px;
+        }
+        .vender-entry-date {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+        .vender-unit-badge {
+            display: inline-block;
+            margin-top: 3px;
+            font-size: 9px;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+        .vender-unit-badge.matriz { background: var(--bg-green-soft); color: var(--primary-green); }
+        .vender-unit-badge.vila { background: var(--bg-blue-soft); color: var(--primary-blue); }
+        .vender-entry-amounts {
+            flex: 1;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .vender-entry-amount {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .vender-amount-label {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94A3B8;
+        }
+        .vender-amount-val { font-size: 12px; font-weight: 800; }
+        .vender-amount-val.green { color: var(--primary-green); }
+        .vender-amount-val.blue { color: var(--primary-blue); }
+        .vender-amount-val.red { color: var(--soft-red); }
+        .vender-entry-result-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: right;
+        }
+        .vender-result-label {
+            font-size: 9px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #94A3B8;
+        }
+        .vender-result-val { font-size: 16px; font-weight: 900; }
+        .vender-result-val.positive { color: #0F172A; }
+        .vender-result-val.negative { color: var(--soft-red); }
+        .vender-entry-actions { display: flex; gap: 6px; flex: 0 0 auto; }
+        .vender-entry-notes-row {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #EEF2F7;
+            font-size: 11px;
+            color: #64748B;
+            line-height: 1.4;
+        }
+        .vender-empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #94A3B8;
+        }
+        @media (max-width: 900px) {
+            .vender-redesign-grid { grid-template-columns: 1fr; }
+            .vender-entry-panel { position: static; }
+        }
+        @media (max-width: 600px) {
+            .vender-total-banner { flex-direction: column; align-items: flex-start; }
+            .vender-total-pills { justify-content: flex-start; }
+            .vender-entry-top { flex-wrap: wrap; }
+        }
+
         .recon-destination-cell {
             display: flex;
             align-items: center;
@@ -3647,6 +4277,91 @@
         }
         .recon-toolbar-preview {
             min-width: 0;
+        }
+        .recon-sheet-input {
+            width: 100%;
+            min-width: 0;
+            height: 34px;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 9px;
+            border: 1px solid #E2E8F0;
+            background: #F8FAFC;
+            color: #0F172A;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .recon-sheet-input:hover {
+            border-color: #CBD5E1;
+            background: #FFFFFF;
+        }
+        .recon-sheet-input:focus {
+            border-color: #94A3B8;
+            box-shadow: 0 0 0 3px rgba(148,163,184,0.15);
+            background: #FFFFFF;
+        }
+        .recon-sheet-type-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            font-weight: 900;
+            font-size: 18px;
+            border: 2px solid;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+        .recon-sheet-type-entrada {
+            color: #16a34a;
+            border-color: #86efac;
+            background: #f0fdf4;
+        }
+        .recon-sheet-type-entrada:hover {
+            background: #dcfce7;
+            border-color: #4ade80;
+        }
+        .recon-sheet-type-saida {
+            color: #dc2626;
+            border-color: #fca5a5;
+            background: #fef2f2;
+        }
+        .recon-sheet-type-saida:hover {
+            background: #fee2e2;
+            border-color: #f87171;
+        }
+        .recon-sheet-fill-handle {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            border: 1px solid #CBD5E1;
+            background: #F1F5F9;
+            color: #94A3B8;
+            cursor: ns-resize;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            letter-spacing: -1px;
+            user-select: none;
+            flex: 0 0 auto;
+        }
+        .recon-sheet-fill-handle:hover {
+            background: #DBEAFE;
+            border-color: #93C5FD;
+            color: #2563EB;
+        }
+        .recon-sheet-filling td {
+            background: #EFF6FF !important;
+        }
+        .recon-sheet-filling td:first-child {
+            box-shadow: inset 2px 0 0 #3B82F6;
+        }
+        .recon-sheet-filling td:last-child {
+            box-shadow: inset -2px 0 0 #3B82F6;
         }
         .entry-destination-panel {
             border: 0;
@@ -4252,6 +4967,7 @@
             }
             .mobile-nav-btn {
                 height: 56px;
+                min-width: 44px;
                 border-radius: 12px;
                 display: flex;
                 flex-direction: column;
@@ -4259,10 +4975,17 @@
                 justify-content: center;
                 gap: 4px;
                 color: #9CA3AF;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
                 transition: all var(--dur-std) var(--ease-premium);
             }
+            .mobile-nav-btn:focus-visible {
+                outline: 2px solid #60A5FA;
+                outline-offset: 2px;
+                border-radius: 12px;
+            }
             .mobile-nav-label {
-                font-size: 9px;
+                font-size: 10px;
                 line-height: 1;
                 font-weight: 800;
                 letter-spacing: 0.04em;
@@ -4270,7 +4993,7 @@
             }
             .mobile-nav-btn.active {
                 color: #FFFFFF;
-                background: rgba(255,255,255,0.12);
+                background: rgba(255,255,255,0.15);
             }
             .mobile-main-scroll {
                 padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
@@ -4423,7 +5146,7 @@
                 border-radius: 10px !important;
             }
             .mobile-nav-label {
-                font-size: 8px !important;
+                font-size: 10px !important;
             }
             .entries-toolbar {
                 position: static;
@@ -4547,13 +5270,8 @@
             .modal-btn-danger {
                 width: 100%;
             }
-            #entry-modal input,
-            #entry-modal select,
-            #entry-modal textarea,
-            #db-modal input,
-            #db-modal select,
-            #db-modal textarea {
-                font-size: 16px;
+            input, select, textarea {
+                font-size: 16px !important;
             }
             #treasury .table-mobile-scroll {
                 overflow-x: auto;
@@ -4967,6 +5685,26 @@
             }
             #monthly .monthly-daily-scroll {
                 max-height: 430px;
+            }
+            #monthly-daily-view,
+            #reports #monthly-daily-view {
+                min-width: 0 !important;
+            }
+            .monthly-flow-cell {
+                min-width: 0 !important;
+            }
+            .monthly-flow-mini-track {
+                display: none !important;
+            }
+            .monthly-day-row td {
+                padding: 10px 8px !important;
+            }
+            .monthly-day-cell {
+                width: 36px !important;
+                padding-left: 10px !important;
+            }
+            .monthly-daily-table th {
+                padding: 10px 8px !important;
             }
         }
 
@@ -5668,7 +6406,34 @@
         .goals-tree-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
         .goals-tree-toggle { display: flex; align-items: center; color: #94A3B8; flex-shrink: 0; }
         .goals-cell-zero { color: #CBD5E1; font-size: 12px; }
-        .goals-cell-clickable:hover { background: #EEF2FF !important; }
+        /* ─── GOALS DAILY OPEN BUTTON ─── */
+        .goals-daily-open-btn { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; color:#64748B; background:transparent; border:none; cursor:pointer; flex-shrink:0; transition:background var(--dur-fast) var(--ease-premium),color var(--dur-fast) var(--ease-premium); }
+        .goals-daily-open-btn:hover { background:#EEF2FF; color:#4F46E5; }
+
+        /* ─── GOALS DAILY KPI ROW ─── */
+        .goals-daily-kpi-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:0; }
+        .goals-daily-kpi-card { flex:1; min-width:140px; }
+
+        /* ─── GOALS DAILY MONTH NAV / CHIPS ─── */
+        .goals-daily-month-nav { display:flex; align-items:center; gap:8px; padding:10px 0 4px; }
+        .goals-daily-chips { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+        .goals-daily-month-chip { padding:4px 10px; border-radius:99px; font-size:12px; font-weight:600; border:1.5px solid #E2E8F0; background:#F8FAFC; color:#64748B; cursor:pointer; transition:all var(--dur-fast) var(--ease-premium); }
+        .goals-daily-month-chip:hover { border-color:#818CF8; color:#4F46E5; background:#EEF2FF; }
+        .goals-daily-month-chip-sel { background:#4F46E5; color:#fff; border-color:#4F46E5; }
+        .goals-daily-month-chip-sel:hover { background:#3730A3; border-color:#3730A3; }
+        .goals-daily-month-chip-cur { border-color:#6366F1; }
+
+        /* ─── GOALS DAILY TABLE MULTI-MÊS ─── */
+        .goals-daily-month-th { padding:8px 12px; text-align:center; font-size:12px; font-weight:700; color:#475569; white-space:nowrap; background:#F8FAFC; border-bottom:2px solid #E2E8F0; min-width:110px; }
+        .goals-daily-cell { padding:7px 12px; font-size:12px; text-align:left; vertical-align:top; border-bottom:1px solid #F1F5F9; min-width:110px; transition:background var(--dur-fast) var(--ease-premium); }
+        .goals-daily-cell:hover { background:#F0F4FF; }
+        .goals-daily-cell-na { color:#CBD5E1; text-align:center; }
+        .goals-daily-cell-expand { margin-top:4px; border-top:1px dashed #E2E8F0; padding-top:4px; }
+        .goals-daily-expand-item { display:flex; justify-content:space-between; gap:8px; padding:2px 0; }
+        .goals-daily-expand-desc-inline { font-size:11px; color:#64748B; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:130px; }
+        .goals-daily-expand-amount-inline { font-size:11px; font-weight:700; white-space:nowrap; flex-shrink:0; }
+        .goals-daily-total-row { border-top:2px solid #E2E8F0; background:#F8FAFC; }
+        .goals-daily-total-cell { padding:8px 12px; font-size:13px; }
         .goals-detail-link {
             width: 22px; height: 22px; border-radius: 6px; border: 1px solid #CBD5E1;
             background: transparent; display: inline-flex; align-items: center; justify-content: center;
@@ -5726,6 +6491,29 @@
         .goals-detail-pct-col { padding: 12px; text-align: center; }
         .goals-detail-thead { color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
 
+        /* ─── GOALS CARDS SECTION ─── */
+        .goals-cards-section { /* wrapper, sem padding próprio */ }
+        .goals-cards-wrap { display:flex; gap:12px; flex-wrap:wrap; }
+        .goals-card { background:#fff; border-radius:14px; box-shadow:0 1px 4px 0 rgba(30,41,59,.07); padding:16px 18px 14px; flex:1 1 220px; min-width:200px; max-width:340px; display:flex; flex-direction:column; gap:7px; transition:box-shadow var(--dur-fast) var(--ease-premium),transform var(--dur-fast) var(--ease-premium); }
+        .goals-card:hover { box-shadow:0 4px 16px 0 rgba(30,41,59,.12); transform:translateY(-1px); }
+        .goals-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+        .goals-card-title-wrap { display:flex; flex-direction:column; gap:3px; min-width:0; }
+        .goals-card-name { font-size:13px; font-weight:800; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+        .goals-card-type-badge { font-size:10px; font-weight:700; border-radius:99px; padding:1px 7px; align-self:flex-start; }
+        .goals-card-actions { display:flex; gap:3px; flex-shrink:0; }
+        .goals-card-btn { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:transparent; color:#94A3B8; cursor:pointer; transition:background var(--dur-fast) var(--ease-premium),color var(--dur-fast) var(--ease-premium); }
+        .goals-card-btn:hover { background:#F1F5F9; color:#475569; }
+        .goals-card-edit-btn:hover { background:#EEF2FF; color:#4F46E5; }
+        .goals-card-month { font-size:10px; font-weight:700; color:#94A3B8; text-transform:uppercase; letter-spacing:.04em; }
+        .goals-card-amounts { display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+        .goals-card-actual { font-size:20px; font-weight:900; line-height:1; }
+        .goals-card-sep { font-size:13px; color:#CBD5E1; }
+        .goals-card-target { font-size:13px; color:#94A3B8; font-weight:600; }
+        .goals-card-pill { font-size:11px !important; }
+        .goals-card-bar-track { margin-top:2px; }
+        .goals-card-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+        .goals-card-remaining { font-size:11px; color:#94A3B8; }
+
         /* ─── GOALS LAUNCHES (legacy, kept for reference) ─── */
         .goals-launches-date { padding: 10px 12px; white-space: nowrap; color: var(--text-secondary); font-size: 12px; }
         .goals-launches-desc { padding: 10px 12px; font-weight: 600; font-size: 13px; color: var(--text-primary); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -5763,20 +6551,36 @@
 <body class="flex h-screen overflow-hidden">
 
     <section id="login-screen" aria-label="Login inicial">
-        <div class="login-card">
+
+        <!-- Mobile lock screen (≤640 px) — estilo iOS clássico -->
+        <div id="login-mobile-lock" aria-hidden="true">
+            <div class="lml-top">
+                <div class="lml-lock-wrap" id="lml-lock-wrap">
+                    <div id="lml-icon-locked"><i data-lucide="lock"></i></div>
+                    <div id="lml-icon-unlocked" style="display:none"><i data-lucide="lock-open"></i></div>
+                </div>
+                <p class="lml-app-name">Financeiro</p>
+                <p class="lml-app-sub">Acesso seguro</p>
+            </div>
+            <div class="lml-slide-area">
+                <div class="lml-slide-track" id="lml-slide-track">
+                    <div class="lml-slide-thumb" id="lml-slide-thumb">
+                        <i data-lucide="chevron-right"></i>
+                    </div>
+                    <span class="lml-slide-text">deslize para desbloquear</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-card" id="login-pin-card">
             <div class="login-brand">
                 <div class="login-brand-icon" aria-hidden="true">
                     <i data-lucide="lock-keyhole" class="w-5 h-5"></i>
                 </div>
                 <div>
                     <p class="login-eyebrow">Acesso seguro</p>
-                    <h1 class="login-title">Entrar no financeiro</h1>
+                    <h1 class="login-title">Digite o PIN</h1>
                 </div>
-            </div>
-
-            <div class="login-field">
-                <label class="label-mini" for="login-user">Usuário</label>
-                <input id="login-user" class="login-input" type="text" autocomplete="username" autocapitalize="none" placeholder="Digite seu usuário">
             </div>
 
             <div class="login-field">
@@ -5843,27 +6647,24 @@
             </div>
         </div>
 
-        <nav class="flex-1 px-4 space-y-2">
-            <button onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatórios</span>
+        <nav class="flex-1 px-4 space-y-2" aria-label="Navegação principal">
+            <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
+                <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
-            <button onclick="switchTab('projection')" id="nav-projection" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="chart-spline" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Projeção</span>
+            <button type="button" onclick="switchTab('planejamento')" id="nav-planejamento" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="compass" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Planejamento</span>
             </button>
-            <button onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="receipt" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
+            <button type="button" onclick="switchTab('entries')" id="nav-entries" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="receipt" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Lançamentos</span>
             </button>
-            <button onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="landmark" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Conciliação</span>
+            <button type="button" onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="landmark" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
-            <button onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
+            <button type="button" onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
             </button>
-            <button onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="database" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
-            </button>
-            <button onclick="switchTab('goals')" id="nav-goals" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="target" class="w-5 shrink-0"></i><span class="nav-text text-sm font-bold">Metas</span>
+            <button type="button" onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="database" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
             </button>
         </nav>
     </aside>
@@ -6166,6 +6967,10 @@
                             <h4 id="reports-monthly-chart-title">Fluxo diário</h4>
                             <p id="reports-monthly-chart-subtitle">Entradas e saídas realizadas por dia.</p>
                         </div>
+                        <button type="button" id="daily-pend-toggle" class="daily-pend-toggle-btn" onclick="toggleDailyPending()" aria-pressed="false">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                            <span>Pendentes</span>
+                        </button>
                     </div>
                     <div class="reports-chart-frame">
                         <canvas id="reports-monthly-chart"></canvas>
@@ -6350,76 +7155,120 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             </div>
 
             <!-- PROJEÇÃO -->
-            <div id="projection" class="tab-content projection-tab space-y-8">
-                <section class="reports-shell-head" aria-labelledby="projection-title">
-                    <div>
-                        <p class="reports-eyebrow">Previsão financeira</p>
-                        <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
-                        <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
-                    </div>
-                    <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
-                        <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
-                        <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
-                    </div>
-                </section>
-                <section class="projection-control-card">
-                    <div id="projection-pending-controls" class="reports-control-row">
-                        <span class="reports-control-label">Prazo</span>
-                        <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">Próximos 7 dias</button>
-                        <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">Próximos 15 dias</button>
-                        <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">Próximos 30 dias</button>
-                        <button type="button" id="projection-period-custom" class="reports-chip" onclick="setProjectionPeriod('custom')">Personalizado</button>
-                        <input id="projection-custom-days" class="reports-small-input hidden" type="number" min="1" max="365" value="45" onchange="renderProjection()" aria-label="Dias personalizados">
-                    </div>
-                    <div id="projection-history-controls" class="reports-control-stack hidden">
-                        <div class="reports-control-row">
-                            <span class="reports-control-label">Base histórica</span>
-                            <button type="button" id="projection-history-1" class="reports-chip active" onclick="setProjectionHistoryMonths(1)">Mês passado</button>
-                            <button type="button" id="projection-history-2" class="reports-chip" onclick="setProjectionHistoryMonths(2)">Últimos 2 meses</button>
-                            <button type="button" id="projection-history-3" class="reports-chip" onclick="setProjectionHistoryMonths(3)">Últimos 3 meses</button>
-                            <button type="button" id="projection-history-6" class="reports-chip" onclick="setProjectionHistoryMonths(6)">Últimos 6 meses</button>
-                        </div>
-                        <div class="reports-control-row">
-                            <span class="reports-control-label">Prazo</span>
-                            <button type="button" id="projection-history-period-7" class="reports-chip active" onclick="setProjectionHistoryPeriod(7)">7 dias</button>
-                            <button type="button" id="projection-history-period-15" class="reports-chip" onclick="setProjectionHistoryPeriod(15)">15 dias</button>
-                            <button type="button" id="projection-history-period-30" class="reports-chip" onclick="setProjectionHistoryPeriod(30)">30 dias</button>
-                        </div>
-                    </div>
-                    <div class="reports-control-row" aria-label="Agrupamento do gráfico de projeção">
-                        <span class="reports-control-label">Mostrar gráfico por</span>
-                        <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
-                        <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
-                        <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
-                    </div>
-                </section>
-                <div class="reports-summary-grid">
-                    <article class="reports-summary-card in"><span><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i></span><p id="projection-card-in-label">Entradas previstas</p><strong id="projection-card-in">R$ 0,00</strong></article>
-                    <article class="reports-summary-card out"><span><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i></span><p id="projection-card-out-label">Saídas previstas</p><strong id="projection-card-out">R$ 0,00</strong></article>
-                    <article class="reports-summary-card net"><span><i data-lucide="chart-spline" class="w-4 h-4"></i></span><p id="projection-card-net-label">Saldo projetado</p><strong id="projection-card-net">R$ 0,00</strong></article>
+            <div id="planejamento" class="tab-content space-y-6">
+                <!-- Navegação interna -->
+                <div class="plan-pill-nav">
+                    <button type="button" id="plantab-projection" class="plan-pill-btn is-active" onclick="switchPlanTab('projection')">
+                        <i data-lucide="chart-spline" class="w-4 h-4"></i>
+                        <span>Projeção</span>
+                    </button>
+                    <button type="button" id="plantab-goals" class="plan-pill-btn" onclick="switchPlanTab('goals')">
+                        <i data-lucide="target" class="w-4 h-4"></i>
+                        <span>Metas</span>
+                    </button>
                 </div>
-                <section class="card-premium reports-chart-card">
-                    <div class="reports-card-head">
+
+                <!-- Seção: Projeção -->
+                <div id="plan-projection-section" class="plan-section space-y-8">
+                    <section class="reports-shell-head" aria-labelledby="projection-title">
                         <div>
-                            <h4 id="projection-chart-title">Saldo projetado</h4>
-                            <p id="projection-explain">Baseado nos lançamentos futuros pendentes já cadastrados.</p>
+                            <p class="reports-eyebrow">Previsão financeira</p>
+                            <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
+                            <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
+                        </div>
+                        <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
+                            <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
+                            <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
+                        </div>
+                    </section>
+                    <section class="projection-control-card">
+                        <div id="projection-pending-controls" class="reports-control-row">
+                            <span class="reports-control-label">Prazo</span>
+                            <button type="button" id="projection-period-7" class="reports-chip active" onclick="setProjectionPeriod(7)">Próximos 7 dias</button>
+                            <button type="button" id="projection-period-15" class="reports-chip" onclick="setProjectionPeriod(15)">Próximos 15 dias</button>
+                            <button type="button" id="projection-period-30" class="reports-chip" onclick="setProjectionPeriod(30)">Próximos 30 dias</button>
+                            <button type="button" id="projection-period-custom" class="reports-chip" onclick="setProjectionPeriod('custom')">Personalizado</button>
+                            <input id="projection-custom-days" class="reports-small-input hidden" type="number" min="1" max="365" value="45" onchange="renderProjection()" aria-label="Dias personalizados">
+                        </div>
+                        <div id="projection-history-controls" class="reports-control-stack hidden">
+                            <div class="reports-control-row">
+                                <span class="reports-control-label">Base histórica</span>
+                                <button type="button" id="projection-history-1" class="reports-chip active" onclick="setProjectionHistoryMonths(1)">Mês passado</button>
+                                <button type="button" id="projection-history-2" class="reports-chip" onclick="setProjectionHistoryMonths(2)">Últimos 2 meses</button>
+                                <button type="button" id="projection-history-3" class="reports-chip" onclick="setProjectionHistoryMonths(3)">Últimos 3 meses</button>
+                                <button type="button" id="projection-history-6" class="reports-chip" onclick="setProjectionHistoryMonths(6)">Últimos 6 meses</button>
+                            </div>
+                            <div class="reports-control-row">
+                                <span class="reports-control-label">Prazo</span>
+                                <button type="button" id="projection-history-period-7" class="reports-chip active" onclick="setProjectionHistoryPeriod(7)">7 dias</button>
+                                <button type="button" id="projection-history-period-15" class="reports-chip" onclick="setProjectionHistoryPeriod(15)">15 dias</button>
+                                <button type="button" id="projection-history-period-30" class="reports-chip" onclick="setProjectionHistoryPeriod(30)">30 dias</button>
+                            </div>
+                        </div>
+                        <div class="reports-control-row" aria-label="Agrupamento do gráfico de projeção">
+                            <span class="reports-control-label">Mostrar gráfico por</span>
+                            <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
+                            <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
+                            <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
+                        </div>
+                    </section>
+                    <div class="reports-summary-grid">
+                        <article class="reports-summary-card in"><span><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i></span><p id="projection-card-in-label">Entradas previstas</p><strong id="projection-card-in">R$ 0,00</strong></article>
+                        <article class="reports-summary-card out"><span><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i></span><p id="projection-card-out-label">Saídas previstas</p><strong id="projection-card-out">R$ 0,00</strong></article>
+                        <article class="reports-summary-card net"><span><i data-lucide="chart-spline" class="w-4 h-4"></i></span><p id="projection-card-net-label">Saldo projetado</p><strong id="projection-card-net">R$ 0,00</strong></article>
+                    </div>
+                    <section class="card-premium reports-chart-card">
+                        <div class="reports-card-head">
+                            <div>
+                                <h4 id="projection-chart-title">Saldo projetado</h4>
+                                <p id="projection-explain">Baseado nos lançamentos futuros pendentes já cadastrados.</p>
+                            </div>
+                        </div>
+                        <div class="reports-chart-frame"><canvas id="projection-chart"></canvas></div>
+                    </section>
+                    <section class="card-premium reports-insights-card">
+                        <div class="reports-card-head">
+                            <div>
+                                <h4 id="projection-list-title">Lançamentos usados na projeção</h4>
+                                <p id="projection-list-subtitle">Somente pendências futuras dentro do prazo escolhido.</p>
+                            </div>
+                        </div>
+                        <div id="projection-list" class="projection-list"></div>
+                    </section>
+                </div>
+
+                <!-- Seção: Metas -->
+                <div id="plan-goals-section" class="plan-section hidden space-y-6">
+                    <div class="card-premium p-6">
+                        <div class="flex flex-wrap gap-4 items-center justify-between">
+                            <div>
+                                <p class="text-base font-black text-slate-900">Controle de Metas</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Orçamentos e metas por categoria, subcategoria e destino.</p>
+                            </div>
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <div class="pill-segment compact" role="tablist" aria-label="Modo de visualização de metas">
+                                    <button type="button" id="goals-mode-cards" class="pill-segment-btn active" onclick="setGoalsDisplayMode('cards')" aria-selected="true">
+                                        <i data-lucide="layout-grid" class="w-4 h-4"></i>Cards
+                                    </button>
+                                    <button type="button" id="goals-mode-table" class="pill-segment-btn" onclick="setGoalsDisplayMode('table')" aria-selected="false">
+                                        <i data-lucide="table-2" class="w-4 h-4"></i>Tabela
+                                    </button>
+                                </div>
+                                <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase shadow flex items-center gap-2">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>Nova Meta
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="reports-chart-frame"><canvas id="projection-chart"></canvas></div>
-                </section>
-                <section class="card-premium reports-insights-card">
-                    <div class="reports-card-head">
-                        <div>
-                            <h4 id="projection-list-title">Lançamentos usados na projeção</h4>
-                            <p id="projection-list-subtitle">Somente pendências futuras dentro do prazo escolhido.</p>
-                        </div>
-                    </div>
-                    <div id="projection-list" class="projection-list"></div>
-                </section>
+                    <div id="goals-cards-section" class="goals-cards-section"></div>
+                    <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                    <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                </div>
             </div>
 
             <!-- TESOURARIA -->
@@ -6467,89 +7316,122 @@
                     </div>
                 </div>
 
-                <div class="treasury-form-grid">
-                    <section class="treasury-form-card">
-                        <div class="treasury-panel-head">
-                            <div>
-                                <h4 id="treasury-mv-form-title" class="treasury-panel-title">Novo fechamento</h4>
-                                <p id="treasury-mv-form-subtitle" class="treasury-panel-sub">Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.</p>
-                            </div>
-                        </div>
-                        <div class="treasury-form-body">
-                            <form id="treasury-movement-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input id="treasury-mv-edit-id" type="hidden">
+                <div class="vender-redesign-grid">
+                    <!-- Formulário de entrada rápida -->
+                    <section class="vender-entry-panel">
+                        <form id="treasury-movement-form">
+                            <input id="treasury-mv-edit-id" type="hidden">
+                            <input id="treasury-mv-unit" type="hidden" value="MATRIZ">
+                            <div class="vender-entry-header">
                                 <div>
+                                    <p class="vender-eyebrow">Fechamento rápido</p>
+                                    <h4 id="treasury-mv-form-title" class="vender-entry-title">Novo fechamento</h4>
+                                    <p id="treasury-mv-form-subtitle" class="vender-entry-sub"></p>
+                                </div>
+                                <div class="vender-date-box">
                                     <label class="label-mini" for="treasury-mv-date">Data</label>
-                                    <input id="treasury-mv-date" type="date" required>
+                                    <input id="treasury-mv-date" type="date" required class="vender-date-input">
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-unit">Unidade</label>
-                                    <select id="treasury-mv-unit" required>
-                                        <option value="MATRIZ">MATRIZ</option>
-                                        <option value="VILA_NOVA">VILA_NOVA</option>
-                                    </select>
+                            </div>
+                            <div class="vender-unit-section">
+                                <p class="label-mini">Unidade</p>
+                                <div class="vender-unit-grid">
+                                    <button type="button" class="vender-unit-btn is-active" data-unit="MATRIZ" onclick="selectVenderUnit('MATRIZ')">
+                                        <i data-lucide="store" class="w-5 h-5"></i>
+                                        <span>Matriz</span>
+                                    </button>
+                                    <button type="button" class="vender-unit-btn" data-unit="VILA_NOVA" onclick="selectVenderUnit('VILA_NOVA')">
+                                        <i data-lucide="map-pin" class="w-5 h-5"></i>
+                                        <span>Vila Nova</span>
+                                    </button>
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-cash">Venda em dinheiro</label>
-                                    <input id="treasury-mv-cash" type="number" step="0.01" min="0" value="0">
+                            </div>
+                            <div class="vender-fields-stack">
+                                <div class="vender-money-field green">
+                                    <div class="vender-money-icon"><i data-lucide="banknote" class="w-5 h-5"></i></div>
+                                    <div class="vender-money-content">
+                                        <label class="vender-money-lbl" for="treasury-mv-cash">Dinheiro</label>
+                                        <div class="vender-money-row">
+                                            <span class="vender-currency">R$</span>
+                                            <input id="treasury-mv-cash" type="text" inputmode="decimal" value="0" class="vender-amount-input" oninput="updateVenderTotal()" onfocus="this.select()" placeholder="0,00" autocomplete="off">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-card">Venda em cartão</label>
-                                    <input id="treasury-mv-card" type="number" step="0.01" min="0" value="0">
+                                <div class="vender-money-field blue">
+                                    <div class="vender-money-icon"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
+                                    <div class="vender-money-content">
+                                        <label class="vender-money-lbl" for="treasury-mv-card">Cartão</label>
+                                        <div class="vender-money-row">
+                                            <span class="vender-currency">R$</span>
+                                            <input id="treasury-mv-card" type="text" inputmode="decimal" value="0" class="vender-amount-input" oninput="updateVenderTotal()" onfocus="this.select()" placeholder="0,00" autocomplete="off">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="label-mini" for="treasury-mv-payments">Saídas / pagamentos do dia</label>
-                                    <input id="treasury-mv-payments" type="number" step="0.01" min="0" value="0">
+                                <div class="vender-money-field red">
+                                    <div class="vender-money-icon"><i data-lucide="arrow-up-circle" class="w-5 h-5"></i></div>
+                                    <div class="vender-money-content">
+                                        <label class="vender-money-lbl" for="treasury-mv-payments">Saídas</label>
+                                        <div class="vender-money-row">
+                                            <span class="vender-currency">R$</span>
+                                            <input id="treasury-mv-payments" type="text" inputmode="decimal" value="0" class="vender-amount-input" oninput="updateVenderTotal()" onfocus="this.select()" placeholder="0,00" autocomplete="off">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="md:col-span-2">
-                                    <label class="label-mini" for="treasury-mv-notes">Observações</label>
-                                    <input id="treasury-mv-notes" type="text" placeholder="Ex.: sangria, fornecedor, ajuste de caixa...">
+                            </div>
+                            <div class="vender-total-banner">
+                                <div class="vender-total-left">
+                                    <span class="vender-total-label">Fechamento do dia</span>
+                                    <div id="vender-live-total" class="vender-total-val">R$ 0,00</div>
                                 </div>
-                                <div class="md:col-span-2 treasury-form-actions">
-                                    <button type="submit" class="modal-btn-primary"><span id="treasury-mv-submit-label">Salvar fechamento</span></button>
-                                    <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar edição</button>
+                                <div class="vender-total-pills">
+                                    <span id="vender-pill-cash" class="vender-pill green">Dinheiro R$ 0,00</span>
+                                    <span class="vender-pill-op">+</span>
+                                    <span id="vender-pill-card" class="vender-pill blue">Cartão R$ 0,00</span>
+                                    <span class="vender-pill-op">−</span>
+                                    <span id="vender-pill-out" class="vender-pill red">Saídas R$ 0,00</span>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="vender-notes-wrap">
+                                <button type="button" class="vender-notes-toggle" onclick="toggleVenderNotes()">
+                                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                                    <span id="vender-notes-toggle-label">Adicionar observação</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4" id="vender-chevron"></i>
+                                </button>
+                                <div id="vender-notes-body" class="vender-notes-body hidden">
+                                    <input id="treasury-mv-notes" type="text" placeholder="Ex.: sangria, fornecedor, ajuste de caixa..." maxlength="180">
+                                </div>
+                            </div>
+                            <div class="vender-form-actions">
+                                <button type="button" id="treasury-mv-cancel-edit" class="treasury-secondary-btn hidden" onclick="cancelTreasuryMovementEdit()">Cancelar</button>
+                                <button type="submit" class="vender-save-btn">
+                                    <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                    <span id="treasury-mv-submit-label">Salvar fechamento</span>
+                                </button>
+                            </div>
+                        </form>
                     </section>
 
-                    <section class="treasury-history-card">
-                        <div class="treasury-panel-head">
-                            <div>
-                                <h4 class="treasury-panel-title">Histórico de lançamentos</h4>
-                                <p class="treasury-panel-sub">Filtre por mês e unidade para localizar rapidamente um fechamento e editar com mais clareza.</p>
-                            </div>
-                        </div>
-                        <div class="treasury-history-toolbar">
-                            <div>
-                                <label class="label-mini" for="treasury-mv-filter-month">Filtrar por mês</label>
-                                <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
-                            </div>
-                            <div>
-                                <label class="label-mini" for="treasury-mv-filter-unit">Filtrar por unidade</label>
-                                <select id="treasury-mv-filter-unit" onchange="renderTreasuryMovements()">
-                                    <option value="">Todas</option>
-                                    <option value="MATRIZ">MATRIZ</option>
-                                    <option value="VILA_NOVA">VILA_NOVA</option>
-                                </select>
+                    <!-- Histórico de lançamentos -->
+                    <section class="vender-history-panel">
+                        <div class="vender-history-header">
+                            <h4 class="treasury-panel-title">Histórico de lançamentos</h4>
+                            <div class="vender-history-filters">
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-filter-month">Mês</label>
+                                    <input id="treasury-mv-filter-month" type="month" onchange="renderTreasuryMovements()">
+                                </div>
+                                <div>
+                                    <label class="label-mini" for="treasury-mv-filter-unit">Unidade</label>
+                                    <select id="treasury-mv-filter-unit" onchange="renderTreasuryMovements()">
+                                        <option value="">Todas</option>
+                                        <option value="MATRIZ">Matriz</option>
+                                        <option value="VILA_NOVA">Vila Nova</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div id="treasury-mv-history-summary" class="treasury-history-summary">0 lançamento(s) encontrados.</div>
-                        <div class="table-mobile-scroll custom-scrollbar">
-                            <table id="treasury-mv-table" class="w-full text-left">
-                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
-                                    <tr>
-                                        <th class="px-4 py-3">Data</th>
-                                        <th class="px-4 py-3 text-right">Vendas</th>
-                                        <th class="px-4 py-3 text-right">Saídas</th>
-                                        <th class="px-4 py-3 text-right">Fechamento</th>
-                                        <th class="px-4 py-3">Observações</th>
-                                        <th class="px-4 py-3 text-center">Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="treasury-mv-history-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                            </table>
-                        </div>
+                        <div id="treasury-mv-history-body" class="vender-entries-list"></div>
                     </section>
                 </div>
 
@@ -6658,6 +7540,35 @@
                     </div>
                 </div>
 
+                <!-- PLANILHA MANUAL DE LANÇAMENTOS -->
+                <div class="card-premium p-6 lg:p-7 space-y-4">
+                    <div class="flex flex-wrap gap-3 items-center justify-between">
+                        <div>
+                            <p class="text-sm font-black uppercase text-slate-700">Planilha de Lançamentos</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Preencha manualmente e adicione à conciliação</p>
+                        </div>
+                        <button onclick="addReconSheetToRecon()" class="bg-[#E09132] text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase shadow-xl hover:bg-[#C57A22] transition-all">Adicionar à Conciliação</button>
+                    </div>
+                    <div class="table-mobile-scroll custom-scrollbar">
+                        <table class="w-full text-left" id="recon-sheet-table">
+                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
+                                <tr>
+                                    <th class="px-3 py-3 w-[130px]">Data</th>
+                                    <th class="px-3 py-3">Destino</th>
+                                    <th class="px-3 py-3 w-[130px] text-right">Valor</th>
+                                    <th class="px-3 py-3 w-[72px] text-center">+/−</th>
+                                    <th class="px-3 py-3 w-[220px]">Descrição</th>
+                                    <th class="px-3 py-3 w-[52px] text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recon-sheet-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                        </table>
+                    </div>
+                    <button onclick="addReconSheetRow()" class="flex items-center gap-2 text-slate-400 hover:text-slate-700 font-bold text-xs uppercase transition-all">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Linha
+                    </button>
+                </div>
+
                 <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
                     <div class="flex justify-between items-center bg-white p-6 rounded-3xl border border-blue-100 shadow-xl">
                         <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
@@ -6708,63 +7619,33 @@
             </div>
 
             <!-- METAS -->
-            <div id="goals" class="tab-content space-y-6">
-                <div class="card-premium p-6">
-                    <div class="flex flex-wrap gap-4 items-center justify-between">
-                        <div>
-                            <p class="text-base font-black text-slate-900">Controle de Metas</p>
-                            <p class="text-xs text-slate-400 mt-0.5">Orçamentos e metas por categoria, subcategoria e destino.</p>
-                        </div>
-                        <div class="flex items-center gap-3 flex-wrap">
-                            <div class="goals-month-nav">
-                                <button type="button" onclick="goalsNavMonth(-1)" aria-label="Mês anterior">
-                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                                </button>
-                                <span id="goals-month-label">—</span>
-                                <button type="button" onclick="goalsNavMonth(1)" aria-label="Próximo mês">
-                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                            <button onclick="openGoalModal()" class="bg-slate-900 text-white px-5 py-2.5 rounded-xl text-xs font-black uppercase shadow flex items-center gap-2">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>Nova Meta
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
-                <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-            </div>
         </div>
     </main>
 
-    <nav id="mobile-nav" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
-        <button onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros">
-            <i data-lucide="chart-no-axes-combined" class="w-5 h-5"></i>
+    <nav id="mobile-nav" aria-label="Navegação principal" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
+        <button type="button" onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros" aria-current="page">
+            <i data-lucide="chart-no-axes-combined" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Relat.</span>
         </button>
-        <button onclick="switchTab('projection')" id="mnav-projection" class="mobile-nav-btn" aria-label="Projeção financeira">
-            <i data-lucide="chart-spline" class="w-5 h-5"></i>
-            <span class="mobile-nav-label">Proj.</span>
+        <button type="button" onclick="switchTab('planejamento')" id="mnav-planejamento" class="mobile-nav-btn" aria-label="Planejamento">
+            <i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i>
+            <span class="mobile-nav-label">Plan.</span>
         </button>
-        <button onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
-            <i data-lucide="receipt" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
+            <i data-lucide="receipt" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Lanç.</span>
         </button>
-        <button onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
-            <i data-lucide="landmark" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
+            <i data-lucide="landmark" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Conc.</span>
         </button>
-        <button onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
-            <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
+            <i data-lucide="bar-chart-3" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Vendas</span>
         </button>
-        <button onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
-            <i data-lucide="database" class="w-5 h-5"></i>
+        <button type="button" onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
+            <i data-lucide="database" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Banco</span>
-        </button>
-        <button onclick="switchTab('goals')" id="mnav-goals" class="mobile-nav-btn" aria-label="Metas financeiras">
-            <i data-lucide="target" class="w-5 h-5"></i>
-            <span class="mobile-nav-label">Metas</span>
         </button>
     </nav>
 
@@ -7231,6 +8112,8 @@
         const CLOUD_FOCUS_REFRESH_THROTTLE_MS = 15 * 1000;
         const CLOUD_FETCH_PAGE_SIZE = 1000;
         let reconImportInFlight = false;
+        let tempReconSheet = [];
+        let reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
         let entryFillDragMode = '';
         let destinationComboboxState = {
             inputId: '',
@@ -7751,11 +8634,10 @@
             initial: ['Conectando com a nuvem', 'Carregando cadastros', 'Carregando lancamentos', 'Sincronizando metas', 'Montando a tela inicial'],
             reports: ['Lendo lancamentos do periodo', 'Calculando totais e saldos', 'Montando graficos', 'Preparando detalhamento'],
             entries: ['Aplicando filtros', 'Somando entradas e saidas', 'Organizando a tabela', 'Preparando paginacao'],
-            projection: ['Lendo pendencias', 'Calculando fluxo futuro', 'Montando cenarios', 'Atualizando grafico'],
+            planejamento: ['Carregando planejamento', 'Calculando projecao', 'Organizando metas', 'Atualizando painel'],
             treasury: ['Carregando vendas', 'Calculando caixa da loja', 'Organizando historico', 'Atualizando painel'],
             database: ['Lendo estrutura', 'Organizando categorias', 'Montando listas', 'Preparando edicao'],
-            reconciliation: ['Preparando conciliacao', 'Carregando contas', 'Validando estrutura', 'Liberando importacao'],
-            goals: ['Carregando metas', 'Calculando progresso', 'Organizando historico', 'Atualizando painel']
+            reconciliation: ['Preparando conciliacao', 'Carregando contas', 'Validando estrutura', 'Liberando importacao']
         };
 
         const waitMs = (ms) => new Promise(resolve => window.setTimeout(resolve, ms));
@@ -7766,11 +8648,10 @@
             const labels = {
                 entries: 'Carregando lancamentos',
                 reports: 'Carregando relatorios',
-                projection: 'Carregando projecao',
+                planejamento: 'Carregando planejamento',
                 reconciliation: 'Preparando conciliacao',
                 treasury: 'Carregando vendas',
-                database: 'Carregando banco de dados',
-                goals: 'Carregando metas'
+                database: 'Carregando banco de dados'
             };
             return labels[tabId] || 'Carregando visao';
         }
@@ -7781,9 +8662,8 @@
             const goalCount = Array.isArray(goalsData) ? goalsData.length : 0;
             if (tabId === 'entries') return `${totalEntries} lancamento(s) prontos para consulta.`;
             if (tabId === 'reports') return `${totalEntries} lancamento(s) analisados nos relatorios.`;
-            if (tabId === 'projection') return 'Projecao atualizada com base nas pendencias cadastradas.';
+            if (tabId === 'planejamento') return `Planejamento pronto: projecao e ${goalCount} meta(s).`;
             if (tabId === 'database') return `${accountCount} conta(s) e cadastros carregados.`;
-            if (tabId === 'goals') return `${goalCount} meta(s) pronta(s) para acompanhar.`;
             return 'Tela pronta com os dados mais recentes.';
         }
 
@@ -10136,29 +11016,40 @@
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.sidebar-btn').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
+            document.querySelectorAll('.mobile-nav-btn').forEach(b => { b.classList.remove('active'); b.removeAttribute('aria-current'); });
             const target = document.getElementById(tabId);
             const nav = document.getElementById(`nav-${tabId}`);
             const mnav = document.getElementById(`mnav-${tabId}`);
             if(target) target.classList.add('active');
-            if(nav) nav.classList.add('active');
-            if(mnav) mnav.classList.add('active');
+            if(nav) { nav.classList.add('active'); nav.setAttribute('aria-current', 'page'); }
+            if(mnav) { mnav.classList.add('active'); mnav.setAttribute('aria-current', 'page'); }
             currentTab = tabId;
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
                 entries: 'Lançamentos',
                 reports: 'Relatórios financeiros',
-                projection: 'Projeção financeira',
+                planejamento: 'Planejamento',
                 reconciliation: 'Conciliação',
                 treasury: 'Relatório de Vendas',
-                database: 'Banco de Dados',
-                goals: 'Metas financeiras'
+                database: 'Banco de Dados'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
             if (mainScroll) mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
             runPageLoader(tabId, render);
+        }
+
+        function switchPlanTab(tab) {
+            window.currentPlanTab = tab;
+            document.querySelectorAll('.plan-pill-btn').forEach(btn => {
+                btn.classList.toggle('is-active', btn.id === `plantab-${tab}`);
+            });
+            document.querySelectorAll('.plan-section').forEach(sec => {
+                sec.classList.toggle('hidden', sec.id !== `plan-${tab}-section`);
+            });
+            if (tab === 'projection') renderProjection();
+            else renderGoals();
         }
 
         function render() {
@@ -10175,16 +11066,17 @@
                 renderMonthly();
                 renderAnnual();
                 updateReportsModeUI();
-            } else if (currentTab === 'projection') {
-                renderProjection();
+            } else if (currentTab === 'planejamento') {
+                const activePlan = window.currentPlanTab || 'projection';
+                if (activePlan === 'projection') renderProjection();
+                else renderGoals();
             } else if (currentTab === 'treasury') {
                 renderTreasury();
             } else if (currentTab === 'database') {
                 renderDatabase();
             } else if (currentTab === 'reconciliation') {
                 populateDropdown('recon-account-select', state.accounts);
-            } else if (currentTab === 'goals') {
-                renderGoals();
+                initReconSheet();
             }
             refreshLucideIcons();
             initPiggyMicroInteractions();
@@ -10357,7 +11249,8 @@
             return date;
         }
         function toMoneyNumber(value) {
-            const parsed = Number(value);
+            const str = String(value ?? '').trim().replace(',', '.');
+            const parsed = Number(str);
             return Number.isFinite(parsed) ? parsed : 0;
         }
         function isCashAccount(account) {
@@ -10647,11 +11540,46 @@
             if (salesEl) salesEl.innerText = formatBRL(movementDay);
             if (closingEl) closingEl.innerText = formatBRL(closingDay);
         }
+        function selectVenderUnit(unit) {
+            const unitInput = document.getElementById('treasury-mv-unit');
+            if (unitInput) unitInput.value = unit;
+            document.querySelectorAll('.vender-unit-btn').forEach(btn => {
+                btn.classList.toggle('is-active', btn.dataset.unit === unit);
+            });
+        }
+        function updateVenderTotal() {
+            const parseVal = v => parseFloat(String(v ?? '0').replace(',', '.')) || 0;
+            const cash = parseVal(document.getElementById('treasury-mv-cash')?.value);
+            const card = parseVal(document.getElementById('treasury-mv-card')?.value);
+            const out  = parseVal(document.getElementById('treasury-mv-payments')?.value);
+            const total = cash + card - out;
+            const totalEl   = document.getElementById('vender-live-total');
+            const cashPill  = document.getElementById('vender-pill-cash');
+            const cardPill  = document.getElementById('vender-pill-card');
+            const outPill   = document.getElementById('vender-pill-out');
+            if (totalEl) {
+                totalEl.textContent = formatBRL(total);
+                totalEl.style.color = total < 0 ? 'var(--soft-red)' : '#0F172A';
+            }
+            if (cashPill) cashPill.textContent = `Dinheiro ${formatBRL(cash)}`;
+            if (cardPill) cardPill.textContent = `Cartão ${formatBRL(card)}`;
+            if (outPill)  outPill.textContent  = `Saídas ${formatBRL(out)}`;
+        }
+        function toggleVenderNotes() {
+            const body    = document.getElementById('vender-notes-body');
+            const chevron = document.getElementById('vender-chevron');
+            const label   = document.getElementById('vender-notes-toggle-label');
+            if (!body) return;
+            const wasHidden = body.classList.contains('hidden');
+            body.classList.toggle('hidden', !wasHidden);
+            if (chevron) chevron.classList.toggle('open', wasHidden);
+            if (label) label.textContent = wasHidden ? 'Ocultar observação' : 'Adicionar observação';
+            if (wasHidden) setTimeout(() => document.getElementById('treasury-mv-notes')?.focus(), 50);
+        }
         function resetTreasuryMovementForm(options = {}) {
             const { keepDate = true } = options;
             const editIdEl = document.getElementById('treasury-mv-edit-id');
             const dateEl = document.getElementById('treasury-mv-date');
-            const unitEl = document.getElementById('treasury-mv-unit');
             const cashEl = document.getElementById('treasury-mv-cash');
             const cardEl = document.getElementById('treasury-mv-card');
             const paymentsEl = document.getElementById('treasury-mv-payments');
@@ -10664,15 +11592,22 @@
 
             if (editIdEl) editIdEl.value = '';
             if (dateEl && (!keepDate || !dateEl.value)) dateEl.value = today;
-            if (unitEl && !unitEl.value) unitEl.value = 'MATRIZ';
             if (cashEl) cashEl.value = '0';
             if (cardEl) cardEl.value = '0';
             if (paymentsEl) paymentsEl.value = '0';
             if (notesEl) notesEl.value = '';
             if (titleEl) titleEl.innerText = 'Novo fechamento';
-            if (subtitleEl) subtitleEl.innerText = 'Preencha os valores do dia para MATRIZ ou VILA NOVA. Você pode editar um lançamento existente pelo histórico ao lado.';
+            if (subtitleEl) subtitleEl.innerText = '';
             if (submitLabelEl) submitLabelEl.innerText = 'Salvar fechamento';
             if (cancelBtnEl) cancelBtnEl.classList.add('hidden');
+            selectVenderUnit('MATRIZ');
+            updateVenderTotal();
+            const notesBody    = document.getElementById('vender-notes-body');
+            const notesChevron = document.getElementById('vender-chevron');
+            const notesLabel   = document.getElementById('vender-notes-toggle-label');
+            if (notesBody)    notesBody.classList.add('hidden');
+            if (notesChevron) notesChevron.classList.remove('open');
+            if (notesLabel)   notesLabel.textContent = 'Adicionar observação';
         }
         function startTreasuryMovementEdit(id) {
             const item = (state.storeDailyMovements || []).find(entry => String(entry.id || '') === String(id || ''));
@@ -10680,7 +11615,6 @@
             const totals = getMovementTotals(item);
             document.getElementById('treasury-mv-edit-id').value = String(item.id || '');
             document.getElementById('treasury-mv-date').value = String(item.date || '');
-            document.getElementById('treasury-mv-unit').value = String(item.unit || 'MATRIZ');
             document.getElementById('treasury-mv-cash').value = String(totals.cashIn || 0);
             document.getElementById('treasury-mv-card').value = String(totals.cardIn || 0);
             document.getElementById('treasury-mv-payments').value = String(totals.paymentsOut || 0);
@@ -10689,6 +11623,16 @@
             document.getElementById('treasury-mv-form-subtitle').innerText = `Revise os valores de ${String(item.unit || '').replace('_', ' ')} em ${formatDateBRV2(item.date)}.`;
             document.getElementById('treasury-mv-submit-label').innerText = 'Salvar alterações';
             document.getElementById('treasury-mv-cancel-edit').classList.remove('hidden');
+            selectVenderUnit(String(item.unit || 'MATRIZ'));
+            updateVenderTotal();
+            if (item.notes) {
+                const notesBody    = document.getElementById('vender-notes-body');
+                const notesChevron = document.getElementById('vender-chevron');
+                const notesLabel   = document.getElementById('vender-notes-toggle-label');
+                if (notesBody)    notesBody.classList.remove('hidden');
+                if (notesChevron) notesChevron.classList.add('open');
+                if (notesLabel)   notesLabel.textContent = 'Ocultar observação';
+            }
             document.getElementById('treasury-mv-date')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             document.getElementById('treasury-mv-date')?.focus();
         }
@@ -10699,6 +11643,7 @@
             const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
             const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
             const historyBody = document.getElementById('treasury-mv-history-body');
+            const summaryEl = document.getElementById('treasury-mv-history-summary');
             if (!historyBody) return;
 
             const filtered = (state.storeDailyMovements || [])
@@ -10709,32 +11654,51 @@
                     return String(b.date || '').localeCompare(String(a.date || ''));
                 });
 
+            if (summaryEl) summaryEl.textContent = `${filtered.length} lançamento(s) encontrados.`;
+
             if (!filtered.length) {
-                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem fechamentos para os filtros aplicados</td></tr>';
+                historyBody.innerHTML = '<div class="vender-empty-state">Nenhum fechamento para os filtros aplicados.</div>';
             } else {
                 historyBody.innerHTML = filtered.map(item => {
                     const totals = getMovementTotals(item);
-                    const resultClass = totals.dailyResult < 0 ? 'text-red-600' : 'text-slate-700';
-                    return `<tr class="table-row">
-                        <td class="px-4 py-3">
-                            <div class="treasury-cell-main text-slate-700">${escapeHtml(formatDateBRV2(item.date))}</div>
-                            <div class="treasury-cell-sub">${escapeHtml(item.unit || '-')}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-bold text-slate-800">${escapeHtml(item.unit || '-')}</td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} • Cartão: ${formatBRL(totals.cardIn)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main ${resultClass}">${formatBRL(totals.dailyResult)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="h-7 w-7 inline-flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200" title="Excluir movimento" aria-label="Excluir movimento">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
-                        </td>
-                    </tr>`;
+                    const isNeg = totals.dailyResult < 0;
+                    const unitClass = item.unit === 'VILA_NOVA' ? 'vila' : 'matriz';
+                    const unitLabel = item.unit === 'VILA_NOVA' ? 'Vila Nova' : 'Matriz';
+                    return `<div class="vender-entry-card">
+                        <div class="vender-entry-top">
+                            <div class="vender-entry-date-col">
+                                <div class="vender-entry-date">${escapeHtml(formatDateBRV2(item.date))}</div>
+                                <span class="vender-unit-badge ${unitClass}">${unitLabel}</span>
+                            </div>
+                            <div class="vender-entry-amounts">
+                                <div class="vender-entry-amount">
+                                    <span class="vender-amount-label">Dinheiro</span>
+                                    <span class="vender-amount-val green">${formatBRL(totals.cashIn)}</span>
+                                </div>
+                                <div class="vender-entry-amount">
+                                    <span class="vender-amount-label">Cartão</span>
+                                    <span class="vender-amount-val blue">${formatBRL(totals.cardIn)}</span>
+                                </div>
+                                <div class="vender-entry-amount">
+                                    <span class="vender-amount-label">Saídas</span>
+                                    <span class="vender-amount-val red">${formatBRL(totals.paymentsOut)}</span>
+                                </div>
+                            </div>
+                            <div class="vender-entry-result-col">
+                                <span class="vender-result-label">Fechamento</span>
+                                <span class="vender-result-val ${isNeg ? 'negative' : 'positive'}">${formatBRL(totals.dailyResult)}</span>
+                            </div>
+                            <div class="vender-entry-actions">
+                                <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar" aria-label="Editar">
+                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="treasury-action-btn danger" title="Excluir" aria-label="Excluir">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        ${item.notes ? `<div class="vender-entry-notes-row">${escapeHtml(item.notes)}</div>` : ''}
+                    </div>`;
                 }).join('');
             }
             refreshLucideIcons();
@@ -12511,7 +13475,7 @@
             </article>`;
         }
 
-        function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP) {
+        function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
             const totalProjected = (Number(incR) || 0) + (Number(incP) || 0) - (Number(expR) || 0) - (Number(expP) || 0);
             const resultEl = document.getElementById('reports-month-result');
             const resultNoteEl = document.getElementById('reports-month-result-note');
@@ -12527,23 +13491,32 @@
             const chartEl = document.getElementById('reports-monthly-chart');
             const emptyEl = document.getElementById('reports-monthly-empty');
             const chartSubtitleEl = document.getElementById('reports-monthly-chart-subtitle');
+            const hasPendingDailyData = (dailyInPend || []).some(v => Number(v) > 0) || (dailyOutPend || []).some(v => Number(v) > 0);
             const hasRealizedDailyData = dailyInReal.some(value => Number(value) > 0) || dailyOutReal.some(value => Number(value) > 0);
-            if (emptyEl) emptyEl.classList.toggle('hidden', hasRealizedDailyData);
-            if (chartEl) chartEl.style.opacity = hasRealizedDailyData ? '1' : '0';
+            const hasAnyData = hasRealizedDailyData || (dailyShowPending && hasPendingDailyData);
+            if (emptyEl) emptyEl.classList.toggle('hidden', hasAnyData);
+            if (chartEl) chartEl.style.opacity = hasAnyData ? '1' : '0';
             if (chartSubtitleEl) chartSubtitleEl.innerText = hasRealizedDailyData
-                ? 'Entradas e saídas realizadas por dia.'
-                : 'Sem movimentos realizados no mês selecionado.';
+                ? (dailyShowPending ? 'Entradas e saídas realizadas e pendentes por dia.' : 'Entradas e saídas realizadas por dia.')
+                : (dailyShowPending && hasPendingDailyData ? 'Lançamentos pendentes por dia.' : 'Sem movimentos realizados no mês selecionado.');
+            const pendToggleBtn = document.getElementById('daily-pend-toggle');
+            if (pendToggleBtn) {
+                pendToggleBtn.classList.toggle('is-active', dailyShowPending);
+                pendToggleBtn.setAttribute('aria-pressed', String(dailyShowPending));
+            }
             if (chartEl && window.Chart) {
                 if (window.reportsMonthlyChart) window.reportsMonthlyChart.destroy();
+                const datasets = [
+                    { label: 'Entradas', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 18 },
+                    { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
+                ];
+                if (dailyShowPending && dailyInPend) {
+                    datasets.push({ label: 'Entradas pendentes', data: dailyInPend, backgroundColor: '#86EFAC', borderRadius: 10, maxBarThickness: 14 });
+                    datasets.push({ label: 'Saídas pendentes', data: dailyOutPend || [], backgroundColor: '#FCA5A5', borderRadius: 10, maxBarThickness: 14 });
+                }
                 window.reportsMonthlyChart = new Chart(chartEl.getContext('2d'), {
                     type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [
-                            { label: 'Entradas', data: dailyInReal, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 18 },
-                            { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
-                        ]
-                    },
+                    data: { labels, datasets },
                     options: {
                         maintainAspectRatio: false,
                         interaction: { mode: 'index', intersect: false },
@@ -12605,6 +13578,18 @@
             insights.push(buildInsightCard(currentSummary.net >= 0 ? 'thumbs-up' : 'triangle-alert', 'Leitura do resultado', currentSummary.net >= 0 ? 'O saldo realizado do mês está positivo.' : 'O saldo realizado do mês está negativo e merece atenção.'));
             const insightsHost = document.getElementById('reports-monthly-insights');
             if (insightsHost) insightsHost.innerHTML = insights.join('');
+        }
+
+        let dailyShowPending = false;
+
+        function toggleDailyPending() {
+            dailyShowPending = !dailyShowPending;
+            const btn = document.getElementById('daily-pend-toggle');
+            if (btn) {
+                btn.classList.toggle('is-active', dailyShowPending);
+                btn.setAttribute('aria-pressed', String(dailyShowPending));
+            }
+            renderMonthly();
         }
 
         function renderMonthly() {
@@ -12679,9 +13664,13 @@
 
             let html = '', cumulative = 0;
             const maxDailyReal = Math.max(...dailyInReal, ...dailyOutReal, 0);
+            const maxDailyPend = Math.max(...dailyInPend, ...dailyOutPend, 0);
             const hasRealizedDailyData = maxDailyReal > 0;
-            const getDailyWidth = (value) => maxDailyReal > 0 ? Math.max(0, Math.round((Number(value || 0) / maxDailyReal) * 100)) : 0;
-            if (hasRealizedDailyData) for(let d = 1; d <= daysInMonth; d++) {
+            const hasPendingDailyData = maxDailyPend > 0;
+            const maxForWidth = Math.max(maxDailyReal, dailyShowPending ? maxDailyPend : 0, 0);
+            const getDailyWidth = (value) => maxForWidth > 0 ? Math.max(0, Math.round((Number(value || 0) / maxForWidth) * 100)) : 0;
+            const shouldRenderTable = hasRealizedDailyData || (dailyShowPending && hasPendingDailyData);
+            if (shouldRenderTable) for(let d = 1; d <= daysInMonth; d++) {
                 const dInc = dailyInReal[d - 1] || 0;
                 const dExp = dailyOutReal[d - 1] || 0;
                 const dBal = dInc - dExp;
@@ -12689,32 +13678,61 @@
                 const incWidth = getDailyWidth(dInc);
                 const expWidth = getDailyWidth(dExp);
                 const isEmptyDay = dInc === 0 && dExp === 0;
-                html += `<tr class="monthly-day-row ${isEmptyDay ? 'is-empty' : ''}">
-                    <td class="monthly-day-cell">${String(d).padStart(2, '0')}</td>
-                    <td class="monthly-flow-cell">
-                        <div class="monthly-flow-value flow-income-text">
-                            <span>${formatBRL(dInc)}</span>
-                            <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${incWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--primary-green); width: ${incWidth}%;"></span></span>
-                        </div>
-                    </td>
-                    <td class="monthly-flow-cell">
-                        <div class="monthly-flow-value flow-expense-text">
-                            <span>${formatBRL(dExp)}</span>
-                            <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${expWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--soft-red); width: ${expWidth}%;"></span></span>
-                        </div>
-                    </td>
-                    <td class="text-right">
-                        <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
-                    </td>
-                    <td class="text-right monthly-cumulative">${formatBRL(cumulative)}</td>
-                </tr>`;
+                const pInc = dailyShowPending ? (dailyInPend[d - 1] || 0) : 0;
+                const pExp = dailyShowPending ? (dailyOutPend[d - 1] || 0) : 0;
+                const hasPendDay = pInc > 0 || pExp > 0;
+                if (hasRealizedDailyData) {
+                    html += `<tr class="monthly-day-row ${isEmptyDay ? 'is-empty' : ''}">
+                        <td class="monthly-day-cell">${String(d).padStart(2, '0')}</td>
+                        <td class="monthly-flow-cell">
+                            <div class="monthly-flow-value flow-income-text">
+                                <span>${formatBRL(dInc)}</span>
+                                <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${incWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--primary-green); width: ${incWidth}%;"></span></span>
+                            </div>
+                        </td>
+                        <td class="monthly-flow-cell">
+                            <div class="monthly-flow-value flow-expense-text">
+                                <span>${formatBRL(dExp)}</span>
+                                <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${expWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--soft-red); width: ${expWidth}%;"></span></span>
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
+                        </td>
+                        <td class="text-right monthly-cumulative">${formatBRL(cumulative)}</td>
+                    </tr>`;
+                }
+                if (dailyShowPending && hasPendDay) {
+                    const pBal = pInc - pExp;
+                    const pIncWidth = getDailyWidth(pInc);
+                    const pExpWidth = getDailyWidth(pExp);
+                    html += `<tr class="monthly-day-row is-pend">
+                        <td class="monthly-day-cell">${hasRealizedDailyData ? '<span class="daily-pend-tag">P</span>' : String(d).padStart(2, '0')}</td>
+                        <td class="monthly-flow-cell">
+                            <div class="monthly-flow-value flow-income-text">
+                                <span>${formatBRL(pInc)}</span>
+                                <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${pIncWidth === 0 ? 'is-zero' : ''}" style="--bar-color: #86EFAC; width: ${pIncWidth}%;"></span></span>
+                            </div>
+                        </td>
+                        <td class="monthly-flow-cell">
+                            <div class="monthly-flow-value flow-expense-text">
+                                <span>${formatBRL(pExp)}</span>
+                                <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${pExpWidth === 0 ? 'is-zero' : ''}" style="--bar-color: #FCA5A5; width: ${pExpWidth}%;"></span></span>
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            <span class="day-net-pill ${pBal < 0 ? 'day-net-negative' : 'day-net-positive'}" style="opacity:0.7">${formatBRL(pBal)}</span>
+                        </td>
+                        <td class="text-right monthly-cumulative" style="color:#94A3B8">—</td>
+                    </tr>`;
+                }
             }
             const monthlyDailyTableEl = document.getElementById('monthly-daily-table');
             if (monthlyDailyTableEl) {
                 monthlyDailyTableEl.innerHTML = html || '<tr><td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold">Nenhum movimento realizado neste período. Cadastre um lançamento realizado ou escolha outro mês.</td></tr>';
             }
 
-            renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP);
+            renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend);
             clearMonthlyCategoryCharts();
         }
 
@@ -12995,7 +14013,8 @@
                 <td class="px-12 py-5 text-right flow-expense-text font-bold">${formatBRL(d.exp)}</td>
                 <td class="px-12 py-5 text-right font-black ${d.bal>=0?'flow-balance-text':'flow-expense-text'}">${formatBRL(d.bal)}</td>
             </tr>`).join('');
-            
+
+
             const ctxEl = document.getElementById('chartAnnual');
             if(ctxEl) {
                 if(window.aChart) window.aChart.destroy();
@@ -13006,22 +14025,22 @@
                 const annualMax = Math.max(...annualInc, ...annualExp, 0);
                 const annualAxisMax = annualMax > 0 ? Math.ceil(annualMax * 1.15) : 100;
                 const annualStep = Math.max(1, Math.ceil(annualAxisMax / 5));
-                window.aChart = new Chart(ctxEl.getContext('2d'), { 
-                    type: 'bar', 
-                    data: { 
-                        labels: monthNames, 
+                window.aChart = new Chart(ctxEl.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: monthNames,
                         datasets: [
-                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#0F8A67', borderRadius: 8, stack: 'entrada' }, 
+                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#0F8A67', borderRadius: 8, stack: 'entrada' },
                             { label: 'Aporte de capital', data: annualAporte, backgroundColor: '#8FD19E', borderRadius: 8, stack: 'entrada' },
                             { label: 'Saídas', data: annualExp, backgroundColor: '#C94A34', borderRadius: 8, stack: 'saida' }
-                        ] 
-                    }, 
+                        ]
+                    },
                     options: {
-                        maintainAspectRatio: false, 
+                        maintainAspectRatio: false,
                         interaction: { mode: 'nearest', intersect: false },
                         onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
-                        scales: { 
-                            x: { stacked: true, grid: { display: false } }, 
+                        scales: {
+                            x: { stacked: true, grid: { display: false } },
                             y: {
                                 stacked: true,
                                 min: 0,
@@ -13032,7 +14051,7 @@
                                     maxTicksLimit: 6,
                                     callback: (value) => formatChartBRLCompact(value)
                                 }
-                            } 
+                            }
                         },
                         plugins: {
                             legend: { position: 'top' },
@@ -13046,13 +14065,13 @@
                                 return `${ctx.dataset.label}: ${formatBRL(valorAtual)}`;
                             })
                         }
-                    } 
+                    }
                 });
                 window.aChart.update();
             }
-            renderAnnualTemporalComparison(year);
             const yearEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`));
             renderAnnualReportExtras(year, data, yearEntries);
+            renderAnnualTemporalComparison(year);
         }
         function formatVariation(current, prev) {
             if (!prev) return '-';
@@ -13470,15 +14489,86 @@
             return Math.max(1, Math.round((end - start) / 86400000) + 1);
         }
 
+        function getDayType(date) {
+            const d = date instanceof Date ? date : parseIsoDateLocal(date);
+            if (!d) return 'weekday';
+            const dow = d.getDay();
+            if (dow === 0) return 'sunday';
+            if (dow === 6) return 'saturday';
+            return 'weekday';
+        }
+
+        function getBusinessDayOrdinal(date) {
+            const d = date instanceof Date ? date : parseIsoDateLocal(date);
+            let count = 0;
+            for (let i = 1; i <= d.getDate(); i++) {
+                const dow = new Date(d.getFullYear(), d.getMonth(), i).getDay();
+                if (dow >= 1 && dow <= 5) count++;
+            }
+            return count;
+        }
+
+        function getSaturdayOrdinal(date) {
+            const d = date instanceof Date ? date : parseIsoDateLocal(date);
+            let count = 0;
+            for (let i = 1; i <= d.getDate(); i++) {
+                if (new Date(d.getFullYear(), d.getMonth(), i).getDay() === 6) count++;
+            }
+            return count;
+        }
+
+        function getCalendarDateForBusinessDayOrdinal(year, month, ordinal) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let count = 0;
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dow = new Date(year, month, i).getDay();
+                if (dow >= 1 && dow <= 5) {
+                    count++;
+                    if (count === ordinal) return new Date(year, month, i);
+                }
+            }
+            return null;
+        }
+
+        function getCalendarDateForSaturdayOrdinal(year, month, ordinal) {
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let count = 0;
+            for (let i = 1; i <= daysInMonth; i++) {
+                if (new Date(year, month, i).getDay() === 6) {
+                    count++;
+                    if (count === ordinal) return new Date(year, month, i);
+                }
+            }
+            return null;
+        }
+
         function getHistoricalProjectionForDay(entries, months, isoDate) {
-            const dayKey = String(isoDate || '').slice(8, 10);
-            const dayEntries = entries.filter(entry => String(entry.date || '').slice(8, 10) === dayKey);
-            const summary = summarizeFinancialEntries(dayEntries);
-            const divisor = Math.max(1, Number(months) || 1);
-            return {
-                inc: summary.inc / divisor,
-                exp: summary.exp / divisor
-            };
+            const targetDate = parseIsoDateLocal(isoDate);
+            if (!targetDate) return { inc: 0, exp: 0 };
+            const dayType = getDayType(targetDate);
+            if (dayType === 'sunday') return { inc: 0, exp: 0 };
+            const ordinal = dayType === 'saturday'
+                ? getSaturdayOrdinal(targetDate)
+                : getBusinessDayOrdinal(targetDate);
+            const lookupFn = dayType === 'saturday'
+                ? getCalendarDateForSaturdayOrdinal
+                : getCalendarDateForBusinessDayOrdinal;
+            const prefixes = [...new Set(entries.map(e => String(e.date || '').slice(0, 7)).filter(Boolean))];
+            let totalInc = 0, totalExp = 0, matchedMonths = 0;
+            prefixes.forEach(prefix => {
+                const refYear = Number(prefix.slice(0, 4));
+                const refMonth = Number(prefix.slice(5, 7)) - 1;
+                const refDate = lookupFn(refYear, refMonth, ordinal);
+                if (!refDate) return;
+                const refIso = formatLocalDate(refDate);
+                const dayEntries = entries.filter(e => String(e.date || '') === refIso);
+                const summary = summarizeFinancialEntries(dayEntries);
+                totalInc += summary.inc;
+                totalExp += summary.exp;
+                matchedMonths++;
+            });
+            const divisor = Math.max(1, matchedMonths);
+            return { inc: totalInc / divisor, exp: totalExp / divisor };
         }
 
         function fillProjectionBucketsFromHistory(buckets, entries, months) {
@@ -13556,19 +14646,63 @@
 
             const listEl = document.getElementById('projection-list');
             if (listEl) {
-                listEl.innerHTML = entries.length ? entries.map(entry => {
-                    const flow = normalizeFlowType(entry.type);
-                    const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
-                    const meta = [getAccountNameById(entry.accountId), entry.description || ''].filter(Boolean).join(' • ');
-                    return `<article class="projection-list-item">
-                        <span class="projection-list-date">${formatDateBRV2(entry.date)}</span>
-                        <div>
-                            <p class="projection-list-name">${escapeHtml(destination)}</p>
-                            <p class="projection-list-meta">${escapeHtml(meta)}</p>
-                        </div>
-                        <strong class="projection-list-value ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'} ${formatBRL(Number(entry.amount) || 0)}</strong>
-                    </article>`;
-                }).join('') : '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+                if (!entries.length) {
+                    listEl.innerHTML = '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+                } else {
+                    const rows = buckets.map(bucket => {
+                        const net = bucket.inc - bucket.exp;
+                        const periodDetail = bucket.startIso === bucket.endIso
+                            ? formatDateBRV2(bucket.startIso)
+                            : `${formatDateBRV2(bucket.startIso)} a ${formatDateBRV2(bucket.endIso)}`;
+                        return `<tr>
+                            <td>
+                                <div class="projection-table-date">${escapeHtml(bucket.label)}</div>
+                                <div class="projection-table-sub">${escapeHtml(periodDetail)}</div>
+                            </td>
+                            <td><span class="projection-table-value flow-income-text">${formatBRL(bucket.inc)}</span></td>
+                            <td><span class="projection-table-value flow-expense-text">${formatBRL(bucket.exp)}</span></td>
+                            <td><span class="projection-table-value ${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(net)}</span></td>
+                        </tr>`;
+                    }).join('');
+                    const tableHtml = `<div class="projection-table-wrap custom-scrollbar">
+                        <table class="projection-table" aria-label="Resumo da projeção por período">
+                            <thead>
+                                <tr>
+                                    <th>Período</th>
+                                    <th>Entradas</th>
+                                    <th>Saídas</th>
+                                    <th>Resultado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                                <tr class="projection-table-total">
+                                    <td>
+                                        <div class="projection-table-date">Total previsto</div>
+                                        <div class="projection-table-sub">${days} dias de pendências futuras</div>
+                                    </td>
+                                    <td><span class="projection-table-value flow-income-text">${formatBRL(summary.inc)}</span></td>
+                                    <td><span class="projection-table-value flow-expense-text">${formatBRL(summary.exp)}</span></td>
+                                    <td><span class="projection-table-value ${summary.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(summary.net)}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>`;
+                    const itemsHtml = entries.map(entry => {
+                        const flow = normalizeFlowType(entry.type);
+                        const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
+                        const meta = [getAccountNameById(entry.accountId), entry.description || ''].filter(Boolean).join(' • ');
+                        return `<article class="projection-list-item">
+                            <span class="projection-list-date">${formatDateBRV2(entry.date)}</span>
+                            <div>
+                                <p class="projection-list-name">${escapeHtml(destination)}</p>
+                                <p class="projection-list-meta">${escapeHtml(meta)}</p>
+                            </div>
+                            <strong class="projection-list-value ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'} ${formatBRL(Number(entry.amount) || 0)}</strong>
+                        </article>`;
+                    }).join('');
+                    listEl.innerHTML = tableHtml + itemsHtml;
+                }
             }
         }
 
@@ -13600,9 +14734,9 @@
             document.getElementById('projection-card-out').innerText = formatBRL(projected.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(projected.net);
             document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
-            document.getElementById('projection-explain').innerText = `Projeção calculada usando o mesmo dia do mês no histórico dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
+            document.getElementById('projection-explain').innerText = `Projeção calculada usando o mesmo dia útil do mês no histórico dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
             document.getElementById('projection-list-title').innerText = 'Tabela da projeção';
-            document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia do mês no histórico.`;
+            document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia útil do mês no histórico.`;
             renderProjectionChart(
                 buckets.length ? buckets.map(bucket => bucket.label) : ['Sem dados'],
                 buckets.length ? buckets.map(bucket => bucket.inc) : [0],
@@ -13612,7 +14746,7 @@
             const listEl = document.getElementById('projection-list');
             if (listEl) {
                 document.getElementById('projection-list-title').innerText = 'Tabela da projeção';
-                document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia do mês no histórico.`;
+                document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia útil do mês no histórico.`;
                 if (!buckets.length) {
                     listEl.innerHTML = '<div class="cash-projection-empty">Nenhum dado histórico encontrado para montar a projeção.</div>';
                     return;
@@ -15587,6 +16721,214 @@
             renderReconPreview();
         }
 
+        function initReconSheet() {
+            if (tempReconSheet.length === 0) addReconSheetRow();
+            else renderReconSheet();
+        }
+        function addReconSheetRow() {
+            tempReconSheet.push({ id: generateId(), date: '', destinationId: '', valor: '', type: 'SAÍDA', descricao: '' });
+            renderReconSheet();
+        }
+        function removeReconSheetRow(index) {
+            tempReconSheet.splice(index, 1);
+            if (tempReconSheet.length === 0) addReconSheetRow();
+            else renderReconSheet();
+        }
+        function updateReconSheetCell(index, field, value) {
+            if (!tempReconSheet[index]) return;
+            tempReconSheet[index][field] = value;
+        }
+        function toggleReconSheetType(index) {
+            if (!tempReconSheet[index]) return;
+            tempReconSheet[index].type = tempReconSheet[index].type === 'ENTRADA' ? 'SAÍDA' : 'ENTRADA';
+            renderReconSheet();
+        }
+        function renderReconSheet() {
+            const body = document.getElementById('recon-sheet-body');
+            if (!body) return;
+            const destinations = getValidDestinations();
+            body.innerHTML = tempReconSheet.map((row, i) => {
+                const isEntrada = row.type === 'ENTRADA';
+                const destOptions = `<option value="">— Destino —</option>` + destinations.map(d =>
+                    `<option value="${escapeHtml(String(d.id || ''))}" ${String(d.id) === String(row.destinationId) ? 'selected' : ''}>${escapeHtml(getDestinationDisplayLabel(d))}</option>`
+                ).join('');
+                return `<tr class="table-row" id="recon-sheet-row-${i}">
+                    <td class="px-3 py-2 w-[148px]">
+                        <div class="flex items-center gap-1.5">
+                            <input type="date" id="recon-sh-date-${i}" class="recon-sheet-input font-mono flex-1 min-w-0"
+                                value="${escapeHtml(row.date)}"
+                                oninput="updateReconSheetCell(${i}, 'date', this.value)"
+                                onkeydown="handleReconSheetKeydown(${i}, 'date', event)">
+                            <button type="button" class="recon-sheet-fill-handle" onmousedown="startReconSheetFill(${i}, event)" title="Arraste para baixo para copiar e incrementar datas">⠿</button>
+                        </div>
+                    </td>
+                    <td class="px-3 py-2">
+                        <select id="recon-sh-dst-${i}" class="recon-sheet-input"
+                            onchange="updateReconSheetCell(${i}, 'destinationId', this.value)"
+                            onkeydown="handleReconSheetKeydown(${i}, 'destinationId', event)">${destOptions}</select>
+                    </td>
+                    <td class="px-3 py-2 w-[130px]">
+                        <input type="text" id="recon-sh-val-${i}" class="recon-sheet-input text-right font-mono ${isEntrada ? 'text-green-700' : 'text-red-700'}" placeholder="0,00"
+                            value="${escapeHtml(row.valor)}"
+                            oninput="updateReconSheetCell(${i}, 'valor', this.value)"
+                            onkeydown="handleReconSheetKeydown(${i}, 'valor', event)">
+                    </td>
+                    <td class="px-3 py-2 w-[72px] text-center">
+                        <button type="button" onclick="toggleReconSheetType(${i})" class="recon-sheet-type-btn ${isEntrada ? 'recon-sheet-type-entrada' : 'recon-sheet-type-saida'}" title="${isEntrada ? 'Entrada — clique para Saída' : 'Saída — clique para Entrada'}">
+                            ${isEntrada ? '+' : '−'}
+                        </button>
+                    </td>
+                    <td class="px-3 py-2 w-[220px]">
+                        <input type="text" id="recon-sh-desc-${i}" class="recon-sheet-input" placeholder="Descrição"
+                            value="${escapeHtml(row.descricao)}"
+                            oninput="updateReconSheetCell(${i}, 'descricao', this.value)"
+                            onkeydown="handleReconSheetKeydown(${i}, 'descricao', event)">
+                    </td>
+                    <td class="px-3 py-2 w-[52px] text-center">
+                        <button onclick="removeReconSheetRow(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+            refreshLucideIcons();
+        }
+        function parseDateReconSheet(val) {
+            if (!val) return '';
+            const s = String(val).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+            const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+            if (m) {
+                const y = m[3].length === 2 ? '20' + m[3] : m[3];
+                return `${y}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+            }
+            return '';
+        }
+        function addReconSheetToRecon() {
+            const batchStatus = getReconBatchStatus();
+            const validDestinations = getValidDestinations();
+            const errors = [];
+            const newItems = [];
+            tempReconSheet.forEach((row, i) => {
+                const date = parseDateReconSheet(row.date);
+                if (!date) { errors.push(`Linha ${i + 1}: data inválida.`); return; }
+                const amount = parseValueRobust(row.valor);
+                if (!amount || amount <= 0) { errors.push(`Linha ${i + 1}: valor inválido.`); return; }
+                newItems.push({
+                    id: generateId(),
+                    date,
+                    amount,
+                    type: row.type,
+                    status: batchStatus,
+                    description: String(row.descricao || ''),
+                    destinationId: row.destinationId || getDefaultReconDestinationId(row.type, getReconAllowedDestinations({ type: row.type }, validDestinations))
+                });
+            });
+            if (errors.length) { alert('Corrija os erros antes de adicionar:\n\n' + errors.join('\n')); return; }
+            if (!newItems.length) { alert('Nenhum registro para adicionar.'); return; }
+            tempRecon = tempRecon.concat(newItems);
+            tempReconSheet = [];
+            addReconSheetRow();
+            renderReconPreview();
+            const preview = document.getElementById('recon-preview');
+            if (preview && !preview.classList.contains('hidden')) preview.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startReconSheetFill(index, event) {
+            event.preventDefault();
+            reconSheetFillState = { active: true, sourceIndex: index, currentIndex: index };
+            document.addEventListener('mousemove', onReconSheetFillMove, { passive: true });
+            document.addEventListener('mouseup', onReconSheetFillEnd);
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'ns-resize';
+        }
+        function onReconSheetFillMove(event) {
+            if (!reconSheetFillState.active) return;
+            let targetIndex = reconSheetFillState.sourceIndex;
+            document.querySelectorAll('[id^="recon-sheet-row-"]').forEach(row => {
+                const rect = row.getBoundingClientRect();
+                if (event.clientY >= rect.top && event.clientY <= rect.bottom) {
+                    const idx = parseInt(row.id.replace('recon-sheet-row-', ''), 10);
+                    if (!isNaN(idx) && idx >= reconSheetFillState.sourceIndex) targetIndex = idx;
+                }
+            });
+            if (targetIndex === reconSheetFillState.currentIndex) return;
+            reconSheetFillState.currentIndex = targetIndex;
+            document.querySelectorAll('[id^="recon-sheet-row-"]').forEach(row => {
+                const idx = parseInt(row.id.replace('recon-sheet-row-', ''), 10);
+                if (isNaN(idx)) return;
+                if (idx > reconSheetFillState.sourceIndex && idx <= targetIndex) row.classList.add('recon-sheet-filling');
+                else row.classList.remove('recon-sheet-filling');
+            });
+        }
+        function onReconSheetFillEnd() {
+            document.removeEventListener('mousemove', onReconSheetFillMove);
+            document.removeEventListener('mouseup', onReconSheetFillEnd);
+            document.body.style.userSelect = '';
+            document.body.style.cursor = '';
+            if (!reconSheetFillState.active) return;
+            const src = reconSheetFillState.sourceIndex;
+            const end = reconSheetFillState.currentIndex;
+            const sourceRow = tempReconSheet[src];
+            if (sourceRow && end > src) {
+                for (let i = src + 1; i <= end && i < tempReconSheet.length; i++) {
+                    tempReconSheet[i].destinationId = sourceRow.destinationId;
+                }
+            }
+            reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
+            renderReconSheet();
+        }
+        function handleReconSheetKeydown(rowIndex, colName, event) {
+            const cols = ['date', 'destinationId', 'valor', 'descricao'];
+            const colIdx = cols.indexOf(colName);
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const dir = event.shiftKey ? -1 : 1;
+                const nextCol = colIdx + dir;
+                if (nextCol >= 0 && nextCol < cols.length) {
+                    focusReconSheetCell(rowIndex, cols[nextCol]);
+                } else if (nextCol >= cols.length) {
+                    if (rowIndex + 1 < tempReconSheet.length) {
+                        focusReconSheetCell(rowIndex + 1, cols[0]);
+                    } else {
+                        addReconSheetRow();
+                        setTimeout(() => focusReconSheetCell(rowIndex + 1, cols[0]), 40);
+                    }
+                } else if (rowIndex > 0) {
+                    focusReconSheetCell(rowIndex - 1, cols[cols.length - 1]);
+                }
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                const nextColEnter = colIdx + 1;
+                if (nextColEnter < cols.length) {
+                    focusReconSheetCell(rowIndex, cols[nextColEnter]);
+                } else {
+                    if (rowIndex + 1 < tempReconSheet.length) {
+                        focusReconSheetCell(rowIndex + 1, cols[0]);
+                    } else {
+                        addReconSheetRow();
+                        setTimeout(() => focusReconSheetCell(rowIndex + 1, cols[0]), 40);
+                    }
+                }
+            } else if (event.key === 'ArrowDown') {
+                if (colName === 'date' || colName === 'valor' || colName === 'descricao') {
+                    event.preventDefault();
+                    focusReconSheetCell(rowIndex + 1, colName);
+                }
+            } else if (event.key === 'ArrowUp' && rowIndex > 0) {
+                if (colName === 'date' || colName === 'valor' || colName === 'descricao') {
+                    event.preventDefault();
+                    focusReconSheetCell(rowIndex - 1, colName);
+                }
+            }
+        }
+        function focusReconSheetCell(rowIndex, colName) {
+            if (rowIndex < 0 || rowIndex >= tempReconSheet.length) return;
+            const ids = { date: `recon-sh-date-${rowIndex}`, destinationId: `recon-sh-dst-${rowIndex}`, valor: `recon-sh-val-${rowIndex}`, descricao: `recon-sh-desc-${rowIndex}` };
+            const el = document.getElementById(ids[colName]);
+            if (el) { el.focus(); if (typeof el.select === 'function') el.select(); }
+        }
+
         async function finalizeRecon() {
             if (reconImportInFlight) return;
             const importBtn = document.getElementById('recon-import-btn');
@@ -16891,10 +18233,6 @@
             return !document.getElementById('login-screen')?.classList.contains('hidden');
         }
 
-        function isLoginUserField(target) {
-            return target && target.id === 'login-user';
-        }
-
         function updateLoginDots() {
             const hiddenInput = document.getElementById('login-pass-hidden');
             const dots = Array.from(document.querySelectorAll('#login-pass-dots .login-dot'));
@@ -16938,14 +18276,104 @@
         }
 
         function submitLogin() {
-            const user = String(document.getElementById('login-user')?.value || '').trim().toLowerCase();
-            if (user === LOGIN_USER && loginPassBuffer === LOGIN_PASS) {
+            if (loginPassBuffer === LOGIN_PASS) {
                 unlockApp();
                 return;
             }
             clearLoginPass();
-            setLoginError('Usuário ou senha incorretos.');
-            document.getElementById('login-user')?.focus();
+            setLoginError('PIN incorreto.');
+        }
+
+        function revealPinCard() {
+            document.getElementById('login-screen')?.classList.add('lml-revealed');
+        }
+
+        function initSlideToUnlock() {
+            const track = document.getElementById('lml-slide-track');
+            const thumb = document.getElementById('lml-slide-thumb');
+            if (!track || !thumb) return;
+
+            const MARGIN = 5;
+            let isDragging = false;
+            let startClientX = 0;
+            let startLeft = MARGIN;
+
+            function getMaxSlide() {
+                return track.clientWidth - thumb.offsetWidth - MARGIN * 2;
+            }
+
+            function setLockIcon(unlocked) {
+                const el0 = document.getElementById('lml-icon-locked');
+                const el1 = document.getElementById('lml-icon-unlocked');
+                if (el0) el0.style.display = unlocked ? 'none' : '';
+                if (el1) el1.style.display = unlocked ? '' : 'none';
+            }
+
+            function applyProgress(deltaX) {
+                const maxSlide = getMaxSlide();
+                const newLeft = Math.max(MARGIN, Math.min(startLeft + deltaX, MARGIN + maxSlide));
+                thumb.style.left = newLeft + 'px';
+                const progress = (newLeft - MARGIN) / maxSlide;
+                const label = track.querySelector('.lml-slide-text');
+                if (label) label.style.opacity = String(Math.max(0, 1 - progress * 1.8));
+                const wrap = document.getElementById('lml-lock-wrap');
+                if (wrap) wrap.classList.toggle('unlocking', progress > 0.5);
+                setLockIcon(progress > 0.5);
+                return progress;
+            }
+
+            function resetThumb() {
+                thumb.style.transition = 'left 0.32s cubic-bezier(0.22,1,0.36,1)';
+                thumb.style.left = MARGIN + 'px';
+                const label = track.querySelector('.lml-slide-text');
+                if (label) { label.style.transition = 'opacity 0.32s ease'; label.style.opacity = '1'; }
+                const wrap = document.getElementById('lml-lock-wrap');
+                if (wrap) wrap.classList.remove('unlocking');
+                setLockIcon(false);
+                setTimeout(() => {
+                    thumb.style.transition = '';
+                    if (label) label.style.transition = '';
+                }, 340);
+            }
+
+            function onDragEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                const maxSlide = getMaxSlide();
+                const currentLeft = parseFloat(thumb.style.left) || MARGIN;
+                if ((currentLeft - MARGIN) / maxSlide >= 0.8) {
+                    revealPinCard();
+                } else {
+                    resetThumb();
+                }
+            }
+
+            thumb.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startClientX = e.touches[0].clientX;
+                startLeft = parseFloat(thumb.style.left) || MARGIN;
+                e.stopPropagation();
+            }, { passive: true });
+
+            track.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                applyProgress(e.touches[0].clientX - startClientX);
+                e.preventDefault();
+            }, { passive: false });
+
+            track.addEventListener('touchend', () => { onDragEnd(); }, { passive: true });
+
+            thumb.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startClientX = e.clientX;
+                startLeft = parseFloat(thumb.style.left) || MARGIN;
+                e.preventDefault();
+            });
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                applyProgress(e.clientX - startClientX);
+            });
+            document.addEventListener('mouseup', () => { onDragEnd(); });
         }
 
         function initLoginScreen() {
@@ -16956,7 +18384,7 @@
             }
             document.body.classList.add('login-locked');
             updateLoginDots();
-            window.setTimeout(() => document.getElementById('login-user')?.focus(), 80);
+            initSlideToUnlock();
         }
 
         const mf = document.getElementById('monthly-filter');
@@ -16965,19 +18393,6 @@
         window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
         document.addEventListener('keydown', (event) => {
             if (isLoginOpen()) {
-                if (isLoginUserField(event.target)) {
-                    const userValue = String(event.target.value || '').trim().toLowerCase();
-                    if (/^\d$/.test(event.key) && userValue === LOGIN_USER) {
-                        event.preventDefault();
-                        appendLoginDigit(event.key);
-                        return;
-                    }
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        submitLogin();
-                    }
-                    return;
-                }
                 if (/^\d$/.test(event.key)) {
                     event.preventDefault();
                     appendLoginDigit(event.key);
@@ -17006,7 +18421,7 @@
         document.addEventListener('touchend', (event) => {
             if (!isLoginOpen()) return;
             const now = Date.now();
-            if (now - lastLoginTouchAt < 320 && !isLoginUserField(event.target)) {
+            if (now - lastLoginTouchAt < 320) {
                 event.preventDefault();
             }
             lastLoginTouchAt = now;
@@ -17022,6 +18437,7 @@
         let goalsViewLevel = 'table';
         let goalsViewSelectedGoal = null;
         let goalsViewSelectedMonth = null;
+        let goalsDisplayMode = 'cards'; // 'cards' | 'table'
         let goalsViewYear = String(new Date().getFullYear());
         let goalsMonthWindowOffset = 0;
         let goalsExpandedCategories = new Set();
@@ -17380,14 +18796,44 @@
             return goal.targetMonth === yyyyMM;
         }
 
+        function setGoalsDisplayMode(mode) {
+            goalsDisplayMode = mode;
+            document.getElementById('goals-mode-cards')?.classList.toggle('active', mode === 'cards');
+            document.getElementById('goals-mode-cards')?.setAttribute('aria-selected', mode === 'cards');
+            document.getElementById('goals-mode-table')?.classList.toggle('active', mode === 'table');
+            document.getElementById('goals-mode-table')?.setAttribute('aria-selected', mode === 'table');
+            // Ao mudar de modo, volta para o nível de tabela
+            goalsViewLevel = 'table';
+            goalsViewSelectedGoal = null;
+            goalsViewSelectedMonth = null;
+            goalsViewSelectedMonths = [];
+            renderGoals();
+        }
+
         function renderGoals() {
             const navEl = document.querySelector('.goals-month-nav');
             const lblEl = document.getElementById('goals-month-label');
             if (navEl) navEl.style.display = 'none';
             if (lblEl) lblEl.textContent = '';
 
+            // Sincroniza o toggle visual com o estado atual
+            document.getElementById('goals-mode-cards')?.classList.toggle('active', goalsDisplayMode === 'cards');
+            document.getElementById('goals-mode-table')?.classList.toggle('active', goalsDisplayMode === 'table');
+
+            const cardsEl = document.getElementById('goals-cards-section');
             const kpiEl = document.getElementById('goals-kpi-row');
             const gridEl = document.getElementById('goals-grid');
+
+            // Modo CARDS: só mostra os cards, nada de tabela
+            if (goalsViewLevel === 'table' && goalsDisplayMode === 'cards') {
+                if (cardsEl) renderGoalsCards(cardsEl);
+                if (kpiEl) kpiEl.innerHTML = '';
+                if (gridEl) gridEl.innerHTML = '';
+                return;
+            }
+
+            // Outros níveis (detail, launches) ou modo tabela: esconde cards
+            if (cardsEl) cardsEl.innerHTML = '';
 
             if (goalsViewLevel === 'table') {
                 renderGoalsTable(kpiEl, gridEl);
@@ -17452,6 +18898,64 @@
             }).filter(c => c.hasData);
         }
 
+        function renderGoalsCards(el) {
+            if (!el) return;
+            if (!goalsData.length) { el.innerHTML = ''; return; }
+
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            const currentYYYYMM = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const mn = now.getMonth();
+            const monthLabel = `${monthNames[mn]}/${String(now.getFullYear()).slice(2)}`;
+
+            const cards = goalsData.map(goal => {
+                const prog = calcGoalProgress(goal, currentYYYYMM);
+                const sc = getGoalStatusStyle(prog.status, goal.type);
+                const name = getGoalHierarchyName(goal);
+                const isEx = getGoalNormalizedType(goal.type) === FLOW_OUT;
+                const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
+                const typeLabel = isEx ? 'Despesa' : 'Receita';
+                const barPct = prog.rawPct > 0 ? Math.max(prog.pct, 2) : 0;
+                const goalId = goal.id;
+
+                const hierarchyType = goal.hierarchyType;
+                const hierarchyId   = goal.hierarchyId;
+                const flowType      = goal.type;
+
+                return `<div class="goals-card" style="border-top:3px solid ${sc.color}">
+                    <div class="goals-card-header">
+                        <div class="goals-card-title-wrap">
+                            <span class="goals-card-name">${name}</span>
+                            <span class="goals-card-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
+                        </div>
+                        <div class="goals-card-actions">
+                            <button class="goals-card-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${name.replace(/'/g,"\\'")}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
+                            <button class="goals-card-btn" onclick="goalsOpenDetail('${goalId}')" title="Ver por mês"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i></button>
+                            <button class="goals-card-btn goals-card-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                    <div class="goals-card-month">${monthLabel}</div>
+                    <div class="goals-card-amounts">
+                        <span class="goals-card-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
+                        <span class="goals-card-sep">/</span>
+                        <span class="goals-card-target">${formatBRL(prog.target)}</span>
+                        <span class="goals-status-pill goals-card-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${Math.round(prog.rawPct)}%</span>
+                    </div>
+                    <div class="goal-progress-track goals-card-bar-track">
+                        <div class="goal-progress-fill" style="width:${barPct}%;background:${sc.color}"></div>
+                    </div>
+                    <div class="goals-card-footer">
+                        <span style="color:${sc.color};font-weight:700;font-size:11px">${sc.label}</span>
+                        ${prog.remaining > 0 ? `<span class="goals-card-remaining">${isEx ? 'Restam' : 'Faltam'} ${formatBRL(prog.remaining)}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+
+            el.innerHTML = `<div class="goals-cards-wrap">${cards}</div>`;
+            refreshLucideIcons();
+        }
+
         function goalsRenderTreeCells(actuals, goal, flow, months, currentYYYYMM, hierarchyType, hierarchyId, itemName) {
             return months.map((m, i) => {
                 const isCurrent = m === currentYYYYMM;
@@ -17476,17 +18980,7 @@
                     metaHtml = `<span class="goals-cell-zero">—</span>`;
                 }
 
-                const safeHT = (hierarchyType||'').replace(/'/g,"\'");
-                const safeHI = (hierarchyId||'').replace(/'/g,"\'");
-                const safeN  = (itemName||'').replace(/'/g,"\'");
-                const safeF  = String(flow||'').replace(/'/g,"\'");
-                const goalId = goal ? goal.id : '';
-                const clickable = actual > 0 || (goal && goalsIsApplicable(goal, m));
-                const tdClick = clickable
-                    ? `onclick="event.stopPropagation();goalsOpenDailyDirect('${safeHT}','${safeHI}','${safeF}','${safeN}','${m}','${goalId}')" style="cursor:pointer" title="Ver dia a dia de ${goalMonthLabel(m)}"`
-                    : '';
-
-                return `<td class="goals-matrix-cell${cls} goals-cell-clickable" ${tdClick}>${actualHtml}</td><td class="goals-matrix-cell goals-cell-meta-col${cls}${clickable ? ' goals-cell-clickable' : ''}" ${tdClick}>${metaHtml}</td>`;
+                return `<td class="goals-matrix-cell${cls}">${actualHtml}</td><td class="goals-matrix-cell goals-cell-meta-col${cls}">${metaHtml}</td>`;
             }).join('');
         }
 
@@ -17561,13 +19055,14 @@
                     const goalChevron = hasGoal
                         ? `<button class="goals-detail-link" onclick="event.stopPropagation();goalsOpenDetail('${goalId}')" title="Ver detalhes da meta"><i data-lucide="target" class="w-3.5 h-3.5"></i></button>`
                         : `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('category','${cat.id}','${cat.flow}')" title="Criar meta para esta categoria"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
+                    const catDailyBtn = `<button class="goals-daily-open-btn" onclick="event.stopPropagation();goalsOpenDailyDirect('category','${cat.id}','${cat.flow}','${cat.name.replace(/'/g,"\\'")}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>`;
 
                     rows += `<tr class="goals-tree-row goals-tree-cat" onclick="goalsToggleCategory('${cat.id}')">
                         <td class="goals-tree-name-cell goals-tree-cat-cell">
                             <span class="goals-tree-toggle">${hasSubs ? `<i data-lucide="${expandIcon}" class="w-3.5 h-3.5"></i>` : '<span class="w-3.5 h-3.5 inline-block"></span>'}</span>
                             <span class="goals-tree-name">${cat.name}</span>
                             <span class="goals-matrix-type-badge" style="background:${typeColor}18;color:${typeColor}">${isEx ? 'Desp.' : 'Rec.'}</span>
-                            ${goalChevron}
+                            ${catDailyBtn}${goalChevron}
                         </td>
                         ${goalsRenderTreeCells(cat.actuals, cat.goal, cat.flow, months, currentYYYYMM, 'category', cat.id, cat.name)}
                         <td class="goals-matrix-chevron-cell"></td>
@@ -17585,12 +19080,13 @@
                             const subGoalChevron = subHasGoal
                                 ? `<button class="goals-detail-link" onclick="event.stopPropagation();goalsOpenDetail('${subGoalId}')" title="Ver detalhes da meta"><i data-lucide="target" class="w-3.5 h-3.5"></i></button>`
                                 : `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('subcategory','${sub.id}','${sub.flow}')" title="Criar meta"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
+                            const subDailyBtn = `<button class="goals-daily-open-btn" onclick="event.stopPropagation();goalsOpenDailyDirect('subcategory','${sub.id}','${sub.flow}','${sub.name.replace(/'/g,"\\'")}','${subGoalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>`;
 
                             rows += `<tr class="goals-tree-row goals-tree-sub" onclick="goalsToggleSubcategory('${sub.id}')">
                                 <td class="goals-tree-name-cell goals-tree-sub-cell">
                                     <span class="goals-tree-toggle">${hasDests ? `<i data-lucide="${subExpandIcon}" class="w-3.5 h-3.5"></i>` : '<span class="w-3.5 h-3.5 inline-block"></span>'}</span>
                                     <span class="goals-tree-name">${sub.name}</span>
-                                    ${subGoalChevron}
+                                    ${subDailyBtn}${subGoalChevron}
                                 </td>
                                 ${goalsRenderTreeCells(sub.actuals, sub.goal, sub.flow, months, currentYYYYMM, 'subcategory', sub.id, sub.name)}
                                 <td class="goals-matrix-chevron-cell"></td>
@@ -17603,11 +19099,12 @@
                                     const destGoalChevron = destHasGoal
                                         ? `<button class="goals-detail-link" onclick="event.stopPropagation();goalsOpenDetail('${destGoalId}')" title="Ver detalhes da meta"><i data-lucide="target" class="w-3.5 h-3.5"></i></button>`
                                         : `<button class="goals-add-goal-btn" onclick="event.stopPropagation();openGoalModalForRow('destination','${dest.id}','${dest.flow}')" title="Criar meta"><i data-lucide="plus" class="w-3 h-3"></i></button>`;
+                                    const destDailyBtn = `<button class="goals-daily-open-btn" onclick="event.stopPropagation();goalsOpenDailyDirect('destination','${dest.id}','${dest.flow}','${dest.name.replace(/'/g,"\\'")}','${destGoalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>`;
 
                                     rows += `<tr class="goals-tree-row goals-tree-dest">
                                         <td class="goals-tree-name-cell goals-tree-dest-cell">
                                             <span class="goals-tree-name">${dest.name}</span>
-                                            ${destGoalChevron}
+                                            ${destDailyBtn}${destGoalChevron}
                                         </td>
                                         ${goalsRenderTreeCells(dest.actuals, dest.goal, dest.flow, months, currentYYYYMM, 'destination', dest.id, dest.name)}
                                         <td class="goals-matrix-chevron-cell"></td>
@@ -17792,13 +19289,17 @@
             renderGoals();
         }
 
-        function goalsOpenDailyDirect(hierarchyType, hierarchyId, flow, name, yyyyMM, goalId) {
+        function goalsOpenDailyDirect(hierarchyType, hierarchyId, flow, name, goalId) {
             goalsViewHierarchyType = hierarchyType;
             goalsViewHierarchyId = hierarchyId;
             goalsViewHierarchyFlow = flow;
             goalsViewHierarchyName = name;
             goalsViewSelectedGoal = goalId ? (goalsData.find(g => g.id === goalId) || null) : null;
-            goalsViewSelectedMonth = yyyyMM;
+            goalsViewSelectedMonth = null;
+            // Sincroniza a janela diária com a janela da tabela principal
+            goalsViewDailyWindowOffset = goalsMonthWindowOffset;
+            // Pré-seleciona os 4 meses atuais da janela
+            goalsViewSelectedMonths = goalsDailyGetWindowMonths();
             goalsViewLevel = 'launches';
             goalsExpandedDays = new Set();
             renderGoals();
@@ -17826,172 +19327,213 @@
         }
 
         let goalsExpandedDays = new Set();
+        let goalsViewSelectedMonths = []; // multi-mês para visão diária
+        let goalsViewDailyWindowOffset = 0; // offset do seletor de meses
 
-        function goalsToggleDay(dateStr) {
-            if (goalsExpandedDays.has(dateStr)) goalsExpandedDays.delete(dateStr);
-            else goalsExpandedDays.add(dateStr);
+        function goalsToggleDay(key) { // key = 'YYYY-MM-DD' ou 'YYYY-MM-DD|YYYY-MM' para multi-mês
+            if (goalsExpandedDays.has(key)) goalsExpandedDays.delete(key);
+            else goalsExpandedDays.add(key);
             renderGoals();
         }
 
+        function goalsDailySlideWindow(dir) {
+            const next = goalsViewDailyWindowOffset + dir;
+            if (next < 0) return;
+            goalsViewDailyWindowOffset = next;
+            renderGoals();
+        }
+
+        function goalsDailyToggleMonth(yyyyMM) {
+            const idx = goalsViewSelectedMonths.indexOf(yyyyMM);
+            if (idx >= 0) {
+                if (goalsViewSelectedMonths.length <= 1) return; // mínimo 1
+                goalsViewSelectedMonths.splice(idx, 1);
+            } else {
+                if (goalsViewSelectedMonths.length >= 4) return; // máximo 4
+                // Inserir em ordem cronológica
+                goalsViewSelectedMonths.push(yyyyMM);
+                goalsViewSelectedMonths.sort();
+            }
+            goalsExpandedDays = new Set();
+            renderGoals();
+        }
+
+        function goalsDailyGetWindowMonths() {
+            const now = new Date();
+            const baseDate = new Date(now.getFullYear(), now.getMonth() - goalsViewDailyWindowOffset, 1);
+            const months = [];
+            for (let i = 3; i >= 0; i--) {
+                const d = new Date(baseDate.getFullYear(), baseDate.getMonth() - i, 1);
+                months.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+            }
+            return months;
+        }
+
         function renderGoalLaunches(kpiEl, gridEl) {
-            if (!goalsViewSelectedMonth) { goalsBackToTable(); return; }
-            // Suporta acesso direto da tabela (sem passar pelo Nível 2)
+            if (!goalsViewSelectedMonths || !goalsViewSelectedMonths.length) { goalsBackToTable(); return; }
+
             const goal = goalsViewSelectedGoal || null;
             const hierarchyType = goal ? goal.hierarchyType : (goalsViewHierarchyType || 'category');
             const hierarchyId   = goal ? goal.hierarchyId   : (goalsViewHierarchyId   || '');
             const flowType      = goal ? goal.type          : (goalsViewHierarchyFlow  || FLOW_OUT);
             const name          = goal ? getGoalHierarchyName(goal) : (goalsViewHierarchyName || '—');
-            const yyyyMM = goalsViewSelectedMonth;
             const isEx = getGoalNormalizedType(flowType) === FLOW_OUT;
             const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
+            const hasGoal = !!(goal && goal.amount > 0);
 
-            const [yr, mn] = yyyyMM.split('-').map(Number);
-            const daysInMonth = new Date(yr, mn, 0).getDate();
             const pad = n => String(n).padStart(2, '0');
-            const start = `${yyyyMM}-01`;
-            const end   = `${yyyyMM}-${pad(daysInMonth)}`;
-            const destIds = getGoalDestinationIds(hierarchyType, hierarchyId);
-            const targetFlow = getGoalNormalizedType(flowType);
-
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-            const isCurrentMonth = `${now.getFullYear()}-${pad(now.getMonth()+1)}` === yyyyMM;
+            const destIds = getGoalDestinationIds(hierarchyType, hierarchyId);
+            const targetFlow = getGoalNormalizedType(flowType);
+            const weekDays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-            const allEntries = state.entries.filter(e =>
-                getGoalNormalizedType(e.type) === targetFlow &&
-                e.date >= start && e.date <= end &&
-                destIds.has(getGoalEntryDestinationId(e))
-            );
-
-            // Agrupar por dia
-            const byDay = {};
-            allEntries.forEach(e => {
-                const d = (e.date || '').slice(8, 10);
-                if (!d) return;
-                if (!byDay[d]) byDay[d] = { realized: [], pending: [] };
-                const isPending = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
-                if (isPending) byDay[d].pending.push(e);
-                else byDay[d].realized.push(e);
+            // Pré-calcular dados por mês
+            const selectedMonths = goalsViewSelectedMonths;
+            const monthData = selectedMonths.map(yyyyMM => {
+                const [yr, mn] = yyyyMM.split('-').map(Number);
+                const daysInMonth = new Date(yr, mn, 0).getDate();
+                const start = `${yyyyMM}-01`;
+                const end   = `${yyyyMM}-${pad(daysInMonth)}`;
+                const entries = state.entries.filter(e =>
+                    getGoalNormalizedType(e.type) === targetFlow &&
+                    e.date >= start && e.date <= end &&
+                    destIds.has(getGoalEntryDestinationId(e))
+                );
+                const byDay = {};
+                entries.forEach(e => {
+                    const d = (e.date || '').slice(8, 10);
+                    if (!d) return;
+                    if (!byDay[d]) byDay[d] = { realized: [], pending: [] };
+                    const isPending = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
+                    if (isPending) byDay[d].pending.push(e);
+                    else byDay[d].realized.push(e);
+                });
+                const prog = goal ? calcGoalProgress(goal, yyyyMM) : null;
+                const sc = prog ? getGoalStatusStyle(prog.status, flowType) : null;
+                const dailyGoal = hasGoal ? goal.amount / daysInMonth : 0;
+                const totalRealized = entries.filter(e => (e.status || 'REALIZADO').toUpperCase() !== 'PENDENTE').reduce((s,e)=>s+(Number(e.amount)||0),0);
+                return { yyyyMM, yr, mn, daysInMonth, byDay, prog, sc, dailyGoal, totalRealized };
             });
 
-            const prog = goal ? calcGoalProgress(goal, yyyyMM) : { actual: 0, target: 0, pct: 0, rawPct: 0, status: 'ok', remaining: 0 };
-            if (!goal) prog.actual = allEntries.filter(e => (e.status || 'REALIZADO').toUpperCase() !== 'PENDENTE').reduce((s, e) => s + (Number(e.amount) || 0), 0);
-            const sc = getGoalStatusStyle(prog.status, flowType);
-            const hasGoal = !!(goal && goal.amount > 0);
-            const dailyGoal = hasGoal ? goal.amount / daysInMonth : 0;
-
-            // KPI do mês inteiro
+            // KPI cards por mês
             if (kpiEl) {
-                const barPct = prog.rawPct > 0 ? Math.max(prog.pct, 3) : 0;
-                const dailyGoalHtml = hasGoal
-                    ? `<span class="text-xs text-slate-400 ml-3">Meta diária: <strong>${formatBRL(dailyGoal)}</strong></span>`
-                    : '';
-                kpiEl.innerHTML = `
-                    <div class="kpi-card p-5 col-span-2 lg:col-span-4" style="border-top:4px solid ${sc.color}">
-                        <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
-                            <div>
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">${name} · ${goalMonthLabel(yyyyMM)}</p>
-                                <div class="flex items-baseline gap-2 flex-wrap">
-                                    <span class="text-2xl font-black" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
-                                    ${hasGoal ? `<span class="text-slate-400 text-sm">/ ${formatBRL(prog.target)}</span>
-                                    <span class="goals-status-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${Math.round(prog.rawPct)}%</span>` : ''}
-                                    ${dailyGoalHtml}
-                                </div>
-                            </div>
-                            ${hasGoal ? `<span class="text-sm font-bold" style="color:${sc.color}">${sc.label}</span>` : ''}
+                const cardsHtml = monthData.map(md => {
+                    const { yyyyMM, prog, sc, dailyGoal, totalRealized } = md;
+                    const actual = prog ? prog.actual : totalRealized;
+                    const barPct = prog && prog.rawPct > 0 ? Math.max(prog.pct, 3) : 0;
+                    const barColor = sc ? sc.color : typeColor;
+                    const mn = Number(yyyyMM.split('-')[1]);
+                    const mnName = monthNames[mn - 1];
+                    const yr2 = yyyyMM.split('-')[0].slice(2);
+                    return `<div class="kpi-card p-4 goals-daily-kpi-card" style="border-top:3px solid ${barColor}">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">${mnName}/${yr2}</p>
+                        <div class="flex items-baseline gap-1 flex-wrap mb-2">
+                            <span class="text-xl font-black" style="color:${barColor}">${formatBRL(actual)}</span>
+                            ${prog ? `<span class="text-slate-400 text-xs">/ ${formatBRL(prog.target)}</span>
+                            <span class="goals-status-pill" style="background:${barColor}20;color:${barColor};border:1px solid ${barColor}40">${Math.round(prog.rawPct)}%</span>` : ''}
                         </div>
-                        ${hasGoal ? `<div class="goal-progress-track">
-                            <div class="goal-progress-fill" style="width:${barPct}%;background:${sc.color}" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(prog.pct)}"></div>
-                        </div>` : ''}
+                        ${hasGoal && dailyGoal > 0 ? `<p class="text-xs text-slate-400 mb-2">Meta diária: <strong>${formatBRL(dailyGoal)}</strong></p>` : ''}
+                        ${prog ? `<div class="goal-progress-track"><div class="goal-progress-fill" style="width:${barPct}%;background:${barColor}"></div></div>` : ''}
                     </div>`;
+                }).join('');
+                kpiEl.innerHTML = `<div class="goals-daily-kpi-row">${cardsHtml}</div>`;
             }
 
             if (!gridEl) return;
 
-            const weekDays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
-            let cumulativeReal = 0;
+            // Seletor de meses
+            const windowMonths = goalsDailyGetWindowMonths();
+            const canGoBack = true;
+            const nowYYYYMM = `${now.getFullYear()}-${pad(now.getMonth()+1)}`;
+            const canGoFwd = goalsViewDailyWindowOffset > 0;
+            const chipHtml = windowMonths.map(m => {
+                const sel = selectedMonths.includes(m);
+                const mn = Number(m.split('-')[1]);
+                const yr2 = m.split('-')[0].slice(2);
+                const label = `${monthNames[mn-1]}/${yr2}`;
+                const isCur = m === nowYYYYMM;
+                return `<button type="button" class="goals-daily-month-chip${sel ? ' goals-daily-month-chip-sel' : ''}${isCur ? ' goals-daily-month-chip-cur' : ''}" onclick="goalsDailyToggleMonth('${m}')" title="${sel ? 'Remover' : 'Adicionar'} ${label}">${label}${isCur ? ' ◆' : ''}</button>`;
+            }).join('');
+
+            // Maior número de dias entre os meses selecionados
+            const maxDays = Math.max(...monthData.map(md => md.daysInMonth));
+
+            // Cabeçalho: uma coluna por mês (valor + mini barra)
+            const thMonths = monthData.map(md => {
+                const mn = Number(md.yyyyMM.split('-')[1]);
+                const yr2 = md.yyyyMM.split('-')[0].slice(2);
+                const isCur = md.yyyyMM === nowYYYYMM;
+                return `<th class="goals-daily-month-th${isCur ? ' goals-month-current-col' : ''}">${monthNames[mn-1]}/${yr2}${isCur ? ' ◆' : ''}</th>`;
+            }).join('');
+
+            // Linhas de dias
             let dailyRows = '';
-
-            for (let day = 1; day <= daysInMonth; day++) {
+            for (let day = 1; day <= maxDays; day++) {
                 const dd = pad(day);
-                const dateStr = `${yyyyMM}-${dd}`;
-                const dayData = byDay[dd] || { realized: [], pending: [] };
-                const isFuture = dateStr > todayStr;
-                const isToday = dateStr === todayStr;
-                const dayOfWeek = weekDays[new Date(yr, mn - 1, day).getDay()];
+                // Determinar tipo de linha baseado em hoje
+                const isTodayDay = Number(todayStr.slice(8,10)) === day;
+                const todayMon = todayStr.slice(0, 7);
 
-                const realizedDay = dayData.realized.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-                const pendingDay = dayData.pending.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-                const hasLaunches = dayData.realized.length + dayData.pending.length > 0;
-                const isExpanded = goalsExpandedDays.has(dateStr);
+                let rowClass = 'goals-daily-row';
+                const cellsHtml = monthData.map(md => {
+                    if (day > md.daysInMonth) return `<td class="goals-daily-cell goals-daily-cell-na"><span class="goals-cell-zero">—</span></td>`;
+                    const dateStr = `${md.yyyyMM}-${dd}`;
+                    const isFuture = dateStr > todayStr;
+                    const isToday = dateStr === todayStr;
+                    const dayData = md.byDay[dd] || { realized: [], pending: [] };
+                    const realizedDay = dayData.realized.reduce((s,e)=>s+(Number(e.amount)||0),0);
+                    const pendingDay  = dayData.pending.reduce((s,e)=>s+(Number(e.amount)||0),0);
+                    const hasLaunches = dayData.realized.length + dayData.pending.length > 0;
+                    const expandKey = `${dateStr}|${md.yyyyMM}`;
+                    const isExpanded = goalsExpandedDays.has(expandKey);
 
-                if (!isFuture) cumulativeReal += realizedDay;
+                    let cellBg = '';
+                    if (isToday) cellBg = 'background:#EEF2FF';
+                    else if (isFuture) cellBg = 'background:#FAFBFC;opacity:.75';
 
-                const cumulativeGoal = dailyGoal * day;
-                let barColor = sc.color;
-                let barWidth = 0;
+                    const realHtml = realizedDay > 0
+                        ? `<span style="color:${typeColor};font-weight:800;font-size:12px">${formatBRL(realizedDay)}</span>`
+                        : isFuture && pendingDay > 0 ? '' : `<span class="goals-cell-zero">—</span>`;
+                    const pendHtml = pendingDay > 0 ? `<br><span class="goals-pending-tag">↻ ${formatBRL(pendingDay)}</span>` : '';
+                    const expandIcon = hasLaunches ? (isExpanded ? '▾ ' : '▸ ') : '';
+                    const clickAttr = hasLaunches ? `onclick="goalsToggleDay('${expandKey}')" style="cursor:pointer;${cellBg}"` : `style="${cellBg}"`;
 
-                if (hasGoal && !isFuture && cumulativeGoal > 0) {
-                    const cumPct = (cumulativeReal / cumulativeGoal) * 100;
-                    barWidth = Math.min(cumPct, 100);
-                    if (isEx) {
-                        barColor = cumPct > 100 ? '#7F1D1D' : cumPct > 90 ? '#B23A3A' : cumPct > 70 ? '#D97706' : '#1F7A5C';
-                    } else {
-                        barColor = cumPct >= 90 ? '#1F7A5C' : cumPct >= 70 ? '#2F7FB3' : '#94A3B8';
+                    let expandRows = '';
+                    if (isExpanded) {
+                        const allDay = [...dayData.realized, ...dayData.pending];
+                        expandRows = allDay.map(e => {
+                            const dest = state.destinations.find(d => String(d.id) === getGoalEntryDestinationId(e));
+                            const destName = dest?.name || '—';
+                            const isPend = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
+                            return `<div class="goals-daily-expand-item">${isPend ? '<span class="goals-pending-tag">↻</span> ' : ''}<span class="goals-daily-expand-desc-inline">${e.description || destName}</span><span class="goals-daily-expand-amount-inline" style="color:${isPend ? '#94A3B8' : typeColor}">${formatBRL(Number(e.amount)||0)}</span></div>`;
+                        }).join('');
                     }
-                } else if (!hasGoal && realizedDay > 0) {
-                    barWidth = 100;
-                }
 
-                const rowClass = isToday ? 'goals-daily-row goals-daily-row-today' : isFuture ? 'goals-daily-row goals-daily-row-future' : 'goals-daily-row';
-                const clickAttr = hasLaunches ? `onclick="goalsToggleDay('${dateStr}')" style="cursor:pointer"` : '';
+                    return `<td class="goals-daily-cell" ${clickAttr}><span class="goals-daily-expand-icon">${expandIcon}</span>${realHtml}${pendHtml}${expandRows ? `<div class="goals-daily-cell-expand">${expandRows}</div>` : ''}</td>`;
+                }).join('');
 
-                const realHtml = realizedDay > 0
-                    ? `<span style="color:${typeColor};font-weight:800">${formatBRL(realizedDay)}</span>`
-                    : `<span class="goals-cell-zero">—</span>`;
+                // Dia da semana — usar o primeiro mês com esse dia
+                const refMd = monthData.find(md => day <= md.daysInMonth);
+                const dayOfWeek = refMd ? weekDays[new Date(refMd.yr, refMd.mn - 1, day).getDay()] : '';
+                const isTodayRow = monthData.some(md => `${md.yyyyMM}-${dd}` === todayStr);
+                rowClass += isTodayRow ? ' goals-daily-row-today' : '';
 
-                const pendHtml = pendingDay > 0
-                    ? `<span class="goals-pending-tag">↻ ${formatBRL(pendingDay)}</span>`
-                    : '';
-
-                const cumHtml = !isFuture && cumulativeReal > 0
-                    ? formatBRL(cumulativeReal)
-                    : `<span class="goals-cell-zero">—</span>`;
-
-                const cumGoalHtml = hasGoal && !isFuture
-                    ? formatBRL(cumulativeGoal)
-                    : `<span class="goals-cell-zero">—</span>`;
-
-                const barHtml = hasGoal && !isFuture
-                    ? `<div class="goals-daily-bar-track"><div class="goals-daily-bar-fill" style="width:${barWidth}%;background:${barColor}"></div></div>`
-                    : '';
-
-                const expandIcon = hasLaunches ? (isExpanded ? '▾' : '▸') : '';
-
-                dailyRows += `<tr class="${rowClass}" ${clickAttr}>
-                    <td class="goals-daily-date-cell">${expandIcon ? `<span class="goals-daily-expand-icon">${expandIcon}</span>` : ''}<strong>${dd}</strong> <span class="goals-daily-weekday">${dayOfWeek}</span>${isToday ? ' <span class="goals-detail-now-badge">Hoje</span>' : ''}</td>
-                    <td class="goals-daily-amount-cell">${realHtml}${pendHtml ? `<br>${pendHtml}` : ''}</td>
-                    <td class="goals-daily-cum-cell">${cumHtml}</td>
-                    ${hasGoal ? `<td class="goals-daily-cumgoal-cell">${cumGoalHtml}</td>` : ''}
-                    <td class="goals-daily-bar-cell">${barHtml}</td>
+                dailyRows += `<tr class="${rowClass}">
+                    <td class="goals-daily-date-cell"><strong>${dd}</strong> <span class="goals-daily-weekday">${dayOfWeek}</span>${isTodayRow ? ' <span class="goals-detail-now-badge">Hoje</span>' : ''}</td>
+                    ${cellsHtml}
                 </tr>`;
-
-                if (isExpanded && hasLaunches) {
-                    const allDay = [...dayData.realized, ...dayData.pending].sort((a, b) => (a.description || '').localeCompare(b.description || ''));
-                    allDay.forEach(e => {
-                        const dest = state.destinations.find(d => String(d.id) === getGoalEntryDestinationId(e));
-                        const destName = dest?.name || '—';
-                        const isPend = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
-                        dailyRows += `<tr class="goals-daily-expand-row">
-                            <td class="goals-daily-expand-indent"></td>
-                            <td class="goals-daily-expand-desc" colspan="${hasGoal ? 2 : 1}">${isPend ? '<span class="goals-pending-tag">↻</span> ' : ''}${e.description || destName}<span class="goals-daily-expand-dest"> · ${destName}</span></td>
-                            <td class="goals-daily-expand-amount" colspan="${hasGoal ? 2 : 1}" style="color:${isPend ? '#94A3B8' : typeColor}">${formatBRL(Number(e.amount) || 0)}</td>
-                        </tr>`;
-                    });
-                }
             }
 
-            const goalHeaderCol = hasGoal ? `<th class="goals-daily-cumgoal-cell goals-detail-thead">Meta acum.</th>` : '';
+            // Linha de totais
+            const totalCells = monthData.map(md => {
+                const total = md.totalRealized;
+                const sc = md.sc;
+                const color = sc ? sc.color : (total > 0 ? typeColor : '#94A3B8');
+                return `<td class="goals-daily-cell goals-daily-total-cell" style="color:${color};font-weight:900">${total > 0 ? formatBRL(total) : '—'}</td>`;
+            }).join('');
+            dailyRows += `<tr class="goals-daily-total-row"><td class="goals-daily-date-cell" style="font-weight:700;color:#64748B">Total</td>${totalCells}</tr>`;
 
             gridEl.className = '';
             gridEl.innerHTML = `
@@ -17999,18 +19541,19 @@
                     <div class="goals-breadcrumb">
                         <button type="button" onclick="goalsBackToTable()" class="goals-breadcrumb-btn">Metas</button>
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>
-                        ${goal ? `<button type="button" onclick="goalsBackToDetail()" class="goals-breadcrumb-btn">${name}</button><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>` : `<span class="goals-breadcrumb-current">${name}</span><i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400"></i>`}
-                        <span class="goals-breadcrumb-current">${goalMonthLabel(yyyyMM)}</span>
+                        ${goal ? `<button type="button" onclick="goalsBackToDetail()" class="goals-breadcrumb-btn">${name}</button>` : `<span class="goals-breadcrumb-current">${name}</span>`}
+                    </div>
+                    <div class="goals-daily-month-nav">
+                        <button type="button" class="goals-year-btn" onclick="goalsDailySlideWindow(1)" title="Meses anteriores"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <div class="goals-daily-chips">${chipHtml}</div>
+                        <button type="button" class="goals-year-btn" onclick="goalsDailySlideWindow(-1)" title="Próximos meses" ${canGoFwd ? '' : 'disabled'}><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
                     <div class="goals-matrix-scroll">
                         <table class="goals-matrix-table goals-daily-table">
                             <thead>
                                 <tr>
                                     <th class="goals-daily-date-cell goals-detail-thead">Dia</th>
-                                    <th class="goals-daily-amount-cell goals-detail-thead">Realizado</th>
-                                    <th class="goals-daily-cum-cell goals-detail-thead">Acumulado</th>
-                                    ${goalHeaderCol}
-                                    <th class="goals-daily-bar-cell goals-detail-thead">Progresso acumulado</th>
+                                    ${thMonths}
                                 </tr>
                             </thead>
                             <tbody>${dailyRows}</tbody>
@@ -18194,7 +19737,7 @@
 
             saveGoals();
             closeModal('goals-modal');
-            if (currentTab === 'goals') renderGoals();
+            if (currentTab === 'planejamento' && window.currentPlanTab === 'goals') renderGoals();
 
             if (goal) {
                 const result = await upsertGoalToCloud(goal);
@@ -18226,7 +19769,7 @@
             goalsData = goalsData.filter(g => g.id !== id);
             saveGoals();
             closeModal('goals-modal');
-            if (currentTab === 'goals') renderGoals();
+            if (currentTab === 'planejamento' && window.currentPlanTab === 'goals') renderGoals();
             const result = await deleteGoalFromCloud(id);
             if (!result.ok) {
                 showAppToast('Meta removida localmente. Falha ao sincronizar com a nuvem.', { tone: 'danger' });
