@@ -16764,7 +16764,7 @@
             const sourceRow = tempReconSheet[src];
             if (sourceRow && end > src) {
                 for (let i = src + 1; i <= end && i < tempReconSheet.length; i++) {
-                    tempReconSheet[i].destinationId = sourceRow.destinationId;
+                    tempReconSheet[i].date = sourceRow.date;
                 }
             }
             reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
@@ -16791,7 +16791,8 @@
                 }
             } else if (event.key === 'Enter') {
                 event.preventDefault();
-                const nextColEnter = colIdx + 1;
+                // From destinationId (index 1), jump directly to valor (index 2)
+                const nextColEnter = colName === 'destinationId' ? 2 : colIdx + 1;
                 if (nextColEnter < cols.length) {
                     focusReconSheetCell(rowIndex, cols[nextColEnter]);
                 } else {
