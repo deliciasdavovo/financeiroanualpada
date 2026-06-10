@@ -6193,7 +6193,69 @@
                 padding: 14px;
             }
             .projection-table-wrap {
+                overflow-x: visible;
+            }
+            .projection-table {
+                min-width: 0;
+                display: block;
+                border-spacing: 0;
+            }
+            .projection-table thead {
+                display: none;
+            }
+            .projection-table tbody {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .projection-table tr {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                background: #FFFFFF;
+                border: 1px solid #E8EEF6;
+                border-radius: 14px;
+                padding: 12px 14px;
+                gap: 0;
+            }
+            .projection-table tr.projection-table-total {
+                background: #F8FAFF !important;
+                border-color: #DDE6F0 !important;
+            }
+            .projection-table td {
+                display: block;
                 padding: 0;
+                border: none !important;
+                background: transparent !important;
+                border-radius: 0 !important;
+                white-space: normal;
+                text-align: left;
+            }
+            .projection-table td:first-child {
+                grid-column: 1 / -1;
+                padding-bottom: 10px;
+                margin-bottom: 6px;
+                border-left: none !important;
+                border-bottom: 1px solid #F1F5F9 !important;
+            }
+            .projection-table td:last-child {
+                border-right: none !important;
+            }
+            .projection-table td:nth-child(2)::before,
+            .projection-table td:nth-child(3)::before,
+            .projection-table td:nth-child(4)::before {
+                display: block;
+                font-size: 9px;
+                font-weight: 800;
+                color: #94A3B8;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin-bottom: 3px;
+            }
+            .projection-table td:nth-child(2)::before { content: "Entradas"; }
+            .projection-table td:nth-child(3)::before { content: "Saídas"; }
+            .projection-table td:nth-child(4)::before { content: "Resultado"; }
+            .projection-table-value {
+                font-size: 12px !important;
             }
             .projection-list-item {
                 grid-template-columns: 1fr;
