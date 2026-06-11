@@ -6680,6 +6680,43 @@
         .dre-row-values { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
         .dre-row-values small { font-size: 11px; color: var(--text-muted); font-weight: 700; }
         .dre-row-total { font-weight: 850; border-bottom: none; border-top: 2px solid #0F172A; margin-top: 8px; }
+
+        /* === FAB global, olhinho de privacidade, desfazer e destinos recentes === */
+        .global-fab {
+            position: fixed; right: 18px; bottom: 24px; z-index: 45;
+            width: 58px; height: 58px; border-radius: 99px; border: none;
+            background: var(--primary-green, #1F7A5C); color: #FFFFFF;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, .28);
+            transition: transform 160ms var(--ease-premium), box-shadow 160ms;
+        }
+        .global-fab:hover { transform: scale(1.06); box-shadow: 0 14px 30px rgba(15, 23, 42, .32); }
+        .global-fab:active { transform: scale(.94); }
+        @media (max-width: 1023px) {
+            .global-fab { bottom: calc(76px + env(safe-area-inset-bottom)); right: 14px; }
+        }
+        .privacy-toggle {
+            margin-left: auto; width: 44px; height: 44px; flex-shrink: 0;
+            border-radius: 14px; border: 1px solid #E2E8F2; background: #F8FAFC; color: #5F6B7A;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: background 150ms, color 150ms, border-color 150ms;
+        }
+        .privacy-toggle:hover { background: #EEF2F7; }
+        .privacy-toggle.is-active { background: #E8F3EF; color: #1F7A5C; border-color: #CFE5DB; }
+        .app-toast-undo-btn {
+            margin-top: 6px; padding: 8px 14px; min-height: 36px;
+            font-size: 12px; font-weight: 800; color: #2F4F9D;
+            background: #EAF0FF; border: 1px solid #C8D6EF; border-radius: 10px; cursor: pointer;
+        }
+        .app-toast-undo-btn:hover { background: #DEE8FC; }
+        .dst-recent-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+        .dst-recent-label { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+        .dst-recent-chip {
+            font-size: 12px; font-weight: 700; color: #1F7A5C;
+            background: #E8F3EF; border: 1px solid #CFE5DB; border-radius: 99px;
+            padding: 9px 14px; min-height: 40px; cursor: pointer; transition: background 150ms;
+        }
+        .dst-recent-chip:hover { background: #DDF0E6; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -6822,6 +6859,9 @@
                     <span>Exportar PDF</span>
                 </button>
             </div>
+            <button type="button" id="privacy-toggle" class="privacy-toggle" onclick="togglePrivacyMode()" aria-label="Mostrar ou esconder valores" aria-pressed="false">
+                <i data-lucide="eye" class="w-5 h-5"></i>
+            </button>
         </header>
 
         <div id="main-scroll" class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll relative">
@@ -7821,6 +7861,10 @@
         </button>
     </nav>
 
+    <button type="button" id="global-fab" class="global-fab" onclick="openEntryModal()" aria-label="Adicionar novo lançamento">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+
     <!-- MODAL LANÇAMENTO -->
     <div id="entry-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('entry-modal')">
         <div class="modal-shell modal-shell-entry">
@@ -7878,6 +7922,7 @@
                     <input type="hidden" id="form-dst" required>
                     <p id="form-dst-help" class="field-help">Selecione o destino para classificar categoria e subcategoria.</p>
                     <p id="form-dst-error" class="field-error hidden" role="alert"></p>
+                    <div id="form-dst-recent" class="dst-recent-chips hidden" aria-label="Destinos mais usados"></div>
                 </div>
                 <div>
                     <label for="form-acc" class="label-mini">Conta</label>
@@ -9135,8 +9180,58 @@
             return { ok: true, missingRpc: false, error: null };
         }
 
+        let lastDeletedEntries = [];
+
+        function registerEntryUndo(removedEntries) {
+            const items = Array.isArray(removedEntries) ? removedEntries.filter(Boolean) : [];
+            if (!items.length) return;
+            lastDeletedEntries = items;
+            const region = getToastRegion();
+            const toast = document.createElement('div');
+            toast.className = 'app-toast info';
+            toast.setAttribute('role', 'status');
+            toast.innerHTML = `
+                <div class="app-toast-icon"><i data-lucide="trash-2" class="w-4 h-4"></i></div>
+                <div>
+                    <p class="app-toast-title">${items.length === 1 ? 'Lançamento excluído' : `${items.length} lançamentos excluídos`}</p>
+                    <button type="button" class="app-toast-undo-btn">Desfazer</button>
+                </div>
+                <button class="app-toast-close" type="button" aria-label="Fechar mensagem"><i data-lucide="x" class="w-4 h-4"></i></button>
+            `;
+            const dismiss = () => {
+                if (!toast.isConnected || toast.classList.contains('is-leaving')) return;
+                toast.classList.add('is-leaving');
+                window.setTimeout(() => toast.remove(), 190);
+            };
+            toast.querySelector('.app-toast-close')?.addEventListener('click', dismiss);
+            toast.querySelector('.app-toast-undo-btn')?.addEventListener('click', () => {
+                dismiss();
+                undoLastEntryDelete();
+            });
+            region.appendChild(toast);
+            while (region.children.length > 4) region.firstElementChild?.remove();
+            refreshLucideIcons();
+            window.setTimeout(dismiss, 8000);
+        }
+
+        async function undoLastEntryDelete() {
+            const items = lastDeletedEntries;
+            lastDeletedEntries = [];
+            if (!items.length) return;
+            const result = await cloudSaveBatched('entries', items);
+            if (!result?.ok) {
+                alert(`Não foi possível desfazer a exclusão.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
+                return;
+            }
+            const existingIds = new Set(state.entries.map(e => String(e.id || '')));
+            state.entries = state.entries.concat(items.filter(item => !existingIds.has(String(item.id || ''))));
+            render();
+            showAppToast('Exclusão desfeita\nOs lançamentos foram restaurados.', { tone: 'success' });
+        }
+
         window.deleteEntry = async function(id) {
             if(confirm("Deseja realmente excluir este lançamento?")) {
+                const removed = state.entries.filter(e => e.id === id);
                 const result = await cloudDelete('entries', id);
                 if (!result?.ok) {
                     alert(`Não foi possível excluir o lançamento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
@@ -9144,12 +9239,14 @@
                 }
                 state.entries = state.entries.filter(e => e.id !== id);
                 render();
+                registerEntryUndo(removed);
             }
         };
         async function confirmDeleteFromModal() {
             const id = String(document.getElementById('entry-id')?.value || '');
             if (!id) return;
             if (!confirm("Deseja realmente excluir este lançamento?")) return;
+            const removed = state.entries.filter(e => e.id === id);
             const result = await cloudDelete('entries', id);
             if (!result?.ok) {
                 alert(`Não foi possível excluir o lançamento.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
@@ -9158,10 +9255,31 @@
             state.entries = state.entries.filter(e => e.id !== id);
             closeModal('entry-modal');
             render();
+            registerEntryUndo(removed);
         }
 
-        const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        let privacyMode = (() => {
+            try { return localStorage.getItem('dv_privacy_mode') === '1'; } catch (_) { return false; }
+        })();
+        const formatBRL = (v) => privacyMode ? 'R$ ••••' : (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const roundBRL = (n) => Math.round(((Number(n) || 0) + Number.EPSILON) * 100) / 100;
+
+        function syncPrivacyToggleUi() {
+            const btn = document.getElementById('privacy-toggle');
+            if (!btn) return;
+            btn.classList.toggle('is-active', privacyMode);
+            btn.setAttribute('aria-pressed', String(privacyMode));
+            btn.innerHTML = `<i data-lucide="${privacyMode ? 'eye-off' : 'eye'}" class="w-5 h-5"></i>`;
+            refreshLucideIcons();
+        }
+
+        function togglePrivacyMode() {
+            privacyMode = !privacyMode;
+            try { localStorage.setItem('dv_privacy_mode', privacyMode ? '1' : '0'); } catch (_) {}
+            syncPrivacyToggleUi();
+            render();
+        }
+        window.setTimeout(syncPrivacyToggleUi, 0);
         function formatLaunchCount(count) {
             const safeCount = Math.max(0, Number(count) || 0);
             if (safeCount === 0) return 'Nenhum lançamento';
@@ -9182,6 +9300,7 @@
             maximumFractionDigits: 0
         });
         const formatChartBRLCompact = (v) => {
+            if (privacyMode) return 'R$ ••••';
             const n = Number(v) || 0;
             const abs = Math.abs(n);
             const sign = n < 0 ? '-' : '';
@@ -12865,6 +12984,8 @@
             const ids = Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id));
             if (ids.length === 0) return;
             if (!confirm(`Deseja excluir ${ids.length} lançamento(s) selecionado(s)?`)) return;
+            const idSet = new Set(ids);
+            const removed = state.entries.filter(e => idSet.has(e.id));
             const result = await cloudDeleteMany('entries', ids);
             if (!result?.ok) {
                 alert(`Não foi possível excluir os lançamentos.\n\nDetalhe: ${String(result?.error?.message || 'Erro desconhecido.')}`);
@@ -12873,6 +12994,7 @@
             state.entries = state.entries.filter(e => !selectedEntryIds.has(e.id));
             selectedEntryIds.clear();
             render();
+            registerEntryUndo(removed);
         }
 
         async function deleteFilteredEntries() {
@@ -12895,10 +13017,12 @@
             }
 
             const idSet = new Set(ids);
+            const removed = state.entries.filter(e => idSet.has(String(e.id || '')));
             state.entries = state.entries.filter(e => !idSet.has(String(e.id || '')));
             selectedEntryIds = new Set(Array.from(selectedEntryIds).filter(id => !idSet.has(String(id || ''))));
             window.currentFilteredAllEntryIds = [];
             render();
+            registerEntryUndo(removed);
         }
 
         function updateEntriesSummaryAndSelection(filtered) {
@@ -18093,6 +18217,45 @@
             closeDestinationCombobox();
         }
 
+        function getRecentDestinationIds(limit = 5) {
+            const counts = new Map();
+            (state.entries || [])
+                .filter(e => e.destinationId && e.date)
+                .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+                .slice(0, 300)
+                .forEach(e => {
+                    const id = String(e.destinationId);
+                    counts.set(id, (counts.get(id) || 0) + 1);
+                });
+            return Array.from(counts.entries())
+                .sort((a, b) => b[1] - a[1])
+                .map(([id]) => id)
+                .filter(id => (state.destinations || []).some(d => String(d.id) === id))
+                .slice(0, limit);
+        }
+
+        function renderRecentDestinationChips() {
+            const host = document.getElementById('form-dst-recent');
+            if (!host) return;
+            const ids = getRecentDestinationIds();
+            if (!ids.length) {
+                host.classList.add('hidden');
+                host.innerHTML = '';
+                return;
+            }
+            host.classList.remove('hidden');
+            host.innerHTML = '<span class="dst-recent-label">Mais usados:</span>' + ids.map(id => {
+                const destination = (state.destinations || []).find(d => String(d.id) === id);
+                return `<button type="button" class="dst-recent-chip" onclick="selectRecentDestination('${escapeHtml(id)}')">${escapeHtml(destination?.name || '')}</button>`;
+            }).join('');
+        }
+
+        function selectRecentDestination(destinationId) {
+            populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, destinationId);
+            setEntryFieldError('form-dst', '');
+            document.getElementById('form-value')?.focus();
+        }
+
         function toggleStatus(val) {
             const statusEl = document.getElementById('form-status');
             const tr = document.getElementById('toggle-realized');
@@ -18125,6 +18288,7 @@
             if (repeatCountEl) repeatCountEl.value = '1';
             populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations);
             populateDropdown('form-acc', state.accounts);
+            renderRecentDestinationChips();
             if(id) {
                 const e = state.entries.find(x => x.id === id);
                 if(e) {
