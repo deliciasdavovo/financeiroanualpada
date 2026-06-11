@@ -6608,6 +6608,78 @@
         .goals-daily-expand-desc { padding: 7px 12px; font-size: 12px; color: var(--text-secondary); }
         .goals-daily-expand-dest { font-size: 11px; color: var(--text-muted); }
         .goals-daily-expand-amount { padding: 7px 12px; text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+        /* === Indicadores de gestão (contas a vencer, orçado x realizado, DRE) === */
+        .bills-due-card, .budget-vs-card, .dre-card { border-radius: 22px !important; overflow: hidden; }
+        #mnav-reports { position: relative; }
+        #nav-reports { position: relative; }
+        .bills-badge {
+            position: absolute; top: 0; right: 10px;
+            min-width: 18px; height: 18px; padding: 0 5px;
+            border-radius: 99px; background: #B23A3A; color: #FFFFFF;
+            font-size: 10px; font-weight: 800; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 0 2px #111827; pointer-events: none; z-index: 2;
+        }
+        #nav-reports .bills-badge { top: 8px; right: 12px; box-shadow: 0 0 0 2px #FFFFFF; }
+        .bills-due-body { padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 14px; }
+        .bills-due-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+        .bills-pill {
+            display: flex; flex-direction: column; gap: 2px;
+            padding: 8px 12px; border-radius: 12px; flex: 1 1 130px; min-width: 130px;
+            font-size: 11px; font-weight: 650; border: 1px solid #E2E8F2; background: #F8FAFC; color: #64748B;
+        }
+        .bills-pill strong { font-size: 11px; font-weight: 800; }
+        .bills-pill-overdue:not(.is-empty) { background: #FBEAEA; border-color: #EBC9C9; color: #B23A3A; }
+        .bills-pill-today:not(.is-empty), .bills-pill-week:not(.is-empty) { background: #FDF1E0; border-color: #F2DBB8; color: #B45309; }
+        .bills-pill-upcoming:not(.is-empty) { background: #E9EDFA; border-color: #C8D6EF; color: #2F4F9D; }
+        .bills-due-list { display: flex; flex-direction: column; gap: 6px; }
+        .bill-row {
+            display: flex; align-items: center; gap: 10px;
+            min-height: 48px; padding: 8px 10px 8px 12px;
+            border-left: 3px solid #CBD5E1; border-radius: 0 12px 12px 0;
+            background: #FBFCFE; border-bottom: 1px solid #F1F5F9;
+        }
+        .bill-row-overdue { border-left-color: #B23A3A; background: #FFF7F7; }
+        .bill-row-today, .bill-row-week { border-left-color: #D97706; background: #FFFBF2; }
+        .bill-row-upcoming { border-left-color: #94A3B8; }
+        .bill-row-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+        .bill-row-name { font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bill-row-meta { font-size: 11px; color: var(--text-muted); font-weight: 650; }
+        .bill-row-amount { font-size: 13px; font-weight: 800; color: #B23A3A; white-space: nowrap; }
+        .bill-check-btn {
+            width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+            border: 1px solid #CFE5DB; background: #EDF7F2; color: #1F7A5C;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: background 150ms, transform 150ms;
+        }
+        .bill-check-btn:hover { background: #DDF0E6; }
+        .bill-check-btn:active { transform: scale(.94); }
+        .bills-see-all-btn, .budget-vs-cta {
+            font-size: 12px; font-weight: 800; color: #2F4F9D;
+            background: #EAF0FF; border: 1px solid #C8D6EF; border-radius: 12px;
+            padding: 10px 14px; min-height: 44px; cursor: pointer; white-space: nowrap;
+        }
+        .bills-empty, .dre-empty { font-size: 13px; color: var(--text-muted); font-weight: 600; padding: 6px 0; }
+        .budget-vs-list { padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 18px; }
+        .budget-vs-row-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .budget-vs-name { font-size: 13px; font-weight: 800; color: var(--text-primary); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .budget-vs-name small { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; margin-left: 6px; }
+        .budget-vs-status { font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 99px; white-space: nowrap; }
+        .budget-vs-status.is-ok { background: #E8F3EF; color: #1F7A5C; }
+        .budget-vs-status.is-info { background: #E9EDFA; color: #2F4F9D; }
+        .budget-vs-status.is-warn { background: #FDF1E0; color: #B45309; }
+        .budget-vs-status.is-over { background: #FBEAEA; color: #B23A3A; }
+        .budget-vs-row-meta { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 6px; font-size: 12px; color: var(--text-secondary); font-weight: 650; }
+        .budget-vs-empty { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+        .budget-vs-empty p { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .dre-body { padding: 8px 20px 18px; display: flex; flex-direction: column; }
+        .dre-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+        .dre-row-section { font-weight: 850; color: var(--text-primary); border-bottom: 2px solid #E2E8F2; margin-top: 8px; }
+        .dre-row-item > span:first-child { color: var(--text-secondary); font-weight: 600; padding-left: 12px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dre-row-values { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+        .dre-row-values small { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+        .dre-row-total { font-weight: 850; border-bottom: none; border-top: 2px solid #0F172A; margin-top: 8px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -6712,6 +6784,7 @@
         <nav class="flex-1 px-4 space-y-2" aria-label="Navegação principal">
             <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
                 <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
+                <span id="bills-badge-desktop" class="bills-badge hidden" aria-label="Contas a vencer">0</span>
             </button>
             <button type="button" onclick="switchTab('planejamento')" id="nav-planejamento" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="compass" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Planejamento</span>
@@ -7009,6 +7082,7 @@
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                        <p id="kpi-margin-note" class="monthly-kpi-compact-note">Margem: —</p>
                     </div>
                     <div class="card-premium kpi-card kpi-card-forecast monthly-kpi-card">
                         <div class="kpi-card-header">
@@ -7022,6 +7096,31 @@
                         <p id="reports-month-result-note" class="monthly-kpi-compact-note">Sem pendências no período.</p>
                     </div>
                 </div>
+
+                <section class="card-premium bills-due-card" aria-labelledby="bills-due-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="bills-due-title">Contas a vencer</h4>
+                            <p>Saídas pendentes organizadas por vencimento.</p>
+                        </div>
+                        <button type="button" class="bills-see-all-btn" onclick="switchTab('entries')">Ver todos</button>
+                    </div>
+                    <div class="bills-due-body">
+                        <div id="bills-due-pills" class="bills-due-pills" aria-live="polite"></div>
+                        <div id="bills-due-list" class="bills-due-list"></div>
+                    </div>
+                </section>
+
+                <section class="card-premium budget-vs-card" aria-labelledby="budget-vs-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="budget-vs-title">Orçado x Realizado</h4>
+                            <p>Acompanhamento das metas no mês selecionado.</p>
+                        </div>
+                        <button type="button" class="bills-see-all-btn" onclick="switchTab('planejamento'); switchPlanTab('goals')">Gerenciar metas</button>
+                    </div>
+                    <div id="budget-vs-list" class="budget-vs-list"></div>
+                </section>
 
                 <section class="card-premium reports-chart-card" aria-labelledby="reports-monthly-chart-title">
                     <div class="reports-card-head">
@@ -7105,6 +7204,16 @@
                         </table>
                     </div>
                 </div>
+
+                <section class="card-premium dre-card" aria-labelledby="dre-title">
+                    <div class="reports-card-head">
+                        <div>
+                            <h4 id="dre-title">DRE simplificado</h4>
+                            <p>Receitas e despesas realizadas por categoria no mês.</p>
+                        </div>
+                    </div>
+                    <div id="dre-body" class="dre-body"></div>
+                </section>
 
             </div>
 
@@ -7688,6 +7797,7 @@
         <button type="button" onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros" aria-current="page">
             <i data-lucide="chart-no-axes-combined" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Relat.</span>
+            <span id="bills-badge-mobile" class="bills-badge hidden" aria-label="Contas a vencer">0</span>
         </button>
         <button type="button" onclick="switchTab('planejamento')" id="mnav-planejamento" class="mobile-nav-btn" aria-label="Planejamento">
             <i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i>
@@ -9051,6 +9161,7 @@
         }
 
         const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const roundBRL = (n) => Math.round(((Number(n) || 0) + Number.EPSILON) * 100) / 100;
         function formatLaunchCount(count) {
             const safeCount = Math.max(0, Number(count) || 0);
             if (safeCount === 0) return 'Nenhum lançamento';
@@ -11116,6 +11227,7 @@
 
         function render() {
             updateBalance();
+            updateBillsBadge();
             populateEntryAccountFilter();
             if (currentTab === 'entries') {
                 applyEntriesToolbarState();
@@ -13491,6 +13603,177 @@
             }
         }
 
+        function addDaysToIsoDate(iso, days) {
+            const [year, month, day] = String(iso || getTodayIsoDate()).split('-').map(Number);
+            const date = new Date(year, (month || 1) - 1, (day || 1) + Number(days || 0));
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function getPendingBills() {
+            const today = getTodayIsoDate();
+            const weekLimit = addDaysToIsoDate(today, 7);
+            const monthLimit = addDaysToIsoDate(today, 30);
+            const bills = getAnalyticalEntries(state.entries)
+                .filter(e => e.date && String(e.status || '').toUpperCase() === 'PENDENTE' && normalizeFlowType(e.type) === FLOW_OUT)
+                .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+            const buckets = { overdue: [], today: [], week: [], upcoming: [] };
+            bills.forEach(bill => {
+                const date = String(bill.date);
+                if (date < today) buckets.overdue.push(bill);
+                else if (date === today) buckets.today.push(bill);
+                else if (date <= weekLimit) buckets.week.push(bill);
+                else if (date <= monthLimit) buckets.upcoming.push(bill);
+            });
+            const sumBucket = (list) => roundBRL(list.reduce((acc, e) => acc + (Number(e.amount) || 0), 0));
+            return {
+                buckets,
+                totals: {
+                    overdue: sumBucket(buckets.overdue),
+                    today: sumBucket(buckets.today),
+                    week: sumBucket(buckets.week),
+                    upcoming: sumBucket(buckets.upcoming)
+                },
+                alertCount: buckets.overdue.length + buckets.today.length + buckets.week.length
+            };
+        }
+
+        function updateBillsBadge() {
+            const { alertCount } = getPendingBills();
+            ['bills-badge-mobile', 'bills-badge-desktop'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerText = alertCount > 99 ? '99+' : String(alertCount);
+                el.classList.toggle('hidden', alertCount === 0);
+            });
+        }
+
+        function renderBillsDue() {
+            const pillsHost = document.getElementById('bills-due-pills');
+            const listHost = document.getElementById('bills-due-list');
+            if (!pillsHost || !listHost) return;
+            const { buckets, totals } = getPendingBills();
+            pillsHost.innerHTML = [
+                ['Vencidas', buckets.overdue.length, totals.overdue, 'overdue'],
+                ['Vencem hoje', buckets.today.length, totals.today, 'today'],
+                ['Próximos 7 dias', buckets.week.length, totals.week, 'week'],
+                ['Até 30 dias', buckets.upcoming.length, totals.upcoming, 'upcoming']
+            ].map(([label, count, total, tone]) => `<span class="bills-pill bills-pill-${tone}${count ? '' : ' is-empty'}">
+                    <strong>${label}</strong>
+                    <span>${count} ${count === 1 ? 'conta' : 'contas'} • ${formatBRL(total)}</span>
+                </span>`).join('');
+            const rows = [
+                ...buckets.overdue.map(bill => ({ bill, tone: 'overdue', tag: 'Vencida' })),
+                ...buckets.today.map(bill => ({ bill, tone: 'today', tag: 'Hoje' })),
+                ...buckets.week.map(bill => ({ bill, tone: 'week', tag: 'Esta semana' })),
+                ...buckets.upcoming.map(bill => ({ bill, tone: 'upcoming', tag: 'Em breve' }))
+            ].slice(0, 8);
+            if (!rows.length) {
+                listHost.innerHTML = '<p class="bills-empty">Nenhuma conta pendente nos próximos 30 dias. Tudo em dia!</p>';
+                return;
+            }
+            listHost.innerHTML = rows.map(({ bill, tone, tag }) => {
+                const hierarchy = getDestinationHierarchyById(bill.destinationId, bill);
+                const name = bill.description || hierarchy.destination?.name || hierarchy.category?.name || 'Sem descrição';
+                const dateLabel = String(bill.date).split('-').reverse().join('/');
+                return `<div class="bill-row bill-row-${tone}">
+                    <div class="bill-row-info">
+                        <span class="bill-row-name">${escapeHtml(name)}</span>
+                        <span class="bill-row-meta">${dateLabel} • ${tag}</span>
+                    </div>
+                    <strong class="bill-row-amount">${formatBRL(bill.amount)}</strong>
+                    <button type="button" class="bill-check-btn" onclick="toggleQuickStatus('${escapeHtml(String(bill.id))}')" aria-label="Marcar ${escapeHtml(name)} como paga">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                    </button>
+                </div>`;
+            }).join('');
+            refreshLucideIcons();
+        }
+
+        function renderBudgetVsActual(filter) {
+            const host = document.getElementById('budget-vs-list');
+            if (!host) return;
+            const month = String(filter || getCurrentMonthIso()).slice(0, 7);
+            const goals = (typeof goalsData !== 'undefined' && Array.isArray(goalsData) ? goalsData : [])
+                .filter(goal => goalsIsApplicable(goal, month));
+            if (!goals.length) {
+                host.innerHTML = `<div class="budget-vs-empty">
+                    <p>Nenhuma meta cadastrada para este mês. Crie metas de gasto ou receita para acompanhar aqui.</p>
+                    <button type="button" class="budget-vs-cta" onclick="switchTab('planejamento'); switchPlanTab('goals')">Criar primeira meta</button>
+                </div>`;
+                return;
+            }
+            const items = goals
+                .map(goal => ({ goal, progress: calcGoalProgress(goal, month) }))
+                .sort((a, b) => b.progress.rawPct - a.progress.rawPct);
+            host.innerHTML = items.map(({ goal, progress }) => {
+                const isExpense = getGoalNormalizedType(goal.type) === FLOW_OUT;
+                let color, toneClass, toneLabel;
+                if (isExpense) {
+                    if (progress.rawPct >= 100) { color = '#B23A3A'; toneClass = 'is-over'; toneLabel = 'Estourou'; }
+                    else if (progress.rawPct >= 80) { color = '#D97706'; toneClass = 'is-warn'; toneLabel = 'Atenção'; }
+                    else { color = '#1F7A5C'; toneClass = 'is-ok'; toneLabel = 'Dentro da meta'; }
+                } else {
+                    if (progress.rawPct >= 100) { color = '#1F7A5C'; toneClass = 'is-ok'; toneLabel = 'Meta atingida'; }
+                    else if (progress.rawPct >= 70) { color = '#2F4F9D'; toneClass = 'is-info'; toneLabel = 'No caminho'; }
+                    else { color = '#D97706'; toneClass = 'is-warn'; toneLabel = 'Abaixo do esperado'; }
+                }
+                return `<div class="budget-vs-row">
+                    <div class="budget-vs-row-head">
+                        <span class="budget-vs-name">${escapeHtml(getGoalHierarchyName(goal))} <small>${isExpense ? 'Gasto' : 'Receita'}</small></span>
+                        <span class="budget-vs-status ${toneClass}">${toneLabel}</span>
+                    </div>
+                    <div class="goal-progress-track"><div class="goal-progress-fill" style="width:${Math.min(progress.rawPct, 100).toFixed(1)}%;background:${color}"></div></div>
+                    <div class="budget-vs-row-meta">
+                        <span>${formatBRL(roundBRL(progress.actual))} de ${formatBRL(goal.amount)}</span>
+                        <strong>${formatPercentual(progress.rawPct)}</strong>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderDRE(entries) {
+            const host = document.getElementById('dre-body');
+            if (!host) return;
+            const realized = (Array.isArray(entries) ? entries : [])
+                .filter(e => String(e.status || '').toUpperCase() === 'REALIZADO');
+            if (!realized.length) {
+                host.innerHTML = '<p class="dre-empty">Nenhum lançamento realizado neste mês. O DRE aparece assim que houver movimentos pagos ou recebidos.</p>';
+                return;
+            }
+            const sumFlow = (flow) => roundBRL(realized
+                .filter(e => normalizeFlowType(e.type) === flow)
+                .reduce((acc, e) => acc + (Number(e.amount) || 0), 0));
+            const groupByCategory = (flow) => {
+                const map = new Map();
+                realized.filter(e => normalizeFlowType(e.type) === flow).forEach(e => {
+                    const name = getCategoryById(e.categoryId)?.name
+                        || getDestinationHierarchyById(e.destinationId, e).category?.name
+                        || 'Sem categoria';
+                    map.set(name, (map.get(name) || 0) + (Number(e.amount) || 0));
+                });
+                return Array.from(map.entries())
+                    .map(([name, value]) => ({ name, value: roundBRL(value) }))
+                    .sort((a, b) => b.value - a.value);
+            };
+            const totalIncome = sumFlow(FLOW_IN);
+            const totalExpense = sumFlow(FLOW_OUT);
+            const result = roundBRL(totalIncome - totalExpense);
+            const margin = totalIncome > 0 ? (result / totalIncome) * 100 : null;
+            const buildRows = (rows, total, cssClass) => rows.map(row => `<div class="dre-row dre-row-item">
+                    <span>${escapeHtml(row.name)}</span>
+                    <span class="dre-row-values"><small>${total > 0 ? formatPercentual((row.value / total) * 100) : '—'}</small><strong class="${cssClass}">${formatBRL(row.value)}</strong></span>
+                </div>`).join('');
+            host.innerHTML = `
+                <div class="dre-row dre-row-section"><span>Receitas</span><strong class="flow-income-text">${formatBRL(totalIncome)}</strong></div>
+                ${buildRows(groupByCategory(FLOW_IN), totalIncome, 'flow-income-text')}
+                <div class="dre-row dre-row-section"><span>Despesas</span><strong class="flow-expense-text">${formatBRL(totalExpense)}</strong></div>
+                ${buildRows(groupByCategory(FLOW_OUT), totalExpense, 'flow-expense-text')}
+                <div class="dre-row dre-row-total">
+                    <span>Resultado do mês</span>
+                    <span class="dre-row-values"><small>Margem ${margin === null ? '—' : formatPercentual(margin)}</small><strong class="${result >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(result)}</strong></span>
+                </div>`;
+        }
+
         function summarizeFinancialEntries(entries, realizedOnly = true) {
             const base = (Array.isArray(entries) ? entries : []).filter(entry => !realizedOnly || String(entry.status || '').toUpperCase() === 'REALIZADO');
             const inc = base
@@ -13548,6 +13831,23 @@
             if (resultNoteEl) resultNoteEl.innerText = (incP || expP)
                 ? `${formatBRL(incP)} a receber - ${formatBRL(expP)} a pagar`
                 : 'Sem pendências no período.';
+
+            const marginEl = document.getElementById('kpi-margin-note');
+            if (marginEl) {
+                const margin = (Number(incR) || 0) > 0 ? ((incR - expR) / incR) * 100 : null;
+                if (margin === null) {
+                    marginEl.innerText = 'Margem: sem entradas no período.';
+                } else {
+                    const prevSummary = summarizeFinancialEntries(getRealizedEntriesForPrefix(getMonthPrefixShift(filter, -1)));
+                    const prevMargin = prevSummary.inc > 0 ? ((prevSummary.inc - prevSummary.exp) / prevSummary.inc) * 100 : null;
+                    let deltaText = '';
+                    if (prevMargin !== null) {
+                        const delta = margin - prevMargin;
+                        deltaText = ` • ${delta >= 0 ? '+' : '-'}${Math.abs(delta).toFixed(1).replace('.', ',')} p.p. vs mês anterior`;
+                    }
+                    marginEl.innerHTML = `Margem: <strong class="${margin >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatPercentual(margin)}</strong>${escapeHtml(deltaText)}`;
+                }
+            }
 
             const labels = Array.from({ length: dailyInReal.length }, (_, idx) => String(idx + 1).padStart(2, '0'));
             const chartEl = document.getElementById('reports-monthly-chart');
@@ -13795,6 +14095,9 @@
             }
 
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend);
+            renderBillsDue();
+            renderBudgetVsActual(filter);
+            renderDRE(entries);
             clearMonthlyCategoryCharts();
         }
 
