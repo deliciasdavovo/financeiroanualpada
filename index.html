@@ -14913,6 +14913,10 @@
             for (let i = 0; i < segments.length; i++) {
                 if (i === dateIdx) continue;
                 const token = segments[i];
+                if (/%/.test(token)) continue; // percentual não é valor de lançamento
+                if (/\*/.test(token)) continue; // documento mascarado (***.229.338-**)
+                if (/\d:\d/.test(token)) continue; // horário (16:09:58)
+                if (/^\d+-\d+$/.test(token)) continue; // código/conta (5004-0, 0001-74)
                 if (isLikelyDocumentToken(token) && !isStrongMoneyToken(token)) continue;
                 const v = parseValueRobust(token);
                 if (isNaN(v) || v === 0 || !/\d/.test(token)) continue;
@@ -15883,7 +15887,9 @@
         }
 
         function normalizeReconLines(rawText) {
-            const headerLineRe = /^(data|hist[óo]rico|valor|documento|agên?cia|ag\.?|conta|saldo|banco|per[íü]odo|extrato|lançamento|número|débito|crédito|debit|credit|descrição|tipo|balancete|demonstrativo)\b/i;
+            // Aceita pontuação antes da palavra (ex.: "(+) SALDO EM CONTA"), mas não dígitos,
+            // para não descartar lançamentos que começam com a data.
+            const headerLineRe = /^[^a-zA-ZÀ-ÿ0-9]*(data|hist[óo]rico|valor|documento|agên?cia|ag\.?|conta|saldo|banco|per[íü]odo|extrato|lançamento|número|débito|crédito|debit|credit|descrição|tipo|balancete|demonstrativo|resumo|juros\s+vencidos|tarifas\s+vencidas|encargos|custo\s+efetivo|taxa\s+cheque|vencimento\s+cheque|cheque\s+especial|outras\s+informa|sac\b|ouvidoria)\b/i;
             const lines = normalizeMinusSigns(rawText)
                 .split(/\r?\n/)
                 .map(l => l.replace(/\u00a0/g, ' ').trim())
@@ -15896,6 +15902,8 @@
                     const hasMoney = /\d[\d.,]*,\d{2}\b/.test(l);
                     const hasTab = l.includes('\t');
                     if (hasDate || hasMoney || hasTab) return true;
+                    // Marcador de débito/crédito que saiu sozinho na linha (quebra do PDF).
+                    if (/^[CD]$/i.test(l)) return true;
                     // Linha só de texto pode ser a descrição do lançamento (cópia coluna a coluna).
                     const noiseLineRe = /(p[áa]gina\s|gerado\s+(em|por)|ouvidoria|atendimento|deficiente|0800[\s\d-]|www\.|https?:\/\/|internet banking|aplicativo|bankline|autoatendimento)/i;
                     return /[A-Za-zÀ-ÿ]{3,}/.test(l) && l.length <= 80 && !noiseLineRe.test(l);
@@ -15906,10 +15914,24 @@
             const merged = [];
             let currentDateToken = '';
             let pendingDateBreak = false;
-            lines.forEach(line => {
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                // Quebra de linha do PDF: o valor sai impresso na linha ANTERIOR à do
+                // lançamento. Move o valor solto para a linha datada seguinte que tem
+                // histórico (texto) mas ficou sem valor.
+                if (/^\(?-?\s*(?:R\$\s*)?\d[\d.]*,\d{2}\)?\s*-?\s*[CD]?$/i.test(line)) {
+                    const next = lines[i + 1] || '';
+                    const nextRest = next.replace(datePrefixRe, '').trim();
+                    if (datePrefixRe.test(next) && !moneyPresenceRe.test(next) && /[A-Za-zÀ-ÿ]/.test(nextRest)) {
+                        lines[i + 1] = `${next} ${line}`;
+                        continue;
+                    }
+                }
+
                 if (/^[CD]$/i.test(line) && merged.length > 0) {
                     merged[merged.length - 1] = `${merged[merged.length - 1]} ${line.toUpperCase()}`.trim();
-                    return;
+                    continue;
                 }
 
                 const dateMatch = line.match(datePrefixRe);
@@ -15919,11 +15941,11 @@
                     if (!rest) {
                         // Linha só com a data (cabeçalho de dia): aplica essa data aos próximos lançamentos.
                         pendingDateBreak = true;
-                        return;
+                        continue;
                     }
                     pendingDateBreak = false;
                     merged.push(line);
-                    return;
+                    continue;
                 }
 
                 const hasMoney = moneyPresenceRe.test(line);
@@ -15936,18 +15958,18 @@
                 if (startsNewEntry) {
                     pendingDateBreak = false;
                     merged.push(currentDateToken ? `${currentDateToken} ${line}` : line);
-                    return;
+                    continue;
                 }
 
                 merged[merged.length - 1] = mergeReconLineFragments(prev, line);
-            });
+            }
             return merged.map(line => line.replace(/\s+/g, ' ').trim()).filter(Boolean);
         }
 
         function getReconMoneyMatches(line) {
             // Captura o sinal junto do valor: "-1.234,56", "(1.234,56)", "1.234,56-", "1.234,56 D", "123,45C".
             const normalized = normalizeMinusSigns(line);
-            return [...normalized.matchAll(/\(?\s*-?\s*(?:R\$\s*)?(?:\d{1,3}(?:\.\d{3})+|\d+),\d{2}(?!\d)\)?(?:-|\s?[CD](?![0-9A-Za-zÀ-ÿ]))?/gi)];
+            return [...normalized.matchAll(/\(?\s*-?\s*(?:R\$\s*)?(?:\d{1,3}(?:\.\d{3})+|\d+),\d{2}(?!\d)\)?(?:-|\s?[CD](?![0-9A-Za-zÀ-ÿ]))?(?!\s*%)/gi)];
         }
 
         function extractBankTableRowData(rawLine) {
@@ -15974,8 +15996,8 @@
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
                 .toLowerCase();
-            if (/(recebi|deposito|resgate|estorno|devolucao|rendimento|credito em conta)/.test(d)) return 1;
-            if (/(enviad|envio|pagamento|pagto|\bpago\b|compra|tarifa|\btaxa\b|\bdeb\b|debito|saque|boleto|aplicacao|transferencia para|darf|convenio|emprestimo|juros)/.test(d)) return -1;
+            if (/(recebi|deposito|resgate|estorno|devolucao|rendimento|credito em conta|\brem\.?:)/.test(d)) return 1;
+            if (/(enviad|envio|emit|pagamento|pagto|\bpago\b|compra|tarifa|\btaxa\b|\bdeb\b|debito|saque|boleto|aplicacao|transferencia para|darf|convenio|emprestimo|juros|\bfav\.?:)/.test(d)) return -1;
             return 0;
         }
 
