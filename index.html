@@ -8228,8 +8228,9 @@
             storeDailyMovements: [],
             dailyBalances: []
         };
-        const OPTIONAL_STATE_TABLES = ['storeDailyMovements', 'dailyBalances', 'movementTypes'];
-        const STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'movementTypes', 'storeDailyMovements', 'dailyBalances'];
+        const OPTIONAL_STATE_TABLES = ['storeDailyMovements', 'dailyBalances'];
+        const LOAD_STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances'];
+        const STATE_TABLES = [...LOAD_STATE_TABLES, 'movementTypes'];
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -8714,6 +8715,21 @@
             return { ok: true, data: rows, error: null };
         }
 
+        async function loadMovementTypesOptional(targetState) {
+            if (!targetState) return;
+            try {
+                const result = await cloudSelectAllRows('movementTypes');
+                if (result?.ok) {
+                    targetState.movementTypes = result.data || [];
+                    return;
+                }
+                console.warn('Classificacoes de lancamentos nao carregadas. Usando padroes locais.', result?.error);
+            } catch (err) {
+                console.warn('Classificacoes de lancamentos nao carregadas. Usando padroes locais.', err);
+            }
+            targetState.movementTypes = [];
+        }
+
         function getCloudStateSignature(snapshot) {
             const source = snapshot || state || {};
             return STATE_TABLES.map((table) => {
@@ -8970,8 +8986,8 @@
                 });
                 // Tenta carregar dados do Supabase
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], movementTypes: [], storeDailyMovements: [], dailyBalances: [] };
-                for(let tableIndex = 0; tableIndex < STATE_TABLES.length; tableIndex++) {
-                    const t = STATE_TABLES[tableIndex];
+                for(let tableIndex = 0; tableIndex < LOAD_STATE_TABLES.length; tableIndex++) {
+                    const t = LOAD_STATE_TABLES[tableIndex];
                     const loaderIndex = t === 'entries' || t === 'storeDailyMovements' || t === 'dailyBalances' ? 2 : 1;
                     updateLoaderPanel('initial', {
                         title: 'Sincronizando dados',
@@ -8979,7 +8995,7 @@
                         steps: loaderStepPresets.initial,
                         activeIndex: loaderIndex,
                         doneUntil: Math.max(0, loaderIndex - 1),
-                        progress: 16 + (tableIndex / Math.max(1, STATE_TABLES.length)) * 58
+                        progress: 16 + (tableIndex / Math.max(1, LOAD_STATE_TABLES.length)) * 58
                     });
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
@@ -9017,6 +9033,13 @@
                 });
                 render();
                 await finishInitialLoader(`${getAnalyticalEntries(state.entries).length} lancamento(s) sincronizados.`);
+                loadMovementTypesOptional(state).then(() => {
+                    normalizeStateIds();
+                    lastCloudStateSignature = getCloudStateSignature(state);
+                    populateMovementTypeSelect('form-mov-type-entry');
+                    populateMovementTypeSelect('db-mov-type-filter');
+                    if (currentTab === 'database') renderDatabase();
+                });
             } catch (err) {
                 console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
@@ -9033,7 +9056,7 @@
                 lastCloudRefreshAt = Date.now();
                 if (!silent) setSyncStatus('syncing');
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], movementTypes: [], storeDailyMovements: [], dailyBalances: [] };
-                for (const t of STATE_TABLES) {
+                for (const t of LOAD_STATE_TABLES) {
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
@@ -9045,6 +9068,7 @@
                     }
                     cloudState[t] = result.data || [];
                 }
+                await loadMovementTypesOptional(cloudState);
                 const nextSignature = getCloudStateSignature(cloudState);
                 if (nextSignature === lastCloudStateSignature) {
                     setSyncStatus('synced');
@@ -20856,9 +20880,12 @@
                 } else {
                     flowToken = typeMode === 'SAÍDA' ? 'D' : 'C';
                 }
-                // Format: "DD/MM/YYYY\tDESC\tVALOR\tD_OR_C"jjjj
+                // Format: "DD/MM/YYYY\tDESC\tVALOR\tD_OR_C"
                 lines.push([dateStr, rawDesc || (flowToken === 'D' ? 'Débito' : 'Crédito'), amountObj.str, flowToken].join('\t'));
-jjj                _excelData = null;
+            }
+            if (!lines.length) {
+                alert('Nenhuma linha válida encontrada com os mapeamentos selecionados. Verifique se as colunas estão corretas.');
+                _excelData = null;
                 return;
             }
             const pasteArea = document.getElementById('recon-paste-area');
