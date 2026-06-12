@@ -6608,6 +6608,47 @@
         .goals-daily-expand-desc { padding: 7px 12px; font-size: 12px; color: var(--text-secondary); }
         .goals-daily-expand-dest { font-size: 11px; color: var(--text-muted); }
         .goals-daily-expand-amount { padding: 7px 12px; text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+        /* Tipo de Movimento badge */
+        .mov-type-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+        .mov-type-OPERACIONAL { background: #E0F2EA; color: #0F7A5C; }
+        .mov-type-FINANCEIRO  { background: #E0EAFF; color: #2B4DAA; }
+        .mov-type-SOCIOS      { background: #FFF3CD; color: #92600A; }
+        .mov-type-INVESTIMENTO{ background: #F0E6FF; color: #6B21A8; }
+        .mov-type-TRANSFERENCIA{ background: #F1F5F9; color: #475569; }
+
+        /* Gerencial KPI row */
+        .monthly-gerencial-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+        @media (max-width: 1100px) { .monthly-gerencial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 640px)  { .monthly-gerencial-grid { grid-template-columns: 1fr; } }
+        .kpi-card-op   { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border-color: #BBF7D0 !important; }
+        .kpi-card-lucro{ background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-color: #BFDBFE !important; }
+        .kpi-card-nop  { background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%); border-color: #FED7AA !important; }
+        .kpi-card-cash { background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border-color: #E2E8F0 !important; }
+
+        /* DRE */
+        .dre-section { border: 1px solid #E2E8F0; border-radius: 20px; overflow: hidden; background: #fff; }
+        .dre-header  { padding: 20px 24px 16px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .dre-header h4 { font-size: 14px; font-weight: 900; color: #0F172A; margin: 0; }
+        .dre-header p  { font-size: 12px; color: #64748B; margin: 0; }
+        .dre-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .dre-table td { padding: 9px 24px; vertical-align: middle; }
+        .dre-row-line td { color: #0F172A; }
+        .dre-row-line:hover td { background: #F8FAFC; }
+        .dre-row-subtotal td { background: #F1F5F9; font-weight: 800; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; }
+        .dre-row-total td { background: #0F172A; color: #fff; font-weight: 900; font-size: 14px; border-radius: 0; }
+        .dre-row-result td { background: #EFF6FF; font-weight: 900; border-top: 2px solid #BFDBFE; }
+        .dre-row-lucro td { background: #0F7A5C; color: #fff; font-weight: 900; font-size: 14px; }
+        .dre-label { color: inherit; }
+        .dre-deduct { color: #64748B; padding-left: 40px !important; font-size: 12px; }
+        .dre-group-label { font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #64748B; padding: 12px 24px 4px !important; background: #FAFBFC; border-top: 1px solid #F1F5F9; }
+        .dre-value-col { text-align: right; white-space: nowrap; min-width: 110px; }
+        .dre-positive { color: #0F7A5C; font-weight: 800; }
+        .dre-negative { color: #B23A3A; font-weight: 800; }
+        .dre-neutral  { color: #1E293B; font-weight: 800; }
+        .dre-separator { border: none; border-top: 1px solid #F1F5F9; margin: 0; }
+        .dre-empty { text-align: center; padding: 32px; color: #94A3B8; font-size: 13px; font-weight: 700; }
+        .dre-note { font-size: 11px; color: #94A3B8; padding: 10px 24px 14px; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -6852,6 +6893,7 @@
                         <div class="entries-filter-item"><label for="filter-status" class="label-mini">Status</label><select id="filter-status" onchange="renderEntries()"><option value="">Todos</option><option value="REALIZADO">Realizados</option><option value="PENDENTE">Pendentes</option></select></div>
                         <div class="entries-filter-item"><label for="filter-account" class="label-mini">Conta / Banco</label><select id="filter-account" onchange="renderEntries()"><option value="">Todos</option></select></div>
                         <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">Ocorrência</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option><option value="TRANSFER">Possível transferência</option></select></div>
+                        <div class="entries-filter-item"><label for="filter-mov-type" class="label-mini">Tipo de movimento</label><select id="filter-mov-type" onchange="renderEntries()"><option value="">Todos</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option><option value="SOCIOS">Sócios</option><option value="INVESTIMENTO">Investimento</option><option value="TRANSFERENCIA">Transferência</option></select></div>
                         <button onclick="openEntryModal()" class="btn-new-entry" aria-label="Adicionar novo lançamento">
                             + Novo
                         </button>
@@ -7003,8 +7045,8 @@
                     <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
                         <div class="kpi-card-header">
                             <div>
-                                <p class="monthly-kpi-title">Saldo realizado</p>
-                                <span class="monthly-kpi-mode-tag realized">Pago e recebido</span>
+                                <p class="monthly-kpi-title">Saldo de caixa</p>
+                                <span class="monthly-kpi-mode-tag realized">Todos os movimentos</span>
                             </div>
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
@@ -7020,6 +7062,50 @@
                         </div>
                         <p id="reports-month-result" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
                         <p id="reports-month-result-note" class="monthly-kpi-compact-note">Sem pendências no período.</p>
+                    </div>
+                </div>
+
+                <!-- Visão Gerencial - 4 cards -->
+                <div class="monthly-gerencial-grid">
+                    <div class="card-premium kpi-card kpi-card-cash monthly-kpi-card" style="min-height:130px">
+                        <div class="kpi-card-header">
+                            <div>
+                                <p class="monthly-kpi-title">Saldo de caixa</p>
+                                <span class="monthly-kpi-mode-tag realized">Caixa real</span>
+                            </div>
+                            <span class="kpi-icon"><i data-lucide="banknote" class="w-4 h-4"></i></span>
+                        </div>
+                        <p id="kpi-saldo-caixa" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                    </div>
+                    <div class="card-premium kpi-card kpi-card-op monthly-kpi-card" style="min-height:130px">
+                        <div class="kpi-card-header">
+                            <div>
+                                <p class="monthly-kpi-title">Resultado operacional</p>
+                                <span class="monthly-kpi-mode-tag" style="background:#D1FAE5;color:#065F46">Somente operacional</span>
+                            </div>
+                            <span class="kpi-icon"><i data-lucide="store" class="w-4 h-4"></i></span>
+                        </div>
+                        <p id="kpi-resultado-op" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                    </div>
+                    <div class="card-premium kpi-card kpi-card-lucro monthly-kpi-card" style="min-height:130px">
+                        <div class="kpi-card-header">
+                            <div>
+                                <p class="monthly-kpi-title">Lucro gerencial</p>
+                                <span class="monthly-kpi-mode-tag" style="background:#DBEAFE;color:#1E40AF">Op. + financeiro</span>
+                            </div>
+                            <span class="kpi-icon"><i data-lucide="chart-line" class="w-4 h-4"></i></span>
+                        </div>
+                        <p id="kpi-lucro-gerencial" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                    </div>
+                    <div class="card-premium kpi-card kpi-card-nop monthly-kpi-card" style="min-height:130px">
+                        <div class="kpi-card-header">
+                            <div>
+                                <p class="monthly-kpi-title">Mov. não operacional</p>
+                                <span class="monthly-kpi-mode-tag" style="background:#FFEDD5;color:#9A3412">Sócios/Invest./Transf.</span>
+                            </div>
+                            <span class="kpi-icon"><i data-lucide="arrow-right-left" class="w-4 h-4"></i></span>
+                        </div>
+                        <p id="kpi-mov-nop" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
                     </div>
                 </div>
 
@@ -7088,6 +7174,9 @@
                 </section>
 
                 <section id="analise-hierarquica-mensal"></section>
+
+                <!-- DRE - Resultado Gerencial do Mês -->
+                <section id="dre-mensal-section" class="dre-section"></section>
 
                 <div class="card-premium monthly-daily-card h-[520px] lg:h-[700px] flex flex-col">
                     <div class="monthly-daily-head">
@@ -7189,6 +7278,17 @@
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-exclude-destination">Excluir destino</label>
                                 <select id="annual-exclude-destination"></select>
+                            </div>
+                            <div class="annual-filter-item">
+                                <label class="label-mini" for="annual-mov-type-filter">Tipo de movimento</label>
+                                <select id="annual-mov-type-filter">
+                                    <option value="">Todos</option>
+                                    <option value="OPERACIONAL">Operacional</option>
+                                    <option value="FINANCEIRO">Financeiro</option>
+                                    <option value="SOCIOS">Sócios</option>
+                                    <option value="INVESTIMENTO">Investimento</option>
+                                    <option value="TRANSFERENCIA">Transferência</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -7670,6 +7770,17 @@
                             <label class="label-mini" for="db-search">Buscar em categorias, subcategorias e destinos</label>
                             <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
                         </div>
+                        <div style="min-width:180px">
+                            <label class="label-mini" for="db-mov-type-filter">Tipo de movimento (lançamentos)</label>
+                            <select id="db-mov-type-filter" onchange="renderDatabase()" style="font-size:12px;padding:7px 10px">
+                                <option value="">Todos</option>
+                                <option value="OPERACIONAL">Operacional</option>
+                                <option value="FINANCEIRO">Financeiro</option>
+                                <option value="SOCIOS">Sócios</option>
+                                <option value="INVESTIMENTO">Investimento</option>
+                                <option value="TRANSFERENCIA">Transferência</option>
+                            </select>
+                        </div>
                         <button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova Categoria</button>
                     </div>
                     <div id="db-list"></div>
@@ -7780,6 +7891,17 @@
                     <input type="text" id="form-desc" maxlength="180" aria-describedby="form-desc-help form-desc-error">
                     <p id="form-desc-help" class="field-help">Opcional. Até 180 caracteres para facilitar buscas.</p>
                     <p id="form-desc-error" class="field-error hidden" role="alert"></p>
+                </div>
+                <div>
+                    <label for="form-mov-type-entry" class="label-mini">Tipo de movimento</label>
+                    <select id="form-mov-type-entry" aria-describedby="form-mov-type-entry-help">
+                        <option value="OPERACIONAL">Operacional</option>
+                        <option value="FINANCEIRO">Financeiro</option>
+                        <option value="SOCIOS">Sócios</option>
+                        <option value="INVESTIMENTO">Investimento</option>
+                        <option value="TRANSFERENCIA">Transferência</option>
+                    </select>
+                    <p id="form-mov-type-entry-help" class="field-help">Classifica o lançamento para separar caixa real do resultado da empresa.</p>
                 </div>
                 <div id="entry-recurrence-block">
                     <label class="label-mini" for="form-repeat-frequency">Repetição</label>
@@ -8114,6 +8236,7 @@
         let subcategoriaFiltroSelecionada = '';
         let destinoExcluidoMensal = '';
         let destinosFiltroSelecionados = [];
+        let movimentoFiltroMensal = '';
         let annualTemporalFlow = 'TODOS';
         let annualTemporalMode = 'MESES';
         let annualTemporalYear = new Date().getFullYear();
@@ -8415,7 +8538,8 @@
                 'filter-type': '',
                 'filter-status': '',
                 'filter-account': '',
-                'filter-duplicates': ''
+                'filter-duplicates': '',
+                'filter-mov-type': ''
             };
             Object.entries(map).forEach(([id, value]) => {
                 const el = document.getElementById(id);
@@ -9217,6 +9341,7 @@
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
             const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
+            const movTypeFilter = document.getElementById('filter-mov-type')?.value || '';
 
             const base = state.entries.filter(e => {
                 const matchesDesc = !descSearch || getEntryDescHaystack(e).includes(descSearch);
@@ -9227,7 +9352,8 @@
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+                const matchesMovType = !movTypeFilter || getMovimentoType(e) === movTypeFilter;
+                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount && matchesMovType;
             });
             const dupMeta = getDuplicateMeta(base);
             const filtered = duplicateFilter === 'ONLY'
@@ -10188,6 +10314,36 @@
         }
         const FLOW_IN = 'ENTRADA';
         const FLOW_OUT = 'SA\u00CDDA';
+        const MOVIMENTO_TYPES = { OPERACIONAL: 'Operacional', FINANCEIRO: 'Financeiro', SOCIOS: 'S\u00F3cios', INVESTIMENTO: 'Investimento', TRANSFERENCIA: 'Transfer\u00EAncia' };
+        const getMovimentoLabel = (mt) => MOVIMENTO_TYPES[String(mt || '').toUpperCase()] || String(mt || '');
+        const getMovimentoType = (entry) => {
+            const raw = String((entry || {}).tipoMovimento || '').toUpperCase().trim();
+            return raw || 'OPERACIONAL';
+        };
+        const isOperacional = (e) => getMovimentoType(e) === 'OPERACIONAL';
+        const isFinanceiro  = (e) => getMovimentoType(e) === 'FINANCEIRO';
+        const isNaoOperacional = (e) => { const t = getMovimentoType(e); return t === 'SOCIOS' || t === 'INVESTIMENTO' || t === 'TRANSFERENCIA'; };
+
+        const DRE_NORMALIZER = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036F]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+        const DRE_EXPENSE_GROUPS = [
+            { key: 'deducoes',   label: 'Dedu\u00E7\u00F5es da receita',       icon: 'minus-circle', keywords: ['deducao','desconto','devolucao','cancelamento','simples','das','iss','pis','cofins','icms','tributo','sangria'] },
+            { key: 'cmv',        label: 'CMV / Custos de produ\u00E7\u00E3o',  icon: 'package',      keywords: ['cmv','custo','materia','insumo','ingrediente','producao','mercadoria','compra','embalagem','estoque','produto'] },
+            { key: 'equipe',     label: 'Equipe',                    icon: 'users',        keywords: ['equipe','pessoal','salario','salarios','folha','funcionario','colaborador','mao de obra','trabalhista','vale','ferias','fgts','inss'] },
+            { key: 'fixas',      label: 'Despesas fixas',            icon: 'building-2',   keywords: ['fixo','fixa','aluguel','arrendamento','iptu','condominio','agua','luz','energia','eletricidade','telefone','internet','utilidade'] },
+            { key: 'manutencao', label: 'Manuten\u00E7\u00E3o',                icon: 'wrench',       keywords: ['manutencao','manutencoes','reparo','conserto','reforma','corretiva','preventiva'] },
+            { key: 'administrativo', label: 'Administrativo',        icon: 'briefcase',    keywords: ['administrativo','admin','escritorio','contabilidade','juridico','seguro','licenca','alvara','certificado','cartorio'] },
+            { key: 'marketing',  label: 'Marketing',                 icon: 'megaphone',    keywords: ['marketing','publicidade','propaganda','divulgacao','anuncio','promocao','campanha','social','comunicacao'] }
+        ];
+        function classifyDreGroup(entry) {
+            const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById((entry || {}).destinationId, entry || {});
+            const haystack = DRE_NORMALIZER([
+                (cat || {}).name || '', (sub || {}).name || '', (dst || {}).name || ''
+            ].join(' '));
+            for (const grp of DRE_EXPENSE_GROUPS) {
+                if (grp.keywords.some(k => haystack.includes(k))) return grp.key;
+            }
+            return 'outras';
+        }
         function normalizeFlowType(type) {
             const raw = String(type || '').trim().toUpperCase();
             const ascii = raw
@@ -10618,6 +10774,7 @@
                 if (categoriaFiltroSelecionada && categoryName !== categoriaFiltroSelecionada) return false;
                 if (subcategoriaFiltroSelecionada && subCategoryName !== subcategoriaFiltroSelecionada) return false;
                 if (destinoExcluidoMensal && destinationName === destinoExcluidoMensal) return false;
+                if (movimentoFiltroMensal && getMovimentoType(e) !== movimentoFiltroMensal) return false;
                 return true;
             });
         }
@@ -10971,6 +11128,17 @@
                             ${destinosDisponiveis.map(d => `<option value="${d}">${d}</option>`).join('')}
                         </select>
                     </div>
+                    <div>
+                        <label class="label-mini" for="hm-mov-type-filter">Tipo de movimento</label>
+                        <select id="hm-mov-type-filter">
+                            <option value="">Todos</option>
+                            <option value="OPERACIONAL">Operacional</option>
+                            <option value="FINANCEIRO">Financeiro</option>
+                            <option value="SOCIOS">Sócios</option>
+                            <option value="INVESTIMENTO">Investimento</option>
+                            <option value="TRANSFERENCIA">Transferência</option>
+                        </select>
+                    </div>
                 </div>
                 <div id="hm-content"></div>
             `;
@@ -10979,6 +11147,7 @@
             const catFilterEl = document.getElementById('hm-category-filter');
             const subFilterEl = document.getElementById('hm-subcategory-filter');
             const excludeDestinationEl = document.getElementById('hm-exclude-destination-filter');
+            const movTypeFilterEl = document.getElementById('hm-mov-type-filter');
             if(flowFilterEl) {
                 flowFilterEl.value = fluxoSelecionado;
                 flowFilterEl.onchange = () => {
@@ -11022,6 +11191,17 @@
                 excludeDestinationEl.value = destinoExcluidoMensal;
                 excludeDestinationEl.onchange = () => {
                     destinoExcluidoMensal = excludeDestinationEl.value;
+                    nivelAtual = 'categoria';
+                    categoriaSelecionada = '';
+                    subcategoriaSelecionada = '';
+                    destinoSelecionado = '';
+                    renderMonthly();
+                };
+            }
+            if(movTypeFilterEl) {
+                movTypeFilterEl.value = movimentoFiltroMensal;
+                movTypeFilterEl.onchange = () => {
+                    movimentoFiltroMensal = movTypeFilterEl.value;
                     nivelAtual = 'categoria';
                     categoriaSelecionada = '';
                     subcategoriaSelecionada = '';
@@ -12901,6 +13081,7 @@
                     ${descLine}
                     <div class="entry-mobile-meta">
                         <span class="entry-mobile-account-name">${escapeHtml(accountName)}</span>
+                        <span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span>
                         <div class="entry-mobile-actions">
                             <button type="button" onclick="openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lançamento"><i data-lucide="pencil" class="w-4 h-4"></i></button>
                             <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status">${e.status}</button>
@@ -12924,6 +13105,7 @@
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
             const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
+            const movTypeFilter = document.getElementById('filter-mov-type')?.value || '';
             const quickDupEl = document.getElementById('entries-quick-dup');
             const duplicateSummaryEl = document.getElementById('entries-dup-summary');
             if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY');
@@ -12936,6 +13118,7 @@
                 statusFilter,
                 accountFilter,
                 duplicateFilter,
+                movTypeFilter,
                 currentSort.field,
                 currentSort.order
             ].join('|');
@@ -12953,7 +13136,8 @@
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+                const matchesMovType = !movTypeFilter || getMovimentoType(e) === movTypeFilter;
+                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount && matchesMovType;
             });
             const duplicateMeta = getDuplicateMeta(baseFiltered);
 
@@ -13122,6 +13306,7 @@
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
             const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
+            const movTypeFilter = document.getElementById('filter-mov-type')?.value || '';
             const quickDupEl = document.getElementById('entries-quick-dup');
             const duplicateSummaryEl = document.getElementById('entries-dup-summary');
             if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY' || duplicateFilter === 'TRANSFER');
@@ -13135,6 +13320,7 @@
                 statusFilter,
                 accountFilter,
                 duplicateFilter,
+                movTypeFilter,
                 currentSort.field,
                 currentSort.order
             ].join('|');
@@ -13152,7 +13338,8 @@
                 const matchesStatus = !statusFilter || e.status === statusFilter;
                 const entryAccountId = String((e.accountId ?? e.account_id) || '');
                 const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount;
+                const matchesMovType = !movTypeFilter || getMovimentoType(e) === movTypeFilter;
+                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount && matchesMovType;
             });
 
             const duplicateMeta = getDuplicateMeta(baseFiltered);
@@ -13294,7 +13481,7 @@
                         <div class="entry-cell-main center">
                             <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
                         </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
+                        <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span></span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="entry-cell-main center">
@@ -13695,10 +13882,29 @@
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRL(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
+
+            // Gerencial KPI calculations
+            const realizedEntries = entries.filter(e => e.status === 'REALIZADO');
+            const opIncR  = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN  && isOperacional(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const opExpR  = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && isOperacional(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const finExpR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && isFinanceiro(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const finIncR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN  && isFinanceiro(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const nopNetR = realizedEntries.filter(e => isNaoOperacional(e)).reduce((a,e) => a + ((normalizeFlowType(e.type)===FLOW_IN?1:-1)*(Number(e.amount)||0)),0);
+            const balR = incR - expR;
+            const resultOp = opIncR - opExpR;
+            const lucroGerencial = opIncR - opExpR - finExpR + finIncR;
+            const setKpi = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) { el.innerText = formatBRL(val); el.className = `monthly-kpi-primary ${val >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; }
+            };
+            setKpi('kpi-saldo-caixa', balR);
+            setKpi('kpi-resultado-op', resultOp);
+            setKpi('kpi-lucro-gerencial', lucroGerencial);
+            setKpi('kpi-mov-nop', nopNetR);
+
             renderCashProjection();
             renderAnaliseHierarquicaMensal(monthEntries);
-
-            const balR = incR - expR;
+            renderDRE(filter, entries);
             const monthlyTitleEl = document.getElementById('monthly-ios-title');
             const monthlyStatusEl = document.getElementById('monthly-period-status');
             const periodCaptionEl = document.getElementById('monthly-period-caption');
@@ -13796,6 +14002,103 @@
 
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend);
             clearMonthlyCategoryCharts();
+        }
+
+        function renderDRE(filter, allMonthEntries) {
+            const section = document.getElementById('dre-mensal-section');
+            if (!section) return;
+
+            const realized = (allMonthEntries || []).filter(e => e.status === 'REALIZADO');
+            const opEntries  = realized.filter(isOperacional);
+            const finEntries = realized.filter(isFinanceiro);
+
+            if (realized.length === 0) {
+                section.innerHTML = '';
+                return;
+            }
+
+            const [yearLabel, monthLabel] = String(filter || '').split('-');
+            const monthName = Number(monthLabel)
+                ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                : filter;
+
+            // Revenue
+            const receitaBruta = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+
+            // Deductions
+            const deducaoEntries = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes');
+            const deducoes = deducaoEntries.reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const receitaLiquida = receitaBruta - deducoes;
+
+            // CMV
+            const cmvEntries = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'cmv');
+            const cmv = cmvEntries.reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const margemBruta = receitaLiquida - cmv;
+
+            // Operating expense groups
+            const expGroups = {};
+            opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
+                const gk = classifyDreGroup(e);
+                if (!expGroups[gk]) expGroups[gk] = 0;
+                expGroups[gk] += Number(e.amount) || 0;
+            });
+
+            // Financial expenses/income
+            const finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+
+            const totalOpExp = Object.values(expGroups).reduce((a,b)=>a+b, 0);
+            const resultadoOp = margemBruta - totalOpExp;
+            const lucroGerencial = resultadoOp - finExp + finInc;
+
+            const row = (label, value, cls='dre-row-line', indent=false, deduct=false) => {
+                const valCls = value === 0 ? 'dre-neutral' : (deduct ? 'dre-negative' : (value > 0 ? 'dre-positive' : 'dre-negative'));
+                const prefix = deduct && value !== 0 ? '(-) ' : '';
+                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}</td><td class="dre-value-col ${valCls}">${formatBRL(value)}</td></tr>`;
+            };
+            const subtotalRow = (label, value) => {
+                const valCls = value >= 0 ? 'dre-positive' : 'dre-negative';
+                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:900">${label}</td><td class="dre-value-col ${valCls}" style="font-weight:900">${formatBRL(value)}</td></tr>`;
+            };
+            const groupHeader = (label) => `<tr><td colspan="2" class="dre-group-label">${label}</td></tr>`;
+
+            let rows = '';
+            rows += groupHeader('Receita');
+            rows += row('Receita bruta', receitaBruta);
+            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true);
+            rows += subtotalRow('Receita líquida', receitaLiquida);
+
+            rows += groupHeader('Custos');
+            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true);
+            rows += subtotalRow('Margem bruta', margemBruta);
+
+            rows += groupHeader('Despesas operacionais');
+            const expGroupOrder = ['equipe','fixas','manutencao','administrativo','marketing','outras'];
+            const expGroupLabels = { equipe:'Equipe', fixas:'Despesas fixas', manutencao:'Manutenção', administrativo:'Administrativo', marketing:'Marketing', outras:'Outras despesas' };
+            expGroupOrder.forEach(gk => {
+                const val = expGroups[gk] || 0;
+                if (val > 0) rows += row(expGroupLabels[gk] || gk, val, 'dre-row-line', false, true);
+            });
+            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:900">${formatBRL(resultadoOp)}</td></tr>`;
+
+            rows += groupHeader('Financeiro');
+            if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true);
+            if (finInc > 0) rows += row('Receitas financeiras', finInc);
+
+            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial</td><td class="dre-value-col" style="color:#fff;font-weight:900">${formatBRL(lucroGerencial)}</td></tr>`;
+
+            section.innerHTML = `
+                <div class="dre-header">
+                    <div>
+                        <h4>Resultado Gerencial do Mês</h4>
+                        <p>DRE simplificada — apenas movimentos operacionais e financeiros realizados em ${monthName}.</p>
+                    </div>
+                </div>
+                <table class="dre-table">
+                    <tbody>${rows}</tbody>
+                </table>
+                <p class="dre-note">* Não inclui sócios, investimentos e transferências. Altere o campo "Tipo de movimento" nos lançamentos para ajustar a classificação.</p>
+            `;
         }
 
         function clearMonthlyCategoryCharts() {
@@ -14174,6 +14477,7 @@
             const dstEl = document.getElementById('annual-nav-destination');
             const accountEl = document.getElementById('annual-nav-account');
             const excludeDstEl = document.getElementById('annual-exclude-destination');
+            const annualMovTypeEl = document.getElementById('annual-mov-type-filter');
             const tableBody = document.getElementById('annual-temporal-table-body');
             const summaryEl = document.getElementById('annual-temporal-summary');
             const chartEl = document.getElementById('chartAnnualTemporal');
@@ -14201,13 +14505,16 @@
             flowEl.onchange = () => { annualTemporalFlow = flowEl.value; renderAnnualTemporalComparison(year); };
             modeEl.onchange = () => { annualTemporalMode = modeEl.value; renderAnnualTemporalComparison(year); };
             yearEl.onchange = () => { annualTemporalYear = Number(yearEl.value) || fallbackYear; renderAnnualTemporalComparison(year); };
+            if (annualMovTypeEl) annualMovTypeEl.onchange = () => renderAnnualTemporalComparison(year);
 
+            const annualMovTypeFilter = annualMovTypeEl?.value || '';
             const isAllAnnualFlows = annualTemporalFlow === 'TODOS';
             const selectedAnnualFlow = annualTemporalFlow === 'ENTRADA' ? FLOW_IN : FLOW_OUT;
             const annualTemporalFlowLabel = isAllAnnualFlows ? 'entradas e saídas' : annualTemporalFlow === 'ENTRADA' ? 'entradas' : 'saídas';
             const baseFlowEntries = getAnalyticalEntries(state.entries).filter(e =>
                 e.status === 'REALIZADO' &&
-                (isAllAnnualFlows || normalizeFlowType(e.type) === selectedAnnualFlow)
+                (isAllAnnualFlows || normalizeFlowType(e.type) === selectedAnnualFlow) &&
+                (!annualMovTypeFilter || getMovimentoType(e) === annualMovTypeFilter)
             );
 
             const validCatIds = new Set(baseFlowEntries.map(e => e.categoryId).filter(Boolean));
@@ -17306,7 +17613,12 @@
             const list = document.getElementById('db-list');
             if(!list) return;
             const search = normalizeReconText(document.getElementById('db-search')?.value || '');
+            const dbMovTypeFilter = document.getElementById('db-mov-type-filter')?.value || '';
             const matches = (...parts) => !search || normalizeReconText(parts.join(' ')).includes(search);
+            const dbEntryFilter = (e) => !dbMovTypeFilter || getMovimentoType(e) === dbMovTypeFilter;
+            const getEntryCountForCategory = (catId) => state.entries.filter(e => e.categoryId === catId && dbEntryFilter(e)).length;
+            const getEntryCountForSub = (subId) => state.entries.filter(e => e.subCategoryId === subId && dbEntryFilter(e)).length;
+            const getEntryCountForDst = (dstId) => state.entries.filter(e => e.destinationId === dstId && dbEntryFilter(e)).length;
 
             const filteredCategories = state.categories.filter(c => {
                 const subs = state.subCategories.filter(s => s.categoryId === c.id);
@@ -17346,18 +17658,20 @@
                             </div>
                         </div>
                         <div class="db-list-scroll custom-scrollbar">
-                            ${filteredCategories.map(c => `
+                            ${filteredCategories.map(c => {
+                                const entCount = dbMovTypeFilter ? getEntryCountForCategory(c.id) : null;
+                                return `
                                 <div class="db-item-row ${c.id === dbSelectedCategoryId ? 'active' : ''}" onclick="selectDbCategory('${c.id}')">
                                     <div class="min-w-0">
                                         <div class="db-item-name">${c.name}</div>
-                                        <div class="db-item-meta">${c.type}</div>
+                                        <div class="db-item-meta">${c.type}${entCount !== null ? ` • <strong>${entCount} lançamento(s)</strong>` : ''}</div>
                                     </div>
                                     <div class="db-item-actions">
                                         <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('CATEGORY', '${c.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
                                         <button class="db-action-btn danger" onclick="event.stopPropagation(); deleteDb('CATEGORY', '${c.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                                     </div>
-                                </div>
-                            `).join('') || '<div class="db-empty">Nenhuma categoria encontrada.</div>'}
+                                </div>`;
+                            }).join('') || '<div class="db-empty">Nenhuma categoria encontrada.</div>'}
                         </div>
                     </div>
                     <div class="db-col">
@@ -17369,18 +17683,20 @@
                             ${selectedCategory ? `<button class="db-inline-btn" onclick="openDbModal('SUBCATEGORY', '${selectedCategory.id}')">+ Subcategoria</button>` : ''}
                         </div>
                         <div class="db-list-scroll custom-scrollbar">
-                            ${selectedCategory ? (filteredSubCategories.map(s => `
+                            ${selectedCategory ? (filteredSubCategories.map(s => {
+                                const subCount = dbMovTypeFilter ? getEntryCountForSub(s.id) : null;
+                                return `
                                 <div class="db-item-row ${s.id === dbSelectedSubCategoryId ? 'active' : ''}" onclick="selectDbSubCategory('${s.id}')">
                                     <div class="min-w-0">
                                         <div class="db-item-name">${s.name}</div>
-                                        <div class="db-item-meta">${selectedCategory.name}</div>
+                                        <div class="db-item-meta">${selectedCategory.name}${subCount !== null ? ` • <strong>${subCount} lançamento(s)</strong>` : ''}</div>
                                     </div>
                                     <div class="db-item-actions">
                                         <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('SUBCATEGORY', '${s.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
                                         <button class="db-action-btn danger" onclick="event.stopPropagation(); deleteDb('SUBCATEGORY', '${s.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                                     </div>
-                                </div>
-                            `).join('') || '<div class="db-empty">Nenhuma subcategoria para esta categoria.</div>') : '<div class="db-empty">Selecione uma categoria.</div>'}
+                                </div>`;
+                            }).join('') || '<div class="db-empty">Nenhuma subcategoria para esta categoria.</div>') : '<div class="db-empty">Selecione uma categoria.</div>'}
                         </div>
                     </div>
                     <div class="db-col">
@@ -17392,18 +17708,20 @@
                             ${selectedSub ? `<button class="db-inline-btn" onclick="openDbModal('DESTINATION', '${selectedSub.id}')">+ Destino</button>` : ''}
                         </div>
                         <div class="db-list-scroll custom-scrollbar">
-                            ${selectedSub ? (filteredDestinations.map(d => `
+                            ${selectedSub ? (filteredDestinations.map(d => {
+                                const dstCount = dbMovTypeFilter ? getEntryCountForDst(d.id) : null;
+                                return `
                                 <div class="db-item-row">
                                     <div class="min-w-0">
                                         <div class="db-item-name">${d.name}</div>
-                                        <div class="db-item-meta">${selectedSub.name}${d.notes ? ` • ${escapeHtml(d.notes)}` : ''}</div>
+                                        <div class="db-item-meta">${selectedSub.name}${d.notes ? ` • ${escapeHtml(d.notes)}` : ''}${dstCount !== null ? ` • <strong>${dstCount} lançamento(s)</strong>` : ''}</div>
                                     </div>
                                     <div class="db-item-actions">
                                         <button class="db-action-btn" onclick="openDbEdit('DESTINATION', '${d.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
                                         <button class="db-action-btn danger" onclick="deleteDb('DESTINATION', '${d.id}')" title="Excluir"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                                     </div>
-                                </div>
-                            `).join('') || '<div class="db-empty">Nenhum destino para esta subcategoria.</div>') : '<div class="db-empty">Selecione uma subcategoria.</div>'}
+                                </div>`;
+                            }).join('') || '<div class="db-empty">Nenhum destino para esta subcategoria.</div>') : '<div class="db-empty">Selecione uma subcategoria.</div>'}
                         </div>
                     </div>
                 </div>
@@ -18004,10 +18322,14 @@
                     populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, e.destinationId);
                     document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
                     toggleStatus(e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO');
+                    const movTypeEl = document.getElementById('form-mov-type-entry');
+                    if (movTypeEl) movTypeEl.value = getMovimentoType(e);
                 }
-            } else { 
+            } else {
                 document.getElementById('form-date').value = formatLocalDate(new Date());
                 toggleStatus('REALIZADO');
+                const movTypeEl = document.getElementById('form-mov-type-entry');
+                if (movTypeEl) movTypeEl.value = 'OPERACIONAL';
             }
             updateEntryRecurrenceVisibility(Boolean(id));
             document.getElementById('entry-modal')?.classList.remove('hidden');
@@ -18063,7 +18385,8 @@
                 destinationId: dstId,
                 accountId: validation.values.accountId,
                 description: validation.values.description,
-                status: validation.values.status
+                status: validation.values.status,
+                tipoMovimento: String(document.getElementById('form-mov-type-entry')?.value || 'OPERACIONAL')
             };
             
             const recurringEntries = buildRecurringEntries(
