@@ -10403,7 +10403,7 @@
             return raw;
         }
         function getEntryCategory(entry) {
-            const categoryId = String((entry || {}).categoryId ?? (entry || {}).category_id || '');
+            const categoryId = String(((entry || {}).categoryId ?? (entry || {}).category_id) || '');
             const direct = (state.categories || []).find(item => String((item || {}).id || '') === categoryId);
             if (direct) return direct;
             return getDestinationHierarchyById((entry || {}).destinationId, entry || {}).category || null;
