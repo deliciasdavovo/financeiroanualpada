@@ -8665,6 +8665,8 @@
                 delete clean.isInternalTransfer;
                 delete clean.internalTransfer;
                 delete clean.is_internal_transfer;
+                delete clean.tipoMovimento;
+                delete clean.tipo_movimento;
                 return clean;
             };
             let payload = table === 'entries'
@@ -17981,14 +17983,12 @@
         async function syncEntriesWithCategoryType(categoryId, nextType, nextMovementType = '') {
             const categoryIdStr = String(categoryId || '');
             const normalizedType = normalizeFlowType(nextType);
-            const normalizedMovementType = String(nextMovementType || '').toUpperCase().trim();
             const affectedEntries = state.entries.filter(e => String((e.categoryId ?? e.category_id) || '') === categoryIdStr);
             if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
             const previousValues = new Map();
             affectedEntries.forEach(entry => {
-                previousValues.set(String(entry.id || ''), { type: entry.type, tipoMovimento: entry.tipoMovimento });
+                previousValues.set(String(entry.id || ''), { type: entry.type });
                 if (normalizedType) entry.type = normalizedType;
-                if (normalizedMovementType) entry.tipoMovimento = normalizedMovementType;
             });
             const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
             if (!saveResult?.ok) {
@@ -17996,7 +17996,6 @@
                     const previous = previousValues.get(String(entry.id || ''));
                     if (!previous) return;
                     entry.type = previous.type;
-                    entry.tipoMovimento = previous.tipoMovimento;
                 });
                 return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lancamentos da categoria.') };
             }
@@ -18056,7 +18055,6 @@
                     .map((item) => String((item || {}).id || ''))
             );
             const normalizedType = normalizeFlowType(nextCategory.type);
-            const normalizedMovementType = getCategoryMovementType(nextCategory);
             const affectedEntries = (state.entries || []).filter((entry) => {
                 const entrySubId = String((entry.subCategoryId ?? entry.sub_category_id) || '');
                 const entryDestinationId = String((entry.destinationId ?? entry.destination_id) || '');
@@ -18068,12 +18066,10 @@
             affectedEntries.forEach((entry) => {
                 previousValues.set(String(entry.id || ''), {
                     categoryId: entry.categoryId,
-                    type: entry.type,
-                    tipoMovimento: entry.tipoMovimento
+                    type: entry.type
                 });
                 entry.categoryId = categoryIdStr;
                 if (normalizedType) entry.type = normalizedType;
-                if (normalizedMovementType) entry.tipoMovimento = normalizedMovementType;
             });
 
             const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
@@ -18083,7 +18079,6 @@
                     if (!previous) return;
                     entry.categoryId = previous.categoryId;
                     entry.type = previous.type;
-                    entry.tipoMovimento = previous.tipoMovimento;
                 });
                 return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao sincronizar lançamentos da subcategoria.') };
             }
@@ -18099,7 +18094,6 @@
             if (!nextSubCategory || !nextCategory) return { ok: false, changed: 0, error: new Error('Subcategoria/categoria de destino não encontrada.') };
 
             const normalizedType = normalizeFlowType(nextCategory.type);
-            const normalizedMovementType = getCategoryMovementType(nextCategory);
             const affectedEntries = (state.entries || []).filter((entry) => String((entry.destinationId ?? entry.destination_id) || '') === destinationIdStr);
             if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
 
@@ -18108,13 +18102,11 @@
                 previousValues.set(String(entry.id || ''), {
                     subCategoryId: entry.subCategoryId,
                     categoryId: entry.categoryId,
-                    type: entry.type,
-                    tipoMovimento: entry.tipoMovimento
+                    type: entry.type
                 });
                 entry.subCategoryId = nextSubCategoryIdStr;
                 entry.categoryId = String((nextCategory || {}).id || '');
                 if (normalizedType) entry.type = normalizedType;
-                if (normalizedMovementType) entry.tipoMovimento = normalizedMovementType;
             });
 
             const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
@@ -18125,7 +18117,6 @@
                     entry.subCategoryId = previous.subCategoryId;
                     entry.categoryId = previous.categoryId;
                     entry.type = previous.type;
-                    entry.tipoMovimento = previous.tipoMovimento;
                 });
                 return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao sincronizar lançamentos do destino.') };
             }
@@ -18569,8 +18560,7 @@
                 destinationId: dstId,
                 accountId: validation.values.accountId,
                 description: validation.values.description,
-                status: validation.values.status,
-                tipoMovimento: getCategoryMovementType(cat)
+                status: validation.values.status
             };
             
             const recurringEntries = buildRecurringEntries(
