@@ -10399,7 +10399,7 @@
             return (getMovementTypeOptions().find(item => String(item.id || '').toUpperCase() === normalized) || {}).name || String(mt || '');
         };
         function getCategoryMovementType(category) {
-            const raw = String((category || {}).tipoMovimento ?? (category || {}).tipo_movimento || '').toUpperCase().trim();
+            const raw = String(((category || {}).tipoMovimento ?? (category || {}).tipo_movimento) || '').toUpperCase().trim();
             return raw;
         }
         function getEntryCategory(entry) {
