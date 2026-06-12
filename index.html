@@ -1266,6 +1266,11 @@
         .field-error.hidden {
             display: none;
         }
+        label[for="form-mov-type-entry"],
+        #form-mov-type-entry,
+        #form-mov-type-entry-help {
+            display: none !important;
+        }
         .combobox-shell {
             position: relative;
         }
@@ -7771,7 +7776,7 @@
                             <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
                         </div>
                         <div style="min-width:180px">
-                            <label class="label-mini" for="db-mov-type-filter">Tipo de movimento (lançamentos)</label>
+                            <label class="label-mini" for="db-mov-type-filter">Classificacao da categoria</label>
                             <select id="db-mov-type-filter" onchange="renderDatabase()" style="font-size:12px;padding:7px 10px">
                                 <option value="">Todos</option>
                                 <option value="OPERACIONAL">Operacional</option>
@@ -7786,7 +7791,7 @@
                     <div id="db-list"></div>
                 </section>
                 <section>
-                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Classificacoes de lancamentos</h4><button onclick="openDbModal('MOVEMENT_TYPE')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Classificacao</button></div>
+                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Classificacoes de categorias</h4><button onclick="openDbModal('MOVEMENT_TYPE')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Classificacao</button></div>
                     <div id="movement-type-list"></div>
                 </section>
                 <section>
@@ -8381,6 +8386,7 @@
             state.categories = (state.categories || []).map(c => ({
                 ...c,
                 id: String(c.id || ''),
+                tipoMovimento: String((c.tipoMovimento ?? c.tipo_movimento) || 'OPERACIONAL').toUpperCase(),
                 updatedAt: String((c.updatedAt ?? c.updated_at) || '')
             }));
             state.subCategories = (state.subCategories || []).map(s => ({
@@ -10378,6 +10384,10 @@
                 const name = String(item.name || '').trim();
                 if (id && name) byId.set(id, { ...item, id, name });
             });
+            (state.categories || []).forEach(category => {
+                const id = getCategoryMovementType(category);
+                if (id && !byId.has(id)) byId.set(id, { id, name: id });
+            });
             (state.entries || []).forEach(entry => {
                 const id = getMovimentoType(entry);
                 if (id && !byId.has(id)) byId.set(id, { id, name: id });
@@ -10388,7 +10398,19 @@
             const normalized = String(mt || '').toUpperCase();
             return (getMovementTypeOptions().find(item => String(item.id || '').toUpperCase() === normalized) || {}).name || String(mt || '');
         };
+        function getCategoryMovementType(category) {
+            const raw = String((category || {}).tipoMovimento ?? (category || {}).tipo_movimento || '').toUpperCase().trim();
+            return raw;
+        }
+        function getEntryCategory(entry) {
+            const categoryId = String((entry || {}).categoryId ?? (entry || {}).category_id || '');
+            const direct = (state.categories || []).find(item => String((item || {}).id || '') === categoryId);
+            if (direct) return direct;
+            return getDestinationHierarchyById((entry || {}).destinationId, entry || {}).category || null;
+        }
         const getMovimentoType = (entry) => {
+            const categoryType = getCategoryMovementType(getEntryCategory(entry));
+            if (categoryType) return categoryType;
             const raw = String((entry || {}).tipoMovimento || '').toUpperCase().trim();
             return raw || 'OPERACIONAL';
         };
@@ -17701,7 +17723,7 @@
                     const subDest = state.destinations.filter(d => d.subCategoryId === s.id);
                     return matches(s.name) || subDest.some(d => matches(d.name, d.notes || ''));
                 });
-                return matches(c.name, c.type) || subMatch;
+                return matches(c.name, c.type, getMovimentoLabel(getCategoryMovementType(c)), getCategoryMovementType(c)) || subMatch;
             });
 
             if (dbSelectedCategoryId && !filteredCategories.some(c => c.id === dbSelectedCategoryId)) dbSelectedCategoryId = '';
@@ -17739,7 +17761,7 @@
                                 <div class="db-item-row ${c.id === dbSelectedCategoryId ? 'active' : ''}" onclick="selectDbCategory('${c.id}')">
                                     <div class="min-w-0">
                                         <div class="db-item-name">${c.name}</div>
-                                        <div class="db-item-meta">${c.type}${entCount !== null ? ` • <strong>${entCount} lançamento(s)</strong>` : ''}</div>
+                                        <div class="db-item-meta">${c.type} • ${escapeHtml(getMovimentoLabel(getCategoryMovementType(c)))}${entCount !== null ? ` • <strong>${entCount} lançamento(s)</strong>` : ''}</div>
                                     </div>
                                     <div class="db-item-actions">
                                         <button class="db-action-btn" onclick="event.stopPropagation(); openDbEdit('CATEGORY', '${c.id}')" title="Editar"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
@@ -17807,12 +17829,12 @@
                 movementTypeList.innerHTML = filteredMovementTypes.length
                     ? `<div class="db-account-list">${filteredMovementTypes.map(item => {
                         const id = String(item.id || '').toUpperCase();
-                        const entryCount = state.entries.filter(e => getMovimentoType(e) === id).length;
+                        const categoryCount = state.categories.filter(c => getCategoryMovementType(c) === id).length;
                         return `
                         <div class="db-account-row">
                             <div>
                                 <div class="db-tree-title">${escapeHtml(item.name)}</div>
-                                <div class="db-tree-meta">${escapeHtml(id)}${entryCount ? ` &bull; ${entryCount} lancamento(s)` : ''}</div>
+                                <div class="db-tree-meta">${escapeHtml(id)}${categoryCount ? ` &bull; ${categoryCount} categoria(s)` : ''}</div>
                             </div>
                             <div class="db-tree-actions">
                                 <button class="db-inline-btn" onclick="openDbEdit('MOVEMENT_TYPE', '${id}')">Editar</button>
@@ -17899,7 +17921,7 @@
                 return entryCount + balanceCount;
             }
             if (type === 'MOVEMENT_TYPE') {
-                return state.entries.filter(e => getMovimentoType(e) === targetId.toUpperCase()).length;
+                return state.categories.filter(c => getCategoryMovementType(c) === targetId.toUpperCase()).length;
             }
             if (type === 'DESTINATION') {
                 return state.entries.filter(e => String((e.destinationId ?? e.destination_id) || '') === targetId).length;
@@ -17927,7 +17949,7 @@
 
         function getDbUsageDeleteMessage(type, count) {
             if (count <= 0) return '';
-            if (type === 'MOVEMENT_TYPE') return `Esta classificacao possui ${count} lancamento(s) vinculado(s). Reclassifique esses lancamentos antes de excluir a classificacao.`;
+            if (type === 'MOVEMENT_TYPE') return `Esta classificacao possui ${count} categoria(s) vinculada(s). Reclassifique essas categorias antes de excluir a classificacao.`;
             if (type === 'ACCOUNT') return `Esta conta possui ${count} registro(s) vinculado(s) em lançamentos e/ou saldos bancários. Exclua ou reclassifique esses registros antes de remover a conta.`;
             if (type === 'DESTINATION') return `Este destino possui ${count} lançamento(s) vinculado(s). Reclassifique esses lançamentos antes de excluir o destino.`;
             if (type === 'SUBCATEGORY') return `Esta subcategoria possui ${count} lançamento(s) vinculado(s) direta ou indiretamente. Reclassifique esses lançamentos antes de excluir a subcategoria.`;
@@ -17952,6 +17974,31 @@
                     if (previousType) entry.type = previousType;
                 });
                 return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lançamentos da categoria.') };
+            }
+            return { ok: true, changed: affectedEntries.length, error: null };
+        }
+
+        async function syncEntriesWithCategoryType(categoryId, nextType, nextMovementType = '') {
+            const categoryIdStr = String(categoryId || '');
+            const normalizedType = normalizeFlowType(nextType);
+            const normalizedMovementType = String(nextMovementType || '').toUpperCase().trim();
+            const affectedEntries = state.entries.filter(e => String((e.categoryId ?? e.category_id) || '') === categoryIdStr);
+            if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
+            const previousValues = new Map();
+            affectedEntries.forEach(entry => {
+                previousValues.set(String(entry.id || ''), { type: entry.type, tipoMovimento: entry.tipoMovimento });
+                if (normalizedType) entry.type = normalizedType;
+                if (normalizedMovementType) entry.tipoMovimento = normalizedMovementType;
+            });
+            const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
+            if (!saveResult?.ok) {
+                affectedEntries.forEach(entry => {
+                    const previous = previousValues.get(String(entry.id || ''));
+                    if (!previous) return;
+                    entry.type = previous.type;
+                    entry.tipoMovimento = previous.tipoMovimento;
+                });
+                return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao atualizar lancamentos da categoria.') };
             }
             return { ok: true, changed: affectedEntries.length, error: null };
         }
@@ -18009,6 +18056,7 @@
                     .map((item) => String((item || {}).id || ''))
             );
             const normalizedType = normalizeFlowType(nextCategory.type);
+            const normalizedMovementType = getCategoryMovementType(nextCategory);
             const affectedEntries = (state.entries || []).filter((entry) => {
                 const entrySubId = String((entry.subCategoryId ?? entry.sub_category_id) || '');
                 const entryDestinationId = String((entry.destinationId ?? entry.destination_id) || '');
@@ -18020,10 +18068,12 @@
             affectedEntries.forEach((entry) => {
                 previousValues.set(String(entry.id || ''), {
                     categoryId: entry.categoryId,
-                    type: entry.type
+                    type: entry.type,
+                    tipoMovimento: entry.tipoMovimento
                 });
                 entry.categoryId = categoryIdStr;
                 if (normalizedType) entry.type = normalizedType;
+                if (normalizedMovementType) entry.tipoMovimento = normalizedMovementType;
             });
 
             const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
@@ -18033,6 +18083,7 @@
                     if (!previous) return;
                     entry.categoryId = previous.categoryId;
                     entry.type = previous.type;
+                    entry.tipoMovimento = previous.tipoMovimento;
                 });
                 return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao sincronizar lançamentos da subcategoria.') };
             }
@@ -18048,6 +18099,7 @@
             if (!nextSubCategory || !nextCategory) return { ok: false, changed: 0, error: new Error('Subcategoria/categoria de destino não encontrada.') };
 
             const normalizedType = normalizeFlowType(nextCategory.type);
+            const normalizedMovementType = getCategoryMovementType(nextCategory);
             const affectedEntries = (state.entries || []).filter((entry) => String((entry.destinationId ?? entry.destination_id) || '') === destinationIdStr);
             if (!affectedEntries.length) return { ok: true, changed: 0, error: null };
 
@@ -18056,11 +18108,13 @@
                 previousValues.set(String(entry.id || ''), {
                     subCategoryId: entry.subCategoryId,
                     categoryId: entry.categoryId,
-                    type: entry.type
+                    type: entry.type,
+                    tipoMovimento: entry.tipoMovimento
                 });
                 entry.subCategoryId = nextSubCategoryIdStr;
                 entry.categoryId = String((nextCategory || {}).id || '');
                 if (normalizedType) entry.type = normalizedType;
+                if (normalizedMovementType) entry.tipoMovimento = normalizedMovementType;
             });
 
             const saveResult = await cloudSaveBatched('entries', affectedEntries, 200);
@@ -18071,6 +18125,7 @@
                     entry.subCategoryId = previous.subCategoryId;
                     entry.categoryId = previous.categoryId;
                     entry.type = previous.type;
+                    entry.tipoMovimento = previous.tipoMovimento;
                 });
                 return { ok: false, changed: affectedEntries.length, error: saveResult?.error || new Error('Falha ao sincronizar lançamentos do destino.') };
             }
@@ -18474,6 +18529,13 @@
                 el.value = 'OPERACIONAL';
             }
         }
+        function buildMovementTypeOptionsMarkup(selectedValue = '') {
+            const selected = String(selectedValue || 'OPERACIONAL').toUpperCase();
+            return getMovementTypeOptions().map(item => {
+                const value = String(item.id || '').toUpperCase();
+                return `<option value="${escapeHtml(value)}" ${value === selected ? 'selected' : ''}>${escapeHtml(item.name)}</option>`;
+            }).join('');
+        }
 
         document.getElementById('entry-form').onsubmit = async (event) => {
             event.preventDefault();
@@ -18508,7 +18570,7 @@
                 accountId: validation.values.accountId,
                 description: validation.values.description,
                 status: validation.values.status,
-                tipoMovimento: String(document.getElementById('form-mov-type-entry')?.value || 'OPERACIONAL')
+                tipoMovimento: getCategoryMovementType(cat)
             };
             
             const recurringEntries = buildRecurringEntries(
@@ -18659,7 +18721,17 @@
             if (subtitleEl) subtitleEl.innerText = editItem ? 'Atualize os dados e salve as alterações.' : 'Cadastre rapidamente um novo item.';
             const exEl = document.getElementById('db-extra');
             if(exEl) {
-                if(type === 'CATEGORY') exEl.innerHTML = `<label class="label-mini" for="db-cat-type">Tipo</label><select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>`;
+                if(type === 'CATEGORY') exEl.innerHTML = `<div class="space-y-4">
+                    <div>
+                        <label class="label-mini" for="db-cat-type">Fluxo</label>
+                        <select id="db-cat-type"><option value="SAÍDA">Saída</option><option value="ENTRADA">Entrada</option></select>
+                    </div>
+                    <div>
+                        <label class="label-mini" for="db-cat-mov-type">Classificacao</label>
+                        <select id="db-cat-mov-type">${buildMovementTypeOptionsMarkup(editItem ? getCategoryMovementType(editItem) : 'OPERACIONAL')}</select>
+                        <p class="field-help">Todos os lancamentos desta categoria herdam esta classificacao automaticamente.</p>
+                    </div>
+                </div>`;
                 else if(type === 'SUBCATEGORY') exEl.innerHTML = `<div><label class="label-mini" for="db-subcategory-category">Categoria</label><select id="db-subcategory-category" onchange="syncDbSubCategoryParentField()">${buildDbCategoryOptions(parentId)}</select><p class="field-help">Ao mover a subcategoria, os lançamentos vinculados continuam ligados e têm a categoria atualizada automaticamente.</p></div>`;
                 else if(type === 'DESTINATION') {
                     const initialSubCategoryId = String((editItem || {}).subCategoryId || parentId || '');
@@ -18683,7 +18755,7 @@
                     </div>`;
                 }
                 else if(type === 'ACCOUNT') exEl.innerHTML = `<label class="label-mini" for="db-acc-balance">Saldo Inicial</label><input type="number" step="0.01" id="db-acc-balance" value="${editItem ? Number(editItem.initialBalance || 0) : 0}">`;
-                else if(type === 'MOVEMENT_TYPE') exEl.innerHTML = `<p class="field-help">Esta classificacao aparece no campo "Tipo de movimento" dos lancamentos e nos filtros do banco de dados.</p>`;
+                else if(type === 'MOVEMENT_TYPE') exEl.innerHTML = `<p class="field-help">Esta classificacao aparece nas categorias e os lancamentos herdam automaticamente pela categoria escolhida.</p>`;
                 else exEl.innerHTML = '';
             }
             if (type === 'CATEGORY' && editItem) {
@@ -18714,7 +18786,12 @@
             if(type==='CATEGORY') {
                 table = 'categories';
                 previousItem = state.categories.find(item => item.id === id) || null;
-                data = {id, name, type: document.getElementById('db-cat-type').value };
+                data = {
+                    id,
+                    name,
+                    type: document.getElementById('db-cat-type').value,
+                    tipoMovimento: String(document.getElementById('db-cat-mov-type')?.value || 'OPERACIONAL').toUpperCase()
+                };
             }
             if(type==='SUBCATEGORY') {
                 table = 'subCategories';
@@ -18747,8 +18824,10 @@
                 if (type === 'CATEGORY' && mode === 'EDIT') {
                     const previousType = normalizeFlowType((previousItem || {}).type);
                     const nextType = normalizeFlowType(data.type);
-                    if (previousType && nextType && previousType !== nextType) {
-                        const syncResult = await syncEntriesWithCategoryType(id, nextType);
+                    const previousMovementType = getCategoryMovementType(previousItem);
+                    const nextMovementType = getCategoryMovementType(data);
+                    if ((previousType && nextType && previousType !== nextType) || previousMovementType !== nextMovementType) {
+                        const syncResult = await syncEntriesWithCategoryType(id, nextType, nextMovementType);
                         if (!syncResult?.ok) {
                             if (previousItem) {
                                 await cloudSave('categories', previousItem);
