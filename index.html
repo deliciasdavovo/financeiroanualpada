@@ -520,6 +520,38 @@
             line-height: 1.08;
             font-weight: 900 !important;
         }
+        .monthly-kpi-delta {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 9px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 0.01em;
+            line-height: 1;
+        }
+        .monthly-kpi-delta .kpi-delta-arrow {
+            font-size: 10px;
+            line-height: 1;
+        }
+        .monthly-kpi-delta .kpi-delta-ref {
+            font-weight: 700;
+            opacity: 0.7;
+        }
+        .monthly-kpi-delta.good {
+            background: rgba(31, 122, 92, 0.12);
+            color: #1F7A5C;
+        }
+        .monthly-kpi-delta.bad {
+            background: rgba(178, 58, 58, 0.12);
+            color: #B23A3A;
+        }
+        .monthly-kpi-delta.flat {
+            background: rgba(100, 116, 139, 0.14);
+            color: #64748B;
+        }
         .monthly-kpi-secondary {
             display: inline-flex;
             align-items: center;
@@ -7031,6 +7063,7 @@
                             <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
                         </div>
                         <p id="sum-inc-real" class="monthly-kpi-primary flow-income-text">R$ 0,00</p>
+                        <span id="kpi-delta-inc" class="monthly-kpi-delta" style="display:none"></span>
                         <div class="monthly-kpi-secondary">
                             <span>A receber</span>
                             <strong id="sum-inc-pend">R$ 0,00</strong>
@@ -7042,6 +7075,7 @@
                             <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
                         </div>
                         <p id="sum-exp-real" class="monthly-kpi-primary flow-expense-text">R$ 0,00</p>
+                        <span id="kpi-delta-exp" class="monthly-kpi-delta" style="display:none"></span>
                         <div class="monthly-kpi-secondary">
                             <span>A pagar</span>
                             <strong id="sum-exp-pend">R$ 0,00</strong>
@@ -7056,6 +7090,7 @@
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                        <span id="kpi-delta-bal" class="monthly-kpi-delta" style="display:none"></span>
                     </div>
                     <div class="card-premium kpi-card kpi-card-forecast monthly-kpi-card">
                         <div class="kpi-card-header">
@@ -7066,6 +7101,7 @@
                             <span class="kpi-icon"><i data-lucide="activity" class="w-4 h-4"></i></span>
                         </div>
                         <p id="reports-month-result" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                        <span id="kpi-delta-result" class="monthly-kpi-delta" style="display:none"></span>
                         <p id="reports-month-result-note" class="monthly-kpi-compact-note">Sem pendências no período.</p>
                     </div>
                 </div>
@@ -13939,6 +13975,84 @@
             renderMonthly();
         }
 
+        // Retorna o filtro AAAA-MM do mês anterior ao informado.
+        function previousMonthFilter(filter) {
+            const [y, m] = String(filter || '').split('-').map(Number);
+            if (!y || !m) return '';
+            const d = new Date(y, m - 1, 1);
+            d.setMonth(d.getMonth() - 1);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        // Resumo financeiro de um mês (AAAA-MM), usando o mesmo pipeline de filtros do mês ativo.
+        function computeMonthSummary(filter) {
+            if (!filter) return null;
+            const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+            const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
+            let incR = 0, incP = 0, expR = 0, expP = 0;
+            entries.forEach((entry) => {
+                const amount = Number(entry.amount) || 0;
+                const isIncome = normalizeFlowType(entry.type) === FLOW_IN;
+                const isRealized = entry.status === 'REALIZADO';
+                if (isIncome && isRealized) incR += amount;
+                else if (isIncome) incP += amount;
+                else if (isRealized) expR += amount;
+                else expP += amount;
+            });
+            return {
+                count: entries.length,
+                incR, incP, expR, expP,
+                balR: incR - expR,
+                projected: incR + incP - expR - expP
+            };
+        }
+
+        // Preenche o selo de variação (▲▼%) de um KPI comparando com o período anterior.
+        // invert=true para métricas em que "subir" é ruim (ex.: Saídas).
+        // mode='money' mostra a diferença em R$ (para saldos que podem ser negativos).
+        function setKpiDelta(elId, current, previous, options = {}) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            const { invert = false, mode = 'pct', label = 'mês anterior' } = options;
+            if (previous === null || previous === undefined || !isFinite(current)) {
+                el.style.display = 'none';
+                return;
+            }
+            const diff = current - previous;
+            const eps = 0.005;
+            const dir = Math.abs(diff) < eps ? 'flat' : (diff > 0 ? 'up' : 'down');
+            let tone = 'flat';
+            if (dir !== 'flat') {
+                const isGood = invert ? diff < 0 : diff > 0;
+                tone = isGood ? 'good' : 'bad';
+            }
+            const arrow = dir === 'up' ? '▲' : (dir === 'down' ? '▼' : '–');
+            let valueText;
+            if (mode === 'money' || previous === 0) {
+                valueText = formatBRL(Math.abs(diff));
+            } else {
+                const pct = (diff / Math.abs(previous)) * 100;
+                valueText = `${Math.abs(pct).toFixed(1).replace('.', ',')}%`;
+            }
+            el.className = `monthly-kpi-delta ${tone}`;
+            el.style.display = 'inline-flex';
+            el.innerHTML = `<span class="kpi-delta-arrow">${arrow}</span><span>${valueText}</span><span class="kpi-delta-ref">vs ${escapeHtml(label)}</span>`;
+        }
+
+        // Atualiza os 4 selos de variação dos KPIs mensais com base no mês anterior.
+        function renderMonthlyKpiDeltas(filter, current) {
+            const ids = ['kpi-delta-inc', 'kpi-delta-exp', 'kpi-delta-bal', 'kpi-delta-result'];
+            const prev = computeMonthSummary(previousMonthFilter(filter));
+            if (!prev || prev.count === 0) {
+                ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+                return;
+            }
+            setKpiDelta('kpi-delta-inc', current.incR, prev.incR, { mode: 'pct' });
+            setKpiDelta('kpi-delta-exp', current.expR, prev.expR, { mode: 'pct', invert: true });
+            setKpiDelta('kpi-delta-bal', current.balR, prev.balR, { mode: 'money' });
+            setKpiDelta('kpi-delta-result', current.projected, prev.projected, { mode: 'money' });
+        }
+
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -14023,10 +14137,12 @@
                 balanceMoodEl.className = `monthly-ios-pill ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
             const balEl = document.getElementById('month-bal-r');
-            if(balEl) { 
-                balEl.innerText = formatBRL(balR); 
-                balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; 
+            if(balEl) {
+                balEl.innerText = formatBRL(balR);
+                balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
+
+            renderMonthlyKpiDeltas(filter, { incR, expR, balR, projected: incR + incP - expR - expP });
 
             let html = '', cumulative = 0;
             const maxDailyReal = Math.max(...dailyInReal, ...dailyOutReal, 0);
