@@ -520,6 +520,38 @@
             line-height: 1.08;
             font-weight: 900 !important;
         }
+        .monthly-kpi-delta {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 9px;
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 850;
+            letter-spacing: 0.01em;
+            line-height: 1;
+        }
+        .monthly-kpi-delta .kpi-delta-arrow {
+            font-size: 10px;
+            line-height: 1;
+        }
+        .monthly-kpi-delta .kpi-delta-ref {
+            font-weight: 700;
+            opacity: 0.7;
+        }
+        .monthly-kpi-delta.good {
+            background: rgba(31, 122, 92, 0.12);
+            color: #1F7A5C;
+        }
+        .monthly-kpi-delta.bad {
+            background: rgba(178, 58, 58, 0.12);
+            color: #B23A3A;
+        }
+        .monthly-kpi-delta.flat {
+            background: rgba(100, 116, 139, 0.14);
+            color: #64748B;
+        }
         .monthly-kpi-secondary {
             display: inline-flex;
             align-items: center;
@@ -1621,6 +1653,14 @@
             background: #EEF2FF;
             border-color: #C7D2FE;
             color: #4338CA;
+        }
+        .export-excel-btn {
+            color: #1F7A5C;
+            border-color: #BFE0D2;
+        }
+        .export-excel-btn:hover {
+            background: #F0FAF5;
+            border-color: #9FD2BD;
         }
 
         #loading-overlay {
@@ -6815,6 +6855,10 @@
                 <button id="toggle-values-btn" class="toggle-values-btn" onclick="toggleValuesHidden()" aria-label="Esconder valores" aria-pressed="false" title="Esconder valores">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                 </button>
+                <button id="export-excel-btn" class="export-pdf-btn export-excel-btn" onclick="exportCurrentReportExcel()">
+                    <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+                    <span>Exportar Excel</span>
+                </button>
                 <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
                     <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
                     <span>Exportar PDF</span>
@@ -7056,6 +7100,7 @@
                             <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
                         </div>
                         <p id="sum-inc-real" class="monthly-kpi-primary flow-income-text">R$ 0,00</p>
+                        <span id="kpi-delta-inc" class="monthly-kpi-delta" style="display:none"></span>
                         <div class="monthly-kpi-secondary">
                             <span>A receber</span>
                             <strong id="sum-inc-pend">R$ 0,00</strong>
@@ -7067,6 +7112,7 @@
                             <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
                         </div>
                         <p id="sum-exp-real" class="monthly-kpi-primary flow-expense-text">R$ 0,00</p>
+                        <span id="kpi-delta-exp" class="monthly-kpi-delta" style="display:none"></span>
                         <div class="monthly-kpi-secondary">
                             <span>A pagar</span>
                             <strong id="sum-exp-pend">R$ 0,00</strong>
@@ -7081,6 +7127,7 @@
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                        <span id="kpi-delta-bal" class="monthly-kpi-delta" style="display:none"></span>
                     </div>
                     <div class="card-premium kpi-card kpi-card-forecast monthly-kpi-card">
                         <div class="kpi-card-header">
@@ -7091,6 +7138,7 @@
                             <span class="kpi-icon"><i data-lucide="activity" class="w-4 h-4"></i></span>
                         </div>
                         <p id="reports-month-result" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
+                        <span id="kpi-delta-result" class="monthly-kpi-delta" style="display:none"></span>
                         <p id="reports-month-result-note" class="monthly-kpi-compact-note">Sem pendências no período.</p>
                     </div>
                 </div>
@@ -10176,6 +10224,83 @@
                 setTimeout(printReport, 250);
             }
         }
+        // Exporta os lançamentos do mês ativo para Excel (.xlsx), com aba de resumo,
+        // para análise externa. Reaproveita o SheetJS (XLSX) já carregado para importação.
+        function exportCurrentReportExcel() {
+            if (typeof XLSX === 'undefined') {
+                showAppToast('Biblioteca de planilha indisponível. Recarregue a página e tente de novo.', { tone: 'danger', title: 'Exportação' });
+                return;
+            }
+            const filter = document.getElementById('monthly-filter')?.value || '';
+            const allEntries = getAnalyticalEntries(state.entries);
+            const scoped = filter ? allEntries.filter(e => e.date && e.date.startsWith(filter)) : allEntries;
+            const entries = filter ? applyMonthlySelectionFiltersToEntries(scoped) : scoped;
+            if (!entries.length) {
+                showAppToast('Não há lançamentos no período para exportar.', { tone: 'danger', title: 'Exportação' });
+                return;
+            }
+            const toBRDate = (value) => {
+                const p = String(value || '').split('-');
+                return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : String(value || '');
+            };
+            const sorted = [...entries].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+            const header = ['Data', 'Tipo', 'Status', 'Categoria', 'Subcategoria', 'Destino', 'Conta', 'Descrição', 'Valor (R$)'];
+            const rows = sorted.map((e) => {
+                const meta = getEntryDestinationMeta(e);
+                const isIncome = normalizeFlowType(e.type) === FLOW_IN;
+                const isRealized = String(e.status || '').toUpperCase() === 'REALIZADO';
+                return [
+                    toBRDate(e.date),
+                    isIncome ? 'Entrada' : 'Saída',
+                    isRealized ? 'Realizado' : 'Pendente',
+                    meta.category || '-',
+                    meta.subCategory || '-',
+                    meta.destination || '-',
+                    getAccountNameById(e.accountId),
+                    String(e.description || '').trim() || '-',
+                    Number(e.amount) || 0
+                ];
+            });
+            let incR = 0, incP = 0, expR = 0, expP = 0;
+            entries.forEach((e) => {
+                const a = Number(e.amount) || 0;
+                const isIncome = normalizeFlowType(e.type) === FLOW_IN;
+                const isRealized = String(e.status || '').toUpperCase() === 'REALIZADO';
+                if (isIncome && isRealized) incR += a;
+                else if (isIncome) incP += a;
+                else if (isRealized) expR += a;
+                else expP += a;
+            });
+            const periodLabel = filter
+                ? capitalizeFirst(new Date(Number(filter.split('-')[0]), Number(filter.split('-')[1]) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
+                : 'Todos os lançamentos';
+            const summary = [
+                ['Resumo do período', periodLabel],
+                [],
+                ['Entradas realizadas', incR],
+                ['Entradas a receber', incP],
+                ['Saídas realizadas', expR],
+                ['Saídas a pagar', expP],
+                ['Saldo de caixa (realizado)', incR - expR],
+                ['Resultado previsto', incR + incP - expR - expP],
+                ['Total de lançamentos', entries.length]
+            ];
+            try {
+                const wb = XLSX.utils.book_new();
+                const wsSummary = XLSX.utils.aoa_to_sheet(summary);
+                wsSummary['!cols'] = [{ wch: 28 }, { wch: 22 }];
+                XLSX.utils.book_append_sheet(wb, wsSummary, 'Resumo');
+                const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+                ws['!cols'] = [12, 10, 11, 22, 22, 24, 16, 30, 14].map(wch => ({ wch }));
+                XLSX.utils.book_append_sheet(wb, ws, 'Lançamentos');
+                XLSX.writeFile(wb, `Relatorio_${filter || 'completo'}.xlsx`);
+                showAppToast(`Excel exportado com ${entries.length} lançamento(s).`, { tone: 'success', title: 'Exportação concluída' });
+            } catch (err) {
+                console.error('Erro ao exportar Excel', err);
+                showAppToast('Não foi possível gerar o Excel. Tente novamente.', { tone: 'danger', title: 'Exportação' });
+            }
+        }
+
         async function exportCurrentReportPDF() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
@@ -13985,6 +14110,84 @@
             renderMonthly();
         }
 
+        // Retorna o filtro AAAA-MM do mês anterior ao informado.
+        function previousMonthFilter(filter) {
+            const [y, m] = String(filter || '').split('-').map(Number);
+            if (!y || !m) return '';
+            const d = new Date(y, m - 1, 1);
+            d.setMonth(d.getMonth() - 1);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        // Resumo financeiro de um mês (AAAA-MM), usando o mesmo pipeline de filtros do mês ativo.
+        function computeMonthSummary(filter) {
+            if (!filter) return null;
+            const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+            const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
+            let incR = 0, incP = 0, expR = 0, expP = 0;
+            entries.forEach((entry) => {
+                const amount = Number(entry.amount) || 0;
+                const isIncome = normalizeFlowType(entry.type) === FLOW_IN;
+                const isRealized = entry.status === 'REALIZADO';
+                if (isIncome && isRealized) incR += amount;
+                else if (isIncome) incP += amount;
+                else if (isRealized) expR += amount;
+                else expP += amount;
+            });
+            return {
+                count: entries.length,
+                incR, incP, expR, expP,
+                balR: incR - expR,
+                projected: incR + incP - expR - expP
+            };
+        }
+
+        // Preenche o selo de variação (▲▼%) de um KPI comparando com o período anterior.
+        // invert=true para métricas em que "subir" é ruim (ex.: Saídas).
+        // mode='money' mostra a diferença em R$ (para saldos que podem ser negativos).
+        function setKpiDelta(elId, current, previous, options = {}) {
+            const el = document.getElementById(elId);
+            if (!el) return;
+            const { invert = false, mode = 'pct', label = 'mês anterior' } = options;
+            if (previous === null || previous === undefined || !isFinite(current)) {
+                el.style.display = 'none';
+                return;
+            }
+            const diff = current - previous;
+            const eps = 0.005;
+            const dir = Math.abs(diff) < eps ? 'flat' : (diff > 0 ? 'up' : 'down');
+            let tone = 'flat';
+            if (dir !== 'flat') {
+                const isGood = invert ? diff < 0 : diff > 0;
+                tone = isGood ? 'good' : 'bad';
+            }
+            const arrow = dir === 'up' ? '▲' : (dir === 'down' ? '▼' : '–');
+            let valueText;
+            if (mode === 'money' || previous === 0) {
+                valueText = formatBRL(Math.abs(diff));
+            } else {
+                const pct = (diff / Math.abs(previous)) * 100;
+                valueText = `${Math.abs(pct).toFixed(1).replace('.', ',')}%`;
+            }
+            el.className = `monthly-kpi-delta ${tone}`;
+            el.style.display = 'inline-flex';
+            el.innerHTML = `<span class="kpi-delta-arrow">${arrow}</span><span>${valueText}</span><span class="kpi-delta-ref">vs ${escapeHtml(label)}</span>`;
+        }
+
+        // Atualiza os 4 selos de variação dos KPIs mensais com base no mês anterior.
+        function renderMonthlyKpiDeltas(filter, current) {
+            const ids = ['kpi-delta-inc', 'kpi-delta-exp', 'kpi-delta-bal', 'kpi-delta-result'];
+            const prev = computeMonthSummary(previousMonthFilter(filter));
+            if (!prev || prev.count === 0) {
+                ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+                return;
+            }
+            setKpiDelta('kpi-delta-inc', current.incR, prev.incR, { mode: 'pct' });
+            setKpiDelta('kpi-delta-exp', current.expR, prev.expR, { mode: 'pct', invert: true });
+            setKpiDelta('kpi-delta-bal', current.balR, prev.balR, { mode: 'money' });
+            setKpiDelta('kpi-delta-result', current.projected, prev.projected, { mode: 'money' });
+        }
+
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -14069,10 +14272,12 @@
                 balanceMoodEl.className = `monthly-ios-pill ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
             const balEl = document.getElementById('month-bal-r');
-            if(balEl) { 
+            if(balEl) {
                 balEl.innerText = formatBRLNoCents(balR);
                 balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
+
+            renderMonthlyKpiDeltas(filter, { incR, expR, balR, projected: incR + incP - expR - expP });
 
             let html = '', cumulative = 0;
             const maxDailyReal = Math.max(...dailyInReal, ...dailyOutReal, 0);
