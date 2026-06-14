@@ -1600,6 +1600,28 @@
             background: #F8FAFC;
             border-color: #C8D3E2;
         }
+        .toggle-values-btn {
+            height: 34px;
+            width: 34px;
+            border-radius: 10px;
+            border: 1px solid #D7DFEA;
+            background: #FFFFFF;
+            color: #334155;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background .15s, border-color .15s, color .15s;
+        }
+        .toggle-values-btn:hover {
+            background: #F8FAFC;
+            border-color: #C8D3E2;
+        }
+        .toggle-values-btn.is-hiding {
+            background: #EEF2FF;
+            border-color: #C7D2FE;
+            color: #4338CA;
+        }
 
         #loading-overlay {
             position: fixed;
@@ -6790,6 +6812,9 @@
                     <i data-lucide="hard-drive-download" class="w-3.5 h-3.5"></i>
                     <span>Modo: somente nuvem</span>
                 </div>
+                <button id="toggle-values-btn" class="toggle-values-btn" onclick="toggleValuesHidden()" aria-label="Esconder valores" aria-pressed="false" title="Esconder valores">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
                 <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
                     <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
                     <span>Exportar PDF</span>
@@ -9220,9 +9245,27 @@
             render();
         }
 
-        const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        // Olhinho para esconder valores (igual ao Nubank)
+        let valuesHidden = localStorage.getItem('valuesHidden') === '1';
+        const HIDDEN_MONEY = 'R$ ••••';
+        const formatBRL = (v) => valuesHidden ? HIDDEN_MONEY : (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         // Valor sem centavos (sem vírgula) para os números grandes dos cards
-        const formatBRLNoCents = (v) => Math.round(Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        const formatBRLNoCents = (v) => valuesHidden ? HIDDEN_MONEY : Math.round(Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        function updateToggleValuesUI() {
+            const btn = document.getElementById('toggle-values-btn');
+            if (!btn) return;
+            btn.classList.toggle('is-hiding', valuesHidden);
+            btn.setAttribute('aria-pressed', String(valuesHidden));
+            btn.setAttribute('aria-label', valuesHidden ? 'Mostrar valores' : 'Esconder valores');
+            btn.setAttribute('title', valuesHidden ? 'Mostrar valores' : 'Esconder valores');
+            btn.innerHTML = `<i data-lucide="${valuesHidden ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>`;
+        }
+        function toggleValuesHidden() {
+            valuesHidden = !valuesHidden;
+            localStorage.setItem('valuesHidden', valuesHidden ? '1' : '0');
+            updateToggleValuesUI();
+            try { render(); } catch (e) {}
+        }
         function formatLaunchCount(count) {
             const safeCount = Math.max(0, Number(count) || 0);
             if (safeCount === 0) return 'Nenhum lançamento';
@@ -11420,6 +11463,7 @@
                 populateDropdown('recon-account-select', state.accounts);
                 initReconSheet();
             }
+            updateToggleValuesUI();
             refreshLucideIcons();
             initPiggyMicroInteractions();
         }
