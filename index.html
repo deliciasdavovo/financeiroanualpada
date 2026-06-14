@@ -9221,6 +9221,8 @@
         }
 
         const formatBRL = (v) => (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        // Valor sem centavos (sem vírgula) para os números grandes dos cards
+        const formatBRLNoCents = (v) => Math.round(Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
         function formatLaunchCount(count) {
             const safeCount = Math.max(0, Number(count) || 0);
             if (safeCount === 0) return 'Nenhum lançamento';
@@ -13827,7 +13829,7 @@
             const resultEl = document.getElementById('reports-month-result');
             const resultNoteEl = document.getElementById('reports-month-result-note');
             if (resultEl) {
-                resultEl.innerText = formatBRL(totalProjected);
+                resultEl.innerText = formatBRLNoCents(totalProjected);
                 resultEl.className = `monthly-kpi-primary ${totalProjected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
             if (resultNoteEl) resultNoteEl.innerText = (incP || expP)
@@ -13976,9 +13978,9 @@
                 }
             });
 
-            document.getElementById('sum-inc-real').innerText = formatBRL(incR);
+            document.getElementById('sum-inc-real').innerText = formatBRLNoCents(incR);
             document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
-            document.getElementById('sum-exp-real').innerText = formatBRL(expR);
+            document.getElementById('sum-exp-real').innerText = formatBRLNoCents(expR);
             document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
 
             // Gerencial KPI calculations
@@ -13993,7 +13995,7 @@
             const lucroGerencial = opIncR - opExpR - finExpR + finIncR;
             const setKpi = (id, val) => {
                 const el = document.getElementById(id);
-                if (el) { el.innerText = formatBRL(val); el.className = `monthly-kpi-primary ${val >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; }
+                if (el) { el.innerText = formatBRLNoCents(val); el.className = `monthly-kpi-primary ${val >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; }
             };
             setKpi('kpi-saldo-caixa', balR);
             setKpi('kpi-resultado-op', resultOp);
@@ -14024,8 +14026,8 @@
             }
             const balEl = document.getElementById('month-bal-r');
             if(balEl) { 
-                balEl.innerText = formatBRL(balR); 
-                balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; 
+                balEl.innerText = formatBRLNoCents(balR);
+                balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
 
             let html = '', cumulative = 0;
