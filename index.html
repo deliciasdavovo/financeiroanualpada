@@ -1632,6 +1632,14 @@
             background: #F8FAFC;
             border-color: #C8D3E2;
         }
+        .export-excel-btn {
+            color: #1F7A5C;
+            border-color: #BFE0D2;
+        }
+        .export-excel-btn:hover {
+            background: #F0FAF5;
+            border-color: #9FD2BD;
+        }
 
         #loading-overlay {
             position: fixed;
@@ -6822,6 +6830,10 @@
                     <i data-lucide="hard-drive-download" class="w-3.5 h-3.5"></i>
                     <span>Modo: somente nuvem</span>
                 </div>
+                <button id="export-excel-btn" class="export-pdf-btn export-excel-btn" onclick="exportCurrentReportExcel()">
+                    <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+                    <span>Exportar Excel</span>
+                </button>
                 <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
                     <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
                     <span>Exportar PDF</span>
@@ -10167,6 +10179,83 @@
                 setTimeout(printReport, 250);
             }
         }
+        // Exporta os lançamentos do mês ativo para Excel (.xlsx), com aba de resumo,
+        // para análise externa. Reaproveita o SheetJS (XLSX) já carregado para importação.
+        function exportCurrentReportExcel() {
+            if (typeof XLSX === 'undefined') {
+                showAppToast('Biblioteca de planilha indisponível. Recarregue a página e tente de novo.', { tone: 'danger', title: 'Exportação' });
+                return;
+            }
+            const filter = document.getElementById('monthly-filter')?.value || '';
+            const allEntries = getAnalyticalEntries(state.entries);
+            const scoped = filter ? allEntries.filter(e => e.date && e.date.startsWith(filter)) : allEntries;
+            const entries = filter ? applyMonthlySelectionFiltersToEntries(scoped) : scoped;
+            if (!entries.length) {
+                showAppToast('Não há lançamentos no período para exportar.', { tone: 'danger', title: 'Exportação' });
+                return;
+            }
+            const toBRDate = (value) => {
+                const p = String(value || '').split('-');
+                return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : String(value || '');
+            };
+            const sorted = [...entries].sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+            const header = ['Data', 'Tipo', 'Status', 'Categoria', 'Subcategoria', 'Destino', 'Conta', 'Descrição', 'Valor (R$)'];
+            const rows = sorted.map((e) => {
+                const meta = getEntryDestinationMeta(e);
+                const isIncome = normalizeFlowType(e.type) === FLOW_IN;
+                const isRealized = String(e.status || '').toUpperCase() === 'REALIZADO';
+                return [
+                    toBRDate(e.date),
+                    isIncome ? 'Entrada' : 'Saída',
+                    isRealized ? 'Realizado' : 'Pendente',
+                    meta.category || '-',
+                    meta.subCategory || '-',
+                    meta.destination || '-',
+                    getAccountNameById(e.accountId),
+                    String(e.description || '').trim() || '-',
+                    Number(e.amount) || 0
+                ];
+            });
+            let incR = 0, incP = 0, expR = 0, expP = 0;
+            entries.forEach((e) => {
+                const a = Number(e.amount) || 0;
+                const isIncome = normalizeFlowType(e.type) === FLOW_IN;
+                const isRealized = String(e.status || '').toUpperCase() === 'REALIZADO';
+                if (isIncome && isRealized) incR += a;
+                else if (isIncome) incP += a;
+                else if (isRealized) expR += a;
+                else expP += a;
+            });
+            const periodLabel = filter
+                ? capitalizeFirst(new Date(Number(filter.split('-')[0]), Number(filter.split('-')[1]) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
+                : 'Todos os lançamentos';
+            const summary = [
+                ['Resumo do período', periodLabel],
+                [],
+                ['Entradas realizadas', incR],
+                ['Entradas a receber', incP],
+                ['Saídas realizadas', expR],
+                ['Saídas a pagar', expP],
+                ['Saldo de caixa (realizado)', incR - expR],
+                ['Resultado previsto', incR + incP - expR - expP],
+                ['Total de lançamentos', entries.length]
+            ];
+            try {
+                const wb = XLSX.utils.book_new();
+                const wsSummary = XLSX.utils.aoa_to_sheet(summary);
+                wsSummary['!cols'] = [{ wch: 28 }, { wch: 22 }];
+                XLSX.utils.book_append_sheet(wb, wsSummary, 'Resumo');
+                const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+                ws['!cols'] = [12, 10, 11, 22, 22, 24, 16, 30, 14].map(wch => ({ wch }));
+                XLSX.utils.book_append_sheet(wb, ws, 'Lançamentos');
+                XLSX.writeFile(wb, `Relatorio_${filter || 'completo'}.xlsx`);
+                showAppToast(`Excel exportado com ${entries.length} lançamento(s).`, { tone: 'success', title: 'Exportação concluída' });
+            } catch (err) {
+                console.error('Erro ao exportar Excel', err);
+                showAppToast('Não foi possível gerar o Excel. Tente novamente.', { tone: 'danger', title: 'Exportação' });
+            }
+        }
+
         async function exportCurrentReportPDF() {
             let title = '';
             let subtitle = `Gerado em ${getExportTimestamp()}`;
