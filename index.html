@@ -6716,6 +6716,57 @@
         .dre-separator { border: none; border-top: 1px solid #F1F5F9; margin: 0; }
         .dre-empty { text-align: center; padding: 32px; color: #94A3B8; font-size: 13px; font-weight: 700; }
         .dre-note { font-size: 11px; color: #94A3B8; padding: 10px 24px 14px; }
+
+        /* ===== ABA INÍCIO — HOME TAB ===== */
+        .home-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .home-section-grid { grid-template-columns: 1fr; } }
+        .home-kpi-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 6px; }
+        .home-kpi-value { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; line-height: 1; margin: 8px 0 6px; }
+        .home-kpi-sub { font-size: 12px; color: #64748B; margin-top: 6px; }
+        .home-kpi-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 100px; margin-bottom: 4px; }
+        .home-kpi-delta.good { background: #DCFCE7; color: #15803D; }
+        .home-kpi-delta.bad  { background: #FEE2E2; color: #B91C1C; }
+        .home-alerts { display: flex; flex-direction: column; gap: 10px; }
+        .home-alert-item { display: flex; align-items: center; gap: 10px; background: #FFF7ED; border: 1px solid #FDE68A; border-radius: 12px; padding: 12px 16px; font-size: 13px; color: #92400E; }
+        .home-alert-item > i { color: #D97706; flex-shrink: 0; }
+        .home-alert-item > span { flex: 1; }
+        .home-alert-action { font-size: 11px; font-weight: 800; color: #1F7A5C; background: white; border: 1px solid #1F7A5C; cursor: pointer; padding: 3px 10px; border-radius: 6px; flex-shrink: 0; }
+        .home-proj-list { display: flex; flex-direction: column; gap: 12px; }
+        .home-proj-day { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
+        .home-proj-day.is-negative .home-proj-day-header { background: #FEF2F2; border-bottom-color: #FECACA; }
+        .home-proj-day-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; gap: 8px; }
+        .home-proj-day-label { font-size: 13px; font-weight: 800; color: #0F172A; }
+        .home-proj-day-date { font-weight: 500; color: #64748B; font-size: 12px; }
+        .home-proj-running { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .home-proj-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; border-bottom: 1px solid #F1F5F9; gap: 8px; }
+        .home-proj-item:last-child { border-bottom: none; }
+        .home-proj-item-dest { font-size: 13px; color: #1E293B; flex: 1; }
+        .home-proj-item-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .home-proj-link { font-size: 12px; font-weight: 700; color: #1F7A5C; background: none; border: 1px solid #1F7A5C; cursor: pointer; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
+        .home-proj-link:hover { background: #E8F3EF; }
+
+        /* ===== DRE — COLUNA % DA RECEITA ===== */
+        .dre-pct-col { text-align: right; color: #94A3B8; font-size: 11px; white-space: nowrap; min-width: 60px; padding: 9px 16px 9px 4px !important; }
+        .dre-pct-col.pct-warn  { color: #B23A3A; font-weight: 700; }
+        .dre-pct-col.pct-ok    { color: #15803D; font-weight: 700; }
+
+        /* ===== ANÁLISE HORIZONTAL POR CATEGORIA ===== */
+        .horiz-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+        .horiz-tab-btn { padding: 5px 16px; border-radius: 100px; font-size: 12px; font-weight: 800; border: 1.5px solid #E2E8F0; background: white; cursor: pointer; color: #64748B; transition: all 0.15s; }
+        .horiz-tab-btn.active { background: #0F172A; border-color: #0F172A; color: white; }
+        .horiz-table-wrap { overflow-x: auto; }
+        .horiz-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
+        .horiz-table th { text-align: right; font-size: 11px; font-weight: 800; color: #64748B; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
+        .horiz-table th:first-child { text-align: left; }
+        .horiz-table td { padding: 9px 12px; border-bottom: 1px solid #F1F5F9; color: #1E293B; text-align: right; vertical-align: middle; }
+        .horiz-table td:first-child { text-align: left; font-weight: 700; }
+        .horiz-table tr:last-child td { border-bottom: none; }
+        .horiz-table tr:hover td { background: #FAFBFC; }
+        .horiz-delta-good { color: #15803D; font-weight: 800; }
+        .horiz-delta-bad  { color: #B23A3A; font-weight: 800; }
+        .horiz-delta-flat { color: #94A3B8; }
+        .horiz-pct-small { font-size: 11px; color: #94A3B8; display: block; }
+        .horiz-empty { text-align: center; padding: 24px; color: #94A3B8; font-size: 13px; font-weight: 700; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -6818,7 +6869,10 @@
         </div>
 
         <nav class="flex-1 px-4 space-y-2" aria-label="Navegação principal">
-            <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
+            <button type="button" onclick="switchTab('home')" id="nav-home" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
+                <i data-lucide="layout-dashboard" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Início</span>
+            </button>
+            <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
             <button type="button" onclick="switchTab('planejamento')" id="nav-planejamento" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
@@ -6919,6 +6973,11 @@
                 </div>
             </div>
             
+            <!-- INÍCIO -->
+            <div id="home" class="tab-content active space-y-6">
+                <div id="home-content"></div>
+            </div>
+
             <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
@@ -7048,7 +7107,7 @@
             </div>
 
             <!-- RELATÓRIO MENSAL -->
-            <div id="reports" class="tab-content active reports-tab space-y-8">
+            <div id="reports" class="tab-content reports-tab space-y-8">
                 <section class="reports-shell-head" aria-labelledby="reports-title">
                     <div>
                         <p class="reports-eyebrow">Painel financeiro</p>
@@ -7255,6 +7314,9 @@
 
                 <!-- DRE - Resultado Gerencial do Mês -->
                 <section id="dre-mensal-section" class="dre-section"></section>
+
+                <!-- Análise Horizontal - Variações por Categoria -->
+                <section id="horiz-analysis-section"></section>
 
                 <div class="card-premium monthly-daily-card h-[520px] lg:h-[700px] flex flex-col">
                     <div class="monthly-daily-head">
@@ -7878,7 +7940,11 @@
     </main>
 
     <nav id="mobile-nav" aria-label="Navegação principal" class="hidden lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111827] border-t border-white/10 px-3 py-2">
-        <button type="button" onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn active" aria-label="Relatórios financeiros" aria-current="page">
+        <button type="button" onclick="switchTab('home')" id="mnav-home" class="mobile-nav-btn active" aria-label="Início" aria-current="page">
+            <i data-lucide="layout-dashboard" class="w-5 h-5" aria-hidden="true"></i>
+            <span class="mobile-nav-label">Início</span>
+        </button>
+        <button type="button" onclick="switchTab('reports')" id="mnav-reports" class="mobile-nav-btn" aria-label="Relatórios financeiros">
             <i data-lucide="chart-no-axes-combined" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Relat.</span>
         </button>
@@ -8335,7 +8401,7 @@
         let annualHierarchySubCategory = '';
         let annualHierarchyDestination = '';
         let annualHierarchyLaunchMonth = '';
-        let currentTab = 'reports';
+        let currentTab = 'home';
         let reportsMode = 'annual';
         let monthlyCompareMode = 'prev';
         let projectionMode = 'pending';
@@ -8957,6 +9023,7 @@
             const totalEntries = getAnalyticalEntries(state.entries).length;
             const accountCount = Array.isArray(state.accounts) ? state.accounts.length : 0;
             const goalCount = Array.isArray(goalsData) ? goalsData.length : 0;
+            if (tabId === 'home') return `Inicio carregado: ${totalEntries} lancamento(s) disponiveis.`;
             if (tabId === 'entries') return `${totalEntries} lancamento(s) prontos para consulta.`;
             if (tabId === 'reports') return `${totalEntries} lancamento(s) analisados nos relatorios.`;
             if (tabId === 'planejamento') return `Planejamento pronto: projecao e ${goalCount} meta(s).`;
@@ -11535,6 +11602,7 @@
             currentTab = tabId;
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
+                home: 'Início',
                 entries: 'Lançamentos',
                 reports: 'Relatórios financeiros',
                 planejamento: 'Planejamento',
@@ -11565,7 +11633,9 @@
             populateEntryAccountFilter();
             populateMovementTypeSelect('form-mov-type-entry');
             populateMovementTypeSelect('db-mov-type-filter');
-            if (currentTab === 'entries') {
+            if (currentTab === 'home') {
+                renderHomeTab();
+            } else if (currentTab === 'entries') {
                 applyEntriesToolbarState();
                 renderEntries();
                 populateEntriesMonthChips();
@@ -13993,6 +14063,160 @@
             </article>`;
         }
 
+        function renderHomeTab() {
+            const host = document.getElementById('home-content');
+            if (!host) return;
+
+            const today = getTodayIsoDate();
+            const currentMonthPrefix = getCurrentMonthIso();
+
+            // Dados do mês atual
+            const monthEntries = getAnalyticalEntries(state.entries)
+                .filter(e => e.date && e.date.startsWith(currentMonthPrefix));
+            const realizedEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'REALIZADO');
+            const pendingMonthEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'PENDENTE');
+
+            const incR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const expR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const balR = incR - expR;
+            const incP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const expP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+
+            // Comparação com mês anterior
+            const prevPrefix = getMonthPrefixShift(currentMonthPrefix, -1);
+            const prevRealized = getAnalyticalEntries(state.entries)
+                .filter(e => e.date && e.date.startsWith(prevPrefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
+            const prevInc = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const prevExp = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const prevBal = prevInc - prevExp;
+
+            // Lançamentos pendentes futuros (hoje + 14 dias)
+            const todayDate = parseIsoDateLocal(today) || new Date();
+            const futureDate = addLocalDays(todayDate, 14);
+            const futureEnd = formatLocalDate(futureDate);
+            const tomorrowIso = formatLocalDate(addLocalDays(todayDate, 1));
+
+            const futurePending = getAnalyticalEntries(state.entries)
+                .filter(e => {
+                    const d = String(e.date || '');
+                    return String(e.status || '').toUpperCase() === 'PENDENTE' && d >= today && d <= futureEnd;
+                })
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+
+            // Agrupa por dia para projeção
+            const dayMap = new Map();
+            futurePending.forEach(e => {
+                const key = String(e.date || '');
+                if (!dayMap.has(key)) dayMap.set(key, []);
+                dayMap.get(key).push(e);
+            });
+
+            // Nome do mês
+            const [yearLabel, monthLabel] = currentMonthPrefix.split('-');
+            const monthName = Number(monthLabel)
+                ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                : currentMonthPrefix;
+
+            // Delta vs mês anterior
+            let balDeltaHtml = '';
+            if (prevRealized.length > 0 && prevBal !== 0) {
+                const balDelta = ((balR - prevBal) / Math.abs(prevBal)) * 100;
+                const dir = balDelta > 0.05 ? 'good' : (balDelta < -0.05 ? 'bad' : 'flat');
+                balDeltaHtml = `<span class="home-kpi-delta ${dir}">${balDelta > 0 ? '▲' : (balDelta < 0 ? '▼' : '–')} ${Math.abs(balDelta).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
+            }
+
+            // Saldo projetado acumulado correndo ao longo dos próximos dias
+            let runningBal = balR;
+            const dayRowsHtml = Array.from(dayMap.entries()).map(([dateIso, dayEntries]) => {
+                const dayIn  = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b)  => a + (Number(b.amount) || 0), 0);
+                const dayOut = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                runningBal += dayIn - dayOut;
+                const isNegDay = runningBal < 0;
+
+                const dateLabel = dateIso === today ? 'Hoje'
+                    : dateIso === tomorrowIso ? 'Amanhã'
+                    : formatDateBRV2(dateIso);
+                const dateSub = (dateIso === today || dateIso === tomorrowIso) ? ` · ${formatDateBRV2(dateIso)}` : '';
+
+                const itemsHtml = dayEntries.map(e => {
+                    const flow = normalizeFlowType(e.type);
+                    const destName = getDestinationById(e.destinationId)?.name || 'Sem destino';
+                    const desc = e.description ? ` · ${e.description}` : '';
+                    return `<div class="home-proj-item">
+                        <span class="home-proj-item-dest">${escapeHtml(destName + desc)}</span>
+                        <span class="home-proj-item-val ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'}${formatBRL(Number(e.amount) || 0)}</span>
+                    </div>`;
+                }).join('');
+
+                return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}">
+                    <div class="home-proj-day-header">
+                        <span class="home-proj-day-label">${escapeHtml(dateLabel)}<span class="home-proj-day-date">${escapeHtml(dateSub)}</span></span>
+                        <span class="home-proj-running ${runningBal < 0 ? 'flow-expense-text' : 'flow-balance-text'}">Saldo: ${formatBRLNoCents(runningBal)}</span>
+                    </div>
+                    ${itemsHtml}
+                </div>`;
+            }).join('');
+
+            // Alertas rápidos
+            const pendingMonthCount = pendingMonthEntries.length;
+            const biggestFutureOut = [...futurePending]
+                .filter(e => normalizeFlowType(e.type) === FLOW_OUT)
+                .sort((a, b) => (Number(b.amount) || 0) - (Number(a.amount) || 0))[0];
+
+            const alertsHtml = (pendingMonthCount > 0 || biggestFutureOut) ? `
+                <div class="home-alerts">
+                    ${pendingMonthCount > 0 ? `<div class="home-alert-item">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span>${pendingMonthCount} lançamento${pendingMonthCount > 1 ? 's' : ''} pendente${pendingMonthCount > 1 ? 's' : ''} em ${escapeHtml(capitalizeFirst(monthName))} aguardando confirmação</span>
+                        <button onclick="switchTab('entries')" class="home-alert-action">Ver lançamentos</button>
+                    </div>` : ''}
+                    ${biggestFutureOut ? `<div class="home-alert-item">
+                        <i data-lucide="circle-alert" class="w-4 h-4"></i>
+                        <span>Maior saída nos próximos 14 dias: <strong>${formatBRL(Number(biggestFutureOut.amount) || 0)}</strong> — ${escapeHtml(getDestinationById(biggestFutureOut.destinationId)?.name || 'Sem destino')} em ${escapeHtml(formatDateBRV2(biggestFutureOut.date))}</span>
+                    </div>` : ''}
+                </div>` : '';
+
+            // Card resultado previsto (com pendentes)
+            const projected = balR + incP - expP;
+            const hasPending = incP > 0 || expP > 0;
+            const prevCardHtml = hasPending ? `
+                <div class="card-premium p-8">
+                    <div class="home-kpi-label">Resultado previsto (com pendentes)</div>
+                    <div class="home-kpi-value ${projected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(projected)}</div>
+                    <div class="home-kpi-sub">+ ${formatBRL(incP)} a receber · - ${formatBRL(expP)} a pagar</div>
+                </div>` : '';
+
+            host.innerHTML = `
+                <div class="home-section-grid">
+                    <div class="card-premium p-8">
+                        <div class="home-kpi-label">Saldo realizado — ${escapeHtml(capitalizeFirst(monthName))}</div>
+                        <div class="home-kpi-value ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(balR)}</div>
+                        ${balDeltaHtml}
+                        <div class="home-kpi-sub">${balR >= 0 ? '✓ Mês positivo' : '⚠ Mês negativo'} · Entradas: ${formatBRLNoCents(incR)} · Saídas: ${formatBRLNoCents(expR)}</div>
+                    </div>
+                    ${prevCardHtml}
+                </div>
+
+                ${alertsHtml}
+
+                <div class="card-premium p-8">
+                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900">Próximos 14 dias</h4>
+                            <p class="text-xs text-slate-500 mt-1">Lançamentos pendentes de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))} — saldo acumulado projetado a partir do saldo atual.</p>
+                        </div>
+                        <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção completa <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                    </div>
+                    ${dayRowsHtml.length > 0
+                        ? `<div class="home-proj-list">${dayRowsHtml}</div>`
+                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
+                    }
+                </div>
+            `;
+
+            refreshLucideIcons();
+        }
+
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
             const totalProjected = (Number(incR) || 0) + (Number(incP) || 0) - (Number(expR) || 0) - (Number(expP) || 0);
             const resultEl = document.getElementById('reports-month-result');
@@ -14350,6 +14574,7 @@
             }
 
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend);
+            renderHorizontalAnalysis(filter, monthEntries);
             clearMonthlyCategoryCharts();
         }
 
@@ -14400,25 +14625,48 @@
             const resultadoOp = margemBruta - totalOpExp;
             const lucroGerencial = resultadoOp - finExp + finInc;
 
-            const row = (label, value, cls='dre-row-line', indent=false, deduct=false) => {
+            // Helpers para % sobre receita bruta (Análise Vertical)
+            const pctOf = (value) => receitaBruta > 0 ? ((value / receitaBruta) * 100) : null;
+            const fmtPct = (value) => {
+                const p = pctOf(value);
+                if (p === null || value === 0) return '';
+                return `${p.toFixed(1).replace('.', ',')}%`;
+            };
+            // Benchmarks para segmento alimentar: CMV 25-35%, Pessoal 25-35%, Fixas <15%
+            const benchmarks = { cmv: [25, 35], equipe: [25, 35], fixas: [0, 15] };
+            const pctCell = (value, groupKey) => {
+                const p = pctOf(value);
+                if (p === null || value === 0) return `<td class="dre-pct-col"></td>`;
+                const bm = benchmarks[groupKey];
+                let cls = '';
+                if (bm) {
+                    const pAbs = Math.abs(p);
+                    if (groupKey === 'fixas') cls = pAbs > bm[1] ? 'pct-warn' : 'pct-ok';
+                    else cls = (pAbs >= bm[0] && pAbs <= bm[1]) ? 'pct-ok' : 'pct-warn';
+                }
+                return `<td class="dre-pct-col${cls ? ' ' + cls : ''}" title="% da receita bruta">${fmtPct(value)}</td>`;
+            };
+
+            const row = (label, value, cls='dre-row-line', indent=false, deduct=false, groupKey='') => {
                 const valCls = value === 0 ? 'dre-neutral' : (deduct ? 'dre-negative' : (value > 0 ? 'dre-positive' : 'dre-negative'));
                 const prefix = deduct && value !== 0 ? '(-) ' : '';
-                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}</td><td class="dre-value-col ${valCls}">${formatBRL(value)}</td></tr>`;
+                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}</td><td class="dre-value-col ${valCls}">${formatBRL(value)}</td>${pctCell(value, groupKey)}</tr>`;
             };
             const subtotalRow = (label, value) => {
                 const valCls = value >= 0 ? 'dre-positive' : 'dre-negative';
-                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:900">${label}</td><td class="dre-value-col ${valCls}" style="font-weight:900">${formatBRL(value)}</td></tr>`;
+                const p = fmtPct(value);
+                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:900">${label}</td><td class="dre-value-col ${valCls}" style="font-weight:900">${formatBRL(value)}</td><td class="dre-pct-col" style="font-weight:800;color:#475569">${p}</td></tr>`;
             };
-            const groupHeader = (label) => `<tr><td colspan="2" class="dre-group-label">${label}</td></tr>`;
+            const groupHeader = (label) => `<tr><td colspan="3" class="dre-group-label">${label}</td></tr>`;
 
             let rows = '';
             rows += groupHeader('Receita');
-            rows += row('Receita bruta', receitaBruta);
-            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true);
+            rows += row('Receita bruta', receitaBruta, 'dre-row-line', false, false, '');
+            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true, '');
             rows += subtotalRow('Receita líquida', receitaLiquida);
 
             rows += groupHeader('Custos');
-            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true);
+            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true, 'cmv');
             rows += subtotalRow('Margem bruta', margemBruta);
 
             rows += groupHeader('Despesas operacionais');
@@ -14426,27 +14674,171 @@
             const expGroupLabels = { equipe:'Equipe', fixas:'Despesas fixas', manutencao:'Manutenção', administrativo:'Administrativo', marketing:'Marketing', outras:'Outras despesas' };
             expGroupOrder.forEach(gk => {
                 const val = expGroups[gk] || 0;
-                if (val > 0) rows += row(expGroupLabels[gk] || gk, val, 'dre-row-line', false, true);
+                if (val > 0) rows += row(expGroupLabels[gk] || gk, val, 'dre-row-line', false, true, gk);
             });
-            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:900">${formatBRL(resultadoOp)}</td></tr>`;
+            const resOpPct = fmtPct(resultadoOp);
+            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:900">${formatBRL(resultadoOp)}</td><td class="dre-pct-col" style="font-weight:800;color:#475569">${resOpPct}</td></tr>`;
 
             rows += groupHeader('Financeiro');
-            if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true);
-            if (finInc > 0) rows += row('Receitas financeiras', finInc);
+            if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true, '');
+            if (finInc > 0) rows += row('Receitas financeiras', finInc, 'dre-row-line', false, false, '');
 
-            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial</td><td class="dre-value-col" style="color:#fff;font-weight:900">${formatBRL(lucroGerencial)}</td></tr>`;
+            const lucroGerPct = fmtPct(lucroGerencial);
+            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial</td><td class="dre-value-col" style="color:#fff;font-weight:900">${formatBRL(lucroGerencial)}</td><td class="dre-pct-col" style="color:rgba(255,255,255,0.75);font-weight:800">${lucroGerPct}</td></tr>`;
 
             section.innerHTML = `
                 <div class="dre-header">
                     <div>
                         <h4>Resultado Gerencial do Mês</h4>
-                        <p>DRE simplificada — apenas movimentos operacionais e financeiros realizados em ${monthName}.</p>
+                        <p>DRE simplificada — apenas movimentos operacionais e financeiros realizados em ${monthName}. Coluna % = participação na receita bruta.</p>
                     </div>
                 </div>
                 <table class="dre-table">
+                    <thead><tr><th style="text-align:left;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Descrição</th><th style="text-align:right;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Valor</th><th style="text-align:right;padding:8px 16px 8px 4px;font-size:11px;color:#94A3B8;font-weight:800;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">% Receita</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
-                <p class="dre-note">* Não inclui sócios, investimentos e transferências. Altere o campo "Tipo de movimento" nos lançamentos para ajustar a classificação.</p>
+                <p class="dre-note">* Não inclui sócios, investimentos e transferências. % em vermelho = fora do benchmark de mercado (CMV 25–35%, Equipe 25–35%, Fixas &lt;15%). Altere o "Tipo de movimento" nos lançamentos para ajustar a classificação.</p>
+            `;
+        }
+
+        // Estado do tab ativo na análise horizontal (entradas ou saídas)
+        let horizActiveTab = 'saidas';
+
+        function switchHorizTab(tab) {
+            horizActiveTab = tab;
+            document.querySelectorAll('.horiz-tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            const incTable = document.getElementById('horiz-table-entradas');
+            const expTable = document.getElementById('horiz-table-saidas');
+            if (incTable) incTable.classList.toggle('hidden', tab !== 'entradas');
+            if (expTable) expTable.classList.toggle('hidden', tab !== 'saidas');
+        }
+
+        function renderHorizontalAnalysis(filter, monthEntries) {
+            const section = document.getElementById('horiz-analysis-section');
+            if (!section) return;
+
+            const realized = (Array.isArray(monthEntries) ? monthEntries : []).filter(e => String(e.status || '').toUpperCase() === 'REALIZADO');
+            if (realized.length === 0) { section.innerHTML = ''; return; }
+
+            // Mês de comparação (usa o mesmo monthlyCompareMode já definido)
+            let comparePrefix = '';
+            let compareLabel = 'mês anterior';
+            if (typeof monthlyCompareMode !== 'undefined') {
+                if (monthlyCompareMode === 'lastYear') {
+                    comparePrefix = getMonthPrefixShift(filter, -12);
+                    compareLabel = 'mesmo mês do ano passado';
+                } else if (monthlyCompareMode === 'avg3') {
+                    comparePrefix = null; // média de 3 meses
+                    compareLabel = 'média dos últimos 3 meses';
+                } else {
+                    comparePrefix = getMonthPrefixShift(filter, -1);
+                    compareLabel = 'mês anterior';
+                }
+            } else {
+                comparePrefix = getMonthPrefixShift(filter, -1);
+            }
+
+            // Agrupa entradas do período de referência por categoria
+            let refEntries = [];
+            if (comparePrefix === null) {
+                // Média de 3 meses — não implementamos média por categoria aqui; usa mês anterior como fallback
+                refEntries = getAnalyticalEntries(state.entries)
+                    .filter(e => e.date && e.date.startsWith(getMonthPrefixShift(filter, -1)) && String(e.status || '').toUpperCase() === 'REALIZADO');
+                compareLabel = 'mês anterior';
+            } else {
+                refEntries = getAnalyticalEntries(state.entries)
+                    .filter(e => e.date && e.date.startsWith(comparePrefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
+            }
+
+            // Receita bruta atual e de referência (para % de receita)
+            const recAtual = realized.filter(e => normalizeFlowType(e.type) === FLOW_IN && isOperacional(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const recRef   = refEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN && isOperacional(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+
+            // Agrupa por categoria para cada fluxo
+            function sumByCategory(entries, flow) {
+                const map = new Map();
+                entries.filter(e => normalizeFlowType(e.type) === flow).forEach(e => {
+                    const { category: cat } = getDestinationHierarchyById(e.destinationId, e);
+                    const catName = (cat || {}).name || 'Sem categoria';
+                    map.set(catName, (map.get(catName) || 0) + (Number(e.amount) || 0));
+                });
+                return map;
+            }
+
+            function buildVariationTable(flow) {
+                const currMap = sumByCategory(realized, flow);
+                const refMap  = sumByCategory(refEntries, flow);
+                const allKeys = new Set([...currMap.keys(), ...refMap.keys()]);
+                const isIncome = flow === FLOW_IN;
+
+                const rows = Array.from(allKeys)
+                    .map(cat => {
+                        const curr = currMap.get(cat) || 0;
+                        const ref  = refMap.get(cat) || 0;
+                        const delta = curr - ref;
+                        const deltaPct = ref !== 0 ? (delta / ref) * 100 : null;
+                        const currRec = recAtual > 0 ? recAtual : null;
+                        const refRec  = recRef  > 0 ? recRef  : null;
+                        return { cat, curr, ref, delta, deltaPct, currPct: currRec ? (curr / currRec * 100) : null, refPct: refRec ? (ref / refRec * 100) : null };
+                    })
+                    .filter(r => r.curr > 0 || r.ref > 0)
+                    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+                if (!rows.length) return `<div class="horiz-empty">Nenhum dado de ${isIncome ? 'entradas' : 'saídas'} neste período.</div>`;
+
+                const tableRows = rows.map(r => {
+                    const dir = Math.abs(r.delta) < 0.01 ? 'flat' : (r.delta > 0 ? 'up' : 'down');
+                    // Para saídas: subir é ruim; para entradas: subir é bom
+                    const isGood = isIncome ? dir === 'up' : dir === 'down';
+                    const deltaClass = dir === 'flat' ? 'horiz-delta-flat' : (isGood ? 'horiz-delta-good' : 'horiz-delta-bad');
+                    const arrow = dir === 'up' ? '▲' : (dir === 'down' ? '▼' : '–');
+                    const deltaPctText = r.deltaPct !== null ? `${arrow} ${Math.abs(r.deltaPct).toFixed(1).replace('.', ',')}%` : (dir !== 'flat' ? arrow : '–');
+
+                    const currPctSpan = r.currPct !== null ? `<span class="horiz-pct-small">${r.currPct.toFixed(1).replace('.', ',')}% da receita</span>` : '';
+                    const refPctSpan  = r.refPct  !== null ? `<span class="horiz-pct-small">${r.refPct.toFixed(1).replace('.', ',')}% da receita</span>`  : '';
+
+                    return `<tr>
+                        <td>${escapeHtml(r.cat)}</td>
+                        <td>${formatBRL(r.curr)}${currPctSpan}</td>
+                        <td>${r.ref > 0 ? formatBRL(r.ref) : '—'}${refPctSpan}</td>
+                        <td class="${deltaClass}">${r.delta !== 0 ? (r.delta > 0 ? '+' : '') + formatBRL(r.delta) : '—'}</td>
+                        <td class="${deltaClass}">${deltaPctText}</td>
+                    </tr>`;
+                }).join('');
+
+                return `<div class="horiz-table-wrap custom-scrollbar">
+                    <table class="horiz-table">
+                        <thead><tr>
+                            <th>Categoria</th>
+                            <th>Atual</th>
+                            <th>${escapeHtml(compareLabel)}</th>
+                            <th>Δ R$</th>
+                            <th>Δ %</th>
+                        </tr></thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>`;
+            }
+
+            const incHtml = buildVariationTable(FLOW_IN);
+            const expHtml = buildVariationTable(FLOW_OUT);
+
+            section.className = 'card-premium p-8';
+            section.innerHTML = `
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                    <div>
+                        <h4 class="text-sm font-black text-slate-900">Variações por Categoria — Análise Horizontal</h4>
+                        <p class="text-xs text-slate-500 mt-1">Comparação com ${escapeHtml(compareLabel)}. Cores: verde = melhora, vermelho = piora.</p>
+                    </div>
+                    <div class="horiz-tabs">
+                        <button class="horiz-tab-btn${horizActiveTab === 'saidas' ? ' active' : ''}" data-tab="saidas" onclick="switchHorizTab('saidas')">Saídas</button>
+                        <button class="horiz-tab-btn${horizActiveTab === 'entradas' ? ' active' : ''}" data-tab="entradas" onclick="switchHorizTab('entradas')">Entradas</button>
+                    </div>
+                </div>
+                <div id="horiz-table-saidas"${horizActiveTab !== 'saidas' ? ' class="hidden"' : ''}>${expHtml}</div>
+                <div id="horiz-table-entradas"${horizActiveTab !== 'entradas' ? ' class="hidden"' : ''}>${incHtml}</div>
             `;
         }
 
