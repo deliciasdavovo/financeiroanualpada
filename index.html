@@ -17763,7 +17763,7 @@
             const sourceRow = tempReconSheet[src];
             if (sourceRow && end > src) {
                 for (let i = src + 1; i <= end && i < tempReconSheet.length; i++) {
-                    tempReconSheet[i].destinationId = sourceRow.destinationId;
+                    tempReconSheet[i].date = sourceRow.date;
                 }
             }
             reconSheetFillState = { active: false, sourceIndex: -1, currentIndex: -1 };
