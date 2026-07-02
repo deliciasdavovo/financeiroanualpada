@@ -6734,16 +6734,21 @@
         .home-proj-list { display: flex; flex-direction: column; gap: 12px; }
         .home-proj-day { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
         .home-proj-day.is-negative .home-proj-day-header { background: #FEF2F2; border-bottom-color: #FECACA; }
-        .home-proj-day-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; gap: 8px; }
-        .home-proj-day-label { font-size: 13px; font-weight: 800; color: #0F172A; }
-        .home-proj-day-date { font-weight: 500; color: #64748B; font-size: 12px; }
-        .home-proj-running { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .home-proj-day-header { padding: 10px 16px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
+        .home-proj-day-label { font-size: 14px; font-weight: 800; color: #0F172A; display: block; }
+        .home-proj-day-weekday { font-size: 11px; font-weight: 500; color: #64748B; display: block; margin-top: 1px; text-transform: capitalize; }
+        .home-proj-day-totals { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; }
+        .home-proj-day.is-negative .home-proj-day-totals { background: #FFF5F5; }
+        .home-proj-tot { flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; gap: 1px; }
+        .home-proj-tot:not(:last-child) { border-right: 1px solid #E2E8F0; }
+        .home-proj-tot-label { font-size: 10px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.4px; }
         .home-proj-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; border-bottom: 1px solid #F1F5F9; gap: 8px; }
         .home-proj-item:last-child { border-bottom: none; }
         .home-proj-item-dest { font-size: 13px; color: #1E293B; flex: 1; }
         .home-proj-item-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
         .home-proj-link { font-size: 12px; font-weight: 700; color: #1F7A5C; background: none; border: 1px solid #1F7A5C; cursor: pointer; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
         .home-proj-link:hover { background: #E8F3EF; }
+        .home-saldo-badge { font-size: 12px; font-weight: 700; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
         /* ===== DRE — COLUNA % DA RECEITA ===== */
         .dre-pct-col { text-align: right; color: #94A3B8; font-size: 11px; white-space: nowrap; min-width: 60px; padding: 9px 16px 9px 4px !important; }
@@ -14131,10 +14136,17 @@
                 const dayNet = dayIn - dayOut;
                 const isNegDay = dayNet < 0;
 
+                const dateObj = parseIsoDateLocal(dateIso) || new Date();
+                const weekday = dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+                const dateShort = dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
                 const dateLabel = dateIso === today ? 'Hoje'
                     : dateIso === tomorrowIso ? 'Amanhã'
-                    : formatDateBRV2(dateIso);
-                const dateSub = (dateIso === today || dateIso === tomorrowIso) ? ` · ${formatDateBRV2(dateIso)}` : '';
+                    : dateShort;
+                const weekdayLine = dateIso === today
+                    ? `${weekday} · ${dateShort}`
+                    : dateIso === tomorrowIso
+                    ? `${weekday} · ${dateShort}`
+                    : weekday;
 
                 const itemsHtml = dayEntries.map(e => {
                     const flow = normalizeFlowType(e.type);
@@ -14148,8 +14160,22 @@
 
                 return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}">
                     <div class="home-proj-day-header">
-                        <span class="home-proj-day-label">${escapeHtml(dateLabel)}<span class="home-proj-day-date">${escapeHtml(dateSub)}</span></span>
-                        <span class="home-proj-running ${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}">Total: ${dayNet > 0 ? '+' : ''}${formatBRLNoCents(dayNet)}</span>
+                        <span class="home-proj-day-label">${escapeHtml(dateLabel)}</span>
+                        <span class="home-proj-day-weekday">${escapeHtml(weekdayLine)}</span>
+                    </div>
+                    <div class="home-proj-day-totals">
+                        <div class="home-proj-tot">
+                            <span class="home-proj-tot-label">Entradas</span>
+                            <span class="flow-income-text">${dayIn > 0 ? '+' : ''}${formatBRLNoCents(dayIn)}</span>
+                        </div>
+                        <div class="home-proj-tot">
+                            <span class="home-proj-tot-label">Saídas</span>
+                            <span class="flow-expense-text">${dayOut > 0 ? '-' : ''}${formatBRLNoCents(dayOut)}</span>
+                        </div>
+                        <div class="home-proj-tot">
+                            <span class="home-proj-tot-label">Resultado</span>
+                            <span class="${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}">${dayNet > 0 ? '+' : ''}${formatBRLNoCents(dayNet)}</span>
+                        </div>
                     </div>
                     ${itemsHtml}
                 </div>`;
@@ -14185,25 +14211,18 @@
                 </div>` : '';
 
             host.innerHTML = `
-                <div class="home-section-grid">
-                    <div class="card-premium p-8">
-                        <div class="home-kpi-label">Saldo realizado — ${escapeHtml(capitalizeFirst(monthName))}</div>
-                        <div class="home-kpi-value ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(balR)}</div>
-                        ${balDeltaHtml}
-                        <div class="home-kpi-sub">${balR >= 0 ? '✓ Mês positivo' : '⚠ Mês negativo'} · Entradas: ${formatBRLNoCents(incR)} · Saídas: ${formatBRLNoCents(expR)}</div>
-                    </div>
-                    ${prevCardHtml}
-                </div>
-
                 ${alertsHtml}
 
                 <div class="card-premium p-8">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
                         <div>
                             <h4 class="text-sm font-black text-slate-900">Próximos 14 dias</h4>
-                            <p class="text-xs text-slate-500 mt-1">Lançamentos pendentes de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))} — saldo acumulado projetado a partir do saldo atual.</p>
+                            <p class="text-xs text-slate-500 mt-1">Lançamentos pendentes de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
                         </div>
-                        <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção completa <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                        <div class="flex items-center gap-3">
+                            <span class="home-saldo-badge">Saldo ${escapeHtml(capitalizeFirst(monthName))}: <strong class="${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(balR)}</strong>${balDeltaHtml ? ' ' + balDeltaHtml : ''}</span>
+                            <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                        </div>
                     </div>
                     ${dayRowsHtml.length > 0
                         ? `<div class="home-proj-list">${dayRowsHtml}</div>`
