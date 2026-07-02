@@ -18276,13 +18276,26 @@
                 });
                 const reuseByExistingId = new Map();
                 const entryIdsToSkip = new Set();
+                // Cada lançamento já cadastrado só pode casar com UMA linha da conciliação.
+                // Assim, se o extrato traz duas transações iguais (mesma data, fluxo e valor)
+                // e só existe um pendente cadastrado, marcamos esse pendente como realizado e
+                // ainda importamos a segunda linha como nova — sem perder movimento nem duplicar.
+                const consumedExistingIds = new Set();
                 newEntries.forEach(entry => {
                     const matchesMeta = getReconExistingMovementMatches(entry);
-                    const chosenExisting = matchesMeta.pending[0] || matchesMeta.realized[0] || matchesMeta.matches[0];
+                    const notConsumed = (existing) => {
+                        const id = String((existing || {}).id || '');
+                        return id && !consumedExistingIds.has(id);
+                    };
+                    const chosenExisting = matchesMeta.pending.find(notConsumed)
+                        || matchesMeta.realized.find(notConsumed)
+                        || matchesMeta.matches.find(notConsumed);
                     if (!chosenExisting) return;
-                    entryIdsToSkip.add(String(entry.id || ''));
                     const existingId = String(chosenExisting.id || '');
-                    if (!existingId || reuseByExistingId.has(existingId)) return;
+                    if (!existingId) return;
+                    consumedExistingIds.add(existingId);
+                    entryIdsToSkip.add(String(entry.id || ''));
+                    if (reuseByExistingId.has(existingId)) return;
                     reuseByExistingId.set(existingId, {
                         existing: chosenExisting,
                         shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
