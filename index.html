@@ -1690,49 +1690,40 @@
         .page-loader.is-leaving {
             animation: loaderFadeOut 220ms ease-in forwards;
         }
-        /* Loader minimalista: dinheiro voando em cinza */
+        /* Loader minimalista: dinheiro com asas voando */
         .money-loader {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 24px;
+            gap: 22px;
             text-align: center;
         }
         .money-flight {
             position: relative;
-            width: 200px;
-            height: 132px;
+            width: 190px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .money-bill {
-            position: absolute;
-            left: 50%;
-            bottom: 6px;
-            width: 62px;
-            height: 33px;
-            border-radius: 7px;
-            background: linear-gradient(135deg, #EDF1F6 0%, #D2DAE4 100%);
-            border: 1.5px solid #BAC4D1;
-            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
-            transform: translate(-50%, 24px) scale(0.85);
-            opacity: 0;
-            animation: moneyFly 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        .winged-money {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            transform-origin: center;
+            animation: moneyFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 12px 16px rgba(15, 23, 42, 0.12));
         }
-        .money-bill::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            margin: auto;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            border: 1.5px solid #BAC4D1;
+        .winged-money .wing {
+            transform-box: view-box;
         }
-        .money-bill::after {
-            content: "";
-            position: absolute;
-            inset: 5px;
-            border-radius: 4px;
-            border: 1px dashed rgba(148, 163, 184, 0.5);
+        .winged-money .wing-left {
+            transform-origin: 112px 96px;
+            animation: wingFlapL 0.85s ease-in-out infinite;
+        }
+        .winged-money .wing-right {
+            transform-origin: 172px 104px;
+            animation: wingFlapR 0.85s ease-in-out infinite;
         }
         .money-loader-title {
             font-size: 14px;
@@ -1746,11 +1737,17 @@
             font-weight: 600;
             color: #94A3B8;
         }
-        @keyframes moneyFly {
-            0%   { transform: translate(-50%, 26px) rotate(0deg) scale(0.85); opacity: 0; }
-            18%  { opacity: 1; }
-            75%  { opacity: 1; }
-            100% { transform: translate(calc(-50% + var(--x, 0px)), -122px) rotate(var(--r, 0deg)) scale(1.05); opacity: 0; }
+        @keyframes moneyFloat {
+            0%, 100% { transform: translateY(5px) rotate(-2deg); }
+            50%      { transform: translateY(-9px) rotate(2deg); }
+        }
+        @keyframes wingFlapL {
+            0%, 100% { transform: rotate(-12deg); }
+            50%      { transform: rotate(12deg); }
+        }
+        @keyframes wingFlapR {
+            0%, 100% { transform: rotate(12deg); }
+            50%      { transform: rotate(-12deg); }
         }
         @keyframes loaderFadeIn {
             from { opacity: 0; }
@@ -1760,15 +1757,17 @@
             to { opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .money-bill { animation-duration: 4.2s; }
+            .winged-money { animation-duration: 5s; }
+            .winged-money .wing-left,
+            .winged-money .wing-right { animation-duration: 1.6s; }
         }
         @media (max-width: 760px) {
             .page-loader {
                 padding: 14px;
             }
             .money-flight {
-                width: 170px;
-                height: 120px;
+                width: 165px;
+                height: 132px;
             }
         }
         #login-screen {
@@ -6686,11 +6685,29 @@
     <div id="loading-overlay" aria-live="polite">
         <div class="money-loader" role="status" aria-label="Carregando o financeiro">
             <div class="money-flight" aria-hidden="true">
-                <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"></span>
-                <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"></span>
-                <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"></span>
-                <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"></span>
-                <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"></span>
+                <svg class="winged-money" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Asa esquerda -->
+                    <g class="wing wing-left">
+                        <path d="M112,96 C100,80 80,70 60,74 C72,77 80,85 82,94 C68,82 48,80 32,90 C48,92 62,100 70,110 C54,102 36,106 26,118 C46,116 68,116 86,110 C98,106 106,102 112,96 Z" fill="#E6E6DE" stroke="#26302B" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M70,86 C58,88 46,94 40,102 M78,100 C64,102 52,108 46,116" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                    </g>
+                    <!-- Asa direita -->
+                    <g class="wing wing-right">
+                        <path d="M172,104 C186,90 208,84 230,90 C217,92 208,100 205,110 C222,100 242,104 254,116 C238,113 220,116 210,124 C226,121 240,128 248,140 C230,133 210,132 194,126 C182,121 176,112 172,104 Z" fill="#E6E6DE" stroke="#26302B" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M212,98 C224,100 236,106 242,114 M204,112 C218,114 230,120 236,128" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                    </g>
+                    <!-- Maço de dinheiro -->
+                    <g transform="rotate(-14 138 100)">
+                        <rect x="110" y="72" width="60" height="60" rx="9" fill="#4E9E62" stroke="#26302B" stroke-width="4"/>
+                        <rect x="106" y="68" width="60" height="60" rx="9" fill="#63B078" stroke="#26302B" stroke-width="4"/>
+                        <rect x="102" y="64" width="60" height="60" rx="9" fill="#7CC790" stroke="#26302B" stroke-width="4"/>
+                        <rect x="112" y="74" width="40" height="40" rx="6" fill="#C3E7CA" stroke="#26302B" stroke-width="2.5"/>
+                        <circle cx="132" cy="94" r="9" fill="#7CC790" stroke="#26302B" stroke-width="2.5"/>
+                        <path d="M116,80 l7,7 M120,80 l7,7" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                        <path d="M142,102 l7,7 M146,102 l7,7" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                        <rect x="96" y="88" width="74" height="19" rx="4" fill="#ECECE4" stroke="#26302B" stroke-width="3.5"/>
+                    </g>
+                </svg>
             </div>
             <div>
                 <p class="money-loader-title" id="initial-loader-title">Carregando o financeiro</p>
@@ -6773,11 +6790,26 @@
             <div id="page-loader" class="page-loader" aria-live="polite" aria-hidden="true">
                 <div class="money-loader" role="status" aria-label="Carregando visão">
                     <div class="money-flight" aria-hidden="true">
-                        <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"></span>
-                        <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"></span>
-                        <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"></span>
-                        <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"></span>
-                        <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"></span>
+                        <svg class="winged-money" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g class="wing wing-left">
+                                <path d="M112,96 C100,80 80,70 60,74 C72,77 80,85 82,94 C68,82 48,80 32,90 C48,92 62,100 70,110 C54,102 36,106 26,118 C46,116 68,116 86,110 C98,106 106,102 112,96 Z" fill="#E6E6DE" stroke="#26302B" stroke-width="4" stroke-linejoin="round"/>
+                                <path d="M70,86 C58,88 46,94 40,102 M78,100 C64,102 52,108 46,116" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                            </g>
+                            <g class="wing wing-right">
+                                <path d="M172,104 C186,90 208,84 230,90 C217,92 208,100 205,110 C222,100 242,104 254,116 C238,113 220,116 210,124 C226,121 240,128 248,140 C230,133 210,132 194,126 C182,121 176,112 172,104 Z" fill="#E6E6DE" stroke="#26302B" stroke-width="4" stroke-linejoin="round"/>
+                                <path d="M212,98 C224,100 236,106 242,114 M204,112 C218,114 230,120 236,128" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                            </g>
+                            <g transform="rotate(-14 138 100)">
+                                <rect x="110" y="72" width="60" height="60" rx="9" fill="#4E9E62" stroke="#26302B" stroke-width="4"/>
+                                <rect x="106" y="68" width="60" height="60" rx="9" fill="#63B078" stroke="#26302B" stroke-width="4"/>
+                                <rect x="102" y="64" width="60" height="60" rx="9" fill="#7CC790" stroke="#26302B" stroke-width="4"/>
+                                <rect x="112" y="74" width="40" height="40" rx="6" fill="#C3E7CA" stroke="#26302B" stroke-width="2.5"/>
+                                <circle cx="132" cy="94" r="9" fill="#7CC790" stroke="#26302B" stroke-width="2.5"/>
+                                <path d="M116,80 l7,7 M120,80 l7,7" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                                <path d="M142,102 l7,7 M146,102 l7,7" stroke="#26302B" stroke-width="1.6" stroke-linecap="round"/>
+                                <rect x="96" y="88" width="74" height="19" rx="4" fill="#ECECE4" stroke="#26302B" stroke-width="3.5"/>
+                            </g>
+                        </svg>
                     </div>
                     <div>
                         <p class="money-loader-title" id="page-loader-title">Carregando visão</p>
