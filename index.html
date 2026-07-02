@@ -14125,13 +14125,11 @@
                 balDeltaHtml = `<span class="home-kpi-delta ${dir}">${balDelta > 0 ? '▲' : (balDelta < 0 ? '▼' : '–')} ${Math.abs(balDelta).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
             }
 
-            // Saldo projetado acumulado correndo ao longo dos próximos dias
-            let runningBal = balR;
             const dayRowsHtml = Array.from(dayMap.entries()).map(([dateIso, dayEntries]) => {
                 const dayIn  = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b)  => a + (Number(b.amount) || 0), 0);
                 const dayOut = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                runningBal += dayIn - dayOut;
-                const isNegDay = runningBal < 0;
+                const dayNet = dayIn - dayOut;
+                const isNegDay = dayNet < 0;
 
                 const dateLabel = dateIso === today ? 'Hoje'
                     : dateIso === tomorrowIso ? 'Amanhã'
@@ -14151,7 +14149,7 @@
                 return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}">
                     <div class="home-proj-day-header">
                         <span class="home-proj-day-label">${escapeHtml(dateLabel)}<span class="home-proj-day-date">${escapeHtml(dateSub)}</span></span>
-                        <span class="home-proj-running ${runningBal < 0 ? 'flow-expense-text' : 'flow-balance-text'}">Saldo: ${formatBRLNoCents(runningBal)}</span>
+                        <span class="home-proj-running ${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}">Total: ${dayNet > 0 ? '+' : ''}${formatBRLNoCents(dayNet)}</span>
                     </div>
                     ${itemsHtml}
                 </div>`;
