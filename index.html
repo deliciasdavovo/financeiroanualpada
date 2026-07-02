@@ -18091,27 +18091,35 @@
                 // Assim, se o extrato traz duas transações iguais (mesma data, fluxo e valor)
                 // e só existe um pendente cadastrado, ele é reaproveitado uma única vez e a
                 // segunda linha entra como nova — sem perder movimento nem duplicar.
+                //
+                // A conciliação (casar com existentes e marcar pendente como realizado) só faz
+                // sentido quando o lote é REALIZADO — é o momento em que o extrato confirma o
+                // que estava planejado. Num lote PENDENTE o usuário está apenas cadastrando
+                // lançamentos planejados, então não mexemos em nada que já existe: só adicionamos.
+                const shouldReconcileAgainstExisting = batchStatus === 'REALIZADO';
                 const consumedExistingIds = new Set();
                 const matchPairs = [];
-                newEntries.forEach(entry => {
-                    const matchesMeta = getReconExistingMovementMatches(entry);
-                    const notConsumed = (existing) => {
-                        const id = String((existing || {}).id || '');
-                        return id && !consumedExistingIds.has(id);
-                    };
-                    const chosenExisting = matchesMeta.pending.find(notConsumed)
-                        || matchesMeta.realized.find(notConsumed)
-                        || matchesMeta.matches.find(notConsumed);
-                    if (!chosenExisting) return;
-                    const existingId = String(chosenExisting.id || '');
-                    if (!existingId) return;
-                    consumedExistingIds.add(existingId);
-                    matchPairs.push({
-                        entry,
-                        existing: chosenExisting,
-                        shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
+                if (shouldReconcileAgainstExisting) {
+                    newEntries.forEach(entry => {
+                        const matchesMeta = getReconExistingMovementMatches(entry);
+                        const notConsumed = (existing) => {
+                            const id = String((existing || {}).id || '');
+                            return id && !consumedExistingIds.has(id);
+                        };
+                        const chosenExisting = matchesMeta.pending.find(notConsumed)
+                            || matchesMeta.realized.find(notConsumed)
+                            || matchesMeta.matches.find(notConsumed);
+                        if (!chosenExisting) return;
+                        const existingId = String(chosenExisting.id || '');
+                        if (!existingId) return;
+                        consumedExistingIds.add(existingId);
+                        matchPairs.push({
+                            entry,
+                            existing: chosenExisting,
+                            shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
+                        });
                     });
-                });
+                }
                 // O usuário confere, um a um, quais linhas realmente são o mesmo lançamento.
                 const pendingToRealize = [];
                 if (matchPairs.length > 0) {
