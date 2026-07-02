@@ -1677,217 +1677,80 @@
             inset: 0;
             z-index: 80;
             display: none;
-            background: rgba(243, 246, 250, 0.92);
-            backdrop-filter: blur(10px);
+            background: rgba(243, 246, 250, 0.9);
+            backdrop-filter: blur(8px);
             padding: 24px;
-            overflow: auto;
         }
         .page-loader.active {
-            display: block;
-            animation: loaderFadeIn 180ms var(--ease-premium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: loaderFadeIn 200ms var(--ease-premium);
         }
         .page-loader.is-leaving {
             animation: loaderFadeOut 220ms ease-in forwards;
         }
-        .page-loader-surface {
-            max-width: 1180px;
-            margin: 0 auto;
-            display: grid;
-            gap: 16px;
-        }
-        .loader-skeleton-head,
-        .loader-skeleton-card,
-        .loader-skeleton-table {
-            border: 1px solid #E3EAF3;
-            border-radius: 20px;
-            background: #FFFFFF;
-            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
-            overflow: hidden;
-        }
-        .loader-skeleton-head {
-            min-height: 118px;
-            padding: 20px;
-        }
-        .loader-skeleton-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 14px;
-        }
-        .loader-skeleton-card {
-            height: 142px;
-            padding: 16px;
-        }
-        .loader-skeleton-table {
-            min-height: 330px;
-            padding: 18px;
-        }
-        .skeleton-line,
-        .skeleton-pill,
-        .skeleton-block {
-            display: block;
-            border-radius: 999px;
-            background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 46%, #EEF2F7 100%);
-            background-size: 220% 100%;
-            animation: skeletonPulse 1.35s ease-in-out infinite;
-        }
-        .skeleton-pill {
-            width: 112px;
-            height: 28px;
-        }
-        .skeleton-line {
-            height: 14px;
-            margin-top: 12px;
-        }
-        .skeleton-line.short { width: 38%; }
-        .skeleton-line.mid { width: 62%; }
-        .skeleton-line.long { width: 86%; }
-        .skeleton-block {
-            height: 76px;
-            border-radius: 14px;
-            margin-top: 18px;
-        }
-        .loader-progress-card {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 90;
-            width: min(440px, calc(100vw - 36px));
-            border: 1px solid #DDE6F0;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.96);
-            box-shadow: 0 28px 60px rgba(15, 23, 42, 0.18);
-            padding: 20px;
-        }
-        .loader-progress-top {
+        /* Loader minimalista: dinheiro voando em cinza */
+        .money-loader {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .loader-spinner,
-        .loader-check {
-            width: 40px;
-            height: 40px;
-            border-radius: 14px;
-            display: inline-flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            flex: 0 0 auto;
+            gap: 24px;
+            text-align: center;
         }
-        .loader-spinner {
-            border: 3px solid #E2E8F0;
-            border-top-color: var(--primary-blue);
-            animation: spin 850ms linear infinite;
+        .money-flight {
+            position: relative;
+            width: 200px;
+            height: 132px;
         }
-        .loader-check {
-            display: none;
-            color: #FFFFFF;
-            background: var(--primary-green);
-            transform: scale(0.92);
-            animation: loaderCheckPop 320ms var(--ease-premium) forwards;
+        .money-bill {
+            position: absolute;
+            left: 50%;
+            bottom: 6px;
+            width: 62px;
+            height: 33px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #EDF1F6 0%, #D2DAE4 100%);
+            border: 1.5px solid #BAC4D1;
+            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+            transform: translate(-50%, 24px) scale(0.85);
+            opacity: 0;
+            animation: moneyFly 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
-        .loader-progress-card.complete .loader-spinner {
-            display: none;
-        }
-        .loader-progress-card.complete .loader-check {
-            display: inline-flex;
-        }
-        .loader-title {
-            font-size: 15px;
-            line-height: 1.2;
-            font-weight: 900;
-            color: #0F172A;
-        }
-        .loader-subtitle {
-            margin-top: 5px;
-            font-size: 12px;
-            line-height: 1.45;
-            font-weight: 700;
-            color: #64748B;
-        }
-        .loader-progress-track {
-            height: 8px;
-            border-radius: 999px;
-            background: #EEF2F7;
-            overflow: hidden;
-            margin-top: 16px;
-        }
-        .loader-progress-fill {
-            display: block;
-            height: 100%;
-            width: 0%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-green));
-            transition: width 280ms var(--ease-premium);
-        }
-        .loader-steps {
-            display: grid;
-            gap: 8px;
-            margin-top: 16px;
-        }
-        .loader-step {
-            display: grid;
-            grid-template-columns: 22px minmax(0, 1fr);
-            gap: 8px;
-            align-items: center;
-            min-height: 26px;
-            color: #94A3B8;
-            font-size: 11px;
-            font-weight: 800;
-        }
-        .loader-step-dot {
-            width: 22px;
-            height: 22px;
-            border-radius: 999px;
-            border: 1px solid #DDE6F0;
-            background: #FFFFFF;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: transparent;
-        }
-        .loader-step.active {
-            color: #244A94;
-        }
-        .loader-step.active .loader-step-dot {
-            border-color: #BFCEF0;
-            background: #EAF0FF;
-        }
-        .loader-step.active .loader-step-dot::before {
+        .money-bill::before {
             content: "";
-            width: 8px;
-            height: 8px;
-            border-radius: 999px;
-            background: var(--primary-blue);
-            animation: loaderDotPulse 700ms ease-in-out infinite alternate;
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1.5px solid #BAC4D1;
         }
-        .loader-step.done {
-            color: #1F7A5C;
+        .money-bill::after {
+            content: "";
+            position: absolute;
+            inset: 5px;
+            border-radius: 4px;
+            border: 1px dashed rgba(148, 163, 184, 0.5);
         }
-        .loader-step.done .loader-step-dot {
-            border-color: #CFE7DC;
-            background: #F2FBF6;
-            color: #1F7A5C;
-        }
-        .loader-step.done .loader-step-dot::before {
-            content: "✓";
-            font-size: 12px;
-            line-height: 1;
-            font-weight: 900;
-        }
-        .loader-result {
-            display: none;
-            margin-top: 14px;
-            border: 1px solid #DDE6F0;
-            border-radius: 16px;
-            background: #F8FAFF;
-            padding: 12px;
-            color: #334155;
-            font-size: 12px;
+        .money-loader-title {
+            font-size: 14px;
             font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #475569;
         }
-        .loader-progress-card.complete .loader-result {
-            display: block;
+        .money-loader-subtitle {
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94A3B8;
+        }
+        @keyframes moneyFly {
+            0%   { transform: translate(-50%, 26px) rotate(0deg) scale(0.85); opacity: 0; }
+            18%  { opacity: 1; }
+            75%  { opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--x, 0px)), -122px) rotate(var(--r, 0deg)) scale(1.05); opacity: 0; }
         }
         @keyframes loaderFadeIn {
             from { opacity: 0; }
@@ -1896,35 +1759,16 @@
         @keyframes loaderFadeOut {
             to { opacity: 0; }
         }
-        @keyframes skeletonPulse {
-            from { background-position: 120% 0; }
-            to { background-position: -120% 0; }
-        }
-        @keyframes loaderCheckPop {
-            to { transform: scale(1); }
-        }
-        @keyframes loaderDotPulse {
-            from { transform: scale(0.76); opacity: 0.55; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @media (prefers-reduced-motion: reduce) {
+            .money-bill { animation-duration: 4.2s; }
         }
         @media (max-width: 760px) {
             .page-loader {
                 padding: 14px;
             }
-            .loader-skeleton-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .loader-skeleton-card {
-                height: 112px;
-            }
-            .loader-progress-card {
-                top: 46%;
-                padding: 16px;
-                border-radius: 20px;
+            .money-flight {
+                width: 170px;
+                height: 120px;
             }
         }
         #login-screen {
@@ -6840,18 +6684,18 @@
     </section>
 
     <div id="loading-overlay" aria-live="polite">
-        <div class="loader-progress-card" id="initial-loader-card">
-            <div class="loader-progress-top">
-                <span class="loader-spinner" aria-hidden="true"></span>
-                <span class="loader-check" aria-hidden="true"><i data-lucide="check" class="w-5 h-5"></i></span>
-                <div>
-                    <p class="loader-title" id="initial-loader-title">Preparando o financeiro</p>
-                    <p class="loader-subtitle" id="initial-loader-subtitle">Conectando com a nuvem e montando a primeira tela.</p>
-                </div>
+        <div class="money-loader" role="status" aria-label="Carregando o financeiro">
+            <div class="money-flight" aria-hidden="true">
+                <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"></span>
+                <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"></span>
+                <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"></span>
+                <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"></span>
+                <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"></span>
             </div>
-            <div class="loader-progress-track"><span class="loader-progress-fill" id="initial-loader-progress"></span></div>
-            <div class="loader-steps" id="initial-loader-steps"></div>
-            <div class="loader-result" id="initial-loader-result"></div>
+            <div>
+                <p class="money-loader-title" id="initial-loader-title">Carregando o financeiro</p>
+                <p class="money-loader-subtitle" id="initial-loader-subtitle">Só um instante…</p>
+            </div>
         </div>
     </div>
 
@@ -6927,54 +6771,18 @@
 
         <div id="main-scroll" class="flex-1 overflow-auto custom-scrollbar p-6 lg:p-10 mobile-main-scroll relative">
             <div id="page-loader" class="page-loader" aria-live="polite" aria-hidden="true">
-                <div class="page-loader-surface">
-                    <section class="loader-skeleton-head">
-                        <span class="skeleton-pill"></span>
-                        <span class="skeleton-line long"></span>
-                        <span class="skeleton-line mid"></span>
-                    </section>
-                    <div class="loader-skeleton-grid">
-                        <article class="loader-skeleton-card">
-                            <span class="skeleton-pill"></span>
-                            <span class="skeleton-line long"></span>
-                            <span class="skeleton-line short"></span>
-                        </article>
-                        <article class="loader-skeleton-card">
-                            <span class="skeleton-pill"></span>
-                            <span class="skeleton-line long"></span>
-                            <span class="skeleton-line short"></span>
-                        </article>
-                        <article class="loader-skeleton-card">
-                            <span class="skeleton-pill"></span>
-                            <span class="skeleton-line long"></span>
-                            <span class="skeleton-line short"></span>
-                        </article>
-                        <article class="loader-skeleton-card">
-                            <span class="skeleton-pill"></span>
-                            <span class="skeleton-line long"></span>
-                            <span class="skeleton-line short"></span>
-                        </article>
+                <div class="money-loader" role="status" aria-label="Carregando visão">
+                    <div class="money-flight" aria-hidden="true">
+                        <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"></span>
+                        <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"></span>
+                        <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"></span>
+                        <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"></span>
+                        <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"></span>
                     </div>
-                    <section class="loader-skeleton-table">
-                        <span class="skeleton-line mid"></span>
-                        <span class="skeleton-block"></span>
-                        <span class="skeleton-line long"></span>
-                        <span class="skeleton-line long"></span>
-                        <span class="skeleton-line mid"></span>
-                    </section>
-                </div>
-                <div class="loader-progress-card" id="page-loader-card">
-                    <div class="loader-progress-top">
-                        <span class="loader-spinner" aria-hidden="true"></span>
-                        <span class="loader-check" aria-hidden="true"><i data-lucide="check" class="w-5 h-5"></i></span>
-                        <div>
-                            <p class="loader-title" id="page-loader-title">Carregando visão</p>
-                            <p class="loader-subtitle" id="page-loader-subtitle">Preparando os dados da tela.</p>
-                        </div>
+                    <div>
+                        <p class="money-loader-title" id="page-loader-title">Carregando visão</p>
+                        <p class="money-loader-subtitle" id="page-loader-subtitle">Só um instante…</p>
                     </div>
-                    <div class="loader-progress-track"><span class="loader-progress-fill" id="page-loader-progress"></span></div>
-                    <div class="loader-steps" id="page-loader-steps"></div>
-                    <div class="loader-result" id="page-loader-result"></div>
                 </div>
             </div>
             
@@ -8998,70 +8806,14 @@
             }
         }
 
-        const loaderStepPresets = {
-            initial: ['Conectando com a nuvem', 'Carregando cadastros', 'Carregando lancamentos', 'Sincronizando metas', 'Montando a tela inicial'],
-            reports: ['Lendo lancamentos do periodo', 'Calculando totais e saldos', 'Montando graficos', 'Preparando detalhamento'],
-            entries: ['Aplicando filtros', 'Somando entradas e saidas', 'Organizando a tabela', 'Preparando paginacao'],
-            planejamento: ['Carregando planejamento', 'Calculando projecao', 'Organizando metas', 'Atualizando painel'],
-            treasury: ['Carregando vendas', 'Calculando caixa da loja', 'Organizando historico', 'Atualizando painel'],
-            database: ['Lendo estrutura', 'Organizando categorias', 'Montando listas', 'Preparando edicao'],
-            reconciliation: ['Preparando conciliacao', 'Carregando contas', 'Validando estrutura', 'Liberando importacao']
-        };
-
         const waitMs = (ms) => new Promise(resolve => window.setTimeout(resolve, ms));
         const nextFrame = () => new Promise(resolve => window.requestAnimationFrame(() => resolve()));
         let pageLoaderRunId = 0;
 
-        function getTabLoadingTitle(tabId) {
-            const labels = {
-                entries: 'Carregando lancamentos',
-                reports: 'Carregando relatorios',
-                planejamento: 'Carregando planejamento',
-                reconciliation: 'Preparando conciliacao',
-                treasury: 'Carregando vendas',
-                database: 'Carregando banco de dados'
-            };
-            return labels[tabId] || 'Carregando visao';
-        }
-
-        function getLoadingResultText(tabId) {
-            const totalEntries = getAnalyticalEntries(state.entries).length;
-            const accountCount = Array.isArray(state.accounts) ? state.accounts.length : 0;
-            const goalCount = Array.isArray(goalsData) ? goalsData.length : 0;
-            if (tabId === 'home') return `Inicio carregado: ${totalEntries} lancamento(s) disponiveis.`;
-            if (tabId === 'entries') return `${totalEntries} lancamento(s) prontos para consulta.`;
-            if (tabId === 'reports') return `${totalEntries} lancamento(s) analisados nos relatorios.`;
-            if (tabId === 'planejamento') return `Planejamento pronto: projecao e ${goalCount} meta(s).`;
-            if (tabId === 'database') return `${accountCount} conta(s) e cadastros carregados.`;
-            return 'Tela pronta com os dados mais recentes.';
-        }
-
         function updateLoaderPanel(scope, options = {}) {
             const prefix = scope === 'initial' ? 'initial-loader' : 'page-loader';
-            const card = document.getElementById(`${prefix}-card`);
             const title = document.getElementById(`${prefix}-title`);
-            const subtitle = document.getElementById(`${prefix}-subtitle`);
-            const progress = document.getElementById(`${prefix}-progress`);
-            const stepsHost = document.getElementById(`${prefix}-steps`);
-            const result = document.getElementById(`${prefix}-result`);
-            if(!card || !stepsHost) return;
-            const steps = options.steps || loaderStepPresets.initial;
-            const activeIndex = Math.max(0, Math.min(steps.length - 1, Number(options.activeIndex || 0)));
-            const doneUntil = Number(options.doneUntil ?? activeIndex - 1);
-            const complete = Boolean(options.complete);
-            if(title) title.innerText = options.title || (scope === 'initial' ? 'Preparando o financeiro' : 'Carregando visao');
-            if(subtitle) subtitle.innerText = options.subtitle || steps[activeIndex] || 'Preparando dados.';
-            if(progress) {
-                const value = complete ? 100 : Math.max(4, Math.min(96, Number(options.progress || ((activeIndex + 1) / steps.length) * 86)));
-                progress.style.width = `${value}%`;
-            }
-            stepsHost.innerHTML = steps.map((step, index) => {
-                const status = complete || index <= doneUntil ? 'done' : index === activeIndex ? 'active' : '';
-                return `<div class="loader-step ${status}"><span class="loader-step-dot"></span><span>${escapeHtml(step)}</span></div>`;
-            }).join('');
-            card.classList.toggle('complete', complete);
-            if(result) result.innerText = options.result || '';
-            refreshLucideIcons();
+            if(title && options.title) title.innerText = options.title;
         }
 
         function showPageLoader(options = {}) {
@@ -9070,31 +8822,17 @@
             loader.classList.remove('is-leaving');
             loader.classList.add('active');
             loader.setAttribute('aria-hidden', 'false');
-            updateLoaderPanel('page', {
-                title: options.title || 'Carregando visao',
-                subtitle: options.subtitle || 'A estrutura da tela ja esta pronta. Agora estou preenchendo os dados.',
-                steps: options.steps || loaderStepPresets.reports,
-                activeIndex: 0,
-                doneUntil: -1,
-                progress: 10
-            });
+            updateLoaderPanel('page', { title: options.title });
         }
 
         async function completePageLoader(options = {}) {
             const loader = document.getElementById('page-loader');
             if(!loader || !loader.classList.contains('active')) return;
             if(options.runId && options.runId !== pageLoaderRunId) return;
-            updateLoaderPanel('page', {
-                title: options.title || 'Tela pronta',
-                subtitle: options.subtitle || 'A consulta foi concluida.',
-                steps: options.steps || loaderStepPresets.reports,
-                complete: true,
-                result: options.result || getLoadingResultText(currentTab)
-            });
-            await waitMs(Number(options.holdMs || 420));
+            await waitMs(Number(options.holdMs || 200));
             if(options.runId && options.runId !== pageLoaderRunId) return;
             loader.classList.add('is-leaving');
-            await waitMs(230);
+            await waitMs(220);
             if(options.runId && options.runId !== pageLoaderRunId) return;
             loader.classList.remove('active', 'is-leaving');
             loader.setAttribute('aria-hidden', 'true');
@@ -9106,15 +8844,8 @@
             await nextFrame();
         }
 
-        async function finishInitialLoader(resultText) {
-            updateLoaderPanel('initial', {
-                title: 'Financeiro pronto',
-                subtitle: 'A tela inicial foi montada.',
-                steps: loaderStepPresets.initial,
-                complete: true,
-                result: resultText || getLoadingResultText(currentTab)
-            });
-            await waitMs(520);
+        async function finishInitialLoader() {
+            await waitMs(300);
             const overlay = document.getElementById('loading-overlay');
             if(overlay) overlay.style.display = 'none';
         }
@@ -9122,34 +8853,18 @@
         async function initCloud() {
             if (!sbClient) {
                 console.error("Supabase client não disponível.");
-                await finishInitialLoader('Modo offline ativado.');
+                await finishInitialLoader();
                 setSyncStatus('offline');
                 return;
             }
 
             try {
                 setSyncStatus('syncing');
-                updateLoaderPanel('initial', {
-                    title: 'Sincronizando dados',
-                    subtitle: 'Conectando com a nuvem.',
-                    steps: loaderStepPresets.initial,
-                    activeIndex: 0,
-                    doneUntil: -1,
-                    progress: 10
-                });
+                updateLoaderPanel('initial', { title: 'Sincronizando dados' });
                 // Tenta carregar dados do Supabase
                 const cloudState = { categories: [], subCategories: [], destinations: [], accounts: [], entries: [], movementTypes: [], storeDailyMovements: [], dailyBalances: [] };
                 for(let tableIndex = 0; tableIndex < LOAD_STATE_TABLES.length; tableIndex++) {
                     const t = LOAD_STATE_TABLES[tableIndex];
-                    const loaderIndex = t === 'entries' || t === 'storeDailyMovements' || t === 'dailyBalances' ? 2 : 1;
-                    updateLoaderPanel('initial', {
-                        title: 'Sincronizando dados',
-                        subtitle: `Carregando ${t}.`,
-                        steps: loaderStepPresets.initial,
-                        activeIndex: loaderIndex,
-                        doneUntil: Math.max(0, loaderIndex - 1),
-                        progress: 16 + (tableIndex / Math.max(1, LOAD_STATE_TABLES.length)) * 58
-                    });
                     const result = await cloudSelectAllRows(t);
                     if (!result.ok) {
                         const error = result.error;
@@ -9167,25 +8882,10 @@
                 lastCloudRefreshAt = Date.now();
                 setSyncStatus('synced');
                 updateBackupIndicator();
-                updateLoaderPanel('initial', {
-                    title: 'Sincronizando dados',
-                    subtitle: 'Carregando metas.',
-                    steps: loaderStepPresets.initial,
-                    activeIndex: 3,
-                    doneUntil: 2,
-                    progress: 82
-                });
                 await loadGoalsFromCloud();
-                updateLoaderPanel('initial', {
-                    title: 'Montando tela',
-                    subtitle: 'Calculando totais, graficos e tabelas.',
-                    steps: loaderStepPresets.initial,
-                    activeIndex: 4,
-                    doneUntil: 3,
-                    progress: 94
-                });
+                updateLoaderPanel('initial', { title: 'Montando tela' });
                 render();
-                await finishInitialLoader(`${getAnalyticalEntries(state.entries).length} lancamento(s) sincronizados.`);
+                await finishInitialLoader();
                 loadMovementTypesOptional(state).then(() => {
                     normalizeStateIds();
                     lastCloudStateSignature = getCloudStateSignature(state);
@@ -9197,7 +8897,7 @@
                 console.error("Erro na sincronização:", err);
                 setSyncStatus('offline');
                 render();
-                await finishInitialLoader('Nao foi possivel sincronizar agora. Abrindo em modo offline.');
+                await finishInitialLoader();
             }
         }
 
