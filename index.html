@@ -10596,6 +10596,111 @@
                 window.setTimeout(() => overlay.querySelector('[data-dialog-confirm]')?.focus(), 50);
             });
         }
+        // Dialogo de conferencia item a item dos lancamentos ja encontrados na conciliacao.
+        // Cada linha traz um interruptor: ligado = "e o mesmo" (usa o existente e, se estiver
+        // pendente, marca como realizado, sem duplicar); desligado = "e diferente" (importa como
+        // novo lancamento). Resolve com um Set dos ids de linha marcados para reaproveitar,
+        // ou null se o usuario cancelar toda a importacao.
+        function showReconMatchReviewDialog(pairs = []) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay fixed inset-0 z-[10020] flex items-center justify-center p-4';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                const rowsHtml = pairs.map((pair, idx) => {
+                    const entry = pair.entry || {};
+                    const rowId = String(entry.id || idx);
+                    const destino = getDestinationDisplayLabelById(String(entry.destinationId ?? entry.destination_id ?? '')) || 'Sem destino';
+                    const desc = String(entry.description || '').trim();
+                    const flowClass = normalizeFlowType(entry.type) === 'ENTRADA' ? 'text-emerald-600' : 'text-red-600';
+                    const statusChip = pair.shouldRealize
+                        ? '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wide bg-blue-50 text-blue-700 border border-blue-200">Pendente → realizado</span>'
+                        : '<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wide bg-green-50 text-green-700 border border-green-200">Já realizado → ignorar</span>';
+                    return `
+                        <label class="recon-review-row flex items-start gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 cursor-pointer hover:border-blue-200 transition-colors">
+                            <input type="checkbox" data-reuse-id="${escapeHtml(rowId)}" checked class="recon-review-check mt-0.5 w-4 h-4 shrink-0 accent-blue-600">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[11px] font-black text-slate-500 whitespace-nowrap">${escapeHtml(formatDateBRV2(entry.date))}</span>
+                                    <span class="text-[12px] font-black ${flowClass} whitespace-nowrap">${escapeHtml(formatBRL(entry.amount))}</span>
+                                </div>
+                                <div class="text-[12px] font-bold text-slate-700 truncate">${escapeHtml(destino)}</div>
+                                ${desc ? `<div class="text-[11px] font-semibold text-slate-400 truncate">${escapeHtml(desc)}</div>` : ''}
+                                <div class="mt-1">${statusChip}</div>
+                            </div>
+                        </label>`;
+                }).join('');
+                overlay.innerHTML = `
+                    <div class="modal-shell modal-shell-db">
+                        <div class="modal-head">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-10 h-10 rounded-xl border text-blue-700 bg-blue-50 border-blue-100 inline-flex items-center justify-center shrink-0">
+                                    <i data-lucide="badge-check" class="w-5 h-5"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="modal-head-title">Conferir lançamentos encontrados</p>
+                                    <p class="modal-head-sub">Marque os que são o mesmo lançamento.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="modal-close-btn" data-dialog-cancel aria-label="Fechar">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="space-y-2 text-[12px] font-bold text-slate-600 leading-5">
+                                <p>Encontrei ${pairs.length} lançamento(s) do extrato com data, fluxo e valor iguais a lançamentos já cadastrados.</p>
+                                <p>Deixe <b>marcado</b> o que é o mesmo lançamento (uso o existente e, se estiver pendente, marco como realizado — sem duplicar). <b>Desmarque</b> o que é diferente para importar como novo.</p>
+                            </div>
+                            <div class="flex items-center justify-between mt-3 mb-1">
+                                <span class="text-[10px] font-black uppercase tracking-wide text-slate-400"><span data-reuse-count>${pairs.length}</span> de ${pairs.length} marcado(s)</span>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="text-[10px] font-black uppercase tracking-wide text-blue-700 hover:underline" data-reuse-all>Marcar todos</button>
+                                    <span class="text-slate-300">|</span>
+                                    <button type="button" class="text-[10px] font-black uppercase tracking-wide text-slate-500 hover:underline" data-reuse-none>Desmarcar todos</button>
+                                </div>
+                            </div>
+                            <div class="space-y-2 max-h-[46vh] overflow-y-auto custom-scrollbar pr-1">
+                                ${rowsHtml}
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="treasury-secondary-btn flex-1" data-dialog-cancel>Cancelar</button>
+                                <button type="button" class="modal-btn-primary" data-dialog-confirm>Confirmar importação</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const checks = () => Array.from(overlay.querySelectorAll('.recon-review-check'));
+                const updateCount = () => {
+                    const countEl = overlay.querySelector('[data-reuse-count]');
+                    if (countEl) countEl.innerText = String(checks().filter(c => c.checked).length);
+                };
+                const cleanup = (value) => {
+                    document.removeEventListener('keydown', handleKeydown);
+                    overlay.remove();
+                    resolve(value);
+                };
+                const confirm = () => {
+                    const reuseIds = new Set(checks().filter(c => c.checked).map(c => String(c.getAttribute('data-reuse-id') || '')));
+                    cleanup(reuseIds);
+                };
+                const handleKeydown = (event) => {
+                    if (event.key === 'Escape') cleanup(null);
+                };
+                overlay.addEventListener('change', (event) => {
+                    if (event.target && event.target.classList.contains('recon-review-check')) updateCount();
+                });
+                overlay.addEventListener('click', (event) => {
+                    if (event.target === overlay || event.target.closest('[data-dialog-cancel]')) { cleanup(null); return; }
+                    if (event.target.closest('[data-dialog-confirm]')) { confirm(); return; }
+                    if (event.target.closest('[data-reuse-all]')) { checks().forEach(c => { c.checked = true; }); updateCount(); return; }
+                    if (event.target.closest('[data-reuse-none]')) { checks().forEach(c => { c.checked = false; }); updateCount(); return; }
+                });
+                document.addEventListener('keydown', handleKeydown);
+                document.body.appendChild(overlay);
+                refreshLucideIcons();
+                window.setTimeout(() => overlay.querySelector('[data-dialog-confirm]')?.focus(), 50);
+            });
+        }
         function isCapitalContributionName(value) {
             const normalized = normalizeDestinationLookupLabel(value);
             return normalized.includes('aporte') && normalized.includes('capital');
@@ -18274,13 +18379,13 @@
                         status: batchStatus,
                     };
                 });
-                const reuseByExistingId = new Map();
                 const entryIdsToSkip = new Set();
                 // Cada lançamento já cadastrado só pode casar com UMA linha da conciliação.
                 // Assim, se o extrato traz duas transações iguais (mesma data, fluxo e valor)
-                // e só existe um pendente cadastrado, marcamos esse pendente como realizado e
-                // ainda importamos a segunda linha como nova — sem perder movimento nem duplicar.
+                // e só existe um pendente cadastrado, ele é reaproveitado uma única vez e a
+                // segunda linha entra como nova — sem perder movimento nem duplicar.
                 const consumedExistingIds = new Set();
+                const matchPairs = [];
                 newEntries.forEach(entry => {
                     const matchesMeta = getReconExistingMovementMatches(entry);
                     const notConsumed = (existing) => {
@@ -18294,35 +18399,35 @@
                     const existingId = String(chosenExisting.id || '');
                     if (!existingId) return;
                     consumedExistingIds.add(existingId);
-                    entryIdsToSkip.add(String(entry.id || ''));
-                    if (reuseByExistingId.has(existingId)) return;
-                    reuseByExistingId.set(existingId, {
+                    matchPairs.push({
+                        entry,
                         existing: chosenExisting,
                         shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
                     });
                 });
-                const reuseActions = Array.from(reuseByExistingId.values());
-                const pendingToRealize = reuseActions
-                    .filter(action => action.shouldRealize)
-                    .map(action => ({ ...action.existing, status: 'REALIZADO' }));
-                if (entryIdsToSkip.size > 0) {
-                    const shouldReuseExisting = await showAppConfirmDialog({
-                        title: 'Conferir lançamentos encontrados',
-                        message: [
-                        `Encontrei ${entryIdsToSkip.size} lançamento(s) da conciliação com mesma data, fluxo e valor já cadastrado(s) em alguma conta.`,
-                        pendingToRealize.length > 0
-                            ? `${pendingToRealize.length} lançamento(s) existente(s) estão pendentes e serão marcados como realizado.`
-                            : 'Os lançamentos existentes já estão realizados.',
-                        'Usar existentes evita importar duplicados. Importar tudo mantém as novas linhas da conciliação.'
-                        ],
-                        confirmLabel: 'Usar existentes',
-                        cancelLabel: 'Importar tudo',
-                        icon: 'badge-check'
+                // O usuário confere, um a um, quais linhas realmente são o mesmo lançamento.
+                const pendingToRealize = [];
+                if (matchPairs.length > 0) {
+                    const reuseIds = await showReconMatchReviewDialog(matchPairs);
+                    if (reuseIds === null) {
+                        // Cancelou toda a importação.
+                        if (summaryEl) summaryEl.innerText = 'Importação cancelada.';
+                        return;
+                    }
+                    const realizeByExistingId = new Map();
+                    matchPairs.forEach(pair => {
+                        const entryId = String(pair.entry.id || '');
+                        if (!reuseIds.has(entryId)) return; // desmarcado: é diferente, importa como novo
+                        entryIdsToSkip.add(entryId);
+                        if (pair.shouldRealize) {
+                            const existingId = String(pair.existing.id || '');
+                            if (existingId && !realizeByExistingId.has(existingId)) {
+                                realizeByExistingId.set(existingId, { ...pair.existing, status: 'REALIZADO' });
+                            }
+                        }
                     });
-                    if (!shouldReuseExisting) {
-                        entryIdsToSkip.clear();
-                        pendingToRealize.length = 0;
-                    } else if (pendingToRealize.length > 0) {
+                    pendingToRealize.push(...realizeByExistingId.values());
+                    if (pendingToRealize.length > 0) {
                         if (summaryEl) summaryEl.innerText = `Marcando ${pendingToRealize.length} existente(s) como realizado(s)...`;
                         const realizeResult = await cloudSaveBatched('entries', pendingToRealize, 200);
                         if (!realizeResult?.ok) {
