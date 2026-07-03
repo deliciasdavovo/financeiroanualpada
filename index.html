@@ -6577,12 +6577,12 @@
         .home-alert-action { font-size: 11px; font-weight: 800; color: #1F7A5C; background: white; border: 1px solid #1F7A5C; cursor: pointer; padding: 3px 10px; border-radius: 6px; flex-shrink: 0; }
         .home-proj-list { display: flex; flex-direction: column; gap: 12px; }
         .home-proj-day { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
-        .home-proj-day.is-negative .home-proj-day-header { background: #FEF2F2; border-bottom-color: #FECACA; }
+        .home-proj-day.is-negative .home-proj-day-header { background: #F1F5F9; border-bottom-color: #E2E8F0; }
         .home-proj-day-header { padding: 10px 16px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
         .home-proj-day-label { font-size: 14px; font-weight: 800; color: #0F172A; display: block; }
         .home-proj-day-weekday { font-size: 11px; font-weight: 500; color: #64748B; display: block; margin-top: 1px; text-transform: capitalize; }
         .home-proj-day-totals { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; }
-        .home-proj-day.is-negative .home-proj-day-totals { background: #FFF5F5; }
+        .home-proj-day.is-negative .home-proj-day-totals { background: #F8FAFC; }
         .home-proj-tot { flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; gap: 1px; }
         .home-proj-tot:not(:last-child) { border-right: 1px solid #E2E8F0; }
         .home-proj-tot-label { font-size: 10px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.4px; }
@@ -13986,24 +13986,8 @@
                 </div>`;
             }).join('');
 
-            // Alertas rápidos
-            const pendingMonthCount = pendingMonthEntries.length;
-            const biggestFutureOut = [...futurePending]
-                .filter(e => normalizeFlowType(e.type) === FLOW_OUT)
-                .sort((a, b) => (Number(b.amount) || 0) - (Number(a.amount) || 0))[0];
-
-            const alertsHtml = (pendingMonthCount > 0 || biggestFutureOut) ? `
-                <div class="home-alerts">
-                    ${pendingMonthCount > 0 ? `<div class="home-alert-item">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
-                        <span>${pendingMonthCount} lançamento${pendingMonthCount > 1 ? 's' : ''} pendente${pendingMonthCount > 1 ? 's' : ''} em ${escapeHtml(capitalizeFirst(monthName))} aguardando confirmação</span>
-                        <button onclick="switchTab('entries')" class="home-alert-action">Ver lançamentos</button>
-                    </div>` : ''}
-                    ${biggestFutureOut ? `<div class="home-alert-item">
-                        <i data-lucide="circle-alert" class="w-4 h-4"></i>
-                        <span>Maior saída nos próximos 14 dias: <strong>${formatBRL(Number(biggestFutureOut.amount) || 0)}</strong> — ${escapeHtml(getDestinationById(biggestFutureOut.destinationId)?.name || 'Sem destino')} em ${escapeHtml(formatDateBRV2(biggestFutureOut.date))}</span>
-                    </div>` : ''}
-                </div>` : '';
+            // Alertas rápidos removidos a pedido
+            const alertsHtml = '';
 
             // Card resultado previsto (com pendentes)
             const projected = balR + incP - expP;
