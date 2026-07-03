@@ -1734,6 +1734,45 @@
             border-radius: 4px;
             border: 1px dashed rgba(148, 163, 184, 0.5);
         }
+        /* Asas: mesmo tom de cinza da nota, batendo suavemente */
+        .money-wing {
+            position: absolute;
+            top: -11px;
+            width: 30px;
+            height: 20px;
+            background: linear-gradient(135deg, #F4F7FB 0%, #D8E0EA 100%);
+            border: 1.5px solid #BAC4D1;
+        }
+        .money-wing::after {
+            content: "";
+            position: absolute;
+            top: 7px;
+            left: 5px;
+            right: 5px;
+            height: 5px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.45);
+            border-radius: 50%;
+        }
+        .money-wing--left {
+            right: 84%;
+            border-radius: 90% 20% 60% 80% / 95% 30% 55% 80%;
+            transform-origin: right bottom;
+            animation: wingFlapLeft 0.55s ease-in-out infinite;
+        }
+        .money-wing--right {
+            left: 84%;
+            border-radius: 20% 90% 80% 60% / 30% 95% 80% 55%;
+            transform-origin: left bottom;
+            animation: wingFlapRight 0.55s ease-in-out infinite;
+        }
+        @keyframes wingFlapLeft {
+            0%, 100% { transform: rotate(-22deg); }
+            50%      { transform: rotate(-50deg); }
+        }
+        @keyframes wingFlapRight {
+            0%, 100% { transform: rotate(22deg); }
+            50%      { transform: rotate(50deg); }
+        }
         .money-loader-title {
             font-size: 14px;
             font-weight: 800;
@@ -1761,6 +1800,7 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .money-bill { animation-duration: 4.2s; }
+            .money-wing--left, .money-wing--right { animation-duration: 1.6s; }
         }
         @media (max-width: 760px) {
             .page-loader {
@@ -6733,11 +6773,11 @@
     <div id="loading-overlay" aria-live="polite">
         <div class="money-loader" role="status" aria-label="Carregando o financeiro">
             <div class="money-flight" aria-hidden="true">
-                <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"></span>
-                <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"></span>
-                <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"></span>
-                <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"></span>
-                <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"></span>
+                <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
             </div>
             <div>
                 <p class="money-loader-title" id="initial-loader-title">Carregando o financeiro</p>
@@ -6817,11 +6857,11 @@
             <div id="page-loader" class="page-loader" aria-live="polite" aria-hidden="true">
                 <div class="money-loader" role="status" aria-label="Carregando visão">
                     <div class="money-flight" aria-hidden="true">
-                        <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"></span>
-                        <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"></span>
-                        <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"></span>
-                        <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"></span>
-                        <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"></span>
+                        <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                        <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                        <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                        <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                        <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
                     </div>
                     <div>
                         <p class="money-loader-title" id="page-loader-title">Carregando visão</p>
