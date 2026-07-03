@@ -1707,50 +1707,64 @@
             position: absolute;
             left: 50%;
             bottom: 6px;
-            width: 62px;
-            height: 33px;
+            width: 68px;
+            height: 36px;
             border-radius: 7px;
-            background: linear-gradient(135deg, #EDF1F6 0%, #D2DAE4 100%);
-            border: 1.5px solid #BAC4D1;
-            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
+            background: linear-gradient(135deg, #FBFCFE 0%, #E4EAF1 100%);
+            border: 1.5px solid #AEB9C7;
+            /* Maço de notas empilhadas, como na referência */
+            box-shadow:
+                2px 3px 0 -1px #F2F5F9,
+                3px 5px 0 -1px #AEB9C7,
+                4px 7px 0 -1px #F2F5F9,
+                5px 9px 0 -1px #AEB9C7,
+                0 13px 22px rgba(15, 23, 42, 0.12);
             transform: translate(-50%, 24px) scale(0.85);
             opacity: 0;
             animation: moneyFly 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         }
+        /* Moeda central com o cifrão */
         .money-bill::before {
-            content: "";
+            content: "$";
             position: absolute;
             inset: 0;
             margin: auto;
-            width: 15px;
-            height: 15px;
+            width: 17px;
+            height: 17px;
             border-radius: 50%;
-            border: 1.5px solid #BAC4D1;
+            background: #AEB9C7;
+            color: #FBFCFE;
+            font-size: 12px;
+            font-weight: 900;
+            line-height: 17px;
+            text-align: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
+        /* Moldura interna da nota */
         .money-bill::after {
             content: "";
             position: absolute;
-            inset: 5px;
+            inset: 4px;
             border-radius: 4px;
-            border: 1px dashed rgba(148, 163, 184, 0.5);
+            border: 1px solid rgba(174, 185, 199, 0.55);
         }
         /* Asas: mesmo tom de cinza da nota, batendo suavemente */
         .money-wing {
             position: absolute;
-            top: -11px;
-            width: 30px;
-            height: 20px;
-            background: linear-gradient(135deg, #F4F7FB 0%, #D8E0EA 100%);
-            border: 1.5px solid #BAC4D1;
+            top: -13px;
+            width: 34px;
+            height: 23px;
+            background: linear-gradient(135deg, #FBFCFE 0%, #DCE3EC 100%);
+            border: 1.5px solid #AEB9C7;
         }
         .money-wing::after {
             content: "";
             position: absolute;
-            top: 7px;
+            top: 8px;
             left: 5px;
             right: 5px;
-            height: 5px;
-            border-top: 1px dashed rgba(148, 163, 184, 0.45);
+            height: 6px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.5);
             border-radius: 50%;
         }
         .money-wing--left {
@@ -1785,6 +1799,31 @@
             font-weight: 600;
             color: #94A3B8;
         }
+        /* Barra de progresso indeterminada — reforça o "carregando" */
+        .money-loader-bar {
+            position: relative;
+            width: 148px;
+            height: 4px;
+            margin: 14px auto 0;
+            border-radius: 999px;
+            background: rgba(174, 185, 199, 0.3);
+            overflow: hidden;
+        }
+        .money-loader-bar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 40%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #BAC4D1 0%, #8A97A8 100%);
+            animation: moneyLoaderBar 1.4s ease-in-out infinite;
+        }
+        @keyframes moneyLoaderBar {
+            0%   { transform: translateX(-120%); }
+            100% { transform: translateX(320%); }
+        }
         @keyframes moneyFly {
             0%   { transform: translate(-50%, 26px) rotate(0deg) scale(0.85); opacity: 0; }
             18%  { opacity: 1; }
@@ -1801,6 +1840,7 @@
         @media (prefers-reduced-motion: reduce) {
             .money-bill { animation-duration: 4.2s; }
             .money-wing--left, .money-wing--right { animation-duration: 1.6s; }
+            .money-loader-bar::before { animation-duration: 2.4s; }
         }
         @media (max-width: 760px) {
             .page-loader {
@@ -6782,6 +6822,7 @@
             <div>
                 <p class="money-loader-title" id="initial-loader-title">Carregando o financeiro</p>
                 <p class="money-loader-subtitle" id="initial-loader-subtitle">Só um instante…</p>
+                <div class="money-loader-bar" aria-hidden="true"></div>
             </div>
         </div>
     </div>
@@ -6866,6 +6907,7 @@
                     <div>
                         <p class="money-loader-title" id="page-loader-title">Carregando visão</p>
                         <p class="money-loader-subtitle" id="page-loader-subtitle">Só um instante…</p>
+                        <div class="money-loader-bar" aria-hidden="true"></div>
                     </div>
                 </div>
             </div>
