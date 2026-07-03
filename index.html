@@ -1926,6 +1926,44 @@
             font-weight: 800;
             color: var(--soft-red);
         }
+        /* Feedback ao pressionar cada tecla do PIN */
+        .login-key:active,
+        .login-key-action:active {
+            transform: scale(0.93);
+            background: #E4EDFB;
+            border-color: #B9CBEC;
+        }
+        /* Ponto preenchido com "pop" ao digitar */
+        .login-dot.filled {
+            animation: loginDotPop 0.22s var(--ease-premium);
+        }
+        @keyframes loginDotPop {
+            0% { transform: scale(0.6); }
+            60% { transform: scale(1.25); }
+            100% { transform: scale(1.08); }
+        }
+        /* PIN correto: pontos ficam verdes antes de entrar */
+        .login-dot.success {
+            background: var(--primary-green) !important;
+            border-color: var(--primary-green) !important;
+        }
+        /* PIN incorreto: card treme */
+        .login-card.login-shake {
+            animation: loginShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+        @keyframes loginShake {
+            10%, 90% { transform: translateX(-2px); }
+            20%, 80% { transform: translateX(4px); }
+            30%, 50%, 70% { transform: translateX(-9px); }
+            40%, 60% { transform: translateX(9px); }
+        }
+        .login-hint {
+            margin: 2px 0 16px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #94A3B8;
+        }
         /* ── Mobile lock screen (iOS classic) ── */
         #login-mobile-lock { display: none; }
         .lml-top {
@@ -1996,6 +2034,14 @@
             will-change: left;
         }
         .lml-slide-thumb svg { width: 22px; height: 22px; color: #334155; }
+        /* Dica: o botão "pulsa" para a direita convidando a arrastar */
+        .lml-slide-thumb.hint {
+            animation: lmlNudge 1.5s ease-in-out infinite;
+        }
+        @keyframes lmlNudge {
+            0%, 70%, 100% { transform: translateX(0); box-shadow: 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.9); }
+            35% { transform: translateX(9px); box-shadow: 0 4px 14px rgba(37,99,235,0.28), inset 0 1px 0 rgba(255,255,255,0.9); }
+        }
         @keyframes lmlShimmer {
             0%   { background-position: -280% center; }
             100% { background-position: 280% center; }
@@ -6662,6 +6708,7 @@
                     <span class="login-dot"></span>
                     <span class="login-dot"></span>
                 </div>
+                <p class="login-hint">Digite os 4 números de acesso</p>
                 <div class="login-keypad" aria-label="Teclado numérico da senha">
                     <button type="button" class="login-key" onclick="appendLoginDigit('1')">1</button>
                     <button type="button" class="login-key" onclick="appendLoginDigit('2')">2</button>
@@ -19488,13 +19535,20 @@
             if (el) el.innerText = message || '';
         }
 
+        function loginHaptic(pattern) {
+            try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (_) {}
+        }
+
         function appendLoginDigit(digit) {
             if (loginPassBuffer.length >= 4) return;
-            loginPassBuffer += String(digit || '').replace(/\D/g, '').slice(0, 1);
+            const clean = String(digit || '').replace(/\D/g, '').slice(0, 1);
+            if (!clean) return;
+            loginPassBuffer += clean;
+            loginHaptic(8);
             updateLoginDots();
             setLoginError('');
             if (loginPassBuffer.length === 4) {
-                window.setTimeout(() => submitLogin(), 120);
+                window.setTimeout(() => submitLogin(), 140);
             }
         }
 
@@ -19516,13 +19570,36 @@
             sessionStorage.setItem(LOGIN_SESSION_KEY, '1');
         }
 
+        function showLoginSuccess() {
+            document.querySelectorAll('#login-pass-dots .login-dot').forEach((dot) => {
+                dot.classList.add('success');
+            });
+        }
+
+        function showLoginError() {
+            const card = document.getElementById('login-pin-card');
+            if (card) {
+                card.classList.remove('login-shake');
+                void card.offsetWidth;
+                card.classList.add('login-shake');
+            }
+            setLoginError('PIN incorreto. Tente de novo.');
+            window.setTimeout(() => {
+                loginPassBuffer = '';
+                updateLoginDots();
+                if (card) card.classList.remove('login-shake');
+            }, 420);
+        }
+
         function submitLogin() {
             if (loginPassBuffer === LOGIN_PASS) {
-                unlockApp();
+                loginHaptic(20);
+                showLoginSuccess();
+                window.setTimeout(unlockApp, 240);
                 return;
             }
-            clearLoginPass();
-            setLoginError('PIN incorreto.');
+            loginHaptic([0, 40, 55, 40]);
+            showLoginError();
         }
 
         function revealPinCard() {
@@ -19538,10 +19615,14 @@
             let isDragging = false;
             let startClientX = 0;
             let startLeft = MARGIN;
+            let passedHalf = false;
 
             function getMaxSlide() {
                 return track.clientWidth - thumb.offsetWidth - MARGIN * 2;
             }
+
+            function startHint() { thumb.classList.add('hint'); }
+            function stopHint() { thumb.classList.remove('hint'); }
 
             function setLockIcon(unlocked) {
                 const el0 = document.getElementById('lml-icon-locked');
@@ -19560,6 +19641,8 @@
                 const wrap = document.getElementById('lml-lock-wrap');
                 if (wrap) wrap.classList.toggle('unlocking', progress > 0.5);
                 setLockIcon(progress > 0.5);
+                if (progress > 0.5 && !passedHalf) { passedHalf = true; loginHaptic(10); }
+                if (progress <= 0.5) { passedHalf = false; }
                 return progress;
             }
 
@@ -19571,9 +19654,11 @@
                 const wrap = document.getElementById('lml-lock-wrap');
                 if (wrap) wrap.classList.remove('unlocking');
                 setLockIcon(false);
+                passedHalf = false;
                 setTimeout(() => {
                     thumb.style.transition = '';
                     if (label) label.style.transition = '';
+                    startHint();
                 }, 340);
             }
 
@@ -19582,8 +19667,16 @@
                 isDragging = false;
                 const maxSlide = getMaxSlide();
                 const currentLeft = parseFloat(thumb.style.left) || MARGIN;
-                if ((currentLeft - MARGIN) / maxSlide >= 0.8) {
-                    revealPinCard();
+                if ((currentLeft - MARGIN) / maxSlide >= 0.75) {
+                    loginHaptic(20);
+                    thumb.style.transition = 'left 0.18s ease-out';
+                    thumb.style.left = (MARGIN + maxSlide) + 'px';
+                    const label = track.querySelector('.lml-slide-text');
+                    if (label) { label.style.transition = 'opacity 0.18s ease'; label.style.opacity = '0'; }
+                    const wrap = document.getElementById('lml-lock-wrap');
+                    if (wrap) wrap.classList.add('unlocking');
+                    setLockIcon(true);
+                    setTimeout(revealPinCard, 180);
                 } else {
                     resetThumb();
                 }
@@ -19591,6 +19684,7 @@
 
             thumb.addEventListener('touchstart', (e) => {
                 isDragging = true;
+                stopHint();
                 startClientX = e.touches[0].clientX;
                 startLeft = parseFloat(thumb.style.left) || MARGIN;
                 e.stopPropagation();
@@ -19606,6 +19700,7 @@
 
             thumb.addEventListener('mousedown', (e) => {
                 isDragging = true;
+                stopHint();
                 startClientX = e.clientX;
                 startLeft = parseFloat(thumb.style.left) || MARGIN;
                 e.preventDefault();
@@ -19615,6 +19710,8 @@
                 applyProgress(e.clientX - startClientX);
             });
             document.addEventListener('mouseup', () => { onDragEnd(); });
+
+            startHint();
         }
 
         function initLoginScreen() {
