@@ -6780,11 +6780,8 @@
             <button type="button" onclick="switchTab('reconciliation')" id="nav-reconciliation" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="landmark" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
-            <button type="button" onclick="switchTab('treasury')" id="nav-treasury" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatório de Vendas</span>
-            </button>
-            <button type="button" onclick="switchTab('database')" id="nav-database" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="database" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Banco de Dados</span>
+            <button type="button" onclick="switchTab('vendas')" id="nav-vendas" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Vendas</span>
             </button>
         </nav>
     </aside>
@@ -7434,7 +7431,21 @@
             </div>
 
             <!-- TESOURARIA -->
-            <div id="treasury" class="tab-content space-y-8">
+            <div id="vendas" class="tab-content space-y-6">
+                <!-- Navegação interna -->
+                <div class="plan-pill-nav">
+                    <button type="button" id="salestab-treasury" class="plan-pill-btn is-active" onclick="switchSalesTab('treasury')">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+                        <span>Vendas</span>
+                    </button>
+                    <button type="button" id="salestab-database" class="plan-pill-btn" onclick="switchSalesTab('database')">
+                        <i data-lucide="database" class="w-4 h-4"></i>
+                        <span>Banco de Dados</span>
+                    </button>
+                </div>
+
+                <!-- Seção: Vendas -->
+                <div id="sales-treasury-section" class="plan-section space-y-8">
                 <div class="sales-report-shell">
                     <div class="sales-report-hero">
                         <div class="sales-report-title-wrap">
@@ -7762,8 +7773,8 @@
                 </div>
             </div>
 
-            <!-- BANCO DE DADOS -->
-            <div id="database" class="tab-content space-y-12">
+                <!-- Seção: Banco de Dados -->
+                <div id="sales-database-section" class="plan-section hidden space-y-12">
                 <section>
                     <div class="db-toolbar mb-6">
                         <div class="db-search-wrap">
@@ -7793,6 +7804,7 @@
                     <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Contas e Bancos</h4><button onclick="openDbModal('ACCOUNT')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Conta</button></div>
                     <div id="account-list"></div>
                 </section>
+                </div>
             </div>
 
             <!-- METAS -->
@@ -7820,13 +7832,9 @@
             <i data-lucide="landmark" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Conc.</span>
         </button>
-        <button type="button" onclick="switchTab('treasury')" id="mnav-treasury" class="mobile-nav-btn" aria-label="Relatório de Vendas">
+        <button type="button" onclick="switchTab('vendas')" id="mnav-vendas" class="mobile-nav-btn" aria-label="Vendas e Banco de Dados">
             <i data-lucide="bar-chart-3" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Vendas</span>
-        </button>
-        <button type="button" onclick="switchTab('database')" id="mnav-database" class="mobile-nav-btn" aria-label="Banco de Dados">
-            <i data-lucide="database" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Banco</span>
         </button>
     </nav>
 
@@ -8938,7 +8946,7 @@
                     lastCloudStateSignature = getCloudStateSignature(state);
                     populateMovementTypeSelect('form-mov-type-entry');
                     populateMovementTypeSelect('db-mov-type-filter');
-                    if (currentTab === 'database') renderDatabase();
+                    if (currentTab === 'vendas' && (window.currentSalesTab || 'treasury') === 'database') renderDatabase();
                 });
             } catch (err) {
                 console.error("Erro na sincronização:", err);
@@ -11497,8 +11505,7 @@
                 reports: 'Relatórios financeiros',
                 planejamento: 'Planejamento',
                 reconciliation: 'Conciliação',
-                treasury: 'Relatório de Vendas',
-                database: 'Banco de Dados'
+                vendas: 'Vendas'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
@@ -11516,6 +11523,18 @@
             });
             if (tab === 'projection') renderProjection();
             else renderGoals();
+        }
+
+        function switchSalesTab(tab) {
+            window.currentSalesTab = tab;
+            document.querySelectorAll('#vendas .plan-pill-btn').forEach(btn => {
+                btn.classList.toggle('is-active', btn.id === `salestab-${tab}`);
+            });
+            document.querySelectorAll('#vendas .plan-section').forEach(sec => {
+                sec.classList.toggle('hidden', sec.id !== `sales-${tab}-section`);
+            });
+            if (tab === 'treasury') renderTreasury();
+            else renderDatabase();
         }
 
         function render() {
@@ -11540,10 +11559,10 @@
                 const activePlan = window.currentPlanTab || 'projection';
                 if (activePlan === 'projection') renderProjection();
                 else renderGoals();
-            } else if (currentTab === 'treasury') {
-                renderTreasury();
-            } else if (currentTab === 'database') {
-                renderDatabase();
+            } else if (currentTab === 'vendas') {
+                const activeSales = window.currentSalesTab || 'treasury';
+                if (activeSales === 'treasury') renderTreasury();
+                else renderDatabase();
             } else if (currentTab === 'reconciliation') {
                 populateDropdown('recon-account-select', state.accounts);
                 initReconSheet();
