@@ -10348,7 +10348,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="space-y-2 text-[12px] font-bold text-slate-600 leading-5">
-                                <p>Encontrei ${pairs.length} lançamento(s) do extrato com data, fluxo e valor iguais a lançamentos já cadastrados.</p>
+                                <p>Encontrei ${pairs.length} lançamento(s) do extrato com data, fluxo, valor e destino iguais a lançamentos já cadastrados.</p>
                                 <p>Deixe <b>marcado</b> o que é o mesmo lançamento (uso o existente e, se estiver pendente, marco como realizado — sem duplicar). <b>Desmarque</b> o que é diferente para importar como novo.</p>
                             </div>
                             <div class="flex items-center justify-between mt-3 mb-1">
@@ -17566,9 +17566,16 @@
 
         function getReconExistingMovementMatches(entry) {
             const movementKey = buildEntryReconMatchKey(entry, false);
+            const entryDestinationId = String((entry?.destinationId ?? entry?.destination_id) || '');
             const cache = getReconExistingMatchCache();
+            // Só reaproveita/realiza um lançamento já cadastrado se ele tiver o MESMO destino.
+            // Isso evita que a conciliação "puxe" um pendente de outro destino só porque a
+            // data, o fluxo e o valor coincidem (movimentos de outro destino ficam apenas
+            // sinalizados como "Conferir destino" e são importados como novos, sem consumir
+            // pendentes que não pertencem ao lançamento).
             const matches = (cache.movementEntries.get(movementKey) || [])
-                .filter(existing => String(existing?.id || '') !== String(entry?.id || ''));
+                .filter(existing => String(existing?.id || '') !== String(entry?.id || ''))
+                .filter(existing => String((existing?.destinationId ?? existing?.destination_id) || '') === entryDestinationId);
             const pending = matches.filter(existing => String(existing.status || '').toUpperCase() === 'PENDENTE');
             const realized = matches.filter(existing => String(existing.status || '').toUpperCase() === 'REALIZADO');
             return { matches, pending, realized };
@@ -17630,14 +17637,14 @@
                 return {
                     badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
                     badgeText: 'Pendente encontrado',
-                    note: 'Ja existe lancamento com mesma data, fluxo e valor em alguma conta. Ao importar, posso marcar o antigo como realizado e nao criar duplicado.'
+                    note: 'Ja existe pendente com mesma data, fluxo, valor e destino no historico geral. Ao importar, posso marcar o antigo como realizado e nao criar duplicado.'
                 };
             }
             if (meta.realizedMatches > 0) {
                 return {
                     badgeClass: 'bg-green-50 text-green-700 border border-green-200',
                     badgeText: 'Realizado encontrado',
-                    note: 'Ja existe lancamento realizado com mesma data, fluxo e valor em alguma conta. Ao importar, posso ignorar esta linha.'
+                    note: 'Ja existe lancamento realizado com mesma data, fluxo, valor e destino no historico geral. Ao importar, posso ignorar esta linha.'
                 };
             }
             if (meta.status === 'conflict') {
@@ -18084,27 +18091,35 @@
                 // Assim, se o extrato traz duas transações iguais (mesma data, fluxo e valor)
                 // e só existe um pendente cadastrado, ele é reaproveitado uma única vez e a
                 // segunda linha entra como nova — sem perder movimento nem duplicar.
+                //
+                // A conciliação (casar com existentes e marcar pendente como realizado) só faz
+                // sentido quando o lote é REALIZADO — é o momento em que o extrato confirma o
+                // que estava planejado. Num lote PENDENTE o usuário está apenas cadastrando
+                // lançamentos planejados, então não mexemos em nada que já existe: só adicionamos.
+                const shouldReconcileAgainstExisting = batchStatus === 'REALIZADO';
                 const consumedExistingIds = new Set();
                 const matchPairs = [];
-                newEntries.forEach(entry => {
-                    const matchesMeta = getReconExistingMovementMatches(entry);
-                    const notConsumed = (existing) => {
-                        const id = String((existing || {}).id || '');
-                        return id && !consumedExistingIds.has(id);
-                    };
-                    const chosenExisting = matchesMeta.pending.find(notConsumed)
-                        || matchesMeta.realized.find(notConsumed)
-                        || matchesMeta.matches.find(notConsumed);
-                    if (!chosenExisting) return;
-                    const existingId = String(chosenExisting.id || '');
-                    if (!existingId) return;
-                    consumedExistingIds.add(existingId);
-                    matchPairs.push({
-                        entry,
-                        existing: chosenExisting,
-                        shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
+                if (shouldReconcileAgainstExisting) {
+                    newEntries.forEach(entry => {
+                        const matchesMeta = getReconExistingMovementMatches(entry);
+                        const notConsumed = (existing) => {
+                            const id = String((existing || {}).id || '');
+                            return id && !consumedExistingIds.has(id);
+                        };
+                        const chosenExisting = matchesMeta.pending.find(notConsumed)
+                            || matchesMeta.realized.find(notConsumed)
+                            || matchesMeta.matches.find(notConsumed);
+                        if (!chosenExisting) return;
+                        const existingId = String(chosenExisting.id || '');
+                        if (!existingId) return;
+                        consumedExistingIds.add(existingId);
+                        matchPairs.push({
+                            entry,
+                            existing: chosenExisting,
+                            shouldRealize: String(chosenExisting.status || '').toUpperCase() === 'PENDENTE'
+                        });
                     });
-                });
+                }
                 // O usuário confere, um a um, quais linhas realmente são o mesmo lançamento.
                 const pendingToRealize = [];
                 if (matchPairs.length > 0) {
