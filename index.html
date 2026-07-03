@@ -1703,25 +1703,27 @@
             width: 200px;
             height: 132px;
         }
+        /* Um único maço de dinheiro batendo asas, como na referência */
         .money-bill {
             position: absolute;
             left: 50%;
-            bottom: 6px;
-            width: 68px;
-            height: 36px;
-            border-radius: 7px;
+            top: 50%;
+            width: 92px;
+            height: 48px;
+            border-radius: 9px;
             background: linear-gradient(135deg, #FBFCFE 0%, #E4EAF1 100%);
             border: 1.5px solid #AEB9C7;
-            /* Maço de notas empilhadas, como na referência */
+            /* Maço de notas empilhadas */
             box-shadow:
                 2px 3px 0 -1px #F2F5F9,
                 3px 5px 0 -1px #AEB9C7,
                 4px 7px 0 -1px #F2F5F9,
                 5px 9px 0 -1px #AEB9C7,
-                0 13px 22px rgba(15, 23, 42, 0.12);
-            transform: translate(-50%, 24px) scale(0.85);
-            opacity: 0;
-            animation: moneyFly 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+                6px 11px 0 -1px #F2F5F9,
+                7px 13px 0 -1px #AEB9C7,
+                0 18px 28px rgba(15, 23, 42, 0.14);
+            transform: translate(-50%, -50%) translateY(0) rotate(-16deg);
+            animation: moneyHover 2.6s ease-in-out infinite;
         }
         /* Moeda central com o cifrão */
         .money-bill::before {
@@ -1729,14 +1731,14 @@
             position: absolute;
             inset: 0;
             margin: auto;
-            width: 17px;
-            height: 17px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: #AEB9C7;
             color: #FBFCFE;
-            font-size: 12px;
+            font-size: 15px;
             font-weight: 900;
-            line-height: 17px;
+            line-height: 22px;
             text-align: center;
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
@@ -1744,48 +1746,56 @@
         .money-bill::after {
             content: "";
             position: absolute;
-            inset: 4px;
-            border-radius: 4px;
+            inset: 5px;
+            border-radius: 5px;
             border: 1px solid rgba(174, 185, 199, 0.55);
         }
-        /* Asas: mesmo tom de cinza da nota, batendo suavemente */
+        /* Asas: mesmo tom de cinza da nota, batendo em cantos opostos */
         .money-wing {
             position: absolute;
-            top: -13px;
-            width: 34px;
-            height: 23px;
+            width: 46px;
+            height: 32px;
             background: linear-gradient(135deg, #FBFCFE 0%, #DCE3EC 100%);
             border: 1.5px solid #AEB9C7;
         }
         .money-wing::after {
             content: "";
             position: absolute;
-            top: 8px;
-            left: 5px;
-            right: 5px;
-            height: 6px;
+            top: 11px;
+            left: 7px;
+            right: 7px;
+            height: 8px;
             border-top: 1px dashed rgba(148, 163, 184, 0.5);
             border-radius: 50%;
         }
+        /* Asa esquerda: canto superior-esquerdo do maço */
         .money-wing--left {
-            right: 84%;
+            top: -20px;
+            right: 72%;
             border-radius: 90% 20% 60% 80% / 95% 30% 55% 80%;
             transform-origin: right bottom;
-            animation: wingFlapLeft 0.55s ease-in-out infinite;
+            animation: wingFlapLeft 0.5s ease-in-out infinite;
         }
+        /* Asa direita: canto inferior-direito do maço */
         .money-wing--right {
-            left: 84%;
+            bottom: -20px;
+            left: 72%;
             border-radius: 20% 90% 80% 60% / 30% 95% 80% 55%;
-            transform-origin: left bottom;
-            animation: wingFlapRight 0.55s ease-in-out infinite;
+            transform-origin: left top;
+            animation: wingFlapRight 0.5s ease-in-out infinite;
         }
         @keyframes wingFlapLeft {
-            0%, 100% { transform: rotate(-22deg); }
-            50%      { transform: rotate(-50deg); }
+            0%, 100% { transform: rotate(-20deg); }
+            50%      { transform: rotate(-52deg); }
         }
         @keyframes wingFlapRight {
-            0%, 100% { transform: rotate(22deg); }
-            50%      { transform: rotate(50deg); }
+            0%, 100% { transform: rotate(20deg); }
+            50%      { transform: rotate(52deg); }
+        }
+        /* Flutuação suave do maço no ar */
+        @keyframes moneyHover {
+            0%, 100% { transform: translate(-50%, -50%) translateY(4px) rotate(-14deg); }
+            50%      { transform: translate(-50%, -50%) translateY(-8px) rotate(-18deg); }
         }
         .money-loader-title {
             font-size: 14px;
@@ -1824,12 +1834,6 @@
             0%   { transform: translateX(-120%); }
             100% { transform: translateX(320%); }
         }
-        @keyframes moneyFly {
-            0%   { transform: translate(-50%, 26px) rotate(0deg) scale(0.85); opacity: 0; }
-            18%  { opacity: 1; }
-            75%  { opacity: 1; }
-            100% { transform: translate(calc(-50% + var(--x, 0px)), -122px) rotate(var(--r, 0deg)) scale(1.05); opacity: 0; }
-        }
         @keyframes loaderFadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -1838,7 +1842,7 @@
             to { opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .money-bill { animation-duration: 4.2s; }
+            .money-bill { animation-duration: 5s; }
             .money-wing--left, .money-wing--right { animation-duration: 1.6s; }
             .money-loader-bar::before { animation-duration: 2.4s; }
         }
@@ -6813,11 +6817,7 @@
     <div id="loading-overlay" aria-live="polite">
         <div class="money-loader" role="status" aria-label="Carregando o financeiro">
             <div class="money-flight" aria-hidden="true">
-                <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                <span class="money-bill"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
             </div>
             <div>
                 <p class="money-loader-title" id="initial-loader-title">Carregando o financeiro</p>
@@ -6898,11 +6898,7 @@
             <div id="page-loader" class="page-loader" aria-live="polite" aria-hidden="true">
                 <div class="money-loader" role="status" aria-label="Carregando visão">
                     <div class="money-flight" aria-hidden="true">
-                        <span class="money-bill" style="--x:-46px;--r:-16deg;animation-delay:0s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                        <span class="money-bill" style="--x:34px;--r:14deg;animation-delay:0.45s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                        <span class="money-bill" style="--x:-14px;--r:-6deg;animation-delay:0.9s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                        <span class="money-bill" style="--x:56px;--r:20deg;animation-delay:1.35s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
-                        <span class="money-bill" style="--x:-58px;--r:-22deg;animation-delay:1.8s"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
+                        <span class="money-bill"><i class="money-wing money-wing--left"></i><i class="money-wing money-wing--right"></i></span>
                     </div>
                     <div>
                         <p class="money-loader-title" id="page-loader-title">Carregando visão</p>
