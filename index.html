@@ -19952,7 +19952,7 @@
             const destIds = getGoalDestinationIds(goal.hierarchyType, goal.hierarchyId);
 
             const actual = state.entries
-                .filter(e => getGoalNormalizedType(e.type) === targetFlow && e.date >= start && e.date <= end && destIds.has(getGoalEntryDestinationId(e)))
+                .filter(e => isGoalEntryRealized(e) && getGoalNormalizedType(e.type) === targetFlow && e.date >= start && e.date <= end && destIds.has(getGoalEntryDestinationId(e)))
                 .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
             const rawPct = goal.amount > 0 ? (actual / goal.amount) * 100 : 0;
@@ -19987,6 +19987,12 @@
 
         function getGoalEntryDestinationId(entry) {
             return String((entry || {}).destinationId ?? (entry || {}).destination_id ?? '');
+        }
+
+        // As metas consideram apenas o que de fato aconteceu (REALIZADO).
+        // Lançamentos pendentes/previstos não entram no progresso da meta.
+        function isGoalEntryRealized(entry) {
+            return String((entry || {}).status || '').toUpperCase() !== 'PENDENTE';
         }
 
         function getGoalDestinationSubCategoryId(destination) {
@@ -20155,7 +20161,7 @@
             const destIds = getGoalDestinationIds(hierarchyType, hierarchyId);
             const targetFlow = getGoalNormalizedType(flowType);
             return state.entries
-                .filter(e => getGoalNormalizedType(e.type) === targetFlow && e.date >= start && e.date <= end && destIds.has(getGoalEntryDestinationId(e)))
+                .filter(e => isGoalEntryRealized(e) && getGoalNormalizedType(e.type) === targetFlow && e.date >= start && e.date <= end && destIds.has(getGoalEntryDestinationId(e)))
                 .reduce((s, e) => s + (Number(e.amount) || 0), 0);
         }
 
@@ -20260,6 +20266,7 @@
             const destInFlow = new Map();   // destId -> array de ENTRADAS por mês
             const destOutFlow = new Map();  // destId -> array de SAÍDAS por mês
             (state.entries || []).forEach(e => {
+                if (!isGoalEntryRealized(e)) return;
                 const mi = monthIndex.get(String(e.date || '').slice(0, 7));
                 if (mi === undefined) return;
                 const destId = getGoalEntryDestinationId(e);
