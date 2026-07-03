@@ -10043,17 +10043,53 @@
                 setTimeout(printReport, 250);
             }
         }
-        // Exporta os lançamentos do mês ativo para Excel (.xlsx), com aba de resumo,
+        // Determina os lançamentos e o rótulo do período conforme a aba ativa,
+        // para que a exportação Excel reflita exatamente o que está na tela
+        // (mesma lógica de escopo usada na exportação em PDF).
+        function getExcelExportScope() {
+            if (currentTab === 'entries') {
+                return {
+                    entries: getEntriesForExport(),
+                    periodLabel: 'Lançamentos (filtro atual)',
+                    fileTag: 'lancamentos'
+                };
+            }
+            if (currentTab === 'reports' && reportsMode === 'monthly') {
+                const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
+                const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
+                const periodLabel = capitalizeFirst(new Date(Number(filter.split('-')[0]), Number(filter.split('-')[1]) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }));
+                return {
+                    entries: applyMonthlySelectionFiltersToEntries(monthEntries),
+                    periodLabel,
+                    fileTag: filter
+                };
+            }
+            if ((currentTab === 'reports' && reportsMode === 'annual') || currentTab === 'annual') {
+                const selectedYear = Number(document.getElementById('reports-annual-year')?.value || document.getElementById('annual-temporal-year')?.value);
+                const year = selectedYear || annualTemporalYear || new Date().getFullYear();
+                return {
+                    entries: getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`)),
+                    periodLabel: `Ano de ${year}`,
+                    fileTag: String(year)
+                };
+            }
+            return {
+                entries: getAnalyticalEntries(state.entries),
+                periodLabel: 'Todos os lançamentos',
+                fileTag: 'completo'
+            };
+        }
+
+        // Exporta os lançamentos da aba ativa para Excel (.xlsx), com aba de resumo,
         // para análise externa. Reaproveita o SheetJS (XLSX) já carregado para importação.
         function exportCurrentReportExcel() {
             if (typeof XLSX === 'undefined') {
                 showAppToast('Biblioteca de planilha indisponível. Recarregue a página e tente de novo.', { tone: 'danger', title: 'Exportação' });
                 return;
             }
-            const filter = document.getElementById('monthly-filter')?.value || '';
-            const allEntries = getAnalyticalEntries(state.entries);
-            const scoped = filter ? allEntries.filter(e => e.date && e.date.startsWith(filter)) : allEntries;
-            const entries = filter ? applyMonthlySelectionFiltersToEntries(scoped) : scoped;
+            const scope = getExcelExportScope();
+            const entries = scope.entries;
+            const periodLabel = scope.periodLabel;
             if (!entries.length) {
                 showAppToast('Não há lançamentos no período para exportar.', { tone: 'danger', title: 'Exportação' });
                 return;
@@ -10090,9 +10126,6 @@
                 else if (isRealized) expR += a;
                 else expP += a;
             });
-            const periodLabel = filter
-                ? capitalizeFirst(new Date(Number(filter.split('-')[0]), Number(filter.split('-')[1]) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
-                : 'Todos os lançamentos';
             const summary = [
                 ['Resumo do período', periodLabel],
                 [],
@@ -10112,7 +10145,7 @@
                 const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
                 ws['!cols'] = [12, 10, 11, 22, 22, 24, 16, 30, 14].map(wch => ({ wch }));
                 XLSX.utils.book_append_sheet(wb, ws, 'Lançamentos');
-                XLSX.writeFile(wb, `Relatorio_${filter || 'completo'}.xlsx`);
+                XLSX.writeFile(wb, `Relatorio_${scope.fileTag || 'completo'}.xlsx`);
                 showAppToast(`Excel exportado com ${entries.length} lançamento(s).`, { tone: 'success', title: 'Exportação concluída' });
             } catch (err) {
                 console.error('Erro ao exportar Excel', err);
