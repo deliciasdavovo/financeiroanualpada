@@ -13986,24 +13986,8 @@
                 </div>`;
             }).join('');
 
-            // Alertas rápidos
-            const pendingMonthCount = pendingMonthEntries.length;
-            const biggestFutureOut = [...futurePending]
-                .filter(e => normalizeFlowType(e.type) === FLOW_OUT)
-                .sort((a, b) => (Number(b.amount) || 0) - (Number(a.amount) || 0))[0];
-
-            const alertsHtml = (pendingMonthCount > 0 || biggestFutureOut) ? `
-                <div class="home-alerts">
-                    ${pendingMonthCount > 0 ? `<div class="home-alert-item">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
-                        <span>${pendingMonthCount} lançamento${pendingMonthCount > 1 ? 's' : ''} pendente${pendingMonthCount > 1 ? 's' : ''} em ${escapeHtml(capitalizeFirst(monthName))} aguardando confirmação</span>
-                        <button onclick="switchTab('entries')" class="home-alert-action">Ver lançamentos</button>
-                    </div>` : ''}
-                    ${biggestFutureOut ? `<div class="home-alert-item">
-                        <i data-lucide="circle-alert" class="w-4 h-4"></i>
-                        <span>Maior saída nos próximos 14 dias: <strong>${formatBRL(Number(biggestFutureOut.amount) || 0)}</strong> — ${escapeHtml(getDestinationById(biggestFutureOut.destinationId)?.name || 'Sem destino')} em ${escapeHtml(formatDateBRV2(biggestFutureOut.date))}</span>
-                    </div>` : ''}
-                </div>` : '';
+            // Alertas rápidos removidos a pedido
+            const alertsHtml = '';
 
             // Card resultado previsto (com pendentes)
             const projected = balR + incP - expP;
