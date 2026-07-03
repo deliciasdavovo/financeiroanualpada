@@ -1,4 +1,4 @@
-const CACHE_NAME = 'deliciasvovo-v10';
+const CACHE_NAME = 'deliciasvovo-v11';
 
 const APP_SHELL = [
   './',
