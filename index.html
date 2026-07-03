@@ -20250,40 +20250,76 @@
             const goalMap = new Map();
             goalsData.forEach(g => goalMap.set(`${g.hierarchyType}:${g.hierarchyId}`, g));
 
-            const getActual = (hType, hId, flow, m) => goalsCalcActualForDest(hType, hId, flow, m);
+            const monthCount = months.length;
+            const monthIndex = new Map(months.map((m, i) => [m, i]));
+            const zeros = () => new Array(monthCount).fill(0);
+
+            // Índice construído em UMA passada sobre os lançamentos: para cada destino,
+            // guarda os totais realizados por mês (dentro da janela) separados por fluxo.
+            // Antes, cada célula reescaneava state.entries inteiro — o que travava a aba.
+            const destInFlow = new Map();   // destId -> array de ENTRADAS por mês
+            const destOutFlow = new Map();  // destId -> array de SAÍDAS por mês
+            (state.entries || []).forEach(e => {
+                const mi = monthIndex.get(String(e.date || '').slice(0, 7));
+                if (mi === undefined) return;
+                const destId = getGoalEntryDestinationId(e);
+                if (!destId) return;
+                const bucket = getGoalNormalizedType(e.type) === FLOW_IN ? destInFlow : destOutFlow;
+                let arr = bucket.get(destId);
+                if (!arr) { arr = zeros(); bucket.set(destId, arr); }
+                arr[mi] += Number(e.amount) || 0;
+            });
+            const destActualsFor = (destId, flow) => {
+                const arr = (flow === FLOW_IN ? destInFlow : destOutFlow).get(destId);
+                return arr ? arr.slice() : zeros();
+            };
+
+            // Agrupa a hierarquia uma vez, evitando um filtro O(n) por pai.
+            const subsByCat = new Map();
+            state.subCategories.forEach(s => {
+                const catId = getGoalSubCategoryCategoryId(s);
+                if (!subsByCat.has(catId)) subsByCat.set(catId, []);
+                subsByCat.get(catId).push(s);
+            });
+            const destsBySub = new Map();
+            state.destinations.forEach(d => {
+                const subId = getGoalDestinationSubCategoryId(d);
+                if (!destsBySub.has(subId)) destsBySub.set(subId, []);
+                destsBySub.get(subId).push(d);
+            });
 
             return state.categories.map(cat => {
                 const catFlow = getGoalCategoryFlowType(cat);
                 const catId = String(cat.id);
                 const catGoal = goalMap.get(`category:${catId}`) || null;
-                const catActuals = months.map(m => getActual('category', catId, catFlow, m));
-                const hasCatData = catActuals.some(v => v > 0) || !!catGoal;
+                const catActuals = zeros();
 
-                const subs = state.subCategories
-                    .filter(s => getGoalSubCategoryCategoryId(s) === catId)
+                const subs = (subsByCat.get(catId) || [])
                     .map(sub => {
                         const subFlow = getGoalSubCategoryFlowType(sub);
                         const subId = String(sub.id);
                         const subGoal = goalMap.get(`subcategory:${subId}`) || null;
-                        const subActuals = months.map(m => getActual('subcategory', subId, subFlow, m));
-                        const hasSubData = subActuals.some(v => v > 0) || !!subGoal;
+                        const subActuals = zeros();
 
-                        const dests = state.destinations
-                            .filter(d => getGoalDestinationSubCategoryId(d) === subId)
+                        const allDests = (destsBySub.get(subId) || [])
                             .map(dest => {
                                 const destId = String(dest.id);
                                 const destFlow = getGoalDestinationFlowType(dest);
                                 const destGoal = goalMap.get(`destination:${destId}`) || null;
-                                const destActuals = months.map(m => getActual('destination', destId, destFlow, m));
+                                const destActuals = destActualsFor(destId, destFlow);
+                                for (let i = 0; i < monthCount; i++) subActuals[i] += destActuals[i];
                                 const hasDestData = destActuals.some(v => v > 0) || !!destGoal;
                                 return { id: destId, name: dest.name, flow: destFlow, goal: destGoal, actuals: destActuals, hasData: hasDestData };
-                            })
-                            .filter(d => d.hasData);
+                            });
+                        for (let i = 0; i < monthCount; i++) catActuals[i] += subActuals[i];
 
+                        const dests = allDests.filter(d => d.hasData);
+                        const hasSubData = subActuals.some(v => v > 0) || !!subGoal;
                         return { id: subId, name: sub.name, flow: subFlow, goal: subGoal, actuals: subActuals, hasData: hasSubData || dests.length > 0, dests };
                     })
                     .filter(s => s.hasData);
 
+                const hasCatData = catActuals.some(v => v > 0) || !!catGoal;
                 return { id: catId, name: cat.name, flow: catFlow, goal: catGoal, actuals: catActuals, hasData: hasCatData || subs.length > 0, subs };
             }).filter(c => c.hasData);
         }
