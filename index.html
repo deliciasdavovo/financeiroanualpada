@@ -20904,28 +20904,9 @@
                 return { yyyyMM, yr, mn, daysInMonth, byDay, prog, sc, dailyGoal, totalRealized };
             });
 
-            // KPI cards por mês
+            // Cards de KPI por mês removidos da visão diária (calendário)
             if (kpiEl) {
-                const cardsHtml = monthData.map(md => {
-                    const { yyyyMM, prog, sc, dailyGoal, totalRealized } = md;
-                    const actual = prog ? prog.actual : totalRealized;
-                    const barPct = prog && prog.rawPct > 0 ? Math.max(prog.pct, 3) : 0;
-                    const barColor = sc ? sc.color : typeColor;
-                    const mn = Number(yyyyMM.split('-')[1]);
-                    const mnName = monthNames[mn - 1];
-                    const yr2 = yyyyMM.split('-')[0].slice(2);
-                    return `<div class="kpi-card p-4 goals-daily-kpi-card" style="border-top:3px solid ${barColor}">
-                        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">${mnName}/${yr2}</p>
-                        <div class="flex items-baseline gap-1 flex-wrap mb-2">
-                            <span class="text-xl font-black" style="color:${barColor}">${formatBRL(actual)}</span>
-                            ${prog ? `<span class="text-slate-400 text-xs">/ ${formatBRL(prog.target)}</span>
-                            <span class="goals-status-pill" style="background:${barColor}20;color:${barColor};border:1px solid ${barColor}40">${Math.round(prog.rawPct)}%</span>` : ''}
-                        </div>
-                        ${hasGoal && dailyGoal > 0 ? `<p class="text-xs text-slate-400 mb-2">Meta diária: <strong>${formatBRL(dailyGoal)}</strong></p>` : ''}
-                        ${prog ? `<div class="goal-progress-track"><div class="goal-progress-fill" style="width:${barPct}%;background:${barColor}"></div></div>` : ''}
-                    </div>`;
-                }).join('');
-                kpiEl.innerHTML = `<div class="goals-daily-kpi-row">${cardsHtml}</div>`;
+                kpiEl.innerHTML = '';
             }
 
             if (!gridEl) return;
