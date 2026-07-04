@@ -6800,7 +6800,7 @@
                 <i data-lucide="landmark" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Conciliação</span>
             </button>
             <button type="button" onclick="switchTab('vendas')" id="nav-vendas" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
-                <i data-lucide="bar-chart-3" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Vendas</span>
+                <i data-lucide="bar-chart-3" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Dados</span>
             </button>
         </nav>
     </aside>
@@ -7848,9 +7848,9 @@
             <i data-lucide="landmark" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Conc.</span>
         </button>
-        <button type="button" onclick="switchTab('vendas')" id="mnav-vendas" class="mobile-nav-btn" aria-label="Vendas e Banco de Dados">
+        <button type="button" onclick="switchTab('vendas')" id="mnav-vendas" class="mobile-nav-btn" aria-label="Dados: vendas e banco de dados">
             <i data-lucide="bar-chart-3" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Vendas</span>
+            <span class="mobile-nav-label">Dados</span>
         </button>
     </nav>
 
@@ -11521,7 +11521,7 @@
                 reports: 'Relatórios financeiros',
                 planejamento: 'Planejamento',
                 reconciliation: 'Conciliação',
-                vendas: 'Vendas'
+                vendas: 'Dados'
             };
             if(titleEl) titleEl.innerText = titleMap[tabId] || 'Lançamentos';
             const mainScroll = document.getElementById('main-scroll');
