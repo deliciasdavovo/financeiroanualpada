@@ -1700,7 +1700,7 @@
         .page-loader.is-leaving {
             animation: loaderFadeOut 220ms ease-in forwards;
         }
-        /* Loader minimalista: dinheiro voando em cinza */
+        /* Loader minimalista: mini gráfico financeiro se desenhando (cinza) */
         .money-loader {
             display: flex;
             flex-direction: column;
@@ -1711,39 +1711,65 @@
         .money-flight {
             position: relative;
             width: 180px;
-            height: 150px;
+            height: 132px;
             display: grid;
             place-items: center;
         }
-        /* Dinheiro voando (SVG) com asas batendo e flutuação suave */
-        .money-svg {
+        /* Mini gráfico (SVG): barras que sobem + linha que é traçada, tudo em cinza */
+        .mini-chart {
             width: 176px;
             height: auto;
             overflow: visible;
-            filter: drop-shadow(0 14px 16px rgba(15, 23, 42, 0.12));
-            animation: moneyHover 2.8s ease-in-out infinite;
+            filter: drop-shadow(0 10px 14px rgba(15, 23, 42, 0.08));
         }
-        .money-svg .wing { transform-box: fill-box; }
-        .money-svg .wing-left {
-            transform-origin: 95% 82%;
-            animation: wingFlapLeft 0.5s ease-in-out infinite;
+        .mini-chart .mini-chart-baseline {
+            stroke: #C7CDD5;
+            stroke-width: 2;
+            stroke-linecap: round;
         }
-        .money-svg .wing-right {
-            transform-origin: 5% 18%;
-            animation: wingFlapRight 0.5s ease-in-out infinite;
+        .mini-chart .mini-chart-bar {
+            transform-box: fill-box;
+            transform-origin: bottom;
+            animation: chartBarRise 2.6s var(--ease-premium) infinite;
         }
-        @keyframes wingFlapLeft {
-            0%, 100% { transform: rotate(-3deg); }
-            50%      { transform: rotate(8deg); }
+        .mini-chart .mini-chart-bar:nth-of-type(1) { animation-delay: 0s; }
+        .mini-chart .mini-chart-bar:nth-of-type(2) { animation-delay: 0.12s; }
+        .mini-chart .mini-chart-bar:nth-of-type(3) { animation-delay: 0.24s; }
+        .mini-chart .mini-chart-bar:nth-of-type(4) { animation-delay: 0.36s; }
+        .mini-chart .mini-chart-bar:nth-of-type(5) { animation-delay: 0.48s; }
+        .mini-chart .mini-chart-line {
+            fill: none;
+            stroke: #8A97A8;
+            stroke-width: 3.4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 240;
+            stroke-dashoffset: 240;
+            animation: chartLineDraw 2.6s var(--ease-premium) infinite;
         }
-        @keyframes wingFlapRight {
-            0%, 100% { transform: rotate(3deg); }
-            50%      { transform: rotate(-8deg); }
+        .mini-chart .mini-chart-dot {
+            transform-box: fill-box;
+            transform-origin: center;
+            fill: #5F6B7A;
+            opacity: 0;
+            animation: chartDotPulse 2.6s var(--ease-premium) infinite;
         }
-        /* Flutuação suave, como se estivesse voando */
-        @keyframes moneyHover {
-            0%, 100% { transform: translateY(3px); }
-            50%      { transform: translateY(-4px); }
+        /* Barras sobem, seguram e recuam suavemente, em loop */
+        @keyframes chartBarRise {
+            0%       { transform: scaleY(0.05); opacity: 0.35; }
+            30%, 72% { transform: scaleY(1);    opacity: 1; }
+            100%     { transform: scaleY(0.05); opacity: 0.35; }
+        }
+        /* Linha é traçada, permanece e some ao reiniciar */
+        @keyframes chartLineDraw {
+            0%       { stroke-dashoffset: 240; }
+            42%, 78% { stroke-dashoffset: 0; }
+            100%     { stroke-dashoffset: 240; }
+        }
+        @keyframes chartDotPulse {
+            0%, 34%   { opacity: 0; transform: scale(0.6); }
+            48%, 74%  { opacity: 1; transform: scale(1); }
+            100%      { opacity: 0; transform: scale(0.6); }
         }
         .money-loader-title {
             font-size: 14px;
@@ -1790,8 +1816,10 @@
             to { opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .money-svg { animation-duration: 5s; }
-            .money-svg .wing-left, .money-svg .wing-right { animation-duration: 1.6s; }
+            /* Sem piscar: barras e linha ficam no estado final, sem loop */
+            .mini-chart .mini-chart-bar { animation: none; }
+            .mini-chart .mini-chart-line { animation: none; stroke-dashoffset: 0; }
+            .mini-chart .mini-chart-dot { animation: none; opacity: 1; }
             .money-loader-bar::before { animation-duration: 2.4s; }
         }
         @media (max-width: 760px) {
@@ -6765,7 +6793,7 @@
     <div id="loading-overlay" aria-live="polite">
         <div class="money-loader" role="status" aria-label="Carregando o financeiro">
             <div class="money-flight" aria-hidden="true">
-                <svg viewBox="0 0 260 240" xmlns="http://www.w3.org/2000/svg" class="money-svg" aria-hidden="true"> <defs> <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCFDFE"/><stop offset="1" stop-color="#E6EBF1"/></linearGradient> <linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4E9F0"/></linearGradient> </defs> <g transform="translate(130 120) rotate(-20)"> <g class="wing wing-left" fill="url(#wg)" stroke="#8A8F98" stroke-width="3.2" stroke-linejoin="round" transform="translate(-40 -20)"> <path d="M 6.0,6.0 C -21.8,-29.0 -74.4,-42.0 -80.0,-42.0 C -77.0,-37.2 -38.4,0.7 6.0,6.0 Z"/> <path d="M 4.0,9.0 C -20.6,-19.5 -65.3,-24.7 -70.0,-24.0 C -67.3,-20.0 -33.6,9.8 4.0,9.0 Z"/> <path d="M 2.0,12.0 C -18.8,-9.7 -54.3,-9.1 -58.0,-8.0 C -55.7,-4.9 -27.6,16.9 2.0,12.0 Z"/> <path d="M 0.0,15.0 C -16.5,-0.5 -42.4,4.6 -45.0,6.0 C -43.1,8.3 -21.3,23.0 0.0,15.0 Z"/> </g> <g class="wing wing-right" fill="url(#wg)" stroke="#8A8F98" stroke-width="3.2" stroke-linejoin="round" transform="translate(40 20)"> <path d="M -6.0,-6.0 C 21.8,29.0 74.4,42.0 80.0,42.0 C 77.0,37.2 38.4,-0.7 -6.0,-6.0 Z"/> <path d="M -4.0,-9.0 C 20.6,19.5 65.3,24.7 70.0,24.0 C 67.3,20.0 33.6,-9.8 -4.0,-9.0 Z"/> <path d="M -2.0,-12.0 C 18.8,9.7 54.3,9.1 58.0,8.0 C 55.7,4.9 27.6,-16.9 -2.0,-12.0 Z"/> <path d="M 0.0,-15.0 C 16.5,0.5 42.4,-4.6 45.0,-6.0 C 43.1,-8.3 21.3,-23.0 0.0,-15.0 Z"/> </g> <g stroke="#8A8F98" stroke-width="3.2" stroke-linejoin="round"> <rect x="-46" y="-20" width="94" height="54" rx="8" fill="#D9DFE7"/> <rect x="-47" y="-24" width="94" height="54" rx="8" fill="#E7ECF2"/> <rect x="-48" y="-28" width="94" height="54" rx="8" fill="url(#bg)"/> </g> <g transform="translate(-48 -28)"> <rect x="7" y="7" width="80" height="40" rx="4" fill="none" stroke="#AEB4BD" stroke-width="2"/> <line x1="31" y1="7" x2="31" y2="47" stroke="#C7CDD5" stroke-width="2"/> <line x1="63" y1="7" x2="63" y2="47" stroke="#C7CDD5" stroke-width="2"/> <circle cx="47" cy="27" r="12.5" fill="#9AA1AA" stroke="#8A8F98" stroke-width="2.6"/> <text x="47" y="28" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="900" fill="#FCFDFE">$</text> </g> </g> </svg>
+                <svg viewBox="0 0 176 120" xmlns="http://www.w3.org/2000/svg" class="mini-chart" aria-hidden="true"> <line class="mini-chart-baseline" x1="4" y1="101" x2="172" y2="101"/> <rect class="mini-chart-bar" x="10" y="66" width="20" height="35" rx="4" fill="#D9DFE7"/> <rect class="mini-chart-bar" x="44" y="52" width="20" height="49" rx="4" fill="#CFD7E0"/> <rect class="mini-chart-bar" x="78" y="60" width="20" height="41" rx="4" fill="#D9DFE7"/> <rect class="mini-chart-bar" x="112" y="36" width="20" height="65" rx="4" fill="#CFD7E0"/> <rect class="mini-chart-bar" x="146" y="22" width="20" height="79" rx="4" fill="#C4CDD8"/> <path class="mini-chart-line" d="M 8 80 L 54 62 L 88 68 L 129 42 L 168 26"/> <circle class="mini-chart-dot" cx="168" cy="26" r="4.6"/> </svg>
             </div>
             <div>
                 <p class="money-loader-title" id="initial-loader-title">Carregando o financeiro</p>
@@ -6846,7 +6874,7 @@
             <div id="page-loader" class="page-loader" aria-live="polite" aria-hidden="true">
                 <div class="money-loader" role="status" aria-label="Carregando visão">
                     <div class="money-flight" aria-hidden="true">
-                        <svg viewBox="0 0 260 240" xmlns="http://www.w3.org/2000/svg" class="money-svg" aria-hidden="true"> <defs> <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCFDFE"/><stop offset="1" stop-color="#E6EBF1"/></linearGradient> <linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4E9F0"/></linearGradient> </defs> <g transform="translate(130 120) rotate(-20)"> <g class="wing wing-left" fill="url(#wg)" stroke="#8A8F98" stroke-width="3.2" stroke-linejoin="round" transform="translate(-40 -20)"> <path d="M 6.0,6.0 C -21.8,-29.0 -74.4,-42.0 -80.0,-42.0 C -77.0,-37.2 -38.4,0.7 6.0,6.0 Z"/> <path d="M 4.0,9.0 C -20.6,-19.5 -65.3,-24.7 -70.0,-24.0 C -67.3,-20.0 -33.6,9.8 4.0,9.0 Z"/> <path d="M 2.0,12.0 C -18.8,-9.7 -54.3,-9.1 -58.0,-8.0 C -55.7,-4.9 -27.6,16.9 2.0,12.0 Z"/> <path d="M 0.0,15.0 C -16.5,-0.5 -42.4,4.6 -45.0,6.0 C -43.1,8.3 -21.3,23.0 0.0,15.0 Z"/> </g> <g class="wing wing-right" fill="url(#wg)" stroke="#8A8F98" stroke-width="3.2" stroke-linejoin="round" transform="translate(40 20)"> <path d="M -6.0,-6.0 C 21.8,29.0 74.4,42.0 80.0,42.0 C 77.0,37.2 38.4,-0.7 -6.0,-6.0 Z"/> <path d="M -4.0,-9.0 C 20.6,19.5 65.3,24.7 70.0,24.0 C 67.3,20.0 33.6,-9.8 -4.0,-9.0 Z"/> <path d="M -2.0,-12.0 C 18.8,9.7 54.3,9.1 58.0,8.0 C 55.7,4.9 27.6,-16.9 -2.0,-12.0 Z"/> <path d="M 0.0,-15.0 C 16.5,0.5 42.4,-4.6 45.0,-6.0 C 43.1,-8.3 21.3,-23.0 0.0,-15.0 Z"/> </g> <g stroke="#8A8F98" stroke-width="3.2" stroke-linejoin="round"> <rect x="-46" y="-20" width="94" height="54" rx="8" fill="#D9DFE7"/> <rect x="-47" y="-24" width="94" height="54" rx="8" fill="#E7ECF2"/> <rect x="-48" y="-28" width="94" height="54" rx="8" fill="url(#bg)"/> </g> <g transform="translate(-48 -28)"> <rect x="7" y="7" width="80" height="40" rx="4" fill="none" stroke="#AEB4BD" stroke-width="2"/> <line x1="31" y1="7" x2="31" y2="47" stroke="#C7CDD5" stroke-width="2"/> <line x1="63" y1="7" x2="63" y2="47" stroke="#C7CDD5" stroke-width="2"/> <circle cx="47" cy="27" r="12.5" fill="#9AA1AA" stroke="#8A8F98" stroke-width="2.6"/> <text x="47" y="28" text-anchor="middle" dominant-baseline="central" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="900" fill="#FCFDFE">$</text> </g> </g> </svg>
+                        <svg viewBox="0 0 176 120" xmlns="http://www.w3.org/2000/svg" class="mini-chart" aria-hidden="true"> <line class="mini-chart-baseline" x1="4" y1="101" x2="172" y2="101"/> <rect class="mini-chart-bar" x="10" y="66" width="20" height="35" rx="4" fill="#D9DFE7"/> <rect class="mini-chart-bar" x="44" y="52" width="20" height="49" rx="4" fill="#CFD7E0"/> <rect class="mini-chart-bar" x="78" y="60" width="20" height="41" rx="4" fill="#D9DFE7"/> <rect class="mini-chart-bar" x="112" y="36" width="20" height="65" rx="4" fill="#CFD7E0"/> <rect class="mini-chart-bar" x="146" y="22" width="20" height="79" rx="4" fill="#C4CDD8"/> <path class="mini-chart-line" d="M 8 80 L 54 62 L 88 68 L 129 42 L 168 26"/> <circle class="mini-chart-dot" cx="168" cy="26" r="4.6"/> </svg>
                     </div>
                     <div>
                         <p class="money-loader-title" id="page-loader-title">Carregando visão</p>
