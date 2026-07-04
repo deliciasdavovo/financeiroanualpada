@@ -7711,6 +7711,40 @@
                 </section>
             </div>
 
+                <!-- Seção: Banco de Dados -->
+                <div id="sales-database-section" class="plan-section hidden space-y-12">
+                <section>
+                    <div class="db-toolbar mb-6">
+                        <div class="db-search-wrap">
+                            <label class="label-mini" for="db-search">Buscar em categorias, subcategorias e destinos</label>
+                            <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
+                        </div>
+                        <div style="min-width:180px">
+                            <label class="label-mini" for="db-mov-type-filter">Classificacao da categoria</label>
+                            <select id="db-mov-type-filter" onchange="renderDatabase()" style="font-size:12px;padding:7px 10px">
+                                <option value="">Todos</option>
+                                <option value="OPERACIONAL">Operacional</option>
+                                <option value="FINANCEIRO">Financeiro</option>
+                                <option value="SOCIOS">Sócios</option>
+                                <option value="INVESTIMENTO">Investimento</option>
+                                <option value="TRANSFERENCIA">Transferência</option>
+                            </select>
+                        </div>
+                        <button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova Categoria</button>
+                    </div>
+                    <div id="db-list"></div>
+                </section>
+                <section>
+                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Classificacoes de categorias</h4><button onclick="openDbModal('MOVEMENT_TYPE')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Classificacao</button></div>
+                    <div id="movement-type-list"></div>
+                </section>
+                <section>
+                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Contas e Bancos</h4><button onclick="openDbModal('ACCOUNT')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Conta</button></div>
+                    <div id="account-list"></div>
+                </section>
+                </div>
+            </div>
+
             <!-- CONCILIAÇÃO -->
             <div id="reconciliation" class="tab-content space-y-5">
                 <div class="card-premium p-6 lg:p-7 space-y-5">
@@ -7796,40 +7830,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-
-                <!-- Seção: Banco de Dados -->
-                <div id="sales-database-section" class="plan-section hidden space-y-12">
-                <section>
-                    <div class="db-toolbar mb-6">
-                        <div class="db-search-wrap">
-                            <label class="label-mini" for="db-search">Buscar em categorias, subcategorias e destinos</label>
-                            <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
-                        </div>
-                        <div style="min-width:180px">
-                            <label class="label-mini" for="db-mov-type-filter">Classificacao da categoria</label>
-                            <select id="db-mov-type-filter" onchange="renderDatabase()" style="font-size:12px;padding:7px 10px">
-                                <option value="">Todos</option>
-                                <option value="OPERACIONAL">Operacional</option>
-                                <option value="FINANCEIRO">Financeiro</option>
-                                <option value="SOCIOS">Sócios</option>
-                                <option value="INVESTIMENTO">Investimento</option>
-                                <option value="TRANSFERENCIA">Transferência</option>
-                            </select>
-                        </div>
-                        <button onclick="openDbModal('CATEGORY')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Nova Categoria</button>
-                    </div>
-                    <div id="db-list"></div>
-                </section>
-                <section>
-                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Classificacoes de categorias</h4><button onclick="openDbModal('MOVEMENT_TYPE')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Classificacao</button></div>
-                    <div id="movement-type-list"></div>
-                </section>
-                <section>
-                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Contas e Bancos</h4><button onclick="openDbModal('ACCOUNT')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Conta</button></div>
-                    <div id="account-list"></div>
-                </section>
                 </div>
             </div>
 
