@@ -1933,49 +1933,41 @@
         }
         .login-keypad {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-            max-width: 290px;
+            grid-template-columns: repeat(3, 78px);
+            gap: 20px 26px;
+            justify-content: center;
             margin: 0 auto;
         }
         .login-key,
         .login-key-action {
-            height: 62px;
-            border-radius: 999px;
-            border: 1px solid #E2E8F0;
-            background: rgba(248, 250, 252, 0.96);
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(118, 118, 128, 0.12);
             color: #0F172A;
-            font-size: 24px;
+            font-size: 33px;
             line-height: 1;
-            font-weight: 800;
+            font-weight: 400;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            transition: background var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
         }
-        .login-key:hover,
-        .login-key-action:hover {
-            background: #EEF4FF;
-            border-color: #C8D6EF;
+        .login-key:hover {
+            background: rgba(118, 118, 128, 0.2);
         }
         .login-key-action {
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            color: #475569;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+            color: var(--primary-blue);
+            background: transparent;
         }
-        .login-submit {
-            width: 100%;
-            height: 48px;
-            margin-top: 18px;
-            border-radius: 15px;
-            background: #0F172A;
-            color: #FFFFFF;
-            font-size: 12px;
-            font-weight: 900;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            box-shadow: 0 14px 24px rgba(15, 23, 42, 0.18);
+        .login-key-action:hover {
+            background: rgba(118, 118, 128, 0.1);
         }
         .login-error {
             min-height: 18px;
@@ -1987,11 +1979,11 @@
             color: var(--soft-red);
         }
         /* Feedback ao pressionar cada tecla do PIN */
-        .login-key:active,
+        .login-key:active {
+            background: rgba(118, 118, 128, 0.32);
+        }
         .login-key-action:active {
-            transform: scale(0.93);
-            background: #E4EDFB;
-            border-color: #B9CBEC;
+            background: rgba(118, 118, 128, 0.18);
         }
         /* Ponto preenchido com "pop" ao digitar */
         .login-dot.filled {
@@ -2161,9 +2153,14 @@
                 padding: 22px;
                 border-radius: 26px;
             }
+            .login-keypad {
+                grid-template-columns: repeat(3, 74px);
+                gap: 16px 22px;
+            }
             .login-key,
             .login-key-action {
-                height: 58px;
+                width: 74px;
+                height: 74px;
             }
         }
         @keyframes loadingPulse {
@@ -6802,7 +6799,6 @@
                 </div>
             </div>
 
-            <button type="button" class="login-submit" onclick="submitLogin()">Entrar</button>
             <p id="login-error" class="login-error" role="alert" aria-live="polite"></p>
         </div>
     </section>
