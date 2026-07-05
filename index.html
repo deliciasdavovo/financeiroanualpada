@@ -6709,10 +6709,16 @@
         .home-proj-tot { flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; gap: 1px; }
         .home-proj-tot:not(:last-child) { border-right: 1px solid #E2E8F0; }
         .home-proj-tot-label { font-size: 10px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.4px; }
-        .home-proj-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; border-bottom: 1px solid #F1F5F9; gap: 8px; }
+        .home-proj-item { display: flex; align-items: center; padding: 9px 14px; border-bottom: 1px solid #F1F5F9; gap: 10px; }
         .home-proj-item:last-child { border-bottom: none; }
-        .home-proj-item-dest { font-size: 13px; color: #1E293B; flex: 1; }
-        .home-proj-item-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .home-proj-item-icon { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+        .home-proj-item-icon svg { width: 16px; height: 16px; }
+        .home-proj-item-icon.in { background: var(--bg-green-soft); color: var(--primary-green); }
+        .home-proj-item-icon.out { background: var(--bg-red-soft); color: var(--soft-red); }
+        .home-proj-item-main { flex: 1; min-width: 0; }
+        .home-proj-item-dest { font-size: 13px; font-weight: 600; color: #1E293B; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .home-proj-item-desc { font-size: 11px; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+        .home-proj-item-val { font-size: 14px; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
         .home-proj-link { font-size: 12px; font-weight: 700; color: #1F7A5C; background: none; border: 1px solid #1F7A5C; cursor: pointer; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
         .home-proj-link:hover { background: #E8F3EF; }
         .home-saldo-badge { font-size: 12px; font-weight: 700; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
@@ -14129,11 +14135,16 @@
 
                 const itemsHtml = dayEntries.map(e => {
                     const flow = normalizeFlowType(e.type);
+                    const isIn = flow === FLOW_IN;
                     const destName = getDestinationById(e.destinationId)?.name || 'Sem destino';
-                    const desc = e.description ? ` · ${e.description}` : '';
+                    const descHtml = e.description ? `<span class="home-proj-item-desc">${escapeHtml(e.description)}</span>` : '';
                     return `<div class="home-proj-item">
-                        <span class="home-proj-item-dest">${escapeHtml(destName + desc)}</span>
-                        <span class="home-proj-item-val ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'}${formatBRL(Number(e.amount) || 0)}</span>
+                        <div class="home-proj-item-icon ${isIn ? 'in' : 'out'}"><i data-lucide="${isIn ? 'arrow-down-left' : 'arrow-up-right'}" class="w-4 h-4"></i></div>
+                        <div class="home-proj-item-main">
+                            <span class="home-proj-item-dest">${escapeHtml(destName)}</span>
+                            ${descHtml}
+                        </div>
+                        <span class="home-proj-item-val ${isIn ? 'flow-income-text' : 'flow-expense-text'}">${isIn ? '+' : '-'}${formatBRL(Number(e.amount) || 0)}</span>
                     </div>`;
                 }).join('');
 
