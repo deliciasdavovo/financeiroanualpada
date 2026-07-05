@@ -6698,6 +6698,24 @@
         .home-alert-item > i { color: #D97706; flex-shrink: 0; }
         .home-alert-item > span { flex: 1; }
         .home-alert-action { font-size: 11px; font-weight: 800; color: #1F7A5C; background: white; border: 1px solid #1F7A5C; cursor: pointer; padding: 3px 10px; border-radius: 6px; flex-shrink: 0; }
+        /* ===== HOME · TRANSAÇÕES RECENTES (estilo app financeiro mobile) ===== */
+        .home-tx-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 12px; }
+        .home-tx-title { font-size: 15px; font-weight: 800; color: #0F172A; }
+        .home-tx-list { display: flex; flex-direction: column; }
+        .home-tx-item { display: flex; align-items: center; gap: 12px; padding: 12px 2px; border-bottom: 1px solid #F1F5F9; }
+        .home-tx-item:last-child { border-bottom: none; }
+        .home-tx-icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+        .home-tx-icon svg { width: 20px; height: 20px; }
+        .home-tx-icon.in { background: var(--bg-green-soft); color: var(--primary-green); }
+        .home-tx-icon.out { background: var(--bg-red-soft); color: var(--soft-red); }
+        .home-tx-body { flex: 1; min-width: 0; }
+        .home-tx-dest { font-size: 14px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .home-tx-sub { font-size: 11.5px; font-weight: 500; color: var(--text-secondary); margin-top: 2px; }
+        .home-tx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+        .home-tx-val { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; }
+        .home-tx-acct { font-size: 11.5px; font-weight: 500; color: var(--text-muted); max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .home-tx-empty { padding: 20px; text-align: center; color: #94A3B8; font-size: 13px; }
+
         .home-proj-list { display: flex; flex-direction: column; gap: 12px; }
         .home-proj-day { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
         .home-proj-day.is-negative .home-proj-day-header { background: #F1F5F9; border-bottom-color: #E2E8F0; }
@@ -14173,8 +14191,45 @@
                     <div class="home-kpi-sub">+ ${formatBRL(incP)} a receber · - ${formatBRL(expP)} a pagar</div>
                 </div>` : '';
 
+            // Transações recentes (últimos lançamentos realizados) — estilo da referência
+            const recentTx = getAnalyticalEntries(state.entries)
+                .filter(e => e.date && String(e.status || '').toUpperCase() === 'REALIZADO')
+                .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+                .slice(0, 6);
+
+            const recentTxHtml = recentTx.length ? recentTx.map(e => {
+                const isEntrada = normalizeFlowType(e.type) === FLOW_IN;
+                const destName = getDestinationById(e.destinationId)?.name || e.description || 'Sem destino';
+                const accName = getAccountNameById(String((e.accountId ?? e.account_id) || '')) || '';
+                const dObj = parseIsoDateLocal(e.date);
+                const dLabel = dObj
+                    ? dObj.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '')
+                    : formatDateBRV2(e.date);
+                return `<div class="home-tx-item">
+                    <div class="home-tx-icon ${isEntrada ? 'in' : 'out'}"><i data-lucide="${isEntrada ? 'arrow-down-left' : 'arrow-up-right'}" class="w-5 h-5"></i></div>
+                    <div class="home-tx-body">
+                        <p class="home-tx-dest">${escapeHtml(destName)}</p>
+                        <p class="home-tx-sub">${isEntrada ? 'Entrada' : 'Saída'} · ${escapeHtml(dLabel)}</p>
+                    </div>
+                    <div class="home-tx-right">
+                        <span class="home-tx-val ${isEntrada ? 'flow-income-text' : 'flow-expense-text'}">${isEntrada ? '+' : '−'} ${formatBRL(Math.abs(Number(e.amount) || 0))}</span>
+                        ${accName ? `<span class="home-tx-acct">${escapeHtml(accName)}</span>` : ''}
+                    </div>
+                </div>`;
+            }).join('') : `<div class="home-tx-empty">Nenhum lançamento realizado ainda. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`;
+
+            const recentCardHtml = `
+                <div class="card-premium p-6">
+                    <div class="home-tx-head">
+                        <h4 class="home-tx-title">Transações recentes</h4>
+                        <button onclick="switchTab('entries')" class="home-proj-link">Ver todas <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                    </div>
+                    <div class="home-tx-list">${recentTxHtml}</div>
+                </div>`;
+
             host.innerHTML = `
                 ${alertsHtml}
+                ${recentCardHtml}
 
                 <div class="card-premium p-8">
                     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
