@@ -1540,6 +1540,49 @@
             font-size: 12px;
             font-weight: 800;
         }
+        .recurrence-field.hidden { display: none; }
+        .recurrence-field-full { grid-column: 1 / -1; }
+        .recurrence-endmode-toggle button {
+            text-transform: none;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .weekday-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .weekday-chips button {
+            flex: 1 1 auto;
+            min-width: 40px;
+            padding: 8px 6px;
+            border-radius: 9px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748B;
+            transition: all var(--dur-std) var(--ease-premium);
+        }
+        .weekday-chips button.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: #FFFFFF;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+        }
+        .recurrence-cadence-badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: #EEF2FF;
+            color: #4338CA;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
         .modal-actions {
             display: flex;
             gap: 10px;
@@ -7478,6 +7521,21 @@
                         </div>
                         <div id="projection-list" class="projection-list"></div>
                     </section>
+                    <section class="card-premium reports-insights-card" id="destino-recurrence-panel">
+                        <div class="reports-card-head">
+                            <div>
+                                <h4>Recorrência por destino</h4>
+                                <p>Quantas vezes você paga cada destino e com que frequência (base: lançamentos realizados).</p>
+                            </div>
+                        </div>
+                        <div class="reports-control-row" role="group" aria-label="Período da análise de recorrência">
+                            <button type="button" id="destino-recurrence-period-3" class="reports-chip" onclick="setDestinoRecurrencePeriod(3)">Últimos 3 meses</button>
+                            <button type="button" id="destino-recurrence-period-6" class="reports-chip active" onclick="setDestinoRecurrencePeriod(6)">Últimos 6 meses</button>
+                            <button type="button" id="destino-recurrence-period-12" class="reports-chip" onclick="setDestinoRecurrencePeriod(12)">Últimos 12 meses</button>
+                            <input type="search" id="destino-recurrence-search" class="reports-small-input" placeholder="Buscar destino..." oninput="renderDestinoRecurrence()" aria-label="Buscar destino" style="min-width:160px;">
+                        </div>
+                        <div id="destino-recurrence-content"></div>
+                    </section>
                 </div>
 
                 <!-- Seção: Metas -->
@@ -7922,8 +7980,8 @@
         <div class="modal-shell modal-shell-entry">
             <div class="modal-head">
                 <div>
-                    <h3 class="modal-head-title">Editor de Lançamento</h3>
-                    <p class="modal-head-sub">Preencha os campos e salve com segurança.</p>
+                    <h3 class="modal-head-title" id="entry-modal-title">Editor de Lançamento</h3>
+                    <p class="modal-head-sub" id="entry-modal-sub">Preencha os campos e salve com segurança.</p>
                 </div>
                 <button onclick="closeModal('entry-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -8005,9 +8063,9 @@
                         <button type="button" id="toggle-repeat-on" onclick="toggleEntryRecurrenceMode(true)" aria-pressed="false">Repete</button>
                     </div>
                     <div id="entry-recurrence-grid" class="recurrence-grid hidden">
-                        <div>
+                        <div class="recurrence-field" id="recurrence-field-frequency">
                             <label for="form-repeat-frequency" class="label-mini">Período</label>
-                            <select id="form-repeat-frequency" aria-describedby="form-repeat-frequency-help form-repeat-frequency-error">
+                            <select id="form-repeat-frequency" onchange="onRepeatFrequencyChange()" aria-describedby="form-repeat-frequency-help form-repeat-frequency-error">
                                 <option value="NONE">Não repetir</option>
                                 <option value="DAY">Diariamente</option>
                                 <option value="WEEK">Semanalmente</option>
@@ -8017,17 +8075,45 @@
                             <p id="form-repeat-frequency-help" class="field-help">Define o tipo de intervalo para os próximos lançamentos.</p>
                             <p id="form-repeat-frequency-error" class="field-error hidden" role="alert"></p>
                         </div>
-                        <div>
+                        <div class="recurrence-field" id="recurrence-field-interval">
                             <label for="form-repeat-interval" class="label-mini">A cada</label>
-                            <input type="number" id="form-repeat-interval" min="1" max="120" step="1" value="1" aria-describedby="form-repeat-interval-help form-repeat-interval-error">
+                            <input type="number" id="form-repeat-interval" min="1" max="120" step="1" value="1" oninput="updateEntryRecurrenceSummary()" aria-describedby="form-repeat-interval-help form-repeat-interval-error">
                             <p id="form-repeat-interval-help" class="field-help">Ex.: 2 mensalmente cria repetição a cada 2 meses.</p>
                             <p id="form-repeat-interval-error" class="field-error hidden" role="alert"></p>
                         </div>
-                        <div>
-                            <label for="form-repeat-count" class="label-mini">Quantas vezes</label>
-                            <input type="number" id="form-repeat-count" min="1" max="120" step="1" value="1" aria-describedby="form-repeat-count-help form-repeat-count-error">
+                        <div class="recurrence-field recurrence-field-full hidden" id="recurrence-field-weekdays">
+                            <label class="label-mini">Dias da semana</label>
+                            <div id="form-repeat-weekdays" class="weekday-chips" role="group" aria-label="Dias da semana em que o lançamento se repete">
+                                <button type="button" data-weekday="0" onclick="toggleRepeatWeekday(0)" aria-pressed="false">Dom</button>
+                                <button type="button" data-weekday="1" onclick="toggleRepeatWeekday(1)" aria-pressed="false">Seg</button>
+                                <button type="button" data-weekday="2" onclick="toggleRepeatWeekday(2)" aria-pressed="false">Ter</button>
+                                <button type="button" data-weekday="3" onclick="toggleRepeatWeekday(3)" aria-pressed="false">Qua</button>
+                                <button type="button" data-weekday="4" onclick="toggleRepeatWeekday(4)" aria-pressed="false">Qui</button>
+                                <button type="button" data-weekday="5" onclick="toggleRepeatWeekday(5)" aria-pressed="false">Sex</button>
+                                <button type="button" data-weekday="6" onclick="toggleRepeatWeekday(6)" aria-pressed="false">Sáb</button>
+                            </div>
+                            <p class="field-help">Marque os dias em que o lançamento acontece (ex.: Seg a Sáb).</p>
+                            <p id="form-repeat-weekdays-error" class="field-error hidden" role="alert"></p>
+                        </div>
+                        <div class="recurrence-field recurrence-field-full" id="recurrence-field-endmode">
+                            <label class="label-mini">Terminar</label>
+                            <div class="status-toggle recurrence-endmode-toggle" role="group" aria-label="Como a repetição termina">
+                                <button type="button" id="toggle-repeat-end-count" onclick="setRepeatEndMode('count')" aria-pressed="true">Nº de repetições</button>
+                                <button type="button" id="toggle-repeat-end-until" onclick="setRepeatEndMode('until')" aria-pressed="false">Data final</button>
+                            </div>
+                            <input type="hidden" id="form-repeat-end-mode" value="count">
+                        </div>
+                        <div class="recurrence-field" id="recurrence-field-count">
+                            <label for="form-repeat-count" class="label-mini" id="form-repeat-count-label">Quantas vezes</label>
+                            <input type="number" id="form-repeat-count" min="1" max="120" step="1" value="1" oninput="updateEntryRecurrenceSummary()" aria-describedby="form-repeat-count-help form-repeat-count-error">
                             <p id="form-repeat-count-help" class="field-help">Quantidade de lançamentos futuros que serão criados como pendentes.</p>
                             <p id="form-repeat-count-error" class="field-error hidden" role="alert"></p>
+                        </div>
+                        <div class="recurrence-field hidden" id="recurrence-field-until">
+                            <label for="form-repeat-until" class="label-mini">Data final</label>
+                            <input type="date" id="form-repeat-until" oninput="updateEntryRecurrenceSummary()" aria-describedby="form-repeat-until-help form-repeat-until-error">
+                            <p id="form-repeat-until-help" class="field-help">Repete até esta data (inclusive).</p>
+                            <p id="form-repeat-until-error" class="field-error hidden" role="alert"></p>
                         </div>
                     </div>
                     <p id="entry-recurrence-summary" class="recurrence-summary">Sem recorrência. Apenas este lançamento será salvo.</p>
@@ -13415,6 +13501,7 @@
                         <span class="entry-mobile-account-name">${escapeHtml(accountName)}</span>
                         <div class="entry-mobile-actions">
                             <button type="button" onclick="openEntryModal('${e.id}')" class="entry-action-btn p-1.5 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lançamento"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                            <button type="button" onclick="event.stopPropagation(); duplicateEntry('${e.id}')" class="entry-action-btn p-1.5 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Duplicar lançamento"><i data-lucide="copy" class="w-4 h-4"></i></button>
                             <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status">${e.status}</button>
                             <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
@@ -13819,6 +13906,9 @@
                             <div class="entry-actions-wrap">
                                 <button type="button" onclick="event.stopPropagation(); openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lancamento">
                                     <i data-lucide="pencil" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" onclick="event.stopPropagation(); duplicateEntry('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Duplicar lancamento">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
                                 </button>
                                 <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lancamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
                                 <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lancamento">
@@ -15912,7 +16002,140 @@
             updateProjectionControls();
             if (projectionMode === 'history') renderHistoryProjection();
             else renderPendingProjection();
+            renderDestinoRecurrence();
             refreshLucideIcons();
+        }
+
+        let destinoRecurrencePeriodMonths = 6;
+
+        function setDestinoRecurrencePeriod(months) {
+            destinoRecurrencePeriodMonths = [3, 6, 12].includes(months) ? months : 6;
+            [3, 6, 12].forEach(m => {
+                document.getElementById(`destino-recurrence-period-${m}`)?.classList.toggle('active', m === destinoRecurrencePeriodMonths);
+            });
+            renderDestinoRecurrence();
+        }
+
+        function getRecurrenceCadenceLabel(medianInterval, count) {
+            if (!Number.isFinite(medianInterval) || count < 2) return count >= 1 ? 'Pontual' : '—';
+            if (medianInterval <= 2) return 'Diária';
+            if (medianInterval <= 10) return 'Semanal';
+            if (medianInterval <= 20) return 'Quinzenal';
+            if (medianInterval <= 45) return 'Mensal';
+            if (medianInterval <= 75) return 'Bimestral';
+            return 'Esporádica';
+        }
+
+        function computeDestinoRecurrence(months) {
+            const today = new Date();
+            const startDate = new Date(today.getFullYear(), today.getMonth() - months, today.getDate());
+            const startIso = formatLocalDate(startDate);
+            const todayIso = formatLocalDate(today);
+            const spanMonths = Math.max(1, months);
+
+            const groups = new Map();
+            getAnalyticalEntries(state.entries).forEach(entry => {
+                if (String(entry.status || '').toUpperCase() !== 'REALIZADO') return;
+                const date = String(entry.date || '');
+                if (!date || date < startIso || date > todayIso) return;
+                const destId = String(entry.destinationId || '');
+                if (!destId) return;
+                if (!groups.has(destId)) groups.set(destId, []);
+                groups.get(destId).push(entry);
+            });
+
+            const rows = [];
+            groups.forEach((items, destId) => {
+                const { destination: dst, category: cat } = getDestinationHierarchyById(destId);
+                if (!dst) return;
+                const dates = items.map(e => String(e.date || '')).filter(Boolean).sort();
+                const count = dates.length;
+                const total = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                const intervals = [];
+                for (let i = 1; i < dates.length; i += 1) {
+                    const prev = parseIsoDateLocal(dates[i - 1]);
+                    const cur = parseIsoDateLocal(dates[i]);
+                    if (prev && cur) intervals.push(Math.round((cur.getTime() - prev.getTime()) / 86400000));
+                }
+                let medianInterval = NaN;
+                if (intervals.length) {
+                    const sorted = [...intervals].sort((a, b) => a - b);
+                    const mid = Math.floor(sorted.length / 2);
+                    medianInterval = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+                }
+                rows.push({
+                    id: destId,
+                    name: getDestinationLabel(dst) || 'Sem destino',
+                    flow: normalizeFlowType((cat || {}).type),
+                    count,
+                    total,
+                    perMonth: count / spanMonths,
+                    perWeek: count / (spanMonths * 4.345),
+                    perFortnight: count / (spanMonths * 2.174),
+                    medianInterval,
+                    cadence: getRecurrenceCadenceLabel(medianInterval, count),
+                    lastDate: dates[dates.length - 1] || ''
+                });
+            });
+            rows.sort((a, b) => b.count - a.count || b.total - a.total);
+            return rows;
+        }
+
+        function formatRecurrenceNumber(value) {
+            if (!Number.isFinite(value) || value <= 0) return '0';
+            if (value >= 10) return String(Math.round(value));
+            return value.toFixed(1).replace('.', ',');
+        }
+
+        function renderDestinoRecurrence() {
+            const content = document.getElementById('destino-recurrence-content');
+            if (!content) return;
+            const search = normalizeDestinationLookupLabel(document.getElementById('destino-recurrence-search')?.value || '');
+            let rows = computeDestinoRecurrence(destinoRecurrencePeriodMonths);
+            if (search) rows = rows.filter(r => normalizeDestinationLookupLabel(r.name).includes(search));
+
+            if (!rows.length) {
+                content.innerHTML = '<div class="cash-projection-empty">Nenhum destino com lançamentos realizados no período selecionado.</div>';
+                return;
+            }
+
+            const bodyRows = rows.map(r => {
+                const flowClass = r.flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text';
+                const intervalLabel = Number.isFinite(r.medianInterval) && r.count >= 2
+                    ? `${Math.round(r.medianInterval)} dias`
+                    : '—';
+                return `<tr>
+                    <td>
+                        <div class="projection-table-date">${escapeHtml(r.name)}</div>
+                        <div class="projection-table-sub"><span class="${flowClass}">${escapeHtml(formatBRL(r.total))}</span> no período</div>
+                    </td>
+                    <td><span class="projection-table-value">${r.count}x</span></td>
+                    <td><span class="projection-table-value">${formatRecurrenceNumber(r.perMonth)}</span></td>
+                    <td><span class="projection-table-value">${formatRecurrenceNumber(r.perWeek)}</span></td>
+                    <td><span class="projection-table-value">${formatRecurrenceNumber(r.perFortnight)}</span></td>
+                    <td><span class="projection-table-value">${intervalLabel}</span></td>
+                    <td><span class="recurrence-cadence-badge">${escapeHtml(r.cadence)}</span></td>
+                    <td><span class="projection-table-sub">${r.lastDate ? escapeHtml(formatDateBRV2(r.lastDate)) : '—'}</span></td>
+                </tr>`;
+            }).join('');
+
+            content.innerHTML = `<div class="projection-table-wrap custom-scrollbar">
+                <table class="projection-table" aria-label="Recorrência por destino">
+                    <thead>
+                        <tr>
+                            <th>Destino</th>
+                            <th>Vezes</th>
+                            <th>Por mês</th>
+                            <th>Por semana</th>
+                            <th>Por 15 dias</th>
+                            <th>Intervalo médio</th>
+                            <th>Cadência</th>
+                            <th>Último</th>
+                        </tr>
+                    </thead>
+                    <tbody>${bodyRows}</tbody>
+                </table>
+            </div>`;
         }
 
         function normalizeMinusSigns(text) {
@@ -18829,7 +19052,7 @@
         }
 
         function clearEntryFormErrors() {
-            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status', 'form-repeat-frequency', 'form-repeat-interval', 'form-repeat-count'].forEach((id) => setEntryFieldError(id, ''));
+            ['form-date', 'form-value', 'form-dst', 'form-acc', 'form-desc', 'form-status', 'form-repeat-frequency', 'form-repeat-interval', 'form-repeat-count', 'form-repeat-until', 'form-repeat-weekdays'].forEach((id) => setEntryFieldError(id, ''));
             setEntryFormFeedback('');
         }
 
@@ -18842,6 +19065,103 @@
             return '';
         }
 
+        const REPEAT_WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+        function getSelectedRepeatWeekdays() {
+            return Array.from(document.querySelectorAll('#form-repeat-weekdays button'))
+                .filter(btn => btn.getAttribute('aria-pressed') === 'true')
+                .map(btn => Number(btn.dataset.weekday))
+                .filter(n => Number.isInteger(n) && n >= 0 && n <= 6)
+                .sort((a, b) => a - b);
+        }
+
+        function setRepeatWeekdays(weekdays) {
+            const set = new Set((Array.isArray(weekdays) ? weekdays : []).map(Number));
+            document.querySelectorAll('#form-repeat-weekdays button').forEach(btn => {
+                const active = set.has(Number(btn.dataset.weekday));
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                btn.classList.toggle('active', active);
+            });
+        }
+
+        function getRepeatEndMode() {
+            return String(document.getElementById('form-repeat-end-mode')?.value || 'count') === 'until' ? 'until' : 'count';
+        }
+
+        function isWeekdayRepeatActive() {
+            const freq = String(document.getElementById('form-repeat-frequency')?.value || 'NONE');
+            return freq === 'WEEK' && getSelectedRepeatWeekdays().length > 0;
+        }
+
+        function syncRecurrenceFieldVisibility() {
+            const frequencyEl = document.getElementById('form-repeat-frequency');
+            if (!frequencyEl) return;
+            const freq = String(frequencyEl.value || 'NONE');
+            const isWeek = freq === 'WEEK';
+            const endMode = getRepeatEndMode();
+            const weekdayMode = isWeek && getSelectedRepeatWeekdays().length > 0;
+
+            document.getElementById('recurrence-field-weekdays')?.classList.toggle('hidden', !isWeek);
+            document.getElementById('recurrence-field-count')?.classList.toggle('hidden', endMode !== 'count');
+            document.getElementById('recurrence-field-until')?.classList.toggle('hidden', endMode !== 'until');
+
+            const endCountBtn = document.getElementById('toggle-repeat-end-count');
+            const endUntilBtn = document.getElementById('toggle-repeat-end-until');
+            if (endCountBtn && endUntilBtn) {
+                endCountBtn.classList.toggle('active', endMode === 'count');
+                endUntilBtn.classList.toggle('active', endMode === 'until');
+                endCountBtn.setAttribute('aria-pressed', endMode === 'count' ? 'true' : 'false');
+                endUntilBtn.setAttribute('aria-pressed', endMode === 'until' ? 'true' : 'false');
+            }
+
+            const countLabel = document.getElementById('form-repeat-count-label');
+            const countHelp = document.getElementById('form-repeat-count-help');
+            if (countLabel) countLabel.innerText = weekdayMode ? 'Quantas semanas' : 'Quantas vezes';
+            if (countHelp) countHelp.innerText = weekdayMode
+                ? 'Por quantas semanas repetir os dias marcados (pendentes).'
+                : 'Quantidade de lançamentos futuros que serão criados como pendentes.';
+
+            const intervalHelp = document.getElementById('form-repeat-interval-help');
+            if (intervalHelp) intervalHelp.innerText = isWeek
+                ? 'Ex.: 2 = repete a cada 2 semanas.'
+                : 'Ex.: 2 mensalmente cria repetição a cada 2 meses.';
+        }
+
+        function onRepeatFrequencyChange() {
+            const frequencyEl = document.getElementById('form-repeat-frequency');
+            if (frequencyEl && String(frequencyEl.value) !== 'NONE') {
+                frequencyEl.dataset.lastFrequency = frequencyEl.value;
+            }
+            syncEntryRecurrenceToggleUI();
+            updateEntryRecurrenceSummary();
+        }
+
+        function toggleRepeatWeekday(idx) {
+            const btn = document.querySelector(`#form-repeat-weekdays button[data-weekday="${idx}"]`);
+            if (!btn) return;
+            const active = btn.getAttribute('aria-pressed') === 'true';
+            btn.setAttribute('aria-pressed', active ? 'false' : 'true');
+            btn.classList.toggle('active', !active);
+            setEntryFieldError('form-repeat-weekdays', '');
+            syncRecurrenceFieldVisibility();
+            updateEntryRecurrenceSummary();
+        }
+
+        function setRepeatEndMode(mode) {
+            const safe = mode === 'until' ? 'until' : 'count';
+            const modeEl = document.getElementById('form-repeat-end-mode');
+            if (modeEl) modeEl.value = safe;
+            if (safe === 'until') {
+                const untilEl = document.getElementById('form-repeat-until');
+                const dateEl = document.getElementById('form-date');
+                if (untilEl && !untilEl.value && dateEl && dateEl.value) untilEl.value = dateEl.value;
+            }
+            setEntryFieldError('form-repeat-count', '');
+            setEntryFieldError('form-repeat-until', '');
+            syncRecurrenceFieldVisibility();
+            updateEntryRecurrenceSummary();
+        }
+
         function updateEntryRecurrenceSummary() {
             const summaryEl = document.getElementById('entry-recurrence-summary');
             const frequencyEl = document.getElementById('form-repeat-frequency');
@@ -18849,16 +19169,39 @@
             const countEl = document.getElementById('form-repeat-count');
             if (!summaryEl || !frequencyEl || !intervalEl || !countEl) return;
             const frequency = String(frequencyEl.value || 'NONE');
-            const interval = Number.parseInt(intervalEl.value, 10);
-            const count = Number.parseInt(countEl.value, 10);
             if (frequency === 'NONE') {
                 summaryEl.innerText = 'Sem recorrência. Apenas este lançamento será salvo.';
                 return;
             }
-            const label = getRecurringFrequencyLabel(frequency);
+            const interval = Number.parseInt(intervalEl.value, 10);
             const safeInterval = Number.isFinite(interval) && interval > 0 ? interval : 1;
+            const count = Number.parseInt(countEl.value, 10);
             const safeCount = Number.isFinite(count) && count > 0 ? count : 1;
-            summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), repetindo a cada ${safeInterval} ${label}.`;
+            const endMode = getRepeatEndMode();
+            const untilValue = String(document.getElementById('form-repeat-until')?.value || '');
+            const weekdays = getSelectedRepeatWeekdays();
+
+            if (frequency === 'WEEK' && weekdays.length > 0) {
+                const daysLabel = weekdays.map(d => REPEAT_WEEKDAY_LABELS[d]).join(', ');
+                const spacing = safeInterval > 1 ? ` (a cada ${safeInterval} semanas)` : '';
+                if (endMode === 'until') {
+                    summaryEl.innerText = untilValue
+                        ? `Cria lançamentos pendentes em ${daysLabel}${spacing} até ${formatDateBRV2(untilValue)}.`
+                        : `Escolha a data final para gerar os lançamentos em ${daysLabel}.`;
+                } else {
+                    summaryEl.innerText = `Cria lançamentos pendentes em ${daysLabel}${spacing} por ${safeCount} semana(s).`;
+                }
+                return;
+            }
+
+            const label = getRecurringFrequencyLabel(frequency);
+            if (endMode === 'until') {
+                summaryEl.innerText = untilValue
+                    ? `Cria lançamentos pendentes a cada ${safeInterval} ${label} até ${formatDateBRV2(untilValue)}.`
+                    : 'Escolha a data final para gerar os lançamentos.';
+            } else {
+                summaryEl.innerText = `Serão criados ${safeCount} lançamento(s) futuro(s) pendente(s), repetindo a cada ${safeInterval} ${label}.`;
+            }
         }
 
         function syncEntryRecurrenceToggleUI() {
@@ -18873,6 +19216,7 @@
             onEl.classList.toggle('active', enabled);
             offEl.setAttribute('aria-pressed', enabled ? 'false' : 'true');
             onEl.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+            syncRecurrenceFieldVisibility();
         }
 
         function toggleEntryRecurrenceMode(enabled) {
@@ -18895,6 +19239,8 @@
             setEntryFieldError('form-repeat-frequency', '');
             setEntryFieldError('form-repeat-interval', '');
             setEntryFieldError('form-repeat-count', '');
+            setEntryFieldError('form-repeat-until', '');
+            setEntryFieldError('form-repeat-weekdays', '');
         }
 
         function updateEntryRecurrenceVisibility(isEditing = false) {
@@ -18935,18 +19281,65 @@
             return formatLocalDate(nextDate);
         }
 
-        function buildRecurringEntries(baseEntry, frequency, interval, count) {
+        const MAX_RECURRING_ENTRIES = 366;
+
+        function buildRecurringEntries(baseEntry, frequency, interval, count, endMode = 'count', untilDate = '', weekdays = []) {
             const items = [];
-            const safeInterval = Number.parseInt(interval, 10);
-            const safeCount = Number.parseInt(count, 10);
-            if (!baseEntry || frequency === 'NONE' || !Number.isFinite(safeInterval) || safeInterval <= 0 || !Number.isFinite(safeCount) || safeCount <= 0) return items;
-            for (let i = 1; i <= safeCount; i += 1) {
-                items.push({
-                    ...baseEntry,
-                    id: generateId(),
-                    date: shiftRecurringDate(baseEntry.date, frequency, i * safeInterval),
-                    status: 'PENDENTE'
-                });
+            if (!baseEntry || frequency === 'NONE') return items;
+            const safeInterval = Math.max(1, Number.parseInt(interval, 10) || 0);
+            const mode = endMode === 'until' ? 'until' : 'count';
+            const days = Array.isArray(weekdays)
+                ? weekdays.filter(n => Number.isInteger(n) && n >= 0 && n <= 6)
+                : [];
+            const baseDate = parseIsoDateLocal(baseEntry.date);
+            if (!baseDate) return items;
+            const untilD = mode === 'until' ? parseIsoDateLocal(untilDate) : null;
+            if (mode === 'until' && !untilD) return items;
+
+            const pushEntry = (iso) => {
+                if (!iso || iso === baseEntry.date) return;
+                items.push({ ...baseEntry, id: generateId(), date: iso, status: 'PENDENTE' });
+            };
+
+            // Modo dias da semana (ex.: Seg a Sáb): varre dia a dia e emite pendentes
+            if (frequency === 'WEEK' && days.length > 0) {
+                const daySet = new Set(days);
+                const baseWeekStart = new Date(baseDate.getTime());
+                baseWeekStart.setDate(baseWeekStart.getDate() - baseWeekStart.getDay());
+                let horizonEnd;
+                if (mode === 'until') {
+                    horizonEnd = untilD;
+                } else {
+                    const weeks = Math.max(1, Number.parseInt(count, 10) || 0);
+                    horizonEnd = new Date(baseDate.getTime());
+                    horizonEnd.setDate(horizonEnd.getDate() + (weeks * 7) - 1);
+                }
+                const cursor = new Date(baseDate.getTime());
+                while (cursor.getTime() <= horizonEnd.getTime() && items.length < MAX_RECURRING_ENTRIES) {
+                    const weekStart = new Date(cursor.getTime());
+                    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                    const weekIndex = Math.round((weekStart.getTime() - baseWeekStart.getTime()) / (7 * 86400000));
+                    if (weekIndex >= 0 && weekIndex % safeInterval === 0 && daySet.has(cursor.getDay())) {
+                        pushEntry(formatLocalDate(cursor));
+                    }
+                    cursor.setDate(cursor.getDate() + 1);
+                }
+                return items;
+            }
+
+            // Modos padrão (dia/semana/mês/ano)
+            if (mode === 'until') {
+                for (let i = 1; items.length < MAX_RECURRING_ENTRIES; i += 1) {
+                    const iso = shiftRecurringDate(baseEntry.date, frequency, i * safeInterval);
+                    const d = parseIsoDateLocal(iso);
+                    if (!d || d.getTime() > untilD.getTime()) break;
+                    pushEntry(iso);
+                }
+            } else {
+                const safeCount = Math.max(1, Number.parseInt(count, 10) || 0);
+                for (let i = 1; i <= safeCount && items.length < MAX_RECURRING_ENTRIES; i += 1) {
+                    pushEntry(shiftRecurringDate(baseEntry.date, frequency, i * safeInterval));
+                }
             }
             return items;
         }
@@ -19005,6 +19398,9 @@
             const repeatFrequency = String(repeatFrequencyEl.value || 'NONE');
             const repeatInterval = Number.parseInt(repeatIntervalEl.value, 10);
             const repeatCount = Number.parseInt(repeatCountEl.value, 10);
+            const repeatEndMode = getRepeatEndMode();
+            const repeatUntil = String(document.getElementById('form-repeat-until')?.value || '');
+            const repeatWeekdays = getSelectedRepeatWeekdays();
             const errors = {};
 
             if (!date) errors['form-date'] = 'Informe a data do lançamento.';
@@ -19019,8 +19415,14 @@
             if (repeatFrequency !== 'NONE') {
                 if (!Number.isFinite(repeatInterval) || repeatInterval <= 0) errors['form-repeat-interval'] = 'Informe de quanto em quanto o lançamento deve se repetir.';
                 else if (repeatInterval > 120) errors['form-repeat-interval'] = 'Limite de 120 períodos por repetição.';
-                if (!Number.isFinite(repeatCount) || repeatCount <= 0) errors['form-repeat-count'] = 'Informe quantos lançamentos futuros devem ser criados.';
-                else if (repeatCount > 120) errors['form-repeat-count'] = 'Limite de 120 lançamentos futuros por vez.';
+                const isWeekdayMode = repeatFrequency === 'WEEK' && repeatWeekdays.length > 0;
+                if (repeatEndMode === 'until') {
+                    if (!repeatUntil || !/^\d{4}-\d{2}-\d{2}$/.test(repeatUntil)) errors['form-repeat-until'] = 'Informe a data final da repetição.';
+                    else if (date && repeatUntil < date) errors['form-repeat-until'] = 'A data final deve ser igual ou depois da data do lançamento.';
+                } else {
+                    if (!Number.isFinite(repeatCount) || repeatCount <= 0) errors['form-repeat-count'] = isWeekdayMode ? 'Informe por quantas semanas repetir.' : 'Informe quantos lançamentos futuros devem ser criados.';
+                    else if (repeatCount > 120) errors['form-repeat-count'] = isWeekdayMode ? 'Limite de 120 semanas por vez.' : 'Limite de 120 lançamentos futuros por vez.';
+                }
             }
 
             if (showErrors) {
@@ -19034,7 +19436,7 @@
             return {
                 valid: Object.keys(errors).length === 0,
                 firstInvalidId: Object.keys(errors)[0] || null,
-                values: { date, amount, destinationId, accountId, description, status, repeatFrequency, repeatInterval, repeatCount }
+                values: { date, amount, destinationId, accountId, description, status, repeatFrequency, repeatInterval, repeatCount, repeatEndMode, repeatUntil, repeatWeekdays }
             };
         }
 
@@ -19122,7 +19524,25 @@
             setEntryFieldError('form-status', '');
         }
 
-        function openEntryModal(id = null) {
+        function fillEntryFormFromEntry(e, forceStatus = '') {
+            if (!e) return;
+            document.getElementById('form-date').value = e.date;
+            document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('form-desc').value = e.description || "";
+            populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, e.destinationId);
+            document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
+            toggleStatus(forceStatus || (e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO'));
+            const movTypeEl = document.getElementById('form-mov-type-entry');
+            if (movTypeEl) populateMovementTypeSelect('form-mov-type-entry', getMovimentoType(e));
+        }
+
+        function duplicateEntry(id) {
+            openEntryModal(null, { duplicateFrom: id });
+        }
+        window.duplicateEntry = duplicateEntry;
+
+        function openEntryModal(id = null, options = {}) {
+            const duplicateFrom = options && options.duplicateFrom ? String(options.duplicateFrom) : '';
             lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
             const form = document.getElementById('entry-form');
             if(form) form.reset();
@@ -19140,27 +19560,35 @@
             }
             if (repeatIntervalEl) repeatIntervalEl.value = '1';
             if (repeatCountEl) repeatCountEl.value = '1';
+            const repeatUntilEl = document.getElementById('form-repeat-until');
+            if (repeatUntilEl) repeatUntilEl.value = '';
+            const repeatEndModeEl = document.getElementById('form-repeat-end-mode');
+            if (repeatEndModeEl) repeatEndModeEl.value = 'count';
+            setRepeatWeekdays([]);
             populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations);
             populateDropdown('form-acc', state.accounts);
             populateMovementTypeSelect('form-mov-type-entry');
+            const titleEl = document.getElementById('entry-modal-title');
+            const subEl = document.getElementById('entry-modal-sub');
+            let duplicated = false;
             if(id) {
                 const e = state.entries.find(x => x.id === id);
-                if(e) {
-                    document.getElementById('form-date').value = e.date;
-                    document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    document.getElementById('form-desc').value = e.description || "";
-                    populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, e.destinationId);
-                    document.getElementById('form-acc').value = String((e.accountId ?? e.account_id) || '');
-                    toggleStatus(e.status === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO');
-                    const movTypeEl = document.getElementById('form-mov-type-entry');
-                    if (movTypeEl) populateMovementTypeSelect('form-mov-type-entry', getMovimentoType(e));
+                if(e) fillEntryFormFromEntry(e);
+            } else if (duplicateFrom) {
+                const e = state.entries.find(x => x.id === duplicateFrom);
+                if (e) {
+                    fillEntryFormFromEntry(e, 'PENDENTE');
+                    duplicated = true;
                 }
-            } else {
+            }
+            if (!id && !duplicated) {
                 document.getElementById('form-date').value = formatLocalDate(new Date());
                 toggleStatus('REALIZADO');
                 const movTypeEl = document.getElementById('form-mov-type-entry');
                 if (movTypeEl) populateMovementTypeSelect('form-mov-type-entry', 'OPERACIONAL');
             }
+            if (titleEl) titleEl.innerText = duplicated ? 'Duplicar Lançamento' : 'Editor de Lançamento';
+            if (subEl) subEl.innerText = duplicated ? 'Cópia pendente. Ajuste a data e salve como novo lançamento.' : 'Preencha os campos e salve com segurança.';
             updateEntryRecurrenceVisibility(Boolean(id));
             document.getElementById('entry-modal')?.classList.remove('hidden');
             window.setTimeout(() => {
@@ -19243,7 +19671,10 @@
                 data,
                 validation.values.repeatFrequency,
                 validation.values.repeatInterval,
-                validation.values.repeatCount
+                validation.values.repeatCount,
+                validation.values.repeatEndMode,
+                validation.values.repeatUntil,
+                validation.values.repeatWeekdays
             );
             const entriesToSave = [data, ...recurringEntries];
             const saveResult = entriesToSave.length > 1
