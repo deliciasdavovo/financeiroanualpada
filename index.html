@@ -5086,7 +5086,8 @@
             #backup-status {
                 display: none !important;
             }
-            #export-pdf-btn {
+            #export-pdf-btn,
+            #export-excel-btn {
                 display: none !important;
             }
             .card-premium:not(.overflow-hidden) {
@@ -5817,6 +5818,12 @@
             font-weight: 650;
             color: #64748B;
         }
+        .reports-shell-head-slim {
+            padding: 14px 18px;
+        }
+        .reports-shell-head-slim .reports-subtitle {
+            margin-top: 0;
+        }
         .pill-segment {
             display: inline-flex;
             align-items: center;
@@ -6249,14 +6256,26 @@
                 padding: 16px;
                 border-radius: 20px;
             }
+            .reports-shell-head-slim {
+                padding: 12px 14px;
+                gap: 12px;
+            }
             .reports-title {
                 font-size: 24px;
             }
             .reports-summary-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
             .reports-tab .monthly-kpi-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+            .reports-tab .monthly-kpi-card {
+                min-height: 0;
+                padding: 14px !important;
+            }
+            .reports-tab .monthly-kpi-primary {
+                font-size: 21px !important;
             }
             .reports-chart-frame {
                 height: 270px;
@@ -7087,11 +7106,10 @@
 
             <!-- RELATÓRIO MENSAL -->
             <div id="reports" class="tab-content reports-tab space-y-8">
-                <section class="reports-shell-head" aria-labelledby="reports-title">
+                <section class="reports-shell-head reports-shell-head-slim" aria-label="Tipo de relatório e período">
                     <div>
-                        <p class="reports-eyebrow">Painel financeiro</p>
-                        <h3 id="reports-title" class="reports-title">Relatórios financeiros</h3>
-                        <p class="reports-subtitle">Entenda o que aconteceu no mês ou no ano com a mesma leitura visual.</p>
+                        <h3 id="reports-title" class="sr-only">Relatórios financeiros</h3>
+                        <p class="reports-subtitle">Veja o mês ou o ano com a mesma leitura visual.</p>
                     </div>
                     <div class="pill-segment" role="tablist" aria-label="Tipo de relatório">
                         <button type="button" id="reports-mode-monthly" class="pill-segment-btn" onclick="setReportsMode('monthly')" aria-selected="false">
@@ -7109,7 +7127,7 @@
                         <div class="monthly-ios-title-row">
                             <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="calendar-check-2" class="w-5 h-5"></i></span>
                             <div>
-                                <p class="monthly-ios-eyebrow">Relatório mensal</p>
+                                <p class="monthly-ios-eyebrow">Visão mensal</p>
                                 <h4 id="monthly-ios-title" class="monthly-ios-title">Mês selecionado</h4>
                                 <p id="monthly-period-status" class="monthly-ios-sub">Dados do período ativo.</p>
                             </div>
@@ -7323,7 +7341,7 @@
                         <div class="monthly-ios-title-row">
                             <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></span>
                             <div>
-                                <p class="monthly-ios-eyebrow">Relatório anual</p>
+                                <p class="monthly-ios-eyebrow">Visão anual</p>
                                 <h4 id="reports-annual-title" class="monthly-ios-title">Visão mês a mês do ano</h4>
                                 <p class="monthly-ios-sub">Acompanhe entradas, saídas, resultado anual e os meses que mais puxaram o caixa.</p>
                             </div>
