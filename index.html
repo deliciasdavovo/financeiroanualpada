@@ -56,13 +56,57 @@
             --text-secondary: #5F6B7A;
             --text-muted: #8B96A7;
 
-            --title-size: 32px;
-            --subtitle-size: 18px;
+            --title-size: 22px;
+            --subtitle-size: 16px;
             --aux-size: 11px;
             --dur-fast: 200ms;
             --dur-std: 240ms;
             --dur-slow: 280ms;
             --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-pill: 999px;
+            --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05);
+            --shadow-pop: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+            --accent: var(--primary-green);
+            --positive: var(--primary-green);
+            --negative: var(--soft-red);
+            --info: var(--primary-blue);
+            --num-color: var(--text-primary);
+            --num-md: 20px;
+            --num-lg: 26px;
+            --chart-green: #149463;
+            --chart-red: #B23A3A;
+            --chart-blue: #2F4F9D;
+        }
+
+        /* Valores financeiros: número escuro e tabular por padrão; cor fica nos
+           deltas, sinais e ícones. Overrides compostos vencem o !important das
+           .flow-*-text sem alterar o JS que alterna essas classes. */
+        .monthly-kpi-primary, .home-kpi-value, .sales-kpi-value,
+        .entries-filter-report-value, .kpi-value, .annual-kpi-value,
+        .cash-projection-value, .reports-summary-card strong {
+            font-variant-numeric: tabular-nums;
+        }
+        .monthly-kpi-primary.flow-income-text, .monthly-kpi-primary.flow-expense-text,
+        .monthly-kpi-primary.flow-balance-text, .monthly-kpi-primary.flow-capital-text,
+        .home-kpi-value.flow-income-text, .home-kpi-value.flow-expense-text,
+        .home-kpi-value.flow-balance-text,
+        .sales-kpi-value.flow-income-text, .sales-kpi-value.flow-expense-text,
+        .sales-kpi-value.flow-balance-text,
+        .entries-filter-report-value.flow-income-text,
+        .entries-filter-report-value.flow-expense-text,
+        .entries-filter-report-value.flow-balance-text,
+        .cash-projection-value.flow-income-text,
+        .cash-projection-value.flow-expense-text,
+        .cash-projection-value.flow-balance-text,
+        .reports-summary-card strong.flow-income-text,
+        .reports-summary-card strong.flow-expense-text,
+        .reports-summary-card strong.flow-balance-text {
+            color: var(--num-color) !important;
         }
 
         .flow-income-text { color: var(--primary-green) !important; }
@@ -75,9 +119,9 @@
         .flow-capital-bg { background: #DDF4E4 !important; }
 
         .kpi-card {
-            border-radius: 18px;
-            border: 1px solid #DCE3EC;
-            box-shadow: none;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--divider);
+            box-shadow: var(--shadow-card);
             position: relative;
             overflow: hidden;
             isolation: isolate;
@@ -113,23 +157,19 @@
         }
         .kpi-card-income {
             --kpi-glow: 31, 122, 92;
-            border-top: 4px solid var(--primary-green);
-            background: #EEF9F3;
+            background: var(--bg-card);
         }
         .kpi-card-expense {
             --kpi-glow: 178, 58, 58;
-            border-top: 4px solid var(--soft-red);
-            background: #FFF0F0;
+            background: var(--bg-card);
         }
         .kpi-card-balance {
             --kpi-glow: 47, 79, 157;
-            border-top: 4px solid var(--primary-blue);
-            background: #EDF3FF;
+            background: var(--bg-card);
         }
         .kpi-card-forecast {
             --kpi-glow: 214, 158, 46;
-            border-top: 4px solid #D69E2E;
-            background: #FFF8DB;
+            background: var(--bg-card);
         }
         .kpi-card-header {
             display: flex;
@@ -526,9 +566,10 @@
         .monthly-kpi-primary {
             display: block;
             margin-top: 8px;
-            font-size: 28px !important;
+            font-size: var(--num-lg) !important;
             line-height: 1.08;
-            font-weight: 900 !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em;
         }
         .monthly-kpi-delta {
             display: inline-flex;
@@ -842,15 +883,13 @@
 
         .card-premium {
             background: var(--bg-card);
-            border-radius: 18px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--divider);
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-            transition: transform var(--dur-std) var(--ease-premium), box-shadow var(--dur-std) var(--ease-premium), border-color var(--dur-std) var(--ease-premium);
+            box-shadow: var(--shadow-card);
+            transition: border-color var(--dur-std) var(--ease-premium);
         }
         .card-premium:hover {
-            transform: translateY(-2px);
             border-color: #D8E2EE;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
         }
         .card-premium.kpi-card,
         .card-premium.kpi-card:hover {
@@ -903,9 +942,10 @@
         }
 
         #sum-inc-real, #sum-exp-real, #month-bal-r {
-            font-size: 30px !important;
-            font-weight: 700 !important;
+            font-size: var(--num-lg) !important;
+            font-weight: 800 !important;
             line-height: 1.1;
+            font-variant-numeric: tabular-nums;
         }
 
         input, select, textarea {
@@ -3539,10 +3579,11 @@
         .sales-kpi.period .sales-kpi-icon { color: #0F172A; background: #EEF2F7; }
         .sales-kpi-value {
             margin-top: 12px;
-            font-size: 25px;
+            font-size: var(--num-lg);
             line-height: 1.1;
-            font-weight: 900;
-            color: #0F172A;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--num-color);
         }
         .sales-kpi-note {
             margin-top: 7px;
@@ -4767,10 +4808,10 @@
         }
         .entries-filter-report-value {
             margin-top: 8px;
-            font-size: 22px;
+            font-size: var(--num-md);
             line-height: 1;
-            font-weight: 900;
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
         .entries-filter-report-note {
             margin-top: 8px;
@@ -6017,17 +6058,17 @@
             gap: 14px;
         }
         .reports-summary-card {
-            min-height: 142px;
-            padding: 18px;
-            border: 1px solid #E4EBF3;
-            border-radius: 20px;
+            min-height: 0;
+            padding: 16px 18px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-md);
             background: #FFFFFF;
-            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+            box-shadow: var(--shadow-card);
         }
         .reports-summary-card span {
-            width: 34px;
-            height: 34px;
-            border-radius: 12px;
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -6035,25 +6076,26 @@
             color: #475569;
         }
         .reports-summary-card p {
-            margin-top: 14px;
-            font-size: 12px;
+            margin-top: 12px;
+            font-size: 10.5px;
             font-weight: 800;
-            color: #64748B;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
         .reports-summary-card strong {
             display: block;
-            margin-top: 7px;
-            font-size: 25px;
+            margin-top: 6px;
+            font-size: var(--num-lg);
             line-height: 1.08;
-            font-weight: 900;
-            color: #0F172A;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+            color: var(--num-color);
         }
-        .reports-summary-card.in span,
-        .reports-summary-card.in strong { color: var(--primary-green); }
-        .reports-summary-card.out span,
-        .reports-summary-card.out strong { color: var(--soft-red); }
-        .reports-summary-card.net span,
-        .reports-summary-card.net strong { color: var(--primary-blue); }
+        .reports-summary-card.in span { color: var(--positive); background: var(--bg-green-soft); }
+        .reports-summary-card.out span { color: var(--negative); background: var(--bg-red-soft); }
+        .reports-summary-card.net span { color: var(--info); background: var(--bg-blue-soft); }
         .reports-insight-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -6747,7 +6789,7 @@
         .home-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .home-section-grid { grid-template-columns: 1fr; } }
         .home-kpi-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 6px; }
-        .home-kpi-value { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; line-height: 1; margin: 8px 0 6px; }
+        .home-kpi-value { font-size: var(--num-lg); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 6px; color: var(--num-color); }
         .home-kpi-sub { font-size: 12px; color: #64748B; margin-top: 6px; }
         .home-kpi-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 100px; margin-bottom: 4px; }
         .home-kpi-delta.good { background: #DCFCE7; color: #15803D; }
