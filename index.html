@@ -6824,6 +6824,35 @@
         /* ===== ABA INÍCIO — HOME TAB ===== */
         .home-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .home-section-grid { grid-template-columns: 1fr; } }
+        /* Dashboard executivo da Home */
+        .home-kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+        .home-kpi-tile { background: var(--bg-card); border: 1px solid var(--divider); border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 16px 18px; min-width: 0; }
+        .home-kpi-tile .home-kpi-label { font-size: 10.5px; letter-spacing: 0.07em; margin-bottom: 0; }
+        .home-kpi-tile .home-kpi-value { white-space: nowrap; }
+        .home-kpi-tile .home-kpi-value .brl-full { display: inline; }
+        .home-kpi-tile .home-kpi-value .brl-compact { display: none; }
+        .home-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
+        .home-up-day { font-size: 10px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); padding: 12px 0 6px; border-bottom: 1px solid #EFF2F6; }
+        .home-up-row { display: flex; align-items: center; gap: 11px; padding: 9px 0; border-bottom: 1px solid #F3F5F8; }
+        .home-up-row:last-child { border-bottom: 0; }
+        .home-up-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: #64748B; background: #F1F4F8; border-radius: 6px; padding: 3px 7px; flex-shrink: 0; }
+        .home-up-main { min-width: 0; flex: 1; }
+        .home-up-dest { display: block; font-size: 12.5px; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .home-up-desc { display: block; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+        .home-up-amt { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 12.5px; white-space: nowrap; flex-shrink: 0; }
+        .home-up-amt.in { color: #14684A; }
+        .home-up-amt.out { color: #9A3434; }
+        .home-up-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--accent); background: none; border: none; cursor: pointer; padding: 0; }
+        .home-up-empty { padding: 22px 0; font-size: 13px; color: var(--text-muted); text-align: center; }
+        .home-chart-box { position: relative; height: 240px; }
+        @media (max-width: 1023px) { .home-cols { grid-template-columns: 1fr; } }
+        @media (max-width: 767px) {
+            .home-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+            .home-kpi-tile { padding: 13px 14px; }
+            .home-kpi-tile .home-kpi-value { font-size: clamp(17px, 5.2vw, 22px); }
+            .home-kpi-tile .home-kpi-value .brl-full { display: none; }
+            .home-kpi-tile .home-kpi-value .brl-compact { display: inline; }
+        }
         .home-kpi-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 6px; }
         .home-kpi-value { font-size: var(--num-lg); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 6px; color: var(--num-color); }
         .home-kpi-sub { font-size: 12px; color: #64748B; margin-top: 6px; }
@@ -9415,6 +9444,15 @@
         const formatBRL = (v) => valuesHidden ? HIDDEN_MONEY : (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         // Valor sem centavos (sem vírgula) para os números grandes dos cards
         const formatBRLNoCents = (v) => valuesHidden ? HIDDEN_MONEY : Math.round(Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        // Versão compacta para telas estreitas: abrevia a partir de 100 mil ("R$ 309,2 mil")
+        const formatBRLCompact = (v) => {
+            if (valuesHidden) return HIDDEN_MONEY;
+            const n = Number(v) || 0;
+            const abs = Math.abs(n);
+            if (abs >= 1000000) return `${n < 0 ? '-' : ''}R$ ${(abs / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mi`;
+            if (abs >= 100000) return `${n < 0 ? '-' : ''}R$ ${(abs / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil`;
+            return formatBRLNoCents(n);
+        };
         function updateToggleValuesUI() {
             const btn = document.getElementById('toggle-values-btn');
             if (!btn) return;
@@ -14399,50 +14437,139 @@
                 ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
                 : currentMonthPrefix;
 
-            // Delta vs mês anterior
-            let balDeltaHtml = '';
-            if (prevRealized.length > 0 && prevBal !== 0) {
-                const balDelta = ((balR - prevBal) / Math.abs(prevBal)) * 100;
-                const dir = balDelta > 0.05 ? 'good' : (balDelta < -0.05 ? 'bad' : 'flat');
-                balDeltaHtml = `<span class="home-kpi-delta ${dir}">${balDelta > 0 ? '▲' : (balDelta < 0 ? '▼' : '–')} ${Math.abs(balDelta).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
-            }
+            // Chips de variação vs mês anterior (verde = movimento bom para o negócio)
+            const hasPrevMonth = prevRealized.length > 0;
+            const buildDeltaChip = (cur, prev, goodWhenUp) => {
+                if (!hasPrevMonth || !prev) return '';
+                const pct = ((cur - prev) / Math.abs(prev)) * 100;
+                if (!isFinite(pct)) return '';
+                const up = pct > 0.05;
+                const down = pct < -0.05;
+                const dir = up ? (goodWhenUp ? 'good' : 'bad') : (down ? (goodWhenUp ? 'bad' : 'good') : 'flat');
+                const arrow = up ? '▲' : (down ? '▼' : '–');
+                return `<span class="home-kpi-delta ${dir}">${arrow} ${Math.abs(pct).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
+            };
 
-            const dayRowsHtml = buildHomeStyleDayCards(futurePending);
-
-            // Alertas rápidos removidos a pedido
-            const alertsHtml = '';
-
-            // Card resultado previsto (com pendentes)
+            // Resultado previsto (com pendentes)
             const projected = balR + incP - expP;
-            const hasPending = incP > 0 || expP > 0;
-            const prevCardHtml = hasPending ? `
-                <div class="card-premium p-8">
-                    <div class="home-kpi-label">Resultado previsto (com pendentes)</div>
-                    <div class="home-kpi-value ${projected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(projected)}</div>
-                    <div class="home-kpi-sub">+ ${formatBRL(incP)} a receber · - ${formatBRL(expP)} a pagar</div>
-                </div>` : '';
+            const pendingCount = futurePending.length;
+
+            const monthShort = monthName.split(' ')[0];
+            const kpiValue = (v) => `<div class="home-kpi-value"><span class="brl-full">${formatBRLNoCents(v)}</span><span class="brl-compact">${formatBRLCompact(v)}</span></div>`;
+            const kpiTilesHtml = `
+                <div class="home-kpi-grid">
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Entradas · ${escapeHtml(monthShort)}</div>
+                        ${kpiValue(incR)}
+                        ${buildDeltaChip(incR, prevInc, true)}
+                    </div>
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Saídas · ${escapeHtml(monthShort)}</div>
+                        ${kpiValue(expR)}
+                        ${buildDeltaChip(expR, prevExp, false)}
+                    </div>
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Resultado do mês</div>
+                        ${kpiValue(balR)}
+                        ${buildDeltaChip(balR, prevBal, true)}
+                    </div>
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Previsto com pendentes</div>
+                        ${kpiValue(projected)}
+                        <div class="home-kpi-sub">${pendingCount > 0 ? `${pendingCount} lançamento(s) a vencer` : 'Sem pendências nos próximos 14 dias'}</div>
+                    </div>
+                </div>`;
+
+            // Próximos vencimentos: uma linha por pendência, com separador por dia
+            const MAX_UPCOMING_ROWS = 8;
+            const visiblePending = futurePending.slice(0, MAX_UPCOMING_ROWS);
+            let lastDay = '';
+            const upcomingRowsHtml = visiblePending.map(e => {
+                const flow = normalizeFlowType(e.type);
+                const isIn = flow === FLOW_IN;
+                const dateIso = String(e.date || '');
+                const dObj = parseIsoDateLocal(dateIso) || new Date();
+                const dShort = dObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                const weekday = dObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+                const dayLabel = dateIso === today ? 'Hoje' : `${weekday} · ${dShort}`;
+                const sep = dateIso !== lastDay ? `<div class="home-up-day">${escapeHtml(dayLabel)}</div>` : '';
+                lastDay = dateIso;
+                const destName = getDestinationById(e.destinationId)?.name || e.description || 'Sem destino';
+                const descHtml = (e.description && destName !== e.description) ? `<span class="home-up-desc">${escapeHtml(e.description)}</span>` : '';
+                return `${sep}<div class="home-up-row">
+                    <span class="home-up-date">${escapeHtml(dShort)}</span>
+                    <span class="home-up-main"><span class="home-up-dest">${escapeHtml(destName)}</span>${descHtml}</span>
+                    <span class="home-up-amt ${isIn ? 'in' : 'out'}">${isIn ? '+' : '−'} ${formatBRLNoCents(Number(e.amount) || 0)}</span>
+                </div>`;
+            }).join('');
+            const remaining = futurePending.length - visiblePending.length;
+            const upcomingListHtml = futurePending.length > 0
+                ? `${upcomingRowsHtml}${remaining > 0 ? `<button type="button" class="home-up-more" onclick="switchTab('entries')">Ver todos (${futurePending.length}) <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>` : ''}`
+                : `<div class="home-up-empty">Nenhum lançamento pendente nos próximos 14 dias.<br><button onclick="openEntryModal(null)" class="home-up-more">Adicionar lançamento <i data-lucide="plus" class="w-3.5 h-3.5"></i></button></div>`;
 
             host.innerHTML = `
-                ${alertsHtml}
+                ${kpiTilesHtml}
 
-                <div class="card-premium p-8">
-                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-                        <div>
-                            <h4 class="text-sm font-black text-slate-900">Próximos 14 dias</h4>
-                            <p class="text-xs text-slate-500 mt-1">Lançamentos pendentes de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
+                <div class="home-cols">
+                    <div class="card-premium">
+                        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                            <h4 class="text-sm font-black text-slate-900">Resultado por mês</h4>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="home-chart-box"><canvas id="home-mini-chart" aria-label="Entradas e saídas dos últimos meses" role="img"></canvas></div>
+                    </div>
+                    <div class="card-premium">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <h4 class="text-sm font-black text-slate-900">Próximos vencimentos</h4>
                             <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
                         </div>
+                        ${upcomingListHtml}
                     </div>
-                    ${dayRowsHtml.length > 0
-                        ? `<div class="home-proj-list">${dayRowsHtml}</div>`
-                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
-                    }
                 </div>
             `;
 
+            renderHomeMiniChart(currentMonthPrefix);
             refreshLucideIcons();
+        }
+
+        function renderHomeMiniChart(currentMonthPrefix) {
+            const canvas = document.getElementById('home-mini-chart');
+            if (!canvas || typeof Chart === 'undefined') return;
+            const monthsBack = 6;
+            const labels = [];
+            const incData = [];
+            const expData = [];
+            const analytical = getAnalyticalEntries(state.entries);
+            for (let i = monthsBack; i >= 0; i--) {
+                const prefix = getMonthPrefixShift(currentMonthPrefix, -i);
+                const [y, m] = prefix.split('-');
+                labels.push(new Date(Number(y), Number(m) - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''));
+                const monthRealized = analytical.filter(e => e.date && e.date.startsWith(prefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
+                incData.push(monthRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0));
+                expData.push(monthRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0));
+            }
+            if (window.homeMiniChart && typeof window.homeMiniChart.destroy === 'function') window.homeMiniChart.destroy();
+            window.homeMiniChart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Entradas', data: incData, backgroundColor: '#149463', borderRadius: 4, maxBarThickness: 18, borderSkipped: 'bottom' },
+                        { label: 'Saídas', data: expData, backgroundColor: '#B23A3A', borderRadius: 4, maxBarThickness: 18, borderSkipped: 'bottom' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatBRL(ctx.parsed.y)}` } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, border: { display: false } },
+                        y: { grid: { color: '#EEF2F7' }, border: { display: false }, ticks: { maxTicksLimit: 5, callback: (v) => valuesHidden ? '••' : (Math.abs(v) >= 1000 ? `${Math.round(v / 1000)} mil` : v) } }
+                    }
+                }
+            });
         }
 
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
