@@ -1687,42 +1687,67 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* Status da nuvem: só um ponto colorido; o texto fica para leitores de tela */
         .sync-indicator {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
             background: #FFFFFF;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
+            border-radius: var(--radius-sm);
             color: var(--text-muted);
-            border: 1px solid var(--border);
+            border: 1px solid var(--divider);
+            flex-shrink: 0;
         }
-        .sync-indicator.synced {
-            color: var(--primary-green);
-            border-color: #CFE5DD;
-            background: var(--bg-green-soft);
+        .sync-indicator span {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
         }
-        .sync-indicator.syncing {
-            color: var(--primary-blue);
-            border-color: #D7DEF3;
-            background: var(--bg-blue-soft);
+        .sync-indicator.synced { border-color: #CFE5DD; background: var(--bg-green-soft); }
+        .sync-indicator.syncing { border-color: #D7DEF3; background: var(--bg-blue-soft); }
+        /* Detalhe técnico ("Modo: somente nuvem") sai do cabeçalho */
+        .backup-indicator { display: none; }
+        .export-menu {
+            position: relative;
+            flex-shrink: 0;
         }
-        .backup-indicator {
+        .export-menu-panel {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            z-index: 60;
+            min-width: 190px;
+            padding: 6px;
+            background: #FFFFFF;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-pop);
+        }
+        .export-menu-panel[hidden] { display: none; }
+        .export-menu-panel button {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: #FFFFFF;
-            border-radius: 999px;
-            font-size: 10px;
+            gap: 9px;
+            width: 100%;
+            padding: 9px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
             font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            white-space: nowrap;
+            color: #334155;
+            text-align: left;
+        }
+        .export-menu-panel button:hover { background: #F4F7FA; }
+        .export-menu.open #export-menu-btn {
+            background: #F8FAFC;
+            border-color: #C8D3E2;
         }
         .export-pdf-btn {
             height: 34px;
@@ -5139,14 +5164,7 @@
                 font-size: 20px !important;
                 line-height: 1.15;
             }
-            #sync-status {
-                display: none !important;
-            }
             #backup-status {
-                display: none !important;
-            }
-            #export-pdf-btn,
-            #export-excel-btn {
                 display: none !important;
             }
             .card-premium:not(.overflow-hidden) {
@@ -6992,10 +7010,10 @@
 
     <!-- MAIN -->
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
-        <header class="h-24 bg-white border-b px-10 flex items-center shrink-0">
-            <div class="flex items-center gap-6">
-                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Relatórios financeiros</h2>
-                <div id="sync-status" class="sync-indicator">
+        <header class="h-16 bg-white border-b px-6 lg:px-10 flex items-center shrink-0">
+            <div class="flex items-center gap-3 w-full min-w-0">
+                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight truncate mr-auto">Relatórios financeiros</h2>
+                <div id="sync-status" class="sync-indicator" role="status">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
                 </div>
@@ -7006,14 +7024,23 @@
                 <button id="toggle-values-btn" class="toggle-values-btn" onclick="toggleValuesHidden()" aria-label="Esconder valores" aria-pressed="false" title="Esconder valores">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                 </button>
-                <button id="export-excel-btn" class="export-pdf-btn export-excel-btn" onclick="exportCurrentReportExcel()">
-                    <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
-                    <span>Exportar Excel</span>
-                </button>
-                <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
-                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                    <span>Exportar PDF</span>
-                </button>
+                <div class="export-menu" id="export-menu">
+                    <button type="button" id="export-menu-btn" class="export-pdf-btn" onclick="toggleExportMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="export-menu-panel">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Exportar</span>
+                        <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </button>
+                    <div id="export-menu-panel" class="export-menu-panel" hidden>
+                        <button id="export-excel-btn" type="button" onclick="toggleExportMenu();exportCurrentReportExcel()">
+                            <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+                            <span>Planilha Excel</span>
+                        </button>
+                        <button id="export-pdf-btn" type="button" onclick="toggleExportMenu();exportCurrentReportPDF()">
+                            <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                            <span>Relatório PDF</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -9097,6 +9124,25 @@
                 text.innerText = 'Offline';
             }
         }
+
+        function toggleExportMenu(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('export-menu');
+            const panel = document.getElementById('export-menu-panel');
+            const btn = document.getElementById('export-menu-btn');
+            if (!menu || !panel) return;
+            const willOpen = panel.hidden;
+            panel.hidden = !willOpen;
+            menu.classList.toggle('open', willOpen);
+            if (btn) btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('export-menu');
+            const panel = document.getElementById('export-menu-panel');
+            if (!menu || !panel || panel.hidden) return;
+            if (!menu.contains(event.target)) toggleExportMenu();
+        });
 
         function refreshLucideIcons() {
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
