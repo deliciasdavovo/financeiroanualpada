@@ -14067,69 +14067,21 @@
                 : 'Ocultar lançamentos do dia';
         }
 
-        function renderHomeTab() {
-            const host = document.getElementById('home-content');
-            if (!host) return;
-
+        // Monta os cards agrupados por dia no mesmo design da tela de início.
+        // Recebe lançamentos já ordenados por data e devolve o HTML das linhas de dia.
+        function buildHomeStyleDayCards(entries) {
             const today = getTodayIsoDate();
-            const currentMonthPrefix = getCurrentMonthIso();
-
-            // Dados do mês atual
-            const monthEntries = getAnalyticalEntries(state.entries)
-                .filter(e => e.date && e.date.startsWith(currentMonthPrefix));
-            const realizedEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'REALIZADO');
-            const pendingMonthEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'PENDENTE');
-
-            const incR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const expR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const balR = incR - expR;
-            const incP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const expP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-
-            // Comparação com mês anterior
-            const prevPrefix = getMonthPrefixShift(currentMonthPrefix, -1);
-            const prevRealized = getAnalyticalEntries(state.entries)
-                .filter(e => e.date && e.date.startsWith(prevPrefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
-            const prevInc = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const prevExp = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const prevBal = prevInc - prevExp;
-
-            // Lançamentos pendentes futuros (hoje + 14 dias)
             const todayDate = parseIsoDateLocal(today) || new Date();
-            const futureDate = addLocalDays(todayDate, 14);
-            const futureEnd = formatLocalDate(futureDate);
             const tomorrowIso = formatLocalDate(addLocalDays(todayDate, 1));
 
-            const futurePending = getAnalyticalEntries(state.entries)
-                .filter(e => {
-                    const d = String(e.date || '');
-                    return String(e.status || '').toUpperCase() === 'PENDENTE' && d >= today && d <= futureEnd;
-                })
-                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
-
-            // Agrupa por dia para projeção
             const dayMap = new Map();
-            futurePending.forEach(e => {
+            (entries || []).forEach(e => {
                 const key = String(e.date || '');
                 if (!dayMap.has(key)) dayMap.set(key, []);
                 dayMap.get(key).push(e);
             });
 
-            // Nome do mês
-            const [yearLabel, monthLabel] = currentMonthPrefix.split('-');
-            const monthName = Number(monthLabel)
-                ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-                : currentMonthPrefix;
-
-            // Delta vs mês anterior
-            let balDeltaHtml = '';
-            if (prevRealized.length > 0 && prevBal !== 0) {
-                const balDelta = ((balR - prevBal) / Math.abs(prevBal)) * 100;
-                const dir = balDelta > 0.05 ? 'good' : (balDelta < -0.05 ? 'bad' : 'flat');
-                balDeltaHtml = `<span class="home-kpi-delta ${dir}">${balDelta > 0 ? '▲' : (balDelta < 0 ? '▼' : '–')} ${Math.abs(balDelta).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
-            }
-
-            const dayRowsHtml = Array.from(dayMap.entries()).map(([dateIso, dayEntries]) => {
+            return Array.from(dayMap.entries()).map(([dateIso, dayEntries]) => {
                 const dayIn  = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b)  => a + (Number(b.amount) || 0), 0);
                 const dayOut = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
                 const dayNet = dayIn - dayOut;
@@ -14141,9 +14093,7 @@
                 const dateLabel = dateIso === today ? 'Hoje'
                     : dateIso === tomorrowIso ? 'Amanhã'
                     : dateShort;
-                const weekdayLine = dateIso === today
-                    ? `${weekday} · ${dateShort}`
-                    : dateIso === tomorrowIso
+                const weekdayLine = (dateIso === today || dateIso === tomorrowIso)
                     ? `${weekday} · ${dateShort}`
                     : weekday;
 
@@ -14188,6 +14138,62 @@
                     <div class="home-proj-items is-collapsed">${itemsHtml}</div>
                 </div>`;
             }).join('');
+        }
+
+        function renderHomeTab() {
+            const host = document.getElementById('home-content');
+            if (!host) return;
+
+            const today = getTodayIsoDate();
+            const currentMonthPrefix = getCurrentMonthIso();
+
+            // Dados do mês atual
+            const monthEntries = getAnalyticalEntries(state.entries)
+                .filter(e => e.date && e.date.startsWith(currentMonthPrefix));
+            const realizedEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'REALIZADO');
+            const pendingMonthEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'PENDENTE');
+
+            const incR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const expR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const balR = incR - expR;
+            const incP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const expP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+
+            // Comparação com mês anterior
+            const prevPrefix = getMonthPrefixShift(currentMonthPrefix, -1);
+            const prevRealized = getAnalyticalEntries(state.entries)
+                .filter(e => e.date && e.date.startsWith(prevPrefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
+            const prevInc = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const prevExp = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+            const prevBal = prevInc - prevExp;
+
+            // Lançamentos pendentes futuros (hoje + 14 dias)
+            const todayDate = parseIsoDateLocal(today) || new Date();
+            const futureDate = addLocalDays(todayDate, 14);
+            const futureEnd = formatLocalDate(futureDate);
+
+            const futurePending = getAnalyticalEntries(state.entries)
+                .filter(e => {
+                    const d = String(e.date || '');
+                    return String(e.status || '').toUpperCase() === 'PENDENTE' && d >= today && d <= futureEnd;
+                })
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+
+            // Nome do mês
+            const [yearLabel, monthLabel] = currentMonthPrefix.split('-');
+            const monthName = Number(monthLabel)
+                ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                : currentMonthPrefix;
+
+            // Delta vs mês anterior
+            let balDeltaHtml = '';
+            if (prevRealized.length > 0 && prevBal !== 0) {
+                const balDelta = ((balR - prevBal) / Math.abs(prevBal)) * 100;
+                const dir = balDelta > 0.05 ? 'good' : (balDelta < -0.05 ? 'bad' : 'flat');
+                balDeltaHtml = `<span class="home-kpi-delta ${dir}">${balDelta > 0 ? '▲' : (balDelta < 0 ? '▼' : '–')} ${Math.abs(balDelta).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
+            }
+
+            const dayRowsHtml = buildHomeStyleDayCards(futurePending);
 
             // Alertas rápidos removidos a pedido
             const alertsHtml = '';
@@ -15806,20 +15812,11 @@
                             </tbody>
                         </table>
                     </div>`;
-                    const itemsHtml = entries.map(entry => {
-                        const flow = normalizeFlowType(entry.type);
-                        const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
-                        const meta = [getAccountNameById(entry.accountId), entry.description || ''].filter(Boolean).join(' • ');
-                        return `<article class="projection-list-item">
-                            <span class="projection-list-date">${formatDateBRV2(entry.date)}</span>
-                            <div>
-                                <p class="projection-list-name">${escapeHtml(destination)}</p>
-                                <p class="projection-list-meta">${escapeHtml(meta)}</p>
-                            </div>
-                            <strong class="projection-list-value ${flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text'}">${flow === FLOW_IN ? '+' : '-'} ${formatBRL(Number(entry.amount) || 0)}</strong>
-                        </article>`;
-                    }).join('');
-                    listEl.innerHTML = tableHtml + itemsHtml;
+                    const dayCardsHtml = buildHomeStyleDayCards(entries);
+                    // No agrupamento por dia (padrão, igual à tela de início) mostramos apenas
+                    // os cards por dia. Em semana/mês mantemos a tabela-resumo por período.
+                    const summaryTableHtml = projectionGranularity === 'day' ? '' : tableHtml;
+                    listEl.innerHTML = summaryTableHtml + `<div class="home-proj-list">${dayCardsHtml}</div>`;
                 }
             }
         }
