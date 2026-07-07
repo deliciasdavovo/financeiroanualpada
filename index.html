@@ -7168,6 +7168,43 @@
         .horiz-delta-flat { color: #94A3B8; }
         .horiz-pct-small { font-size: 11px; color: #94A3B8; display: block; }
         .horiz-empty { text-align: center; padding: 24px; color: #94A3B8; font-size: 13px; font-weight: 700; }
+
+        /* ===== RELATÓRIO ANUAL — DRE GERENCIAL (meses em colunas, hierarquia, pouco negrito) ===== */
+        .annual-dre-section { border: 1px solid #E2E8F0; border-radius: 20px; overflow: hidden; background: #fff; }
+        .annual-dre-head { padding: 18px 22px 14px; border-bottom: 1px solid #EEF2F6; background: #F8FAFC; }
+        .annual-dre-head h4 { font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; }
+        .annual-dre-head p { font-size: 12px; color: #64748B; margin: 3px 0 0; }
+        .annual-dre-scroll { overflow-x: auto; }
+        .annual-dre-table { border-collapse: collapse; font-size: 12.5px; width: 100%; min-width: 960px; }
+        .annual-dre-table th, .annual-dre-table td { white-space: nowrap; }
+        .annual-dre-table thead th { position: sticky; top: 0; z-index: 2; background: #FAFBFC; font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #94A3B8; padding: 11px 14px; border-bottom: 1px solid #E2E8F0; text-align: right; }
+        .annual-dre-table thead th.adre-col-label { text-align: left; left: 0; z-index: 4; }
+        .annual-dre-table thead th.adre-col-total { border-left: 1px solid #E2E8F0; color: #64748B; }
+        .annual-dre-table tbody td { padding: 8px 14px; text-align: right; color: #334155; border-bottom: 1px solid #F4F6F9; font-variant-numeric: tabular-nums; font-weight: 400; }
+        .annual-dre-table td.adre-label { position: sticky; left: 0; z-index: 1; background: #fff; text-align: left; color: #334155; font-weight: 500; }
+        .annual-dre-table td.adre-total { font-weight: 600; color: #1E293B; border-left: 1px solid #EEF2F6; }
+        .annual-dre-table tbody tr:hover td { background: #F8FAFC; }
+        .annual-dre-table tbody tr:hover td.adre-label { background: #F8FAFC; }
+        /* cabeçalho de grupo (Receita, Custos, Despesas...) */
+        .annual-dre-table tr.adre-group td { background: #FAFBFC; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: #94A3B8; font-weight: 600; padding-top: 13px; padding-bottom: 4px; border-bottom-color: #EEF2F6; }
+        .annual-dre-table tr.adre-group td.adre-label { background: #FAFBFC; }
+        /* item comum (recuo leve, sem negrito) */
+        .annual-dre-table tr.adre-item td.adre-label { padding-left: 30px; color: #475569; font-weight: 400; }
+        /* subtotais (Receita líquida, Margem bruta) */
+        .annual-dre-table tr.adre-subtotal td { background: #F1F5F9; font-weight: 600; color: #0F172A; border-top: 1px solid #E7ECF2; border-bottom: 1px solid #E7ECF2; }
+        .annual-dre-table tr.adre-subtotal td.adre-label { background: #F1F5F9; font-weight: 600; }
+        /* resultado operacional */
+        .annual-dre-table tr.adre-result td { background: #F0F6FF; font-weight: 600; color: #0F172A; border-top: 1px solid #DBEAFE; border-bottom: 1px solid #DBEAFE; }
+        .annual-dre-table tr.adre-result td.adre-label { background: #F0F6FF; }
+        /* lucro gerencial */
+        .annual-dre-table tr.adre-lucro td { background: #0F7A5C; color: #fff; font-weight: 600; }
+        .annual-dre-table tr.adre-lucro td.adre-label { background: #0F7A5C; color: #fff; }
+        .annual-dre-table tr.adre-lucro:hover td { background: #0F7A5C; }
+        .annual-dre-table .adre-pos { color: #0F7A5C; }
+        .annual-dre-table .adre-neg { color: #B23A3A; }
+        .annual-dre-table .adre-zero { color: #CBD5E1; }
+        .annual-dre-note { font-size: 11px; color: #94A3B8; padding: 10px 22px 14px; margin: 0; }
+        @media (max-width: 640px) { .annual-dre-table { font-size: 12px; } .annual-dre-table tbody td, .annual-dre-table thead th { padding: 7px 11px; } }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -7647,6 +7684,10 @@
                     <article class="reports-summary-card avg"><span><i data-lucide="calendar-range" class="w-4 h-4"></i></span><p>Média mensal</p><strong id="reports-annual-avg">R$ 0,00</strong></article>
                 </div>
                 <div class="card-premium p-10 h-[450px] reports-chart-card"><div class="reports-card-head"><div><h4>Gráfico anual</h4><p>Comparação mês a mês de entradas e saídas.</p></div></div><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
+
+                <!-- DRE Gerencial Anual - meses em colunas com hierarquia -->
+                <section id="annual-dre-section" class="annual-dre-section"></section>
+
                 <div class="card-premium overflow-hidden reports-legacy-annual-table hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="annual-main-table" class="w-full text-left">
@@ -15367,8 +15408,116 @@
                 window.aChart.update();
             }
             const yearEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`));
+            renderAnnualDRE(year);
             renderAnnualReportExtras(year, data, yearEntries);
             renderAnnualTemporalComparison(year);
+        }
+
+        // Calcula os itens da DRE gerencial de um único mês (mesma lógica da DRE mensal).
+        function computeMonthDRE(mEntries) {
+            const realized  = (mEntries || []).filter(e => e.status === 'REALIZADO');
+            const opEntries  = realized.filter(isOperacional);
+            const finEntries = realized.filter(isFinanceiro);
+
+            const receitaBruta = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const deducoes = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const receitaLiquida = receitaBruta - deducoes;
+            const cmv = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'cmv').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const margemBruta = receitaLiquida - cmv;
+
+            const expGroups = {};
+            opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
+                const gk = classifyDreGroup(e);
+                expGroups[gk] = (expGroups[gk] || 0) + (Number(e.amount) || 0);
+            });
+            const totalOpExp = Object.values(expGroups).reduce((a,b)=>a+b, 0);
+            const resultadoOp = margemBruta - totalOpExp;
+
+            const finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const lucroGerencial = resultadoOp - finExp + finInc;
+
+            return { receitaBruta, deducoes, receitaLiquida, cmv, margemBruta, expGroups, resultadoOp, finExp, finInc, lucroGerencial };
+        }
+
+        // DRE gerencial anual: uma linha por conta, uma coluna por mês + coluna Ano.
+        function renderAnnualDRE(year) {
+            const host = document.getElementById('annual-dre-section');
+            if (!host) return;
+
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const analytical = getAnalyticalEntries(state.entries);
+            const dres = [];
+            for (let m = 0; m < 12; m++) {
+                const prefix = `${year}-${String(m + 1).padStart(2, '0')}`;
+                const mEntries = analytical.filter(e => e.date && e.date.startsWith(prefix));
+                dres.push(computeMonthDRE(mEntries));
+            }
+
+            const hasAny = dres.some(d => d.receitaBruta || d.cmv || d.resultadoOp || d.finExp || d.finInc || Object.keys(d.expGroups).length);
+            if (!hasAny) {
+                host.innerHTML = `<div class="annual-dre-head"><h4>DRE gerencial anual — ${year}</h4><p>Sem movimentos operacionais ou financeiros realizados neste ano.</p></div>`;
+                return;
+            }
+
+            const fmt = (v) => v === 0 ? '<span class="adre-zero">–</span>' : formatBRLNoCents(v);
+            const sum = (getter) => dres.reduce((a, d) => a + getter(d), 0);
+            const buildRow = (label, getter, { cls = 'adre-item', prefix = '', color = false } = {}) => {
+                const cells = dres.map(d => {
+                    const v = getter(d);
+                    const c = color && v !== 0 ? (v > 0 ? ' adre-pos' : ' adre-neg') : '';
+                    return `<td class="${c.trim()}">${fmt(v)}</td>`;
+                }).join('');
+                const total = sum(getter);
+                const tc = color && total !== 0 ? (total > 0 ? ' adre-pos' : ' adre-neg') : '';
+                return `<tr class="${cls}"><td class="adre-label">${prefix}${label}</td>${cells}<td class="adre-total${tc}">${fmt(total)}</td></tr>`;
+            };
+            const groupRow = (label) => `<tr class="adre-group"><td class="adre-label">${label}</td><td colspan="13"></td></tr>`;
+
+            const expGroupOrder = ['equipe', 'fixas', 'manutencao', 'administrativo', 'marketing', 'outras'];
+            const expGroupLabels = { equipe: 'Equipe', fixas: 'Despesas fixas', manutencao: 'Manutenção', administrativo: 'Administrativo', marketing: 'Marketing', outras: 'Outras despesas' };
+            const activeExpGroups = expGroupOrder.filter(gk => dres.some(d => (d.expGroups[gk] || 0) > 0));
+            const anyDeducoes = dres.some(d => d.deducoes > 0);
+            const anyFinExp = dres.some(d => d.finExp > 0);
+            const anyFinInc = dres.some(d => d.finInc > 0);
+
+            let rows = '';
+            rows += groupRow('Receita');
+            rows += buildRow('Receita bruta', d => d.receitaBruta, { prefix: '(+) ' });
+            if (anyDeducoes) rows += buildRow('Deduções da receita', d => d.deducoes, { prefix: '(–) ' });
+            rows += buildRow('Receita líquida', d => d.receitaLiquida, { cls: 'adre-subtotal' });
+
+            rows += groupRow('Custos');
+            rows += buildRow('CMV / Custos de produção', d => d.cmv, { prefix: '(–) ' });
+            rows += buildRow('Margem bruta', d => d.margemBruta, { cls: 'adre-subtotal' });
+
+            rows += groupRow('Despesas operacionais');
+            activeExpGroups.forEach(gk => {
+                rows += buildRow(expGroupLabels[gk] || gk, d => d.expGroups[gk] || 0, { prefix: '(–) ' });
+            });
+            rows += buildRow('Resultado operacional', d => d.resultadoOp, { cls: 'adre-result', color: true });
+
+            if (anyFinExp || anyFinInc) {
+                rows += groupRow('Financeiro');
+                if (anyFinExp) rows += buildRow('Juros e despesas financeiras', d => d.finExp, { prefix: '(–) ' });
+                if (anyFinInc) rows += buildRow('Receitas financeiras', d => d.finInc, { prefix: '(+) ' });
+            }
+            rows += buildRow('Lucro gerencial', d => d.lucroGerencial, { cls: 'adre-lucro' });
+
+            const headCells = monthNames.map(mn => `<th>${mn}</th>`).join('');
+            host.innerHTML = `
+                <div class="annual-dre-head">
+                    <h4>DRE gerencial anual — ${year}</h4>
+                    <p>Resultado mês a mês dos movimentos realizados. A coluna "Ano" soma os doze meses.</p>
+                </div>
+                <div class="annual-dre-scroll custom-scrollbar table-mobile-scroll">
+                    <table class="annual-dre-table">
+                        <thead><tr><th class="adre-col-label">Descrição</th>${headCells}<th class="adre-col-total">Ano</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+                <p class="annual-dre-note">* Não inclui sócios, investimentos e transferências. Classifique o "Tipo de movimento" nos lançamentos para ajustar cada linha.</p>
+            `;
         }
         function formatVariation(current, prev) {
             if (!prev) return '-';
