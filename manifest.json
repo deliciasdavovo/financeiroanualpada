@@ -6,7 +6,7 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#0C5C38",
-  "theme_color": "#0C5C38",
+  "theme_color": "#1F7A5C",
   "lang": "pt-BR",
   "orientation": "portrait-primary",
   "categories": ["finance", "business"],
