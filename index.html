@@ -4829,38 +4829,46 @@
             border-radius: 10px;
             background: #F8FAFF;
         }
+        /* Resumo do filtro: faixa horizontal única, sem cards empilhados */
         .entries-filter-report {
             width: 100%;
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
+            gap: 0;
             margin-top: 2px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-md);
+            background: #FFFFFF;
+            overflow: hidden;
         }
         .entries-filter-report-card {
-            border: 1px solid #E5ECF4;
-            border-radius: 14px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
-            padding: 14px 16px;
+            border: none;
+            border-radius: 0;
+            background: none;
+            padding: 12px 16px;
+        }
+        .entries-filter-report-card + .entries-filter-report-card {
+            border-left: 1px solid var(--divider);
         }
         .entries-filter-report-label {
             font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.08em;
+            font-weight: 800;
+            letter-spacing: 0.07em;
             text-transform: uppercase;
-            color: #64748B;
+            color: var(--text-muted);
         }
         .entries-filter-report-value {
-            margin-top: 8px;
+            margin-top: 6px;
             font-size: var(--num-md);
             line-height: 1;
             font-weight: 800;
             letter-spacing: -0.02em;
         }
         .entries-filter-report-note {
-            margin-top: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94A3B8;
+            margin-top: 5px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #A6B0BD;
         }
         @media (max-width: 1400px) {
             .entries-filters-grid {
@@ -4877,11 +4885,21 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Alças de arrasto e ações da linha aparecem no hover — menos ruído em repouso */
         .entry-destination-panel .recon-fill-handle {
-            opacity: 0.35;
+            opacity: 0;
             transition: opacity var(--dur-fast) var(--ease-premium);
         }
-        .entry-destination-panel:hover .recon-fill-handle {
+        .entry-destination-panel:hover .recon-fill-handle,
+        .entry-destination-panel:focus-within .recon-fill-handle {
+            opacity: 0.85;
+        }
+        #entries-table .entry-actions-wrap .entry-action-btn {
+            opacity: 0.3;
+            transition: opacity var(--dur-fast) var(--ease-premium);
+        }
+        #entries-table tr:hover .entry-actions-wrap .entry-action-btn,
+        #entries-table tr:focus-within .entry-actions-wrap .entry-action-btn {
             opacity: 1;
         }
         #entries-pagination button:disabled {
@@ -7097,8 +7115,7 @@
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top">
                         <div>
-                            <p class="entries-toolbar-title">Central de Lançamentos</p>
-                            <p class="entries-toolbar-sub">Use ações rápidas para filtrar e revisar mais rápido.</p>
+                            <p class="entries-toolbar-title">Lançamentos</p>
                         </div>
                         <div class="entries-quick-actions" role="group" aria-label="Ações rápidas">
                             <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
@@ -13641,7 +13658,7 @@
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text' : 'flow-expense-text') : 'text-slate-400';
-                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'badge-pendente';
                 const sign = isEntrada ? '+' : '−';
                 const destinationName = getDestinationById(e.destinationId)?.name || 'Sem destino';
                 const accountName = getAccountNameById(String((e.accountId ?? e.account_id) || '')) || 'Sem conta';
@@ -13780,7 +13797,7 @@
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
-                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'badge-pendente';
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
@@ -13804,7 +13821,6 @@
                         <div class="entry-cell-main center">
                             <span class="entry-date-main">${formatDateBRV2(e.date)}</span>
                         </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
@@ -13850,7 +13866,6 @@
                         <div class="entry-cell-main center">
                             <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
                         </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <div class="entry-cell-main center">
@@ -13864,7 +13879,6 @@
                                 </button>
                             </div>
                         </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                 </tr>`;
             }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
@@ -13986,7 +14000,7 @@
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
-                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'badge-pendente';
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
@@ -14008,7 +14022,6 @@
                         <div class="entry-cell-main center">
                             <span class="entry-date-main">${formatDateBRV2(e.date)}</span>
                         </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
@@ -14038,7 +14051,7 @@
                                     ${isDuplicate ? '<span class="dup-icon" title="Possivel duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
                                 </div>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
-                                    ...
+                                    <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
                             <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
@@ -14051,10 +14064,9 @@
                                     ${accountOptions.map((acc) => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '') === String(acc.id || '') ? 'selected' : ''}>${acc.name}</option>`).join('')}
                                 </select>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryAccountFill(${i}, event)" title="Arraste para copiar conta" aria-label="Arrastar para copiar conta">
-                                    ...
+                                    <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                            <p class="entry-destination-desc entry-cell-sub">Conta / banco</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
