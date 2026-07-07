@@ -7181,6 +7181,46 @@
         .horiz-delta-flat { color: #94A3B8; }
         .horiz-pct-small { font-size: 11px; color: #94A3B8; display: block; }
         .horiz-empty { text-align: center; padding: 24px; color: #94A3B8; font-size: 13px; font-weight: 700; }
+
+        /* ===== EXPLORADOR ANUAL — shell unificado (filtros + tabela + grafico conectados) ===== */
+        .annual-explorer-card { padding: 0 !important; overflow: hidden; }
+        .annual-explorer-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 22px; border-bottom: 1px solid #EEF2F6; background: #FAFBFC; }
+        .annual-explorer-head-main { min-width: 0; }
+        .annual-explorer-title { font-size: 15px; font-weight: 700; color: #0F172A; margin: 0; }
+        .annual-explorer-summary { font-size: 11.5px; color: #64748B; margin: 3px 0 0; line-height: 1.45; max-width: 62ch; }
+        .annual-explorer-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        /* segmentado (Fluxo / Modo) */
+        .annual-seg { display: inline-flex; background: #EEF2F6; border: 1px solid #E2E8F0; border-radius: 10px; padding: 3px; gap: 2px; }
+        .annual-seg-btn { border: 0; background: transparent; color: #64748B; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 7px !important; cursor: pointer; white-space: nowrap; transition: color .15s, background .15s, box-shadow .15s; }
+        .annual-seg-btn:hover { color: #0F172A; }
+        .annual-seg-btn.active { background: #fff; color: #0F172A; box-shadow: 0 1px 2px rgba(15,23,42,.08); }
+        /* seletor de ano */
+        .annual-seg-select { display: inline-flex; align-items: center; gap: 7px; background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; padding: 0 8px 0 12px; height: 38px; }
+        .annual-seg-select-label { font-size: 10.5px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: .04em; }
+        .annual-seg-select select { border: 0; background: transparent; font-size: 12.5px; font-weight: 600; color: #0F172A; height: 36px; padding: 0 2px; cursor: pointer; }
+        .annual-seg-select select:disabled { color: #CBD5E1; cursor: not-allowed; }
+        /* botao mais filtros */
+        .annual-adv-toggle { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; height: 38px; padding: 0 12px; font-size: 12px; font-weight: 600; color: #475569; cursor: pointer; }
+        .annual-adv-toggle:hover { border-color: #CBD5E1; }
+        .annual-adv-toggle.active { background: #0F172A; color: #fff; border-color: #0F172A; }
+        .annual-adv-filters { padding: 16px 22px; border-bottom: 1px solid #EEF2F6; background: #fff; }
+        .annual-adv-filters[hidden] { display: none; }
+        .annual-adv-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+        @media (max-width: 900px) { .annual-adv-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+        @media (max-width: 560px) { .annual-adv-grid { grid-template-columns: 1fr; } .annual-explorer-controls { width: 100%; } }
+        /* secoes internas */
+        .annual-explorer-section { padding: 20px 22px; }
+        .annual-explorer-section + .annual-explorer-section { border-top: 1px solid #EEF2F6; }
+        .annual-explorer-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+        .annual-explorer-section-title { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #94A3B8; margin: 0; }
+        /* legenda custom do grafico */
+        .annual-chart-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+        .annual-legend-item { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 0; padding: 2px 0; font-size: 11.5px; font-weight: 500; color: #475569; cursor: pointer; user-select: none; }
+        .annual-legend-item.is-off { opacity: .38; }
+        .annual-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .annual-legend-val { font-weight: 600; color: #0F172A; font-variant-numeric: tabular-nums; }
+        .annual-chart-box { position: relative; }
+        .annual-compare-wrap { border: 1px solid #EEF2F6; border-radius: 14px; overflow: hidden; }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -7670,32 +7710,49 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-premium p-8 space-y-6 annual-supplier-compare-card">
-                    <div class="flex flex-wrap items-end justify-between gap-4">
-                        <div>
-                            <h4 class="text-sm font-black text-slate-900">Fornecedor mês a mês</h4>
-                            <p id="annual-temporal-summary" class="text-[11px] text-slate-500 mt-1">Escolha um destino/fornecedor para comparar janeiro, fevereiro, março e os demais meses.</p>
+                <div class="card-premium annual-explorer-card annual-supplier-compare-card">
+                    <!-- Cabeçalho + controles principais -->
+                    <div class="annual-explorer-head">
+                        <div class="annual-explorer-head-main">
+                            <h4 class="annual-explorer-title">Explorador anual</h4>
+                            <p id="annual-temporal-summary" class="annual-explorer-summary">Escolha um destino/fornecedor para comparar janeiro, fevereiro, março e os demais meses.</p>
                         </div>
-                        <div class="annual-filters-grid">
-                            <div class="annual-filter-item">
-                                <label class="label-mini" for="annual-temporal-flow">Fluxo</label>
-                                <select id="annual-temporal-flow">
-                                    <option value="TODOS">Entradas e Saídas</option>
-                                    <option value="SAÍDA">Saídas</option>
-                                    <option value="ENTRADA">Entradas</option>
-                                </select>
+                        <div class="annual-explorer-controls">
+                            <div class="annual-seg" role="group" aria-label="Fluxo">
+                                <button type="button" class="annual-seg-btn" data-seg="flow" data-val="TODOS" onclick="setAnnualFlowSeg('TODOS')">Tudo</button>
+                                <button type="button" class="annual-seg-btn" data-seg="flow" data-val="ENTRADA" onclick="setAnnualFlowSeg('ENTRADA')">Entradas</button>
+                                <button type="button" class="annual-seg-btn" data-seg="flow" data-val="SAÍDA" onclick="setAnnualFlowSeg('SAÍDA')">Saídas</button>
                             </div>
-                            <div class="annual-filter-item">
-                                <label class="label-mini" for="annual-temporal-mode">Modo</label>
-                                <select id="annual-temporal-mode">
-                                    <option value="MESES">Entre os meses do ano</option>
-                                    <option value="ANOS">Entre os anos</option>
-                                </select>
+                            <div class="annual-seg-select">
+                                <span class="annual-seg-select-label">Ano</span>
+                                <select id="annual-temporal-year" aria-label="Ano base"></select>
                             </div>
-                            <div class="annual-filter-item">
-                                <label class="label-mini" for="annual-temporal-year">Ano Base</label>
-                                <select id="annual-temporal-year"></select>
+                            <div class="annual-seg" role="group" aria-label="Modo de comparação">
+                                <button type="button" class="annual-seg-btn" data-seg="mode" data-val="MESES" onclick="setAnnualModeSeg('MESES')">Meses</button>
+                                <button type="button" class="annual-seg-btn" data-seg="mode" data-val="ANOS" onclick="setAnnualModeSeg('ANOS')">Anos</button>
                             </div>
+                            <button type="button" class="annual-adv-toggle" onclick="toggleAnnualAdvFilters()" aria-expanded="false" aria-controls="annual-adv-filters">
+                                <i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Mais filtros
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selects ocultos que preservam a lógica de Fluxo/Modo -->
+                    <div class="annual-hidden-controls" aria-hidden="true" style="display:none">
+                        <select id="annual-temporal-flow">
+                            <option value="TODOS">Entradas e Saídas</option>
+                            <option value="SAÍDA">Saídas</option>
+                            <option value="ENTRADA">Entradas</option>
+                        </select>
+                        <select id="annual-temporal-mode">
+                            <option value="MESES">Entre os meses do ano</option>
+                            <option value="ANOS">Entre os anos</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtros avançados (recolhíveis) -->
+                    <div id="annual-adv-filters" class="annual-adv-filters" hidden>
+                        <div class="annual-adv-grid">
                             <div class="annual-filter-item">
                                 <label class="label-mini" for="annual-nav-category">Categoria</label>
                                 <select id="annual-nav-category"></select>
@@ -7729,27 +7786,39 @@
                             </div>
                         </div>
                     </div>
-                    <div id="annual-hierarchy-detail"></div>
-                    <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
-                        <div class="xl:col-span-3 h-[520px]">
-                            <canvas id="chartAnnualTemporal"></canvas>
+
+                    <!-- Seção: tabela hierárquica (navegação por clique / breadcrumb) -->
+                    <div class="annual-explorer-section">
+                        <div id="annual-hierarchy-detail"></div>
+                    </div>
+
+                    <!-- Seção: gráfico + legenda + comparação por período -->
+                    <div class="annual-explorer-section">
+                        <div class="annual-explorer-section-head">
+                            <h5 class="annual-explorer-section-title">Comparação por período</h5>
+                            <div id="annual-chart-legend" class="annual-chart-legend"></div>
                         </div>
-                        <div class="xl:col-span-2 border border-slate-100 rounded-2xl overflow-hidden">
-                            <div class="table-mobile-scroll custom-scrollbar">
-                                <table id="annual-temporal-table" class="w-full text-left annual-compare-table">
-                                    <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
-                                        <tr>
-                                            <th class="px-4 py-3">Período</th>
-                                            <th class="px-4 py-3 text-right">Entradas</th>
-                                            <th class="px-4 py-3 text-right">Aporte de Capital</th>
-                                            <th class="px-4 py-3 text-right">Saídas</th>
-                                            <th class="px-4 py-3 text-right">Saldo</th>
-                                            <th class="px-4 py-3 text-right">Lançamentos</th>
-                                            <th class="px-4 py-3 text-right">Abrir</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                                </table>
+                        <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+                            <div class="xl:col-span-3 h-[420px] annual-chart-box">
+                                <canvas id="chartAnnualTemporal"></canvas>
+                            </div>
+                            <div class="xl:col-span-2 annual-compare-wrap">
+                                <div class="table-mobile-scroll custom-scrollbar">
+                                    <table id="annual-temporal-table" class="w-full text-left annual-compare-table">
+                                        <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
+                                            <tr>
+                                                <th class="px-4 py-3">Período</th>
+                                                <th class="px-4 py-3 text-right">Entradas</th>
+                                                <th class="px-4 py-3 text-right">Aporte de Capital</th>
+                                                <th class="px-4 py-3 text-right">Saídas</th>
+                                                <th class="px-4 py-3 text-right">Saldo</th>
+                                                <th class="px-4 py-3 text-right">Lançamentos</th>
+                                                <th class="px-4 py-3 text-right">Abrir</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -15413,6 +15482,57 @@
             renderEntries();
         }
 
+        // Controles segmentados de Fluxo/Modo: escrevem no <select> oculto e re-renderizam.
+        function setAnnualFlowSeg(value) {
+            const el = document.getElementById('annual-temporal-flow');
+            if (el) el.value = value;
+            annualTemporalFlow = value;
+            renderAnnualTemporalComparison(annualTemporalYear);
+        }
+        function setAnnualModeSeg(value) {
+            const el = document.getElementById('annual-temporal-mode');
+            if (el) el.value = value;
+            annualTemporalMode = value;
+            renderAnnualTemporalComparison(annualTemporalYear);
+        }
+        function toggleAnnualAdvFilters() {
+            const panel = document.getElementById('annual-adv-filters');
+            const btn = document.querySelector('.annual-adv-toggle');
+            if (!panel) return;
+            const willOpen = panel.hasAttribute('hidden');
+            if (willOpen) panel.removeAttribute('hidden'); else panel.setAttribute('hidden', '');
+            if (btn) {
+                btn.classList.toggle('active', willOpen);
+                btn.setAttribute('aria-expanded', String(willOpen));
+            }
+        }
+        function toggleAnnualLegend(index) {
+            const chart = window.aTemporalChart;
+            if (!chart || !chart.data.datasets[index]) return;
+            const meta = chart.getDatasetMeta(index);
+            meta.hidden = meta.hidden === null ? !chart.data.datasets[index].hidden : !meta.hidden;
+            chart.update();
+            const btn = document.querySelectorAll('#annual-chart-legend .annual-legend-item')[index];
+            if (btn) btn.classList.toggle('is-off', !!meta.hidden);
+        }
+        // Aplica o recorte de navegação (drill/breadcrumb) para que o gráfico acompanhe a tabela.
+        function scopeEntriesByAnnualHierarchy(entries) {
+            if (!annualHierarchyCategory && !annualHierarchySubCategory && !annualHierarchyDestination) return entries;
+            return (entries || []).filter(e => {
+                const { destination, subCategory, category } = getDestinationHierarchyById((e || {}).destinationId, e || {});
+                const cat = String((category || {}).name || 'Sem categoria');
+                const sub = String((subCategory || {}).name || 'Sem subcategoria');
+                const dst = String((destination || {}).name || 'Sem destino');
+                return (!annualHierarchyCategory || cat === annualHierarchyCategory)
+                    && (!annualHierarchySubCategory || sub === annualHierarchySubCategory)
+                    && (!annualHierarchyDestination || dst === annualHierarchyDestination);
+            });
+        }
+        function syncAnnualSegments() {
+            document.querySelectorAll('.annual-seg-btn[data-seg="flow"]').forEach(b => b.classList.toggle('active', b.dataset.val === annualTemporalFlow));
+            document.querySelectorAll('.annual-seg-btn[data-seg="mode"]').forEach(b => b.classList.toggle('active', b.dataset.val === annualTemporalMode));
+        }
+
         function renderAnnualTemporalComparison(year) {
             const flowEl = document.getElementById('annual-temporal-flow');
             const modeEl = document.getElementById('annual-temporal-mode');
@@ -15446,6 +15566,7 @@
             modeEl.value = annualTemporalMode;
             yearEl.value = String(annualTemporalYear);
             yearEl.disabled = annualTemporalMode === 'ANOS';
+            syncAnnualSegments();
 
             flowEl.onchange = () => { annualTemporalFlow = flowEl.value; renderAnnualTemporalComparison(year); };
             modeEl.onchange = () => { annualTemporalMode = modeEl.value; renderAnnualTemporalComparison(year); };
@@ -15536,6 +15657,8 @@
                 (!annualNavAccountId || String((e.accountId ?? e.account_id) || '') === String(annualNavAccountId)) &&
                 (!annualExcludedDestinationId || e.destinationId !== annualExcludedDestinationId)
             );
+            // O gráfico/comparação acompanham o drill (categoria › subcategoria › destino) da tabela.
+            const chartEntries = scopeEntriesByAnnualHierarchy(filtered);
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             let labels = [];
             let values = [];
@@ -15545,7 +15668,7 @@
                 labels = monthNames;
                 periods = monthNames.map((label, m) => {
                     const prefix = `${annualTemporalYear}-${String(m + 1).padStart(2, '0')}`;
-                    const monthEntries = filtered.filter(e => (e.date || '').startsWith(prefix));
+                    const monthEntries = chartEntries.filter(e => (e.date || '').startsWith(prefix));
                     const inTotal = monthEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && !isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
                     const capitalTotal = monthEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
                     const outTotal = monthEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_OUT ? acc + (Number(e.amount) || 0) : acc, 0);
@@ -15571,7 +15694,7 @@
                 labels = years.map(String);
                 periods = years.map(y => {
                     const prefix = `${y}-`;
-                    const yearEntries = filtered.filter(e => (e.date || '').startsWith(prefix));
+                    const yearEntries = chartEntries.filter(e => (e.date || '').startsWith(prefix));
                     const inTotal = yearEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && !isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
                     const capitalTotal = yearEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e) ? acc + (Number(e.amount) || 0) : acc, 0);
                     const outTotal = yearEntries.reduce((acc, e) => normalizeFlowType(e.type) === FLOW_OUT ? acc + (Number(e.amount) || 0) : acc, 0);
@@ -15605,7 +15728,7 @@
             ].filter(Boolean);
             const isCapitalView = annualTemporalFlow === 'ENTRADA' && (
                 selectedAnnualNames.some(isCapitalContributionName) ||
-                (filtered.length > 0 && filtered.every(isCapitalContributionEntry))
+                (chartEntries.length > 0 && chartEntries.every(isCapitalContributionEntry))
             );
             if(annualTemporalMode === 'MESES' && annualNavDestinationId) {
                 const supplierName = dstOptions.find(d => d.id === annualNavDestinationId)?.name || 'Fornecedor selecionado';
@@ -15617,8 +15740,10 @@
             if(annualExcludedDestinationId) summaryEl.innerText += ` Excluindo: ${dstOptions.find(d => d.id === annualExcludedDestinationId)?.name || ''}.`;
             renderAnnualHierarchyDetail(filtered);
 
+            const legendHost = document.getElementById('annual-chart-legend');
             if(periods.every(item => item.count === 0)) {
                 tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
+                if(legendHost) legendHost.innerHTML = '';
                 if(window.aTemporalChart) window.aTemporalChart.destroy();
                 return;
             }
@@ -15692,11 +15817,28 @@
                         x: { grid: { display: false } }
                     },
                     plugins: {
-                        legend: { display: isAllAnnualFlows },
+                        legend: { display: false },
                         tooltip: getReadableTooltipConfig((ctx) => formatBRL(ctx.raw || 0))
                     }
                 }
             });
+
+            if(legendHost) {
+                const legendItems = isAllAnnualFlows
+                    ? [
+                        { label: 'Entradas', color: '#149463', total: periods.reduce((acc, p) => acc + (p.inTotal || 0), 0) },
+                        { label: 'Aporte de capital', color: 'rgba(20, 148, 99, 0.45)', total: periods.reduce((acc, p) => acc + (p.capitalTotal || 0), 0) },
+                        { label: 'Saídas', color: '#B23A3A', total: periods.reduce((acc, p) => acc + (p.outTotal || 0), 0) }
+                    ]
+                    : [{
+                        label: annualTemporalFlow === 'ENTRADA' ? 'Entradas' : 'Saídas',
+                        color: isCapitalView ? '#8FD19E' : annualTemporalFlow === 'ENTRADA' ? '#0F8A67' : '#C94A34',
+                        total: periods.reduce((acc, p) => acc + Math.abs(Number(p.value) || 0), 0)
+                    }];
+                legendHost.innerHTML = legendItems.map((item, i) =>
+                    `<button type="button" class="annual-legend-item" onclick="toggleAnnualLegend(${i})"><span class="annual-legend-dot" style="background:${item.color}"></span>${item.label} <span class="annual-legend-val">${formatBRL(item.total)}</span></button>`
+                ).join('');
+            }
         }
 
         function setProjectionMode(mode) {
