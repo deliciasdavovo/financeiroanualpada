@@ -5889,12 +5889,44 @@
             align-items: center;
             justify-content: space-between;
             gap: 18px;
-            padding: 20px;
-            border: 1px solid #DFE7F1;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F6FAF8 48%, #F7F9FF 100%);
-            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
         }
+        /* Cabeçalho de seção compacto: título + meta + controles na mesma linha */
+        .reports-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+        }
+        .reports-section-title {
+            font-size: 16px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.01em;
+            color: var(--text-primary) !important;
+        }
+        .reports-section-meta {
+            margin-top: 2px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .reports-section-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .reports-section-controls select {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: var(--radius-sm);
+        }
+        .reports-head-hidden-meta { display: none !important; }
         .reports-eyebrow {
             font-size: 12px;
             font-weight: 800;
@@ -7240,10 +7272,7 @@
             <!-- RELATÓRIO MENSAL -->
             <div id="reports" class="tab-content reports-tab space-y-8">
                 <section class="reports-shell-head reports-shell-head-slim" aria-label="Tipo de relatório e período">
-                    <div>
-                        <h3 id="reports-title" class="sr-only">Relatórios financeiros</h3>
-                        <p class="reports-subtitle">Veja o mês ou o ano com a mesma leitura visual.</p>
-                    </div>
+                    <h3 id="reports-title" class="sr-only">Relatórios financeiros</h3>
                     <div class="pill-segment" role="tablist" aria-label="Tipo de relatório">
                         <button type="button" id="reports-mode-monthly" class="pill-segment-btn" onclick="setReportsMode('monthly')" aria-selected="false">
                             <i data-lucide="calendar-days" class="w-4 h-4"></i>Mensal
@@ -7255,31 +7284,22 @@
                 </section>
 
                 <div id="reports-monthly-panel" class="reports-mode-panel space-y-8">
-                <section class="monthly-ios-hero" aria-labelledby="monthly-ios-title">
+                <section class="reports-section-head" aria-labelledby="monthly-ios-title">
                     <div>
-                        <div class="monthly-ios-title-row">
-                            <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="calendar-check-2" class="w-5 h-5"></i></span>
-                            <div>
-                                <p class="monthly-ios-eyebrow">Visão mensal</p>
-                                <h4 id="monthly-ios-title" class="monthly-ios-title">Mês selecionado</h4>
-                                <p id="monthly-period-status" class="monthly-ios-sub">Dados do período ativo.</p>
-                            </div>
-                        </div>
-                        <div class="monthly-ios-meta">
-                            <span id="monthly-record-count" class="monthly-ios-pill"><i data-lucide="list-checks" class="w-3.5 h-3.5"></i>Nenhum lançamento</span>
-                            <span id="monthly-balance-mood" class="monthly-ios-pill"><i data-lucide="activity" class="w-3.5 h-3.5"></i>Saldo em leitura</span>
-                        </div>
+                        <h4 id="monthly-ios-title" class="reports-section-title">Mês selecionado</h4>
+                        <p id="monthly-period-status" class="reports-section-meta">Dados do período ativo.</p>
                     </div>
-                    <div class="monthly-period-panel">
-                        <label class="label-mini" for="monthly-filter-month">Período do relatório</label>
-                        <div class="monthly-period-grid">
-                            <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
-                            <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
-                        </div>
-                        <p id="monthly-period-caption" class="monthly-period-caption">Use mês e ano para trocar o período.</p>
-                        <div id="reports-month-chips" class="reports-month-chips" aria-label="Meses do ano"></div>
-                        <input type="hidden" id="monthly-filter">
+                    <div class="reports-section-controls">
+                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
+                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
                     </div>
+                    <div id="reports-month-chips" class="reports-month-chips" aria-label="Meses do ano" style="width:100%"></div>
+                    <div class="reports-head-hidden-meta" hidden>
+                        <span id="monthly-record-count" class="monthly-ios-pill"></span>
+                        <span id="monthly-balance-mood" class="monthly-ios-pill"></span>
+                        <p id="monthly-period-caption" class="monthly-period-caption"></p>
+                    </div>
+                    <input type="hidden" id="monthly-filter">
                 </section>
 
                 <div class="monthly-kpi-grid">
@@ -7469,21 +7489,13 @@
 
             <!-- RELATÓRIO ANUAL -->
                 <div id="reports-annual-panel" class="reports-mode-panel active space-y-8">
-                <section class="monthly-ios-hero reports-annual-hero" aria-labelledby="reports-annual-title">
+                <section class="reports-section-head" aria-labelledby="reports-annual-title">
                     <div>
-                        <div class="monthly-ios-title-row">
-                            <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></span>
-                            <div>
-                                <p class="monthly-ios-eyebrow">Visão anual</p>
-                                <h4 id="reports-annual-title" class="monthly-ios-title">Visão mês a mês do ano</h4>
-                                <p class="monthly-ios-sub">Acompanhe entradas, saídas, resultado anual e os meses que mais puxaram o caixa.</p>
-                            </div>
-                        </div>
+                        <h4 id="reports-annual-title" class="reports-section-title">Visão anual</h4>
+                        <p id="reports-annual-caption" class="reports-section-meta">Selecione um ano para atualizar os relatórios.</p>
                     </div>
-                    <div class="monthly-period-panel">
-                        <label class="label-mini" for="reports-annual-year">Ano do relatório</label>
+                    <div class="reports-section-controls">
                         <select id="reports-annual-year" onchange="setAnnualReportYear(this.value)" aria-label="Ano do relatório anual"></select>
-                        <p id="reports-annual-caption" class="monthly-period-caption">Selecione um ano para atualizar os relatórios.</p>
                     </div>
                 </section>
                 <div class="reports-summary-grid">
@@ -7607,11 +7619,9 @@
 
                 <!-- Seção: Projeção -->
                 <div id="plan-projection-section" class="plan-section space-y-8">
-                    <section class="reports-shell-head" aria-labelledby="projection-title">
+                    <section class="reports-section-head" aria-labelledby="projection-title">
                         <div>
-                            <p class="reports-eyebrow">Previsão financeira</p>
-                            <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
-                            <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
+                            <h3 id="projection-title" class="reports-section-title">Projeção financeira</h3>
                         </div>
                         <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
                             <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
@@ -7735,17 +7745,13 @@
                 <!-- Seção: Vendas -->
                 <div id="sales-treasury-section" class="plan-section space-y-8">
                 <div class="sales-report-shell">
-                    <div class="sales-report-hero">
-                        <div class="sales-report-title-wrap">
-                            <div class="sales-report-icon" aria-hidden="true"><i data-lucide="line-chart" class="w-5 h-5"></i></div>
-                            <div>
-                                <p class="sales-report-eyebrow">Relatório de vendas</p>
-                                <h4 class="sales-report-title">Visão clara do dia e do período</h4>
-                                <p class="sales-report-sub">Cadastre, revise e compare os fechamentos das unidades com leitura rápida de vendas, saídas e resultado.</p>
-                            </div>
+                    <div class="reports-section-head">
+                        <div>
+                            <h4 class="reports-section-title">Vendas</h4>
+                            <p class="reports-section-meta">Fechamentos das unidades por dia e período</p>
                         </div>
-                        <div class="sales-date-panel">
-                            <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
+                        <div class="reports-section-controls">
+                            <label class="label-mini" for="treasury-summary-date" style="margin:0">Dia</label>
                             <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
                         </div>
                     </div>
