@@ -6969,6 +6969,44 @@
         .goals-card-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; }
         .goals-card-remaining { font-size:11px; color:#94A3B8; }
 
+        /* ─── GOALS RANK LIST (estilo ranking) ─── */
+        .goals-rank-card { background:#fff; border-radius:16px; box-shadow:0 1px 4px 0 rgba(30,41,59,.07); padding:6px 6px; }
+        .goals-rank-list { display:flex; flex-direction:column; }
+        .goals-rank-row {
+            display:flex; align-items:center; gap:14px;
+            padding:12px 12px; border-radius:12px;
+            border-bottom:1px solid #F1F5F9;
+            cursor:pointer;
+            transition:background var(--dur-fast) var(--ease-premium);
+        }
+        .goals-rank-row:last-child { border-bottom:none; }
+        .goals-rank-row:hover { background:#F8FAFC; }
+        .goals-rank-num {
+            flex-shrink:0; width:26px; height:26px; border-radius:8px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:12px; font-weight:900; line-height:1;
+        }
+        .goals-rank-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:7px; }
+        .goals-rank-top { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
+        .goals-rank-name { font-size:13px; font-weight:800; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .goals-rank-name-wrap { display:flex; align-items:center; gap:7px; min-width:0; }
+        .goals-rank-type-badge { flex-shrink:0; font-size:9px; font-weight:800; border-radius:99px; padding:1px 6px; text-transform:uppercase; letter-spacing:.03em; }
+        .goals-rank-vals { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; text-align:right; }
+        .goals-rank-actual { font-size:14px; font-weight:900; line-height:1.1; font-variant-numeric:tabular-nums; }
+        .goals-rank-target { font-size:11px; font-weight:600; color:#94A3B8; line-height:1; font-variant-numeric:tabular-nums; }
+        .goals-rank-bar-track { height:8px; border-radius:99px; background:#F1F5F9; overflow:hidden; }
+        .goals-rank-bar-fill { height:100%; border-radius:99px; transition:width 700ms var(--ease-premium); }
+        .goals-rank-actions { flex-shrink:0; display:flex; gap:2px; opacity:.35; transition:opacity var(--dur-fast) var(--ease-premium); }
+        .goals-rank-row:hover .goals-rank-actions { opacity:1; }
+        .goals-rank-btn { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:7px; border:none; background:transparent; color:#94A3B8; cursor:pointer; transition:background var(--dur-fast) var(--ease-premium),color var(--dur-fast) var(--ease-premium); }
+        .goals-rank-btn:hover { background:#F1F5F9; color:#475569; }
+        .goals-rank-edit-btn:hover { background:#EEF2FF; color:#4F46E5; }
+        @media (max-width:640px) {
+            .goals-rank-actions { opacity:1; }
+            .goals-rank-row { gap:10px; padding:12px 8px; }
+            .goals-rank-name { max-width:120px; }
+        }
+
         /* ─── GOALS LAUNCHES (legacy, kept for reference) ─── */
         .goals-launches-date { padding: 10px 12px; white-space: nowrap; color: var(--text-secondary); font-size: 12px; }
         .goals-launches-desc { padding: 10px 12px; font-weight: 600; font-size: 13px; color: var(--text-primary); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -20918,11 +20956,10 @@
             const now = new Date();
             const pad = n => String(n).padStart(2, '0');
             const currentYYYYMM = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
-            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-            const mn = now.getMonth();
-            const monthLabel = `${monthNames[mn]}/${String(now.getFullYear()).slice(2)}`;
 
-            const cards = goalsData.map(goal => {
+            // Monta os dados de cada meta e ordena como um ranking (maior realizado primeiro),
+            // no mesmo estilo da lista de categorias do relatório.
+            const items = goalsData.map(goal => {
                 const prog = calcGoalProgress(goal, currentYYYYMM);
                 const sc = getGoalStatusStyle(prog.status, goal.type);
                 const name = getGoalHierarchyName(goal);
@@ -20930,42 +20967,42 @@
                 const typeColor = isEx ? '#B23A3A' : '#1F7A5C';
                 const typeLabel = isEx ? 'Despesa' : 'Receita';
                 const barPct = prog.rawPct > 0 ? Math.max(prog.pct, 2) : 0;
-                const goalId = goal.id;
+                return { goal, prog, sc, name, isEx, typeColor, typeLabel, barPct };
+            }).sort((a, b) => b.prog.actual - a.prog.actual);
 
+            const rows = items.map((it, idx) => {
+                const { goal, prog, sc, name, typeColor, typeLabel, barPct } = it;
+                const goalId = goal.id;
                 const hierarchyType = goal.hierarchyType;
                 const hierarchyId   = goal.hierarchyId;
                 const flowType      = goal.type;
+                const safeName = name.replace(/'/g, "\\'");
 
-                return `<div class="goals-card" style="border-top:3px solid ${sc.color}">
-                    <div class="goals-card-header">
-                        <div class="goals-card-title-wrap">
-                            <span class="goals-card-name">${name}</span>
-                            <span class="goals-card-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
+                return `<div class="goals-rank-row" onclick="goalsOpenDetail('${goalId}')">
+                    <div class="goals-rank-num" style="background:${sc.color}15;color:${sc.color}">${idx + 1}</div>
+                    <div class="goals-rank-body">
+                        <div class="goals-rank-top">
+                            <div class="goals-rank-name-wrap">
+                                <span class="goals-rank-name">${name}</span>
+                                <span class="goals-rank-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
+                            </div>
+                            <div class="goals-rank-vals">
+                                <span class="goals-rank-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
+                                <span class="goals-rank-target">${formatBRL(prog.target)}</span>
+                            </div>
                         </div>
-                        <div class="goals-card-actions">
-                            <button class="goals-card-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${name.replace(/'/g,"\\'")}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
-                            <button class="goals-card-btn" onclick="goalsOpenDetail('${goalId}')" title="Ver por mês"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i></button>
-                            <button class="goals-card-btn goals-card-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        <div class="goals-rank-bar-track">
+                            <div class="goals-rank-bar-fill" style="width:${barPct}%;background:${sc.color}"></div>
                         </div>
                     </div>
-                    <div class="goals-card-month">${monthLabel}</div>
-                    <div class="goals-card-amounts">
-                        <span class="goals-card-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
-                        <span class="goals-card-sep">/</span>
-                        <span class="goals-card-target">${formatBRL(prog.target)}</span>
-                        <span class="goals-status-pill goals-card-pill" style="background:${sc.color}20;color:${sc.color};border:1px solid ${sc.color}40">${Math.round(prog.rawPct)}%</span>
-                    </div>
-                    <div class="goal-progress-track goals-card-bar-track">
-                        <div class="goal-progress-fill" style="width:${barPct}%;background:${sc.color}"></div>
-                    </div>
-                    <div class="goals-card-footer">
-                        <span style="color:${sc.color};font-weight:700;font-size:11px">${sc.label}</span>
-                        ${prog.remaining > 0 ? `<span class="goals-card-remaining">${isEx ? 'Restam' : 'Faltam'} ${formatBRL(prog.remaining)}</span>` : ''}
+                    <div class="goals-rank-actions" onclick="event.stopPropagation()">
+                        <button class="goals-rank-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${safeName}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
+                        <button class="goals-rank-btn goals-rank-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
                     </div>
                 </div>`;
             }).join('');
 
-            el.innerHTML = `<div class="goals-cards-wrap">${cards}</div>`;
+            el.innerHTML = `<div class="goals-rank-card"><div class="goals-rank-list">${rows}</div></div>`;
             refreshLucideIcons();
         }
 
