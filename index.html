@@ -167,10 +167,6 @@
             --kpi-glow: 47, 79, 157;
             background: var(--bg-card);
         }
-        .kpi-card-forecast {
-            --kpi-glow: 214, 158, 46;
-            background: var(--bg-card);
-        }
         .kpi-card-header {
             display: flex;
             justify-content: space-between;
@@ -197,10 +193,6 @@
         .kpi-card-balance .kpi-icon {
             background: var(--bg-blue-soft);
             color: var(--primary-blue);
-        }
-        .kpi-card-forecast .kpi-icon {
-            background: #FFF3BF;
-            color: #9A6700;
         }
         .kpi-card .text-\[9px\].font-black {
             color: #4B5563 !important;
@@ -570,82 +562,6 @@
             line-height: 1.08;
             font-weight: 800 !important;
             letter-spacing: -0.02em;
-        }
-        .monthly-kpi-delta {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 9px;
-            padding: 3px 9px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 850;
-            letter-spacing: 0.01em;
-            line-height: 1;
-        }
-        .monthly-kpi-delta .kpi-delta-arrow {
-            font-size: 10px;
-            line-height: 1;
-        }
-        .monthly-kpi-delta .kpi-delta-ref {
-            font-weight: 700;
-            opacity: 0.7;
-        }
-        .monthly-kpi-delta.good {
-            background: rgba(31, 122, 92, 0.12);
-            color: #1F7A5C;
-        }
-        .monthly-kpi-delta.bad {
-            background: rgba(178, 58, 58, 0.12);
-            color: #B23A3A;
-        }
-        .monthly-kpi-delta.flat {
-            background: rgba(100, 116, 139, 0.14);
-            color: #64748B;
-        }
-        .monthly-kpi-secondary {
-            display: inline-flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            width: 100%;
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(148, 163, 184, 0.18);
-            font-size: 12px;
-            font-weight: 800;
-            color: #64748B;
-        }
-        .monthly-kpi-secondary strong {
-            color: #334155;
-            font-size: 14px;
-            font-weight: 900;
-            white-space: nowrap;
-        }
-        .monthly-kpi-mode-tag {
-            display: inline-flex;
-            align-items: center;
-            margin-top: 5px;
-            min-height: 24px;
-            padding: 0 9px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 850;
-        }
-        .monthly-kpi-mode-tag.realized {
-            background: #EAF0FF;
-            color: #244A94;
-        }
-        .monthly-kpi-mode-tag.forecast {
-            background: #FFF3BF;
-            color: #9A6700;
-        }
-        .monthly-kpi-compact-note {
-            margin-top: 10px;
-            font-size: 11px;
-            line-height: 1.35;
-            font-weight: 800;
-            color: #7A5A09;
         }
         .monthly-kpi-label {
             font-size: 11px;
@@ -5792,11 +5708,6 @@
             font-size: 28px !important;
             line-height: 1.08;
         }
-        #monthly #sum-inc-pend,
-        #monthly #sum-exp-pend {
-            font-size: 14px !important;
-            line-height: 1.15;
-        }
         #monthly .cash-projection-shell {
             border-radius: 18px;
         }
@@ -6136,7 +6047,7 @@
             margin-top: 22px !important;
         }
         .reports-tab .monthly-kpi-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 14px;
         }
         .reports-tab .monthly-ios-hero {
@@ -6656,7 +6567,7 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
             .reports-tab .monthly-kpi-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: 1fr;
                 gap: 10px;
             }
             .reports-tab .monthly-kpi-card {
@@ -7098,15 +7009,6 @@
         .mov-type-SOCIOS      { background: #FFF3CD; color: #92600A; }
         .mov-type-INVESTIMENTO{ background: #F0E6FF; color: #6B21A8; }
         .mov-type-TRANSFERENCIA{ background: #F1F5F9; color: #475569; }
-
-        /* Gerencial KPI row */
-        .monthly-gerencial-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-        @media (max-width: 1100px) { .monthly-gerencial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        @media (max-width: 640px)  { .monthly-gerencial-grid { grid-template-columns: 1fr; } }
-        .kpi-card-op   { background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border-color: #BBF7D0 !important; }
-        .kpi-card-lucro{ background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border-color: #BFDBFE !important; }
-        .kpi-card-nop  { background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%); border-color: #FED7AA !important; }
-        .kpi-card-cash { background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border-color: #E2E8F0 !important; }
 
         /* DRE */
         .dre-section { border: 1px solid #E2E8F0; border-radius: 20px; overflow: hidden; background: #fff; }
@@ -7581,11 +7483,6 @@
                             <span class="kpi-icon"><i data-lucide="trending-up" class="w-4 h-4"></i></span>
                         </div>
                         <p id="sum-inc-real" class="monthly-kpi-primary flow-income-text">R$ 0,00</p>
-                        <span id="kpi-delta-inc" class="monthly-kpi-delta" style="display:none"></span>
-                        <div class="monthly-kpi-secondary">
-                            <span>A receber</span>
-                            <strong id="sum-inc-pend">R$ 0,00</strong>
-                        </div>
                     </div>
                     <div class="card-premium kpi-card kpi-card-expense monthly-kpi-card">
                         <div class="kpi-card-header">
@@ -7593,78 +7490,13 @@
                             <span class="kpi-icon"><i data-lucide="trending-down" class="w-4 h-4"></i></span>
                         </div>
                         <p id="sum-exp-real" class="monthly-kpi-primary flow-expense-text">R$ 0,00</p>
-                        <span id="kpi-delta-exp" class="monthly-kpi-delta" style="display:none"></span>
-                        <div class="monthly-kpi-secondary">
-                            <span>A pagar</span>
-                            <strong id="sum-exp-pend">R$ 0,00</strong>
-                        </div>
                     </div>
                     <div class="card-premium kpi-card kpi-card-balance monthly-kpi-card">
                         <div class="kpi-card-header">
-                            <div>
-                                <p class="monthly-kpi-title">Saldo de caixa</p>
-                                <span class="monthly-kpi-mode-tag realized">Todos os movimentos</span>
-                            </div>
+                            <p class="monthly-kpi-title">Saldo de caixa</p>
                             <span class="kpi-icon"><i data-lucide="wallet" class="w-4 h-4"></i></span>
                         </div>
                         <p id="month-bal-r" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
-                        <span id="kpi-delta-bal" class="monthly-kpi-delta" style="display:none"></span>
-                    </div>
-                    <div class="card-premium kpi-card kpi-card-forecast monthly-kpi-card">
-                        <div class="kpi-card-header">
-                            <div>
-                                <p class="monthly-kpi-title">Resultado previsto</p>
-                                <span class="monthly-kpi-mode-tag forecast">Inclui pendências</span>
-                            </div>
-                            <span class="kpi-icon"><i data-lucide="activity" class="w-4 h-4"></i></span>
-                        </div>
-                        <p id="reports-month-result" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
-                        <span id="kpi-delta-result" class="monthly-kpi-delta" style="display:none"></span>
-                        <p id="reports-month-result-note" class="monthly-kpi-compact-note">Sem pendências no período.</p>
-                    </div>
-                </div>
-
-                <!-- Visão Gerencial - 4 cards -->
-                <div class="monthly-gerencial-grid">
-                    <div class="card-premium kpi-card kpi-card-cash monthly-kpi-card" style="min-height:130px">
-                        <div class="kpi-card-header">
-                            <div>
-                                <p class="monthly-kpi-title">Saldo de caixa</p>
-                                <span class="monthly-kpi-mode-tag realized">Caixa real</span>
-                            </div>
-                            <span class="kpi-icon"><i data-lucide="banknote" class="w-4 h-4"></i></span>
-                        </div>
-                        <p id="kpi-saldo-caixa" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
-                    </div>
-                    <div class="card-premium kpi-card kpi-card-op monthly-kpi-card" style="min-height:130px">
-                        <div class="kpi-card-header">
-                            <div>
-                                <p class="monthly-kpi-title">Resultado operacional</p>
-                                <span class="monthly-kpi-mode-tag" style="background:#D1FAE5;color:#065F46">Somente operacional</span>
-                            </div>
-                            <span class="kpi-icon"><i data-lucide="store" class="w-4 h-4"></i></span>
-                        </div>
-                        <p id="kpi-resultado-op" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
-                    </div>
-                    <div class="card-premium kpi-card kpi-card-lucro monthly-kpi-card" style="min-height:130px">
-                        <div class="kpi-card-header">
-                            <div>
-                                <p class="monthly-kpi-title">Lucro gerencial</p>
-                                <span class="monthly-kpi-mode-tag" style="background:#DBEAFE;color:#1E40AF">Op. + financeiro</span>
-                            </div>
-                            <span class="kpi-icon"><i data-lucide="chart-line" class="w-4 h-4"></i></span>
-                        </div>
-                        <p id="kpi-lucro-gerencial" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
-                    </div>
-                    <div class="card-premium kpi-card kpi-card-nop monthly-kpi-card" style="min-height:130px">
-                        <div class="kpi-card-header">
-                            <div>
-                                <p class="monthly-kpi-title">Mov. não operacional</p>
-                                <span class="monthly-kpi-mode-tag" style="background:#FFEDD5;color:#9A3412">Sócios/Invest./Transf.</span>
-                            </div>
-                            <span class="kpi-icon"><i data-lucide="arrow-right-left" class="w-4 h-4"></i></span>
-                        </div>
-                        <p id="kpi-mov-nop" class="monthly-kpi-primary flow-balance-text">R$ 0,00</p>
                     </div>
                 </div>
 
@@ -14648,16 +14480,6 @@
         }
 
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
-            const totalProjected = (Number(incR) || 0) + (Number(incP) || 0) - (Number(expR) || 0) - (Number(expP) || 0);
-            const resultEl = document.getElementById('reports-month-result');
-            const resultNoteEl = document.getElementById('reports-month-result-note');
-            if (resultEl) {
-                resultEl.innerText = formatBRLNoCents(totalProjected);
-                resultEl.className = `monthly-kpi-primary ${totalProjected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
-            }
-            if (resultNoteEl) resultNoteEl.innerText = (incP || expP)
-                ? `${formatBRL(incP)} a receber - ${formatBRL(expP)} a pagar`
-                : 'Sem pendências no período.';
 
             const labels = Array.from({ length: dailyInReal.length }, (_, idx) => String(idx + 1).padStart(2, '0'));
             const chartEl = document.getElementById('reports-monthly-chart');
@@ -14764,84 +14586,6 @@
             renderMonthly();
         }
 
-        // Retorna o filtro AAAA-MM do mês anterior ao informado.
-        function previousMonthFilter(filter) {
-            const [y, m] = String(filter || '').split('-').map(Number);
-            if (!y || !m) return '';
-            const d = new Date(y, m - 1, 1);
-            d.setMonth(d.getMonth() - 1);
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        }
-
-        // Resumo financeiro de um mês (AAAA-MM), usando o mesmo pipeline de filtros do mês ativo.
-        function computeMonthSummary(filter) {
-            if (!filter) return null;
-            const monthEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
-            const entries = applyMonthlySelectionFiltersToEntries(monthEntries);
-            let incR = 0, incP = 0, expR = 0, expP = 0;
-            entries.forEach((entry) => {
-                const amount = Number(entry.amount) || 0;
-                const isIncome = normalizeFlowType(entry.type) === FLOW_IN;
-                const isRealized = entry.status === 'REALIZADO';
-                if (isIncome && isRealized) incR += amount;
-                else if (isIncome) incP += amount;
-                else if (isRealized) expR += amount;
-                else expP += amount;
-            });
-            return {
-                count: entries.length,
-                incR, incP, expR, expP,
-                balR: incR - expR,
-                projected: incR + incP - expR - expP
-            };
-        }
-
-        // Preenche o selo de variação (▲▼%) de um KPI comparando com o período anterior.
-        // invert=true para métricas em que "subir" é ruim (ex.: Saídas).
-        // mode='money' mostra a diferença em R$ (para saldos que podem ser negativos).
-        function setKpiDelta(elId, current, previous, options = {}) {
-            const el = document.getElementById(elId);
-            if (!el) return;
-            const { invert = false, mode = 'pct', label = 'mês anterior' } = options;
-            if (previous === null || previous === undefined || !isFinite(current)) {
-                el.style.display = 'none';
-                return;
-            }
-            const diff = current - previous;
-            const eps = 0.005;
-            const dir = Math.abs(diff) < eps ? 'flat' : (diff > 0 ? 'up' : 'down');
-            let tone = 'flat';
-            if (dir !== 'flat') {
-                const isGood = invert ? diff < 0 : diff > 0;
-                tone = isGood ? 'good' : 'bad';
-            }
-            const arrow = dir === 'up' ? '▲' : (dir === 'down' ? '▼' : '–');
-            let valueText;
-            if (mode === 'money' || previous === 0) {
-                valueText = formatBRL(Math.abs(diff));
-            } else {
-                const pct = (diff / Math.abs(previous)) * 100;
-                valueText = `${Math.abs(pct).toFixed(1).replace('.', ',')}%`;
-            }
-            el.className = `monthly-kpi-delta ${tone}`;
-            el.style.display = 'inline-flex';
-            el.innerHTML = `<span class="kpi-delta-arrow">${arrow}</span><span>${valueText}</span><span class="kpi-delta-ref">vs ${escapeHtml(label)}</span>`;
-        }
-
-        // Atualiza os 4 selos de variação dos KPIs mensais com base no mês anterior.
-        function renderMonthlyKpiDeltas(filter, current) {
-            const ids = ['kpi-delta-inc', 'kpi-delta-exp', 'kpi-delta-bal', 'kpi-delta-result'];
-            const prev = computeMonthSummary(previousMonthFilter(filter));
-            if (!prev || prev.count === 0) {
-                ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-                return;
-            }
-            setKpiDelta('kpi-delta-inc', current.incR, prev.incR, { mode: 'pct' });
-            setKpiDelta('kpi-delta-exp', current.expR, prev.expR, { mode: 'pct', invert: true });
-            setKpiDelta('kpi-delta-bal', current.balR, prev.balR, { mode: 'money' });
-            setKpiDelta('kpi-delta-result', current.projected, prev.projected, { mode: 'money' });
-        }
-
         function renderMonthly() {
             const filter = document.getElementById('monthly-filter')?.value || '';
             if (!filter) return;
@@ -14880,28 +14624,9 @@
             });
 
             document.getElementById('sum-inc-real').innerText = formatBRLNoCents(incR);
-            document.getElementById('sum-inc-pend').innerText = formatBRL(incP);
             document.getElementById('sum-exp-real').innerText = formatBRLNoCents(expR);
-            document.getElementById('sum-exp-pend').innerText = formatBRL(expP);
 
-            // Gerencial KPI calculations
-            const realizedEntries = entries.filter(e => e.status === 'REALIZADO');
-            const opIncR  = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN  && isOperacional(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const opExpR  = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && isOperacional(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const finExpR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && isFinanceiro(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const finIncR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN  && isFinanceiro(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const nopNetR = realizedEntries.filter(e => isNaoOperacional(e)).reduce((a,e) => a + ((normalizeFlowType(e.type)===FLOW_IN?1:-1)*(Number(e.amount)||0)),0);
             const balR = incR - expR;
-            const resultOp = opIncR - opExpR;
-            const lucroGerencial = opIncR - opExpR - finExpR + finIncR;
-            const setKpi = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) { el.innerText = formatBRLNoCents(val); el.className = `monthly-kpi-primary ${val >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`; }
-            };
-            setKpi('kpi-saldo-caixa', balR);
-            setKpi('kpi-resultado-op', resultOp);
-            setKpi('kpi-lucro-gerencial', lucroGerencial);
-            setKpi('kpi-mov-nop', nopNetR);
 
             renderCashProjection();
             renderAnaliseHierarquicaMensal(monthEntries);
@@ -14930,8 +14655,6 @@
                 balEl.innerText = formatBRLNoCents(balR);
                 balEl.className = `monthly-kpi-primary ${balR >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
-
-            renderMonthlyKpiDeltas(filter, { incR, expR, balR, projected: incR + incP - expR - expP });
 
             let html = '', cumulative = 0;
             const maxDailyReal = Math.max(...dailyInReal, ...dailyOutReal, 0);
