@@ -2641,29 +2641,29 @@
             gap: 14px;
         }
         .annual-matrix-title {
-            font-size: 17px;
-            line-height: 1.18;
-            font-weight: 900;
+            font-size: 15px;
+            line-height: 1.2;
+            font-weight: 700;
             color: #0F172A;
         }
         .annual-matrix-subtitle {
             margin-top: 4px;
-            font-size: 11px;
+            font-size: 11.5px;
             line-height: 1.45;
-            font-weight: 700;
+            font-weight: 400;
             color: #64748B;
         }
         .annual-matrix-summary-pill {
             display: inline-flex;
             align-items: center;
-            min-height: 32px;
+            min-height: 30px;
             padding: 0 11px;
             border-radius: 999px;
-            border: 1px solid #DDE6F0;
+            border: 1px solid #E5ECF4;
             background: #F8FAFC;
-            color: #334155;
+            color: #475569;
             font-size: 11px;
-            font-weight: 900;
+            font-weight: 600;
             white-space: nowrap;
         }
         .annual-matrix-breadcrumb {
@@ -2672,17 +2672,17 @@
             align-items: center;
             gap: 7px;
             font-size: 11px;
-            font-weight: 800;
-            color: #64748B;
+            font-weight: 500;
+            color: #94A3B8;
         }
         .annual-matrix-breadcrumb button {
             min-height: 30px;
             padding: 0 10px;
             border-radius: 999px;
-            border: 1px solid #DDE6F0;
+            border: 1px solid #E5ECF4;
             background: #FFFFFF;
             color: #244A94;
-            font-weight: 900;
+            font-weight: 600;
         }
         .annual-matrix-wrap {
             border: 1px solid #E5ECF4;
@@ -2702,15 +2702,15 @@
         }
         .annual-matrix-table th,
         .annual-matrix-table td {
-            height: 54px;
-            padding: 10px 14px;
-            border-right: 1px solid #E8EEF6;
-            border-bottom: 1px solid #E8EEF6;
-            font-size: 12px;
-            font-weight: 800;
+            height: 44px;
+            padding: 9px 14px;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 12.5px;
+            font-weight: 400;
             white-space: nowrap;
             text-align: right;
             vertical-align: middle;
+            font-variant-numeric: tabular-nums;
         }
         .annual-matrix-table th:not(:first-child),
         .annual-matrix-table td:not(:first-child) {
@@ -2723,16 +2723,20 @@
         .annual-matrix-table th:last-child,
         .annual-matrix-table td:last-child {
             border-right: 0;
+            border-left: 1px solid #EEF2F6;
         }
         .annual-matrix-table th {
             position: sticky;
             top: 0;
             z-index: 1;
-            height: 48px;
-            background: #F6F8FB;
-            color: #475569;
-            font-size: 11px;
-            font-weight: 900;
+            height: 42px;
+            background: #FAFBFC;
+            color: #94A3B8;
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid #E2E8F0;
         }
         .annual-matrix-table th:first-child,
         .annual-matrix-table td:first-child {
@@ -2744,62 +2748,62 @@
             max-width: 340px;
             text-align: left;
             background: #FFFFFF;
-            box-shadow: 1px 0 0 #EEF2F7;
+            box-shadow: 1px 0 0 #F1F5F9;
         }
         .annual-matrix-table th:first-child {
             z-index: 3;
-            background: #F8FAFC;
+            background: #FAFBFC;
         }
         .annual-matrix-table tr:hover td {
-            background: #F8FAFF;
+            background: #F8FAFC;
+        }
+        .annual-matrix-table tr:hover td:first-child {
+            background: #F8FAFC;
         }
         .annual-matrix-group-row td,
-        .annual-matrix-group-row:hover td,
+        .annual-matrix-group-row:hover td {
+            background: #FAFBFC !important;
+        }
         .annual-matrix-total-row td,
         .annual-matrix-total-row:hover td {
-            background: #F8FAFC !important;
+            background: #F1F5F9 !important;
+            border-top: 1px solid #E2E8F0;
         }
         .annual-matrix-group-row td {
-            height: 46px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-            color: #334155;
-            font-size: 11px;
-            font-weight: 900;
+            height: 38px;
+            padding-top: 12px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #EEF2F6;
+            color: #94A3B8;
+            font-size: 10.5px;
+            font-weight: 600;
         }
         .annual-matrix-group-label {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
-            border-radius: 999px;
-            padding: 5px 10px;
-            background: #FFFFFF;
-            border: 1px solid #E2E8F0;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: 10.5px;
+            font-weight: 600;
         }
-        .annual-matrix-group-label.in {
-            color: #1F7A5C;
-            border-color: #CFE7DC;
-            background: #F2FBF6;
-        }
-        .annual-matrix-group-label.out {
-            color: #B23A3A;
-            border-color: #F1C8C8;
-            background: #FFF6F6;
-        }
+        .annual-matrix-group-label.in { color: #1F7A5C; }
+        .annual-matrix-group-label.out { color: #B23A3A; }
         .annual-matrix-name {
             display: inline-flex;
             align-items: center;
             gap: 7px;
             max-width: 100%;
-            color: #0F172A;
-            font-size: 13px;
-            font-weight: 900;
+            color: #334155;
+            font-size: 12.5px;
+            font-weight: 500;
             text-align: left;
             white-space: normal;
-            line-height: 1.2;
+            line-height: 1.25;
         }
         .annual-matrix-name.can-drill {
             color: #244A94;
+            font-weight: 500;
         }
         .annual-matrix-name.can-drill:hover {
             text-decoration: underline;
@@ -2807,16 +2811,20 @@
         }
         .annual-matrix-sub {
             display: block;
-            margin-top: 4px;
+            margin-top: 3px;
             color: #94A3B8;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 400;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .annual-matrix-total {
+            color: #1E293B;
+            font-weight: 600;
+        }
+        .annual-matrix-total-row td {
             color: #0F172A;
-            font-weight: 900;
+            font-weight: 600;
         }
         .annual-matrix-money {
             display: inline-flex;
@@ -2825,6 +2833,11 @@
             font-variant-numeric: tabular-nums;
             letter-spacing: 0 !important;
             overflow: visible;
+            font-weight: 500;
+        }
+        .annual-matrix-total .annual-matrix-money,
+        .annual-matrix-total-row .annual-matrix-money {
+            font-weight: 600;
         }
         .annual-matrix-zero {
             color: #CBD5E1;
