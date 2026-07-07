@@ -1749,6 +1749,83 @@
             background: #F8FAFC;
             border-color: #C8D3E2;
         }
+        /* Folha "Mais" do menu inferior mobile */
+        #mobile-more-sheet {
+            position: fixed;
+            inset: 0;
+            z-index: 45;
+        }
+        #mobile-more-sheet[hidden] { display: none !important; }
+        .mobile-more-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(1px);
+            animation: mobileMoreFade 0.18s ease;
+        }
+        .mobile-more-panel {
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            bottom: calc(72px + env(safe-area-inset-bottom));
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: 18px;
+            padding: 10px;
+            box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: mobileMoreRise 0.22s var(--ease-premium, ease);
+        }
+        .mobile-more-grip {
+            width: 40px;
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            margin: 2px auto 8px;
+        }
+        .mobile-more-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 13px 12px;
+            border-radius: 12px;
+            color: #E5E7EB;
+            text-align: left;
+            transition: background var(--dur-std, .2s) var(--ease-premium, ease);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .mobile-more-item:active { background: rgba(255, 255, 255, 0.06); }
+        .mobile-more-item-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            border-radius: 11px;
+            background: rgba(255, 255, 255, 0.08);
+            color: #CBD5E1;
+        }
+        .mobile-more-item-label {
+            flex: 1;
+            font-size: 14.5px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .mobile-more-item-chevron { color: rgba(255, 255, 255, 0.35); flex-shrink: 0; }
+        .mobile-more-item.is-current {
+            background: rgba(58, 164, 125, 0.22);
+        }
+        .mobile-more-item.is-current .mobile-more-item-icon {
+            background: rgba(58, 164, 125, 0.28);
+            color: #FFFFFF;
+        }
+        @keyframes mobileMoreFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes mobileMoreRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         .export-pdf-btn {
             height: 34px;
             padding: 0 12px;
@@ -5121,7 +5198,7 @@
             }
             #mobile-nav {
                 display: grid !important;
-                grid-template-columns: repeat(6, minmax(0, 1fr));
+                grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 6px;
             }
             .mobile-nav-btn {
@@ -8143,23 +8220,38 @@
             <i data-lucide="chart-no-axes-combined" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Relat.</span>
         </button>
-        <button type="button" onclick="switchTab('planejamento')" id="mnav-planejamento" class="mobile-nav-btn" aria-label="Planejamento">
-            <i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Plan.</span>
-        </button>
         <button type="button" onclick="switchTab('entries')" id="mnav-entries" class="mobile-nav-btn" aria-label="Lançamentos">
             <i data-lucide="receipt" class="w-5 h-5" aria-hidden="true"></i>
             <span class="mobile-nav-label">Lanç.</span>
         </button>
-        <button type="button" onclick="switchTab('reconciliation')" id="mnav-reconciliation" class="mobile-nav-btn" aria-label="Conciliação">
-            <i data-lucide="landmark" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Conc.</span>
-        </button>
-        <button type="button" onclick="switchTab('vendas')" id="mnav-vendas" class="mobile-nav-btn" aria-label="Dados: vendas e banco de dados">
-            <i data-lucide="database" class="w-5 h-5" aria-hidden="true"></i>
-            <span class="mobile-nav-label">Dados</span>
+        <button type="button" onclick="toggleMobileMore(event)" id="mnav-more" class="mobile-nav-btn" aria-label="Mais opções" aria-haspopup="true" aria-expanded="false" aria-controls="mobile-more-sheet">
+            <i data-lucide="ellipsis" class="w-5 h-5" aria-hidden="true"></i>
+            <span class="mobile-nav-label">Mais</span>
         </button>
     </nav>
+
+    <!-- FOLHA "MAIS" (mobile) -->
+    <div id="mobile-more-sheet" class="lg:hidden" role="dialog" aria-modal="true" aria-label="Mais opções" hidden>
+        <div class="mobile-more-backdrop" onclick="toggleMobileMore()"></div>
+        <div class="mobile-more-panel" role="menu">
+            <div class="mobile-more-grip" aria-hidden="true"></div>
+            <button type="button" role="menuitem" onclick="switchTab('planejamento')" id="mmore-planejamento" class="mobile-more-item">
+                <span class="mobile-more-item-icon"><i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i></span>
+                <span class="mobile-more-item-label">Planejamento</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 mobile-more-item-chevron" aria-hidden="true"></i>
+            </button>
+            <button type="button" role="menuitem" onclick="switchTab('reconciliation')" id="mmore-reconciliation" class="mobile-more-item">
+                <span class="mobile-more-item-icon"><i data-lucide="landmark" class="w-5 h-5" aria-hidden="true"></i></span>
+                <span class="mobile-more-item-label">Conciliação</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 mobile-more-item-chevron" aria-hidden="true"></i>
+            </button>
+            <button type="button" role="menuitem" onclick="switchTab('vendas')" id="mmore-vendas" class="mobile-more-item">
+                <span class="mobile-more-item-icon"><i data-lucide="database" class="w-5 h-5" aria-hidden="true"></i></span>
+                <span class="mobile-more-item-label">Dados</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 mobile-more-item-chevron" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- MODAL LANÇAMENTO -->
     <div id="entry-modal" class="hidden modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('entry-modal')">
@@ -9233,6 +9325,33 @@
             if (!menu || !panel || panel.hidden) return;
             if (!menu.contains(event.target)) toggleExportMenu();
         });
+
+        // Folha "Mais" do menu inferior mobile (abas Planejamento / Conciliação / Dados)
+        const MOBILE_MORE_TABS = ['planejamento', 'reconciliation', 'vendas'];
+        function toggleMobileMore(event) {
+            if (event) event.stopPropagation();
+            const sheet = document.getElementById('mobile-more-sheet');
+            const btn = document.getElementById('mnav-more');
+            if (!sheet) return;
+            const willOpen = sheet.hidden;
+            sheet.hidden = !willOpen;
+            if (btn) btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            if (willOpen) {
+                MOBILE_MORE_TABS.forEach(t => {
+                    const item = document.getElementById('mmore-' + t);
+                    if (item) item.classList.toggle('is-current', currentTab === t);
+                });
+                refreshLucideIcons();
+            }
+        }
+        function closeMobileMore() {
+            const sheet = document.getElementById('mobile-more-sheet');
+            const btn = document.getElementById('mnav-more');
+            if (sheet && !sheet.hidden) {
+                sheet.hidden = true;
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+        }
 
         function refreshLucideIcons() {
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -11885,6 +12004,12 @@
             if(target) target.classList.add('active');
             if(nav) { nav.classList.add('active'); nav.setAttribute('aria-current', 'page'); }
             if(mnav) { mnav.classList.add('active'); mnav.setAttribute('aria-current', 'page'); }
+            // Abas fora da barra inferior acendem o botão "Mais"
+            if(!mnav && typeof MOBILE_MORE_TABS !== 'undefined' && MOBILE_MORE_TABS.includes(tabId)) {
+                const moreBtn = document.getElementById('mnav-more');
+                if(moreBtn) { moreBtn.classList.add('active'); moreBtn.setAttribute('aria-current', 'page'); }
+            }
+            if(typeof closeMobileMore === 'function') closeMobileMore();
             currentTab = tabId;
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
