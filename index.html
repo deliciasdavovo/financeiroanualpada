@@ -14255,27 +14255,6 @@
             if (!host) return;
 
             const today = getTodayIsoDate();
-            const currentMonthPrefix = getCurrentMonthIso();
-
-            // Dados do mês atual
-            const monthEntries = getAnalyticalEntries(state.entries)
-                .filter(e => e.date && e.date.startsWith(currentMonthPrefix));
-            const realizedEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'REALIZADO');
-            const pendingMonthEntries = monthEntries.filter(e => String(e.status || '').toUpperCase() === 'PENDENTE');
-
-            const incR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const expR = realizedEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const balR = incR - expR;
-            const incP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const expP = pendingMonthEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-
-            // Comparação com mês anterior
-            const prevPrefix = getMonthPrefixShift(currentMonthPrefix, -1);
-            const prevRealized = getAnalyticalEntries(state.entries)
-                .filter(e => e.date && e.date.startsWith(prevPrefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
-            const prevInc = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const prevExp = prevRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-            const prevBal = prevInc - prevExp;
 
             // Lançamentos pendentes futuros (hoje + 14 dias)
             const todayDate = parseIsoDateLocal(today) || new Date();
@@ -14289,145 +14268,27 @@
                 })
                 .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
 
-            // Nome do mês
-            const [yearLabel, monthLabel] = currentMonthPrefix.split('-');
-            const monthName = Number(monthLabel)
-                ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-                : currentMonthPrefix;
-
-            // Chips de variação vs mês anterior (verde = movimento bom para o negócio)
-            const hasPrevMonth = prevRealized.length > 0;
-            const buildDeltaChip = (cur, prev, goodWhenUp) => {
-                if (!hasPrevMonth || !prev) return '';
-                const pct = ((cur - prev) / Math.abs(prev)) * 100;
-                if (!isFinite(pct)) return '';
-                const up = pct > 0.05;
-                const down = pct < -0.05;
-                const dir = up ? (goodWhenUp ? 'good' : 'bad') : (down ? (goodWhenUp ? 'bad' : 'good') : 'flat');
-                const arrow = up ? '▲' : (down ? '▼' : '–');
-                return `<span class="home-kpi-delta ${dir}">${arrow} ${Math.abs(pct).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
-            };
-
-            // Resultado previsto (com pendentes)
-            const projected = balR + incP - expP;
-            const pendingCount = futurePending.length;
-
-            const monthShort = monthName.split(' ')[0];
-            const kpiValue = (v) => `<div class="home-kpi-value"><span class="brl-full">${formatBRLNoCents(v)}</span><span class="brl-compact">${formatBRLCompact(v)}</span></div>`;
-            const kpiTilesHtml = `
-                <div class="home-kpi-grid">
-                    <div class="home-kpi-tile">
-                        <div class="home-kpi-label">Entradas · ${escapeHtml(monthShort)}</div>
-                        ${kpiValue(incR)}
-                        ${buildDeltaChip(incR, prevInc, true)}
-                    </div>
-                    <div class="home-kpi-tile">
-                        <div class="home-kpi-label">Saídas · ${escapeHtml(monthShort)}</div>
-                        ${kpiValue(expR)}
-                        ${buildDeltaChip(expR, prevExp, false)}
-                    </div>
-                    <div class="home-kpi-tile">
-                        <div class="home-kpi-label">Resultado do mês</div>
-                        ${kpiValue(balR)}
-                        ${buildDeltaChip(balR, prevBal, true)}
-                    </div>
-                    <div class="home-kpi-tile">
-                        <div class="home-kpi-label">Previsto com pendentes</div>
-                        ${kpiValue(projected)}
-                        <div class="home-kpi-sub">${pendingCount > 0 ? `${pendingCount} lançamento(s) a vencer` : 'Sem pendências nos próximos 14 dias'}</div>
-                    </div>
-                </div>`;
-
-            // Próximos vencimentos: uma linha por pendência, com separador por dia
-            const MAX_UPCOMING_ROWS = 8;
-            const visiblePending = futurePending.slice(0, MAX_UPCOMING_ROWS);
-            let lastDay = '';
-            const upcomingRowsHtml = visiblePending.map(e => {
-                const flow = normalizeFlowType(e.type);
-                const isIn = flow === FLOW_IN;
-                const dateIso = String(e.date || '');
-                const dObj = parseIsoDateLocal(dateIso) || new Date();
-                const dShort = dObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-                const weekday = dObj.toLocaleDateString('pt-BR', { weekday: 'long' });
-                const dayLabel = dateIso === today ? 'Hoje' : `${weekday} · ${dShort}`;
-                const sep = dateIso !== lastDay ? `<div class="home-up-day">${escapeHtml(dayLabel)}</div>` : '';
-                lastDay = dateIso;
-                const destName = getDestinationById(e.destinationId)?.name || e.description || 'Sem destino';
-                const descHtml = (e.description && destName !== e.description) ? `<span class="home-up-desc">${escapeHtml(e.description)}</span>` : '';
-                return `${sep}<div class="home-up-row">
-                    <span class="home-up-date">${escapeHtml(dShort)}</span>
-                    <span class="home-up-main"><span class="home-up-dest">${escapeHtml(destName)}</span>${descHtml}</span>
-                    <span class="home-up-amt ${isIn ? 'in' : 'out'}">${isIn ? '+' : '−'} ${formatBRLNoCents(Number(e.amount) || 0)}</span>
-                </div>`;
-            }).join('');
-            const remaining = futurePending.length - visiblePending.length;
-            const upcomingListHtml = futurePending.length > 0
-                ? `${upcomingRowsHtml}${remaining > 0 ? `<button type="button" class="home-up-more" onclick="switchTab('entries')">Ver todos (${futurePending.length}) <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>` : ''}`
-                : `<div class="home-up-empty">Nenhum lançamento pendente nos próximos 14 dias.<br><button onclick="openEntryModal(null)" class="home-up-more">Adicionar lançamento <i data-lucide="plus" class="w-3.5 h-3.5"></i></button></div>`;
+            const dayRowsHtml = buildHomeStyleDayCards(futurePending);
 
             host.innerHTML = `
-                ${kpiTilesHtml}
-
-                <div class="home-cols">
-                    <div class="card-premium">
-                        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-                            <h4 class="text-sm font-black text-slate-900">Resultado por mês</h4>
+                <div class="card-premium p-8">
+                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                        <div>
+                            <h4 class="text-sm font-black text-slate-900">Próximos 14 dias</h4>
+                            <p class="text-xs text-slate-500 mt-1">Lançamentos pendentes de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
                         </div>
-                        <div class="home-chart-box"><canvas id="home-mini-chart" aria-label="Entradas e saídas dos últimos meses" role="img"></canvas></div>
-                    </div>
-                    <div class="card-premium">
-                        <div class="flex items-center justify-between flex-wrap gap-3">
-                            <h4 class="text-sm font-black text-slate-900">Próximos vencimentos</h4>
+                        <div class="flex items-center gap-3">
                             <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
                         </div>
-                        ${upcomingListHtml}
                     </div>
+                    ${dayRowsHtml.length > 0
+                        ? `<div class="home-proj-list">${dayRowsHtml}</div>`
+                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
+                    }
                 </div>
             `;
 
-            renderHomeMiniChart(currentMonthPrefix);
             refreshLucideIcons();
-        }
-
-        function renderHomeMiniChart(currentMonthPrefix) {
-            const canvas = document.getElementById('home-mini-chart');
-            if (!canvas || typeof Chart === 'undefined') return;
-            const monthsBack = 6;
-            const labels = [];
-            const incData = [];
-            const expData = [];
-            const analytical = getAnalyticalEntries(state.entries);
-            for (let i = monthsBack; i >= 0; i--) {
-                const prefix = getMonthPrefixShift(currentMonthPrefix, -i);
-                const [y, m] = prefix.split('-');
-                labels.push(new Date(Number(y), Number(m) - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''));
-                const monthRealized = analytical.filter(e => e.date && e.date.startsWith(prefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
-                incData.push(monthRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0));
-                expData.push(monthRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0));
-            }
-            if (window.homeMiniChart && typeof window.homeMiniChart.destroy === 'function') window.homeMiniChart.destroy();
-            window.homeMiniChart = new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [
-                        { label: 'Entradas', data: incData, backgroundColor: '#149463', borderRadius: 4, maxBarThickness: 18, borderSkipped: 'bottom' },
-                        { label: 'Saídas', data: expData, backgroundColor: '#B23A3A', borderRadius: 4, maxBarThickness: 18, borderSkipped: 'bottom' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', align: 'end', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle' } },
-                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatBRL(ctx.parsed.y)}` } }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, border: { display: false } },
-                        y: { grid: { color: '#EEF2F7' }, border: { display: false }, ticks: { maxTicksLimit: 5, callback: (v) => valuesHidden ? '••' : (Math.abs(v) >= 1000 ? `${Math.round(v / 1000)} mil` : v) } }
-                    }
-                }
-            });
         }
 
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
