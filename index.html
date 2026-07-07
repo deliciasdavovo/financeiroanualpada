@@ -15486,10 +15486,10 @@
                 const el = document.getElementById(id);
                 if (el) el.innerText = value;
             };
-            setText('reports-annual-in', formatBRL(totalInc));
-            setText('reports-annual-out', formatBRL(totalExp));
-            setText('reports-annual-net', formatBRL(totalNet));
-            setText('reports-annual-avg', formatBRL(avg));
+            setText('reports-annual-in', formatBRLNoCents(totalInc));
+            setText('reports-annual-out', formatBRLNoCents(totalExp));
+            setText('reports-annual-net', formatBRLNoCents(totalNet));
+            setText('reports-annual-avg', formatBRLNoCents(avg));
             const netEl = document.getElementById('reports-annual-net');
             if (netEl) netEl.className = totalNet >= 0 ? 'flow-balance-text' : 'flow-expense-text';
             const captionEl = document.getElementById('reports-annual-caption');
