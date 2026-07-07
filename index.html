@@ -5186,7 +5186,35 @@
                 display: none !important;
             }
             .card-premium:not(.overflow-hidden) {
-                padding: 16px !important;
+                padding: 14px !important;
+            }
+            /* Valores nunca estouram o card: fonte fluida + grids que encolhem */
+            .monthly-kpi-primary, .sales-kpi-value, .entries-filter-report-value,
+            .reports-summary-card strong, .cash-projection-value,
+            #sum-inc-real, #sum-exp-real, #month-bal-r {
+                font-size: clamp(15px, 4.6vw, 22px) !important;
+                line-height: 1.15;
+                white-space: nowrap;
+            }
+            .monthly-kpi-grid, .reports-summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 10px !important;
+            }
+            .monthly-kpi-grid > *, .reports-summary-grid > *,
+            .entries-filter-report > *, .home-kpi-grid > * {
+                min-width: 0;
+            }
+            .entries-filter-report {
+                grid-template-columns: 1fr !important;
+            }
+            .entries-filter-report-card + .entries-filter-report-card {
+                border-left: none;
+                border-top: 1px solid var(--divider);
+            }
+            .tab-content.space-y-6 > * + *,
+            .tab-content.space-y-8 > * + *,
+            .tab-content.space-y-12 > * + * {
+                margin-top: 16px !important;
             }
             .table-mobile-scroll th,
             .table-mobile-scroll td {
@@ -6178,6 +6206,7 @@
             letter-spacing: -0.02em;
             font-variant-numeric: tabular-nums;
             color: var(--num-color);
+            white-space: nowrap;
         }
         .reports-summary-card.in span { color: var(--positive); background: var(--bg-green-soft); }
         .reports-summary-card.out span { color: var(--negative); background: var(--bg-red-soft); }
@@ -8487,8 +8516,17 @@
         }
 
         if (window.Chart && Chart.defaults) {
-            Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '700' };
+            Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '600' };
             Chart.defaults.color = '#64748b';
+            Chart.defaults.plugins.legend.labels.boxWidth = 8;
+            Chart.defaults.plugins.legend.labels.boxHeight = 8;
+            Chart.defaults.plugins.legend.labels.usePointStyle = true;
+            Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+            Chart.defaults.scale.grid = Object.assign({}, Chart.defaults.scale.grid, { color: '#EEF2F7' });
+            Chart.defaults.elements.bar.borderRadius = 5;
+            Chart.defaults.elements.bar.borderSkipped = 'bottom';
+            Chart.defaults.elements.line.borderWidth = 2;
+            Chart.defaults.elements.point.radius = 2.5;
         }
 
         function escapeToastHtml(value) {
@@ -14626,8 +14664,8 @@
                     { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
                 ];
                 if (dailyShowPending && dailyInPend) {
-                    datasets.push({ label: 'Entradas pendentes', data: dailyInPend, backgroundColor: '#86EFAC', borderRadius: 10, maxBarThickness: 14 });
-                    datasets.push({ label: 'Saídas pendentes', data: dailyOutPend || [], backgroundColor: '#FCA5A5', borderRadius: 10, maxBarThickness: 14 });
+                    datasets.push({ label: 'Entradas pendentes', data: dailyInPend, backgroundColor: 'rgba(20, 148, 99, 0.35)', borderRadius: 10, maxBarThickness: 14 });
+                    datasets.push({ label: 'Saídas pendentes', data: dailyOutPend || [], backgroundColor: 'rgba(178, 58, 58, 0.35)', borderRadius: 10, maxBarThickness: 14 });
                 }
                 window.reportsMonthlyChart = new Chart(chartEl.getContext('2d'), {
                     type: 'bar',
@@ -15270,11 +15308,11 @@
 
             const incChartData = buildCategoryChartData(
                 incByCat,
-                ['#0F8A67', '#35A77A', '#79BE4D', '#A6CD39', '#1F4AA8', '#2E63C7', '#A9D7FF']
+                ['#0E6B4A', '#149463', '#3FAE7F', '#74C6A1', '#A8DCC3', '#D2EEE2', '#CBD5E1']
             );
             const expChartData = buildCategoryChartData(
                 expByCat,
-                ['#B23A3A', '#C94A34', '#DE6432', '#EE8833', '#F6AA2F', '#F8C24A', '#F9DA78']
+                ['#8F2E2E', '#B23A3A', '#C75F53', '#DA8878', '#EBB3A6', '#F7D9D2', '#CBD5E1']
             );
             const nextChartsSignature = JSON.stringify({
                 inc: incChartData,
@@ -15509,9 +15547,9 @@
                     data: {
                         labels: monthNames,
                         datasets: [
-                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#0F8A67', borderRadius: 8, stack: 'entrada' },
-                            { label: 'Aporte de capital', data: annualAporte, backgroundColor: '#8FD19E', borderRadius: 8, stack: 'entrada' },
-                            { label: 'Saídas', data: annualExp, backgroundColor: '#C94A34', borderRadius: 8, stack: 'saida' }
+                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#149463', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
+                            { label: 'Aporte de capital', data: annualAporte, backgroundColor: 'rgba(20, 148, 99, 0.45)', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
+                            { label: 'Saídas', data: annualExp, backgroundColor: '#B23A3A', borderRadius: 8, maxBarThickness: 22, stack: 'saida' }
                         ]
                     },
                     options: {
@@ -15815,21 +15853,21 @@
                     {
                         label: 'Entradas',
                         data: periods.map(item => item.inTotal || 0),
-                        backgroundColor: '#0F8A67',
+                        backgroundColor: '#149463',
                         borderRadius: 8,
                         maxBarThickness: 42
                     },
                     {
                         label: 'Aporte de Capital',
                         data: periods.map(item => item.capitalTotal || 0),
-                        backgroundColor: '#8FD19E',
+                        backgroundColor: 'rgba(20, 148, 99, 0.45)',
                         borderRadius: 8,
                         maxBarThickness: 42
                     },
                     {
                         label: 'Saídas',
                         data: periods.map(item => item.outTotal || 0),
-                        backgroundColor: '#C94A34',
+                        backgroundColor: '#B23A3A',
                         borderRadius: 8,
                         maxBarThickness: 42
                     }
