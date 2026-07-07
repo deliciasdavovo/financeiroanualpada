@@ -56,13 +56,57 @@
             --text-secondary: #5F6B7A;
             --text-muted: #8B96A7;
 
-            --title-size: 32px;
-            --subtitle-size: 18px;
+            --title-size: 22px;
+            --subtitle-size: 16px;
             --aux-size: 11px;
             --dur-fast: 200ms;
             --dur-std: 240ms;
             --dur-slow: 280ms;
             --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-pill: 999px;
+            --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05);
+            --shadow-pop: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+            --accent: var(--primary-green);
+            --positive: var(--primary-green);
+            --negative: var(--soft-red);
+            --info: var(--primary-blue);
+            --num-color: var(--text-primary);
+            --num-md: 20px;
+            --num-lg: 26px;
+            --chart-green: #149463;
+            --chart-red: #B23A3A;
+            --chart-blue: #2F4F9D;
+        }
+
+        /* Valores financeiros: número escuro e tabular por padrão; cor fica nos
+           deltas, sinais e ícones. Overrides compostos vencem o !important das
+           .flow-*-text sem alterar o JS que alterna essas classes. */
+        .monthly-kpi-primary, .home-kpi-value, .sales-kpi-value,
+        .entries-filter-report-value, .kpi-value, .annual-kpi-value,
+        .cash-projection-value, .reports-summary-card strong {
+            font-variant-numeric: tabular-nums;
+        }
+        .monthly-kpi-primary.flow-income-text, .monthly-kpi-primary.flow-expense-text,
+        .monthly-kpi-primary.flow-balance-text, .monthly-kpi-primary.flow-capital-text,
+        .home-kpi-value.flow-income-text, .home-kpi-value.flow-expense-text,
+        .home-kpi-value.flow-balance-text,
+        .sales-kpi-value.flow-income-text, .sales-kpi-value.flow-expense-text,
+        .sales-kpi-value.flow-balance-text,
+        .entries-filter-report-value.flow-income-text,
+        .entries-filter-report-value.flow-expense-text,
+        .entries-filter-report-value.flow-balance-text,
+        .cash-projection-value.flow-income-text,
+        .cash-projection-value.flow-expense-text,
+        .cash-projection-value.flow-balance-text,
+        .reports-summary-card strong.flow-income-text,
+        .reports-summary-card strong.flow-expense-text,
+        .reports-summary-card strong.flow-balance-text {
+            color: var(--num-color) !important;
         }
 
         .flow-income-text { color: var(--primary-green) !important; }
@@ -75,9 +119,9 @@
         .flow-capital-bg { background: #DDF4E4 !important; }
 
         .kpi-card {
-            border-radius: 18px;
-            border: 1px solid #DCE3EC;
-            box-shadow: none;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--divider);
+            box-shadow: var(--shadow-card);
             position: relative;
             overflow: hidden;
             isolation: isolate;
@@ -113,23 +157,19 @@
         }
         .kpi-card-income {
             --kpi-glow: 31, 122, 92;
-            border-top: 4px solid var(--primary-green);
-            background: #EEF9F3;
+            background: var(--bg-card);
         }
         .kpi-card-expense {
             --kpi-glow: 178, 58, 58;
-            border-top: 4px solid var(--soft-red);
-            background: #FFF0F0;
+            background: var(--bg-card);
         }
         .kpi-card-balance {
             --kpi-glow: 47, 79, 157;
-            border-top: 4px solid var(--primary-blue);
-            background: #EDF3FF;
+            background: var(--bg-card);
         }
         .kpi-card-forecast {
             --kpi-glow: 214, 158, 46;
-            border-top: 4px solid #D69E2E;
-            background: #FFF8DB;
+            background: var(--bg-card);
         }
         .kpi-card-header {
             display: flex;
@@ -526,9 +566,10 @@
         .monthly-kpi-primary {
             display: block;
             margin-top: 8px;
-            font-size: 28px !important;
+            font-size: var(--num-lg) !important;
             line-height: 1.08;
-            font-weight: 900 !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.02em;
         }
         .monthly-kpi-delta {
             display: inline-flex;
@@ -842,15 +883,13 @@
 
         .card-premium {
             background: var(--bg-card);
-            border-radius: 18px;
+            border-radius: var(--radius-lg);
             border: 1px solid var(--divider);
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
-            transition: transform var(--dur-std) var(--ease-premium), box-shadow var(--dur-std) var(--ease-premium), border-color var(--dur-std) var(--ease-premium);
+            box-shadow: var(--shadow-card);
+            transition: border-color var(--dur-std) var(--ease-premium);
         }
         .card-premium:hover {
-            transform: translateY(-2px);
             border-color: #D8E2EE;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055);
         }
         .card-premium.kpi-card,
         .card-premium.kpi-card:hover {
@@ -882,7 +921,7 @@
             color: #FFFFFF !important;
         }
         .sidebar-btn.active {
-            background: rgba(255,255,255,0.08) !important;
+            background: rgba(58, 164, 125, 0.14) !important;
             color: #FFFFFF !important;
             font-weight: 600 !important;
             box-shadow: none !important;
@@ -903,9 +942,10 @@
         }
 
         #sum-inc-real, #sum-exp-real, #month-bal-r {
-            font-size: 30px !important;
-            font-weight: 700 !important;
+            font-size: var(--num-lg) !important;
+            font-weight: 800 !important;
             line-height: 1.1;
+            font-variant-numeric: tabular-nums;
         }
 
         input, select, textarea {
@@ -1022,8 +1062,23 @@
             text-transform: uppercase;
         }
         .badge-realizado {
-            background: var(--bg-blue-soft);
-            color: var(--primary-blue);
+            background: var(--bg-green-soft);
+            color: #14684A;
+        }
+        .badge-realizado::before,
+        .badge-pendente::before {
+            content: "";
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+            margin-right: 5px;
+            vertical-align: 1px;
+        }
+        .badge-pendente {
+            background: #F7EEDC;
+            color: #8A5E10;
         }
         .badge-income {
             background: var(--bg-green-soft);
@@ -1215,24 +1270,27 @@
         }
         .status-toggle {
             display: flex;
-            background: #F3F4F6;
-            padding: 4px;
+            background: #F1F4F8;
+            border: 1px solid var(--divider);
+            padding: 3px;
             border-radius: 10px;
-            gap: 4px;
+            gap: 3px;
         }
         .status-toggle button {
             flex: 1;
-            padding: 10px;
+            padding: 9px;
             border-radius: 8px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #64748B;
             transition: all var(--dur-std) var(--ease-premium);
         }
         .status-toggle button.active {
             background: #FFFFFF;
-            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
-            color: var(--primary-blue);
+            box-shadow: var(--shadow-card);
+            color: var(--text-primary);
         }
         .modal-overlay {
             background: rgba(15, 23, 42, 0.48);
@@ -1629,42 +1687,67 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* Status da nuvem: só um ponto colorido; o texto fica para leitores de tela */
         .sync-indicator {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
             background: #FFFFFF;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
+            border-radius: var(--radius-sm);
             color: var(--text-muted);
-            border: 1px solid var(--border);
+            border: 1px solid var(--divider);
+            flex-shrink: 0;
         }
-        .sync-indicator.synced {
-            color: var(--primary-green);
-            border-color: #CFE5DD;
-            background: var(--bg-green-soft);
+        .sync-indicator span {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
         }
-        .sync-indicator.syncing {
-            color: var(--primary-blue);
-            border-color: #D7DEF3;
-            background: var(--bg-blue-soft);
+        .sync-indicator.synced { border-color: #CFE5DD; background: var(--bg-green-soft); }
+        .sync-indicator.syncing { border-color: #D7DEF3; background: var(--bg-blue-soft); }
+        /* Detalhe técnico ("Modo: somente nuvem") sai do cabeçalho */
+        .backup-indicator { display: none; }
+        .export-menu {
+            position: relative;
+            flex-shrink: 0;
         }
-        .backup-indicator {
+        .export-menu-panel {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            z-index: 60;
+            min-width: 190px;
+            padding: 6px;
+            background: #FFFFFF;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-pop);
+        }
+        .export-menu-panel[hidden] { display: none; }
+        .export-menu-panel button {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            background: #FFFFFF;
-            border-radius: 999px;
-            font-size: 10px;
+            gap: 9px;
+            width: 100%;
+            padding: 9px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
             font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            white-space: nowrap;
+            color: #334155;
+            text-align: left;
+        }
+        .export-menu-panel button:hover { background: #F4F7FA; }
+        .export-menu.open #export-menu-btn {
+            background: #F8FAFC;
+            border-color: #C8D3E2;
         }
         .export-pdf-btn {
             height: 34px;
@@ -2349,12 +2432,12 @@
             position: absolute;
             left: 10px;
             top: 50%;
-            width: 4px;
-            height: 22px;
+            width: 3px;
+            height: 20px;
             border-radius: 999px;
             transform: translateY(-50%);
-            background: #FFFFFF;
-            opacity: 0.9;
+            background: #3AA47D;
+            opacity: 1;
         }
         #sidebar.collapsed .sidebar-btn.active::before {
             display: none;
@@ -2363,9 +2446,11 @@
             background: #F8FAFC !important;
         }
         th {
-            font-size: 11px !important;
+            font-size: 10px !important;
             font-weight: 800 !important;
-            color: #5F6B7A !important;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted) !important;
         }
         td {
             color: #334155;
@@ -2374,7 +2459,7 @@
             transition: background-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
         }
         .table-row:hover {
-            background: #F6F9FF !important;
+            background: #F8FAFC !important;
         }
         .badge,
         .quick-status-btn,
@@ -3539,10 +3624,11 @@
         .sales-kpi.period .sales-kpi-icon { color: #0F172A; background: #EEF2F7; }
         .sales-kpi-value {
             margin-top: 12px;
-            font-size: 25px;
+            font-size: var(--num-lg);
             line-height: 1.1;
-            font-weight: 900;
-            color: #0F172A;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--num-color);
         }
         .sales-kpi-note {
             margin-top: 7px;
@@ -3724,21 +3810,21 @@
             display: flex;
             align-items: center;
             gap: 7px;
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
             border: none;
             background: transparent;
             color: #64748B;
-            font-size: 13px;
-            font-weight: 800;
+            font-size: 12.5px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.15s ease;
         }
-        .plan-pill-btn:hover { color: #334155; background: #E2E8F0; }
+        .plan-pill-btn:hover { color: #334155; background: #E9EDF2; }
         .plan-pill-btn.is-active {
             background: #FFFFFF;
-            color: #0F172A;
-            box-shadow: 0 2px 8px rgba(15,23,42,0.10);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-card);
         }
         .plan-section { display: block; }
         .plan-section.hidden { display: none; }
@@ -4638,16 +4724,14 @@
             gap: 8px;
         }
         .entries-quick-btn {
-            min-height: 40px;
+            min-height: 34px;
             padding: 0 12px;
-            border-radius: 10px;
-            border: 1px solid #E2E8F0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--divider);
             background: #FFFFFF;
             color: #475569;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
+            font-size: 11.5px;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 6px;
@@ -4658,9 +4742,9 @@
             color: #0F172A;
         }
         .entries-quick-btn.active {
-            border-color: #BFD0EF;
-            background: #EEF4FF;
-            color: #274388;
+            border-color: #BFD9CE;
+            background: var(--bg-green-soft);
+            color: #14684A;
         }
         .entries-quick-btn.danger {
             border-color: #F1C8C8;
@@ -4745,38 +4829,46 @@
             border-radius: 10px;
             background: #F8FAFF;
         }
+        /* Resumo do filtro: faixa horizontal única, sem cards empilhados */
         .entries-filter-report {
             width: 100%;
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
+            gap: 0;
             margin-top: 2px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-md);
+            background: #FFFFFF;
+            overflow: hidden;
         }
         .entries-filter-report-card {
-            border: 1px solid #E5ECF4;
-            border-radius: 14px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
-            padding: 14px 16px;
+            border: none;
+            border-radius: 0;
+            background: none;
+            padding: 12px 16px;
+        }
+        .entries-filter-report-card + .entries-filter-report-card {
+            border-left: 1px solid var(--divider);
         }
         .entries-filter-report-label {
             font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.08em;
+            font-weight: 800;
+            letter-spacing: 0.07em;
             text-transform: uppercase;
-            color: #64748B;
+            color: var(--text-muted);
         }
         .entries-filter-report-value {
-            margin-top: 8px;
-            font-size: 22px;
+            margin-top: 6px;
+            font-size: var(--num-md);
             line-height: 1;
-            font-weight: 900;
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
         .entries-filter-report-note {
-            margin-top: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94A3B8;
+            margin-top: 5px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #A6B0BD;
         }
         @media (max-width: 1400px) {
             .entries-filters-grid {
@@ -4793,11 +4885,21 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Alças de arrasto e ações da linha aparecem no hover — menos ruído em repouso */
         .entry-destination-panel .recon-fill-handle {
-            opacity: 0.35;
+            opacity: 0;
             transition: opacity var(--dur-fast) var(--ease-premium);
         }
-        .entry-destination-panel:hover .recon-fill-handle {
+        .entry-destination-panel:hover .recon-fill-handle,
+        .entry-destination-panel:focus-within .recon-fill-handle {
+            opacity: 0.85;
+        }
+        #entries-table .entry-actions-wrap .entry-action-btn {
+            opacity: 0.3;
+            transition: opacity var(--dur-fast) var(--ease-premium);
+        }
+        #entries-table tr:hover .entry-actions-wrap .entry-action-btn,
+        #entries-table tr:focus-within .entry-actions-wrap .entry-action-btn {
             opacity: 1;
         }
         #entries-pagination button:disabled {
@@ -5050,7 +5152,7 @@
             }
             .mobile-nav-btn.active {
                 color: #FFFFFF;
-                background: rgba(255,255,255,0.15);
+                background: rgba(58, 164, 125, 0.22);
             }
             .mobile-main-scroll {
                 padding-bottom: calc(96px + env(safe-area-inset-bottom)) !important;
@@ -5080,18 +5182,39 @@
                 font-size: 20px !important;
                 line-height: 1.15;
             }
-            #sync-status {
-                display: none !important;
-            }
             #backup-status {
                 display: none !important;
             }
-            #export-pdf-btn,
-            #export-excel-btn {
-                display: none !important;
-            }
             .card-premium:not(.overflow-hidden) {
-                padding: 16px !important;
+                padding: 14px !important;
+            }
+            /* Valores nunca estouram o card: fonte fluida + grids que encolhem */
+            .monthly-kpi-primary, .sales-kpi-value, .entries-filter-report-value,
+            .reports-summary-card strong, .cash-projection-value,
+            #sum-inc-real, #sum-exp-real, #month-bal-r {
+                font-size: clamp(15px, 4.6vw, 22px) !important;
+                line-height: 1.15;
+                white-space: nowrap;
+            }
+            .monthly-kpi-grid, .reports-summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 10px !important;
+            }
+            .monthly-kpi-grid > *, .reports-summary-grid > *,
+            .entries-filter-report > *, .home-kpi-grid > * {
+                min-width: 0;
+            }
+            .entries-filter-report {
+                grid-template-columns: 1fr !important;
+            }
+            .entries-filter-report-card + .entries-filter-report-card {
+                border-left: none;
+                border-top: 1px solid var(--divider);
+            }
+            .tab-content.space-y-6 > * + *,
+            .tab-content.space-y-8 > * + *,
+            .tab-content.space-y-12 > * + * {
+                margin-top: 16px !important;
             }
             .table-mobile-scroll th,
             .table-mobile-scroll td {
@@ -5794,12 +5917,44 @@
             align-items: center;
             justify-content: space-between;
             gap: 18px;
-            padding: 20px;
-            border: 1px solid #DFE7F1;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F6FAF8 48%, #F7F9FF 100%);
-            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+            padding: 0;
+            border: none;
+            border-radius: 0;
+            background: none;
+            box-shadow: none;
         }
+        /* Cabeçalho de seção compacto: título + meta + controles na mesma linha */
+        .reports-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+        }
+        .reports-section-title {
+            font-size: 16px !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.01em;
+            color: var(--text-primary) !important;
+        }
+        .reports-section-meta {
+            margin-top: 2px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .reports-section-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .reports-section-controls select {
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: var(--radius-sm);
+        }
+        .reports-head-hidden-meta { display: none !important; }
         .reports-eyebrow {
             font-size: 12px;
             font-weight: 800;
@@ -5827,24 +5982,24 @@
         .pill-segment {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px;
-            border: 1px solid #DFE7F1;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.86);
+            gap: 3px;
+            padding: 3px;
+            border: 1px solid var(--divider);
+            border-radius: 10px;
+            background: #F1F4F8;
         }
         .pill-segment.compact {
             flex-wrap: wrap;
             justify-content: flex-end;
-            border-radius: 18px;
+            border-radius: 10px;
         }
         .pill-segment-btn {
-            min-height: 40px;
-            padding: 0 16px;
-            border-radius: 999px !important;
+            min-height: 32px;
+            padding: 0 14px;
+            border-radius: 8px !important;
             color: #64748B;
             font-size: 12px;
-            font-weight: 850;
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -5852,9 +6007,9 @@
             white-space: nowrap;
         }
         .pill-segment-btn.active {
-            color: #244A94;
-            background: #EAF0FF;
-            box-shadow: 0 8px 18px rgba(47, 79, 157, 0.12);
+            color: var(--text-primary);
+            background: #FFFFFF;
+            box-shadow: var(--shadow-card);
         }
         .reports-mode-panel {
             display: none;
@@ -5889,19 +6044,19 @@
             margin-top: 12px;
         }
         .reports-chip {
-            min-height: 34px;
+            min-height: 32px;
             padding: 0 12px;
-            border-radius: 999px !important;
-            border: 1px solid #DDE6F0;
+            border-radius: var(--radius-sm) !important;
+            border: 1px solid var(--divider);
             background: #FFFFFF;
             color: #64748B;
-            font-size: 11px;
-            font-weight: 850;
+            font-size: 11.5px;
+            font-weight: 700;
         }
         .reports-chip.active {
-            color: #244A94;
-            background: #EAF0FF;
-            border-color: #C8D6EF;
+            color: #FFFFFF;
+            background: var(--text-primary);
+            border-color: var(--text-primary);
         }
         .projection-control-card .reports-control-row {
             padding: 6px;
@@ -5914,9 +6069,9 @@
         }
         .projection-control-card .reports-chip.active {
             color: #FFFFFF;
-            background: #0F172A;
-            border-color: #0F172A;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            box-shadow: var(--shadow-card);
         }
         .reports-chip:disabled {
             opacity: 0.38;
@@ -6017,17 +6172,17 @@
             gap: 14px;
         }
         .reports-summary-card {
-            min-height: 142px;
-            padding: 18px;
-            border: 1px solid #E4EBF3;
-            border-radius: 20px;
+            min-height: 0;
+            padding: 16px 18px;
+            border: 1px solid var(--divider);
+            border-radius: var(--radius-md);
             background: #FFFFFF;
-            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045);
+            box-shadow: var(--shadow-card);
         }
         .reports-summary-card span {
-            width: 34px;
-            height: 34px;
-            border-radius: 12px;
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -6035,25 +6190,27 @@
             color: #475569;
         }
         .reports-summary-card p {
-            margin-top: 14px;
-            font-size: 12px;
+            margin-top: 12px;
+            font-size: 10.5px;
             font-weight: 800;
-            color: #64748B;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
         .reports-summary-card strong {
             display: block;
-            margin-top: 7px;
-            font-size: 25px;
+            margin-top: 6px;
+            font-size: var(--num-lg);
             line-height: 1.08;
-            font-weight: 900;
-            color: #0F172A;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+            color: var(--num-color);
+            white-space: nowrap;
         }
-        .reports-summary-card.in span,
-        .reports-summary-card.in strong { color: var(--primary-green); }
-        .reports-summary-card.out span,
-        .reports-summary-card.out strong { color: var(--soft-red); }
-        .reports-summary-card.net span,
-        .reports-summary-card.net strong { color: var(--primary-blue); }
+        .reports-summary-card.in span { color: var(--positive); background: var(--bg-green-soft); }
+        .reports-summary-card.out span { color: var(--negative); background: var(--bg-red-soft); }
+        .reports-summary-card.net span { color: var(--info); background: var(--bg-blue-soft); }
         .reports-insight-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -6746,8 +6903,37 @@
         /* ===== ABA INÍCIO — HOME TAB ===== */
         .home-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 768px) { .home-section-grid { grid-template-columns: 1fr; } }
+        /* Dashboard executivo da Home */
+        .home-kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+        .home-kpi-tile { background: var(--bg-card); border: 1px solid var(--divider); border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 16px 18px; min-width: 0; }
+        .home-kpi-tile .home-kpi-label { font-size: 10.5px; letter-spacing: 0.07em; margin-bottom: 0; }
+        .home-kpi-tile .home-kpi-value { white-space: nowrap; }
+        .home-kpi-tile .home-kpi-value .brl-full { display: inline; }
+        .home-kpi-tile .home-kpi-value .brl-compact { display: none; }
+        .home-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
+        .home-up-day { font-size: 10px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); padding: 12px 0 6px; border-bottom: 1px solid #EFF2F6; }
+        .home-up-row { display: flex; align-items: center; gap: 11px; padding: 9px 0; border-bottom: 1px solid #F3F5F8; }
+        .home-up-row:last-child { border-bottom: 0; }
+        .home-up-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: #64748B; background: #F1F4F8; border-radius: 6px; padding: 3px 7px; flex-shrink: 0; }
+        .home-up-main { min-width: 0; flex: 1; }
+        .home-up-dest { display: block; font-size: 12.5px; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .home-up-desc { display: block; font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+        .home-up-amt { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 12.5px; white-space: nowrap; flex-shrink: 0; }
+        .home-up-amt.in { color: #14684A; }
+        .home-up-amt.out { color: #9A3434; }
+        .home-up-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--accent); background: none; border: none; cursor: pointer; padding: 0; }
+        .home-up-empty { padding: 22px 0; font-size: 13px; color: var(--text-muted); text-align: center; }
+        .home-chart-box { position: relative; height: 240px; }
+        @media (max-width: 1023px) { .home-cols { grid-template-columns: 1fr; } }
+        @media (max-width: 767px) {
+            .home-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+            .home-kpi-tile { padding: 13px 14px; }
+            .home-kpi-tile .home-kpi-value { font-size: clamp(17px, 5.2vw, 22px); }
+            .home-kpi-tile .home-kpi-value .brl-full { display: none; }
+            .home-kpi-tile .home-kpi-value .brl-compact { display: inline; }
+        }
         .home-kpi-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 6px; }
-        .home-kpi-value { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; line-height: 1; margin: 8px 0 6px; }
+        .home-kpi-value { font-size: var(--num-lg); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; margin: 8px 0 6px; color: var(--num-color); }
         .home-kpi-sub { font-size: 12px; color: #64748B; margin-top: 6px; }
         .home-kpi-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 100px; margin-bottom: 4px; }
         .home-kpi-delta.good { background: #DCFCE7; color: #15803D; }
@@ -6795,8 +6981,8 @@
 
         /* ===== ANÁLISE HORIZONTAL POR CATEGORIA ===== */
         .horiz-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-        .horiz-tab-btn { padding: 5px 16px; border-radius: 100px; font-size: 12px; font-weight: 800; border: 1.5px solid #E2E8F0; background: white; cursor: pointer; color: #64748B; transition: all 0.15s; }
-        .horiz-tab-btn.active { background: #0F172A; border-color: #0F172A; color: white; }
+        .horiz-tab-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid var(--divider); background: white; cursor: pointer; color: #64748B; transition: all 0.15s; }
+        .horiz-tab-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: white; }
         .horiz-table-wrap { overflow-x: auto; }
         .horiz-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
         .horiz-table th { text-align: right; font-size: 11px; font-weight: 800; color: #64748B; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
@@ -6932,10 +7118,10 @@
 
     <!-- MAIN -->
     <main class="flex-1 flex flex-col min-w-0 bg-slate-50/50">
-        <header class="h-24 bg-white border-b px-10 flex items-center shrink-0">
-            <div class="flex items-center gap-6">
-                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight">Relatórios financeiros</h2>
-                <div id="sync-status" class="sync-indicator">
+        <header class="h-16 bg-white border-b px-6 lg:px-10 flex items-center shrink-0">
+            <div class="flex items-center gap-3 w-full min-w-0">
+                <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight truncate mr-auto">Relatórios financeiros</h2>
+                <div id="sync-status" class="sync-indicator" role="status">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
                 </div>
@@ -6946,14 +7132,23 @@
                 <button id="toggle-values-btn" class="toggle-values-btn" onclick="toggleValuesHidden()" aria-label="Esconder valores" aria-pressed="false" title="Esconder valores">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                 </button>
-                <button id="export-excel-btn" class="export-pdf-btn export-excel-btn" onclick="exportCurrentReportExcel()">
-                    <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
-                    <span>Exportar Excel</span>
-                </button>
-                <button id="export-pdf-btn" class="export-pdf-btn" onclick="exportCurrentReportPDF()">
-                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                    <span>Exportar PDF</span>
-                </button>
+                <div class="export-menu" id="export-menu">
+                    <button type="button" id="export-menu-btn" class="export-pdf-btn" onclick="toggleExportMenu(event)" aria-haspopup="true" aria-expanded="false" aria-controls="export-menu-panel">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Exportar</span>
+                        <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                    </button>
+                    <div id="export-menu-panel" class="export-menu-panel" hidden>
+                        <button id="export-excel-btn" type="button" onclick="toggleExportMenu();exportCurrentReportExcel()">
+                            <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+                            <span>Planilha Excel</span>
+                        </button>
+                        <button id="export-pdf-btn" type="button" onclick="toggleExportMenu();exportCurrentReportPDF()">
+                            <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                            <span>Relatório PDF</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -6981,8 +7176,7 @@
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top">
                         <div>
-                            <p class="entries-toolbar-title">Central de Lançamentos</p>
-                            <p class="entries-toolbar-sub">Use ações rápidas para filtrar e revisar mais rápido.</p>
+                            <p class="entries-toolbar-title">Lançamentos</p>
                         </div>
                         <div class="entries-quick-actions" role="group" aria-label="Ações rápidas">
                             <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
@@ -7107,10 +7301,7 @@
             <!-- RELATÓRIO MENSAL -->
             <div id="reports" class="tab-content reports-tab space-y-8">
                 <section class="reports-shell-head reports-shell-head-slim" aria-label="Tipo de relatório e período">
-                    <div>
-                        <h3 id="reports-title" class="sr-only">Relatórios financeiros</h3>
-                        <p class="reports-subtitle">Veja o mês ou o ano com a mesma leitura visual.</p>
-                    </div>
+                    <h3 id="reports-title" class="sr-only">Relatórios financeiros</h3>
                     <div class="pill-segment" role="tablist" aria-label="Tipo de relatório">
                         <button type="button" id="reports-mode-monthly" class="pill-segment-btn" onclick="setReportsMode('monthly')" aria-selected="false">
                             <i data-lucide="calendar-days" class="w-4 h-4"></i>Mensal
@@ -7122,31 +7313,22 @@
                 </section>
 
                 <div id="reports-monthly-panel" class="reports-mode-panel space-y-8">
-                <section class="monthly-ios-hero" aria-labelledby="monthly-ios-title">
+                <section class="reports-section-head" aria-labelledby="monthly-ios-title">
                     <div>
-                        <div class="monthly-ios-title-row">
-                            <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="calendar-check-2" class="w-5 h-5"></i></span>
-                            <div>
-                                <p class="monthly-ios-eyebrow">Visão mensal</p>
-                                <h4 id="monthly-ios-title" class="monthly-ios-title">Mês selecionado</h4>
-                                <p id="monthly-period-status" class="monthly-ios-sub">Dados do período ativo.</p>
-                            </div>
-                        </div>
-                        <div class="monthly-ios-meta">
-                            <span id="monthly-record-count" class="monthly-ios-pill"><i data-lucide="list-checks" class="w-3.5 h-3.5"></i>Nenhum lançamento</span>
-                            <span id="monthly-balance-mood" class="monthly-ios-pill"><i data-lucide="activity" class="w-3.5 h-3.5"></i>Saldo em leitura</span>
-                        </div>
+                        <h4 id="monthly-ios-title" class="reports-section-title">Mês selecionado</h4>
+                        <p id="monthly-period-status" class="reports-section-meta">Dados do período ativo.</p>
                     </div>
-                    <div class="monthly-period-panel">
-                        <label class="label-mini" for="monthly-filter-month">Período do relatório</label>
-                        <div class="monthly-period-grid">
-                            <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
-                            <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
-                        </div>
-                        <p id="monthly-period-caption" class="monthly-period-caption">Use mês e ano para trocar o período.</p>
-                        <div id="reports-month-chips" class="reports-month-chips" aria-label="Meses do ano"></div>
-                        <input type="hidden" id="monthly-filter">
+                    <div class="reports-section-controls">
+                        <select id="monthly-filter-month" onchange="syncMonthlyFilterFromSelects()" aria-label="Mês de referência"></select>
+                        <select id="monthly-filter-year" onchange="syncMonthlyFilterFromSelects()" aria-label="Ano de referência"></select>
                     </div>
+                    <div id="reports-month-chips" class="reports-month-chips" aria-label="Meses do ano" style="width:100%"></div>
+                    <div class="reports-head-hidden-meta" hidden>
+                        <span id="monthly-record-count" class="monthly-ios-pill"></span>
+                        <span id="monthly-balance-mood" class="monthly-ios-pill"></span>
+                        <p id="monthly-period-caption" class="monthly-period-caption"></p>
+                    </div>
+                    <input type="hidden" id="monthly-filter">
                 </section>
 
                 <div class="monthly-kpi-grid">
@@ -7336,21 +7518,13 @@
 
             <!-- RELATÓRIO ANUAL -->
                 <div id="reports-annual-panel" class="reports-mode-panel active space-y-8">
-                <section class="monthly-ios-hero reports-annual-hero" aria-labelledby="reports-annual-title">
+                <section class="reports-section-head" aria-labelledby="reports-annual-title">
                     <div>
-                        <div class="monthly-ios-title-row">
-                            <span class="monthly-ios-icon" aria-hidden="true"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></span>
-                            <div>
-                                <p class="monthly-ios-eyebrow">Visão anual</p>
-                                <h4 id="reports-annual-title" class="monthly-ios-title">Visão mês a mês do ano</h4>
-                                <p class="monthly-ios-sub">Acompanhe entradas, saídas, resultado anual e os meses que mais puxaram o caixa.</p>
-                            </div>
-                        </div>
+                        <h4 id="reports-annual-title" class="reports-section-title">Visão anual</h4>
+                        <p id="reports-annual-caption" class="reports-section-meta">Selecione um ano para atualizar os relatórios.</p>
                     </div>
-                    <div class="monthly-period-panel">
-                        <label class="label-mini" for="reports-annual-year">Ano do relatório</label>
+                    <div class="reports-section-controls">
                         <select id="reports-annual-year" onchange="setAnnualReportYear(this.value)" aria-label="Ano do relatório anual"></select>
-                        <p id="reports-annual-caption" class="monthly-period-caption">Selecione um ano para atualizar os relatórios.</p>
                     </div>
                 </section>
                 <div class="reports-summary-grid">
@@ -7474,11 +7648,9 @@
 
                 <!-- Seção: Projeção -->
                 <div id="plan-projection-section" class="plan-section space-y-8">
-                    <section class="reports-shell-head" aria-labelledby="projection-title">
+                    <section class="reports-section-head" aria-labelledby="projection-title">
                         <div>
-                            <p class="reports-eyebrow">Previsão financeira</p>
-                            <h3 id="projection-title" class="reports-title">Projeção financeira</h3>
-                            <p class="reports-subtitle">Veja o que pode acontecer com base nas pendências ou no histórico.</p>
+                            <h3 id="projection-title" class="reports-section-title">Projeção financeira</h3>
                         </div>
                         <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
                             <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
@@ -7602,17 +7774,13 @@
                 <!-- Seção: Vendas -->
                 <div id="sales-treasury-section" class="plan-section space-y-8">
                 <div class="sales-report-shell">
-                    <div class="sales-report-hero">
-                        <div class="sales-report-title-wrap">
-                            <div class="sales-report-icon" aria-hidden="true"><i data-lucide="line-chart" class="w-5 h-5"></i></div>
-                            <div>
-                                <p class="sales-report-eyebrow">Relatório de vendas</p>
-                                <h4 class="sales-report-title">Visão clara do dia e do período</h4>
-                                <p class="sales-report-sub">Cadastre, revise e compare os fechamentos das unidades com leitura rápida de vendas, saídas e resultado.</p>
-                            </div>
+                    <div class="reports-section-head">
+                        <div>
+                            <h4 class="reports-section-title">Vendas</h4>
+                            <p class="reports-section-meta">Fechamentos das unidades por dia e período</p>
                         </div>
-                        <div class="sales-date-panel">
-                            <label class="label-mini" for="treasury-summary-date">Dia de referência</label>
+                        <div class="reports-section-controls">
+                            <label class="label-mini" for="treasury-summary-date" style="margin:0">Dia</label>
                             <input id="treasury-summary-date" type="date" onchange="renderTreasuryMovements(); renderTreasuryFinancialPosition(); renderTreasurySalesAnalytics()">
                         </div>
                     </div>
@@ -8348,8 +8516,17 @@
         }
 
         if (window.Chart && Chart.defaults) {
-            Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '700' };
+            Chart.defaults.font = { family: "'Plus Jakarta Sans', sans-serif", size: 11, weight: '600' };
             Chart.defaults.color = '#64748b';
+            Chart.defaults.plugins.legend.labels.boxWidth = 8;
+            Chart.defaults.plugins.legend.labels.boxHeight = 8;
+            Chart.defaults.plugins.legend.labels.usePointStyle = true;
+            Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+            Chart.defaults.scale.grid = Object.assign({}, Chart.defaults.scale.grid, { color: '#EEF2F7' });
+            Chart.defaults.elements.bar.borderRadius = 5;
+            Chart.defaults.elements.bar.borderSkipped = 'bottom';
+            Chart.defaults.elements.line.borderWidth = 2;
+            Chart.defaults.elements.point.radius = 2.5;
         }
 
         function escapeToastHtml(value) {
@@ -9038,6 +9215,25 @@
             }
         }
 
+        function toggleExportMenu(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('export-menu');
+            const panel = document.getElementById('export-menu-panel');
+            const btn = document.getElementById('export-menu-btn');
+            if (!menu || !panel) return;
+            const willOpen = panel.hidden;
+            panel.hidden = !willOpen;
+            menu.classList.toggle('open', willOpen);
+            if (btn) btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        }
+
+        document.addEventListener('click', (event) => {
+            const menu = document.getElementById('export-menu');
+            const panel = document.getElementById('export-menu-panel');
+            if (!menu || !panel || panel.hidden) return;
+            if (!menu.contains(event.target)) toggleExportMenu();
+        });
+
         function refreshLucideIcons() {
             if (window.lucide && typeof window.lucide.createIcons === 'function') {
                 window.lucide.createIcons();
@@ -9309,6 +9505,15 @@
         const formatBRL = (v) => valuesHidden ? HIDDEN_MONEY : (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         // Valor sem centavos (sem vírgula) para os números grandes dos cards
         const formatBRLNoCents = (v) => valuesHidden ? HIDDEN_MONEY : Math.round(Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        // Versão compacta para telas estreitas: abrevia a partir de 100 mil ("R$ 309,2 mil")
+        const formatBRLCompact = (v) => {
+            if (valuesHidden) return HIDDEN_MONEY;
+            const n = Number(v) || 0;
+            const abs = Math.abs(n);
+            if (abs >= 1000000) return `${n < 0 ? '-' : ''}R$ ${(abs / 1000000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mi`;
+            if (abs >= 100000) return `${n < 0 ? '-' : ''}R$ ${(abs / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil`;
+            return formatBRLNoCents(n);
+        };
         function updateToggleValuesUI() {
             const btn = document.getElementById('toggle-values-btn');
             if (!btn) return;
@@ -13497,7 +13702,7 @@
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text' : 'flow-expense-text') : 'text-slate-400';
-                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'badge-pendente';
                 const sign = isEntrada ? '+' : '−';
                 const destinationName = getDestinationById(e.destinationId)?.name || 'Sem destino';
                 const accountName = getAccountNameById(String((e.accountId ?? e.account_id) || '')) || 'Sem conta';
@@ -13526,207 +13731,6 @@
                     </div>
                 </article>`;
             }).join('');
-        }
-
-        function renderEntries() {
-            const body = document.getElementById('entries-table-body');
-            if(!body) return;
-            closeEntryDestinationCombobox();
-            const descSearch = normalizeEntrySearchText(document.getElementById('filter-desc')?.value || '');
-            const valueSearch = parseEntryValueFilter(document.getElementById('filter-value-exact')?.value || '');
-            const dateStart = document.getElementById('filter-date-start')?.value || '';
-            const dateEnd = document.getElementById('filter-date-end')?.value || '';
-            syncEntriesMonthControl(dateStart, dateEnd);
-            const typeFilter = document.getElementById('filter-type')?.value || '';
-            const statusFilter = document.getElementById('filter-status')?.value || '';
-            const accountFilter = document.getElementById('filter-account')?.value || '';
-            const duplicateFilter = document.getElementById('filter-duplicates')?.value || '';
-            const movTypeFilter = document.getElementById('filter-mov-type')?.value || '';
-            const quickDupEl = document.getElementById('entries-quick-dup');
-            const duplicateSummaryEl = document.getElementById('entries-dup-summary');
-            if (quickDupEl) quickDupEl.classList.toggle('active', duplicateFilter === 'ONLY');
-            const queryKey = [
-                descSearch,
-                String(valueSearch),
-                dateStart,
-                dateEnd,
-                typeFilter,
-                statusFilter,
-                accountFilter,
-                duplicateFilter,
-                movTypeFilter,
-                currentSort.field,
-                currentSort.order
-            ].join('|');
-            if (lastEntriesQueryKey !== queryKey) {
-                entriesPage = 1;
-                lastEntriesQueryKey = queryKey;
-            }
-
-            const baseFiltered = state.entries.filter(e => {
-                const matchesDesc = !descSearch || getEntryDescHaystack(e).includes(descSearch);
-                const matchesValue = valueSearch === null || Math.abs(Number(e.amount) || 0).toFixed(2) === valueSearch.toFixed(2);
-                const matchesStart = !dateStart || e.date >= dateStart;
-                const matchesEnd = !dateEnd || e.date <= dateEnd;
-                const matchesType = !typeFilter || e.type === typeFilter;
-                const matchesStatus = !statusFilter || e.status === statusFilter;
-                const entryAccountId = String((e.accountId ?? e.account_id) || '');
-                const matchesAccount = !accountFilter || entryAccountId === String(accountFilter);
-                const matchesMovType = !movTypeFilter || getMovimentoType(e) === movTypeFilter;
-                return matchesDesc && matchesValue && matchesStart && matchesEnd && matchesType && matchesStatus && matchesAccount && matchesMovType;
-            });
-            const duplicateMeta = getDuplicateMeta(baseFiltered);
-
-            let filtered = duplicateFilter === 'ONLY'
-                ? baseFiltered.filter(e => duplicateMeta.duplicateIds.has(e.id))
-                : duplicateFilter === 'TRANSFER'
-                    ? baseFiltered.filter(e => {
-                        const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
-                        return isPossibleTransfer && getEntryTransferReviewStatus(e.id) !== 'dismissed';
-                    })
-                    : baseFiltered;
-
-            if (duplicateSummaryEl) {
-                const dupCount = duplicateMeta.duplicateIds.size;
-                const transferCount = duplicateMeta.transferIds.size;
-                const confirmedTransferCount = baseFiltered.filter(e => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) === 'confirmed').length;
-                const dismissedTransferCount = baseFiltered.filter(e => duplicateMeta.transferIds.has(e.id) && getEntryTransferReviewStatus(e.id) === 'dismissed').length;
-                const pendingTransferCount = Math.max(0, transferCount - confirmedTransferCount - dismissedTransferCount);
-                if (dupCount > 0 || transferCount > 0) {
-                    duplicateSummaryEl.classList.remove('hidden');
-                    duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
-                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
-                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicado(s) por data + valor absoluto (ignora sinal).`;
-                    duplicateSummaryEl.innerText = `${dupCount} lançamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lançamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possível transferência.`;
-                    duplicateSummaryEl.innerText = `${dupCount} lancamento(s) em ${duplicateMeta.duplicateGroups} grupo(s) duplicados e ${transferCount} lancamento(s) em ${duplicateMeta.transferGroups} grupo(s) de possivel transferencia. Pendentes: ${pendingTransferCount} | confirmados: ${confirmedTransferCount} | descartados: ${dismissedTransferCount}.`;
-                } else {
-                    duplicateSummaryEl.classList.add('hidden');
-                    duplicateSummaryEl.innerText = '';
-                }
-            }
-
-            filtered.sort((a,b) => {
-                let vA = a[currentSort.field], vB = b[currentSort.field];
-                if (currentSort.field === 'date') return currentSort.order === 'asc' ? (vA || '').localeCompare(vB || '') : (vB || '').localeCompare(vA || '');
-                return currentSort.order === 'asc' ? (vA || 0) - (vB || 0) : (vB || 0) - (vA || 0);
-            });
-            const sortDateEl = document.getElementById('entries-sort-date');
-            const sortAmountEl = document.getElementById('entries-sort-amount');
-            if (sortDateEl) sortDateEl.setAttribute('aria-sort', currentSort.field === 'date' ? (currentSort.order === 'asc' ? 'ascending' : 'descending') : 'none');
-            if (sortAmountEl) sortAmountEl.setAttribute('aria-sort', currentSort.field === 'amount' ? (currentSort.order === 'asc' ? 'ascending' : 'descending') : 'none');
-            const totalRecords = filtered.length;
-            const totalPages = Math.max(1, Math.ceil(totalRecords / entriesPageSize));
-            if (entriesPage > totalPages) entriesPage = totalPages;
-            const startIdx = (entriesPage - 1) * entriesPageSize;
-            const pageItems = filtered.slice(startIdx, startIdx + entriesPageSize);
-
-            window.currentFilteredAllEntryIds = filtered.map(e => String(e.id || ''));
-            updateEntriesFilterReport(filtered);
-            selectedEntryIds = new Set(Array.from(selectedEntryIds).filter(id => state.entries.some(e => e.id === id)));
-            updateEntriesSummaryAndSelection(pageItems);
-            renderEntriesPagination(totalRecords, totalPages, pageItems.length);
-
-            renderEntriesMobileList(pageItems, duplicateMeta);
-            body.innerHTML = pageItems.map((e, i) => {
-                const dstOptionsByType = getValidDestinationsByFlow(e.type);
-                const dstOptions = dstOptionsByType.length ? dstOptionsByType : getValidDestinations();
-                const accountOptions = (Array.isArray(state.accounts) ? [...state.accounts] : []).sort((a, b) => String((a || {}).name || '').localeCompare(String((b || {}).name || ''), 'pt-BR', { sensitivity: 'base' }));
-                const selectedAccount = accountOptions.find(acc => String(acc.id || '') === String((e.accountId ?? e.account_id) || '')) || null;
-                const selectedAccountName = String((selectedAccount || {}).name || 'Conta não informada');
-                const isEntrada = e.type === 'ENTRADA';
-                const isRealizado = e.status === 'REALIZADO';
-                const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
-                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
-                const isSelected = selectedEntryIds.has(e.id);
-                const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
-                const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
-                const transferReviewStatus = getEntryTransferReviewStatus(e.id);
-                const isConfirmedTransfer = transferReviewStatus === 'confirmed';
-                const isDismissedTransfer = transferReviewStatus === 'dismissed';
-                const transferRowClass = isPossibleTransfer
-                    ? (isConfirmedTransfer ? 'entry-row-transfer-confirmed' : isDismissedTransfer ? '' : 'entry-row-transfer')
-                    : '';
-                const transferIconTitle = isConfirmedTransfer
-                    ? 'Transferencia'
-                    : isDismissedTransfer
-                        ? 'Transferencia descartada'
-                        : 'Possivel transferencia';
-                
-                return `<tr class="table-row ${isPossibleTransfer ? 'entry-row-transfer' : ''} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lançamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
-                    <td class="px-4 py-4 text-center">
-                        <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lançamento de ${escapeHtml(formatDateBRV2(e.date))}">
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="entry-cell-main center">
-                            <span class="entry-date-main">${formatDateBRV2(e.date)}</span>
-                        </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
-                            <div class="recon-destination-cell entry-cell-main">
-                                <input
-                                    id="entry-dst-${e.id}"
-                                    list="entry-dst-list-${e.id}"
-                                    value="${escapeHtml(getDestinationDisplayLabelById(e.destinationId, dstOptions) || getDestinationDisplayLabelById(e.destinationId))}"
-                                    onclick="event.stopPropagation()"
-                                    onkeydown="handleEntryDestinationKeydown('${e.id}', event)"
-                                    onchange="event.stopPropagation(); updateEntryDestinationInlineByLabel('${e.id}', this.value)"
-                                    onblur="event.stopPropagation(); commitEntryDestinationInlineInput('${e.id}', this.value, { showAlert: false })"
-                                    class="entry-destination-input"
-                                    aria-label="Destino do lançamento">
-                                <datalist id="entry-dst-list-${e.id}">
-                                    ${buildDestinationOptionsMarkup(dstOptions, e.destinationId)}
-                                </datalist>
-                                <div class="entry-badges">
-                                    ${isPossibleTransfer ? '<span class="dup-icon" title="Possível transferência"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>' : ''}
-                                    ${isDuplicate ? '<span class="dup-icon" title="Possível duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
-                                </div>
-                                <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
-                                    ⋮
-                                </button>
-                            </div>
-                            <p class="entry-destination-desc entry-cell-sub">${escapeHtml(e.description || 'Sem observação')}</p>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})" onmousemove="applyEntryAccountFillTo(${i})">
-                            <div class="recon-destination-cell entry-cell-main">
-                                <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lançamento">
-                                    ${accountOptions.map(acc => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '')===String(acc.id || '')?'selected':''}>${acc.name}</option>`).join('')}
-                                </select>
-                                <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryAccountFill(${i}, event)" title="Arraste para copiar conta" aria-label="Arrastar para copiar conta">
-                                    ⋮
-                                </button>
-                            </div>
-                            <p class="entry-destination-desc entry-cell-sub">Conta / banco</p>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="entry-cell-main center">
-                            <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
-                        </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <div class="entry-cell-main center">
-                            <div class="entry-actions-wrap">
-                                <button type="button" onclick="event.stopPropagation(); openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lançamento">
-                                    <i data-lucide="pencil" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lançamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
-                                <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lançamento">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
-                    </td>
-                </tr>`;
-            }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
-            applyCompactEntryAccountLabels(body);
-            refreshLucideIcons();
-            requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
 
         function renderEntries() {
@@ -13842,7 +13846,7 @@
                 const isEntrada = e.type === 'ENTRADA';
                 const isRealizado = e.status === 'REALIZADO';
                 const valueClass = isRealizado ? (isEntrada ? 'flow-income-text font-black' : 'flow-expense-text font-black') : 'text-slate-400 font-bold';
-                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'bg-slate-100 text-slate-400';
+                const statusBadgeClass = isRealizado ? 'badge-realizado' : 'badge-pendente';
                 const isSelected = selectedEntryIds.has(e.id);
                 const isDuplicate = duplicateMeta.duplicateIds.has(e.id);
                 const isPossibleTransfer = duplicateMeta.transferIds.has(e.id);
@@ -13864,7 +13868,6 @@
                         <div class="entry-cell-main center">
                             <span class="entry-date-main">${formatDateBRV2(e.date)}</span>
                         </div>
-                        <span class="entry-cell-sub entry-cell-placeholder">.</span>
                     </td>
                     <td class="px-6 py-4">
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
@@ -13894,7 +13897,7 @@
                                     ${isDuplicate ? '<span class="dup-icon" title="Possivel duplicado"><i data-lucide="copy" class="w-3 h-3"></i></span>' : ''}
                                 </div>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryDestinationFill(${i}, event)" title="Arraste para copiar destino" aria-label="Arrastar para copiar destino">
-                                    ...
+                                    <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
                             <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
@@ -13907,10 +13910,9 @@
                                     ${accountOptions.map((acc) => `<option value="${String(acc.id || '')}" ${String((e.accountId ?? e.account_id) || '') === String(acc.id || '') ? 'selected' : ''}>${acc.name}</option>`).join('')}
                                 </select>
                                 <button type="button" class="recon-fill-handle entry-action-btn" onclick="event.stopPropagation()" onmousedown="startEntryAccountFill(${i}, event)" title="Arraste para copiar conta" aria-label="Arrastar para copiar conta">
-                                    ...
+                                    <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                            <p class="entry-destination-desc entry-cell-sub">Conta / banco</p>
                         </div>
                     </td>
                     <td class="px-6 py-4">
@@ -14293,50 +14295,139 @@
                 ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
                 : currentMonthPrefix;
 
-            // Delta vs mês anterior
-            let balDeltaHtml = '';
-            if (prevRealized.length > 0 && prevBal !== 0) {
-                const balDelta = ((balR - prevBal) / Math.abs(prevBal)) * 100;
-                const dir = balDelta > 0.05 ? 'good' : (balDelta < -0.05 ? 'bad' : 'flat');
-                balDeltaHtml = `<span class="home-kpi-delta ${dir}">${balDelta > 0 ? '▲' : (balDelta < 0 ? '▼' : '–')} ${Math.abs(balDelta).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
-            }
+            // Chips de variação vs mês anterior (verde = movimento bom para o negócio)
+            const hasPrevMonth = prevRealized.length > 0;
+            const buildDeltaChip = (cur, prev, goodWhenUp) => {
+                if (!hasPrevMonth || !prev) return '';
+                const pct = ((cur - prev) / Math.abs(prev)) * 100;
+                if (!isFinite(pct)) return '';
+                const up = pct > 0.05;
+                const down = pct < -0.05;
+                const dir = up ? (goodWhenUp ? 'good' : 'bad') : (down ? (goodWhenUp ? 'bad' : 'good') : 'flat');
+                const arrow = up ? '▲' : (down ? '▼' : '–');
+                return `<span class="home-kpi-delta ${dir}">${arrow} ${Math.abs(pct).toFixed(1).replace('.', ',')}% vs mês anterior</span>`;
+            };
 
-            const dayRowsHtml = buildHomeStyleDayCards(futurePending);
-
-            // Alertas rápidos removidos a pedido
-            const alertsHtml = '';
-
-            // Card resultado previsto (com pendentes)
+            // Resultado previsto (com pendentes)
             const projected = balR + incP - expP;
-            const hasPending = incP > 0 || expP > 0;
-            const prevCardHtml = hasPending ? `
-                <div class="card-premium p-8">
-                    <div class="home-kpi-label">Resultado previsto (com pendentes)</div>
-                    <div class="home-kpi-value ${projected >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(projected)}</div>
-                    <div class="home-kpi-sub">+ ${formatBRL(incP)} a receber · - ${formatBRL(expP)} a pagar</div>
-                </div>` : '';
+            const pendingCount = futurePending.length;
+
+            const monthShort = monthName.split(' ')[0];
+            const kpiValue = (v) => `<div class="home-kpi-value"><span class="brl-full">${formatBRLNoCents(v)}</span><span class="brl-compact">${formatBRLCompact(v)}</span></div>`;
+            const kpiTilesHtml = `
+                <div class="home-kpi-grid">
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Entradas · ${escapeHtml(monthShort)}</div>
+                        ${kpiValue(incR)}
+                        ${buildDeltaChip(incR, prevInc, true)}
+                    </div>
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Saídas · ${escapeHtml(monthShort)}</div>
+                        ${kpiValue(expR)}
+                        ${buildDeltaChip(expR, prevExp, false)}
+                    </div>
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Resultado do mês</div>
+                        ${kpiValue(balR)}
+                        ${buildDeltaChip(balR, prevBal, true)}
+                    </div>
+                    <div class="home-kpi-tile">
+                        <div class="home-kpi-label">Previsto com pendentes</div>
+                        ${kpiValue(projected)}
+                        <div class="home-kpi-sub">${pendingCount > 0 ? `${pendingCount} lançamento(s) a vencer` : 'Sem pendências nos próximos 14 dias'}</div>
+                    </div>
+                </div>`;
+
+            // Próximos vencimentos: uma linha por pendência, com separador por dia
+            const MAX_UPCOMING_ROWS = 8;
+            const visiblePending = futurePending.slice(0, MAX_UPCOMING_ROWS);
+            let lastDay = '';
+            const upcomingRowsHtml = visiblePending.map(e => {
+                const flow = normalizeFlowType(e.type);
+                const isIn = flow === FLOW_IN;
+                const dateIso = String(e.date || '');
+                const dObj = parseIsoDateLocal(dateIso) || new Date();
+                const dShort = dObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                const weekday = dObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+                const dayLabel = dateIso === today ? 'Hoje' : `${weekday} · ${dShort}`;
+                const sep = dateIso !== lastDay ? `<div class="home-up-day">${escapeHtml(dayLabel)}</div>` : '';
+                lastDay = dateIso;
+                const destName = getDestinationById(e.destinationId)?.name || e.description || 'Sem destino';
+                const descHtml = (e.description && destName !== e.description) ? `<span class="home-up-desc">${escapeHtml(e.description)}</span>` : '';
+                return `${sep}<div class="home-up-row">
+                    <span class="home-up-date">${escapeHtml(dShort)}</span>
+                    <span class="home-up-main"><span class="home-up-dest">${escapeHtml(destName)}</span>${descHtml}</span>
+                    <span class="home-up-amt ${isIn ? 'in' : 'out'}">${isIn ? '+' : '−'} ${formatBRLNoCents(Number(e.amount) || 0)}</span>
+                </div>`;
+            }).join('');
+            const remaining = futurePending.length - visiblePending.length;
+            const upcomingListHtml = futurePending.length > 0
+                ? `${upcomingRowsHtml}${remaining > 0 ? `<button type="button" class="home-up-more" onclick="switchTab('entries')">Ver todos (${futurePending.length}) <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></button>` : ''}`
+                : `<div class="home-up-empty">Nenhum lançamento pendente nos próximos 14 dias.<br><button onclick="openEntryModal(null)" class="home-up-more">Adicionar lançamento <i data-lucide="plus" class="w-3.5 h-3.5"></i></button></div>`;
 
             host.innerHTML = `
-                ${alertsHtml}
+                ${kpiTilesHtml}
 
-                <div class="card-premium p-8">
-                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-                        <div>
-                            <h4 class="text-sm font-black text-slate-900">Próximos 14 dias</h4>
-                            <p class="text-xs text-slate-500 mt-1">Lançamentos pendentes de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
+                <div class="home-cols">
+                    <div class="card-premium">
+                        <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+                            <h4 class="text-sm font-black text-slate-900">Resultado por mês</h4>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="home-chart-box"><canvas id="home-mini-chart" aria-label="Entradas e saídas dos últimos meses" role="img"></canvas></div>
+                    </div>
+                    <div class="card-premium">
+                        <div class="flex items-center justify-between flex-wrap gap-3">
+                            <h4 class="text-sm font-black text-slate-900">Próximos vencimentos</h4>
                             <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
                         </div>
+                        ${upcomingListHtml}
                     </div>
-                    ${dayRowsHtml.length > 0
-                        ? `<div class="home-proj-list">${dayRowsHtml}</div>`
-                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
-                    }
                 </div>
             `;
 
+            renderHomeMiniChart(currentMonthPrefix);
             refreshLucideIcons();
+        }
+
+        function renderHomeMiniChart(currentMonthPrefix) {
+            const canvas = document.getElementById('home-mini-chart');
+            if (!canvas || typeof Chart === 'undefined') return;
+            const monthsBack = 6;
+            const labels = [];
+            const incData = [];
+            const expData = [];
+            const analytical = getAnalyticalEntries(state.entries);
+            for (let i = monthsBack; i >= 0; i--) {
+                const prefix = getMonthPrefixShift(currentMonthPrefix, -i);
+                const [y, m] = prefix.split('-');
+                labels.push(new Date(Number(y), Number(m) - 1, 1).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''));
+                const monthRealized = analytical.filter(e => e.date && e.date.startsWith(prefix) && String(e.status || '').toUpperCase() === 'REALIZADO');
+                incData.push(monthRealized.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b) => a + (Number(b.amount) || 0), 0));
+                expData.push(monthRealized.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0));
+            }
+            if (window.homeMiniChart && typeof window.homeMiniChart.destroy === 'function') window.homeMiniChart.destroy();
+            window.homeMiniChart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Entradas', data: incData, backgroundColor: '#149463', borderRadius: 4, maxBarThickness: 18, borderSkipped: 'bottom' },
+                        { label: 'Saídas', data: expData, backgroundColor: '#B23A3A', borderRadius: 4, maxBarThickness: 18, borderSkipped: 'bottom' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 8, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatBRL(ctx.parsed.y)}` } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, border: { display: false } },
+                        y: { grid: { color: '#EEF2F7' }, border: { display: false }, ticks: { maxTicksLimit: 5, callback: (v) => valuesHidden ? '••' : (Math.abs(v) >= 1000 ? `${Math.round(v / 1000)} mil` : v) } }
+                    }
+                }
+            });
         }
 
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
@@ -14375,8 +14466,8 @@
                     { label: 'Saídas', data: dailyOutReal, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 18 }
                 ];
                 if (dailyShowPending && dailyInPend) {
-                    datasets.push({ label: 'Entradas pendentes', data: dailyInPend, backgroundColor: '#86EFAC', borderRadius: 10, maxBarThickness: 14 });
-                    datasets.push({ label: 'Saídas pendentes', data: dailyOutPend || [], backgroundColor: '#FCA5A5', borderRadius: 10, maxBarThickness: 14 });
+                    datasets.push({ label: 'Entradas pendentes', data: dailyInPend, backgroundColor: 'rgba(20, 148, 99, 0.35)', borderRadius: 10, maxBarThickness: 14 });
+                    datasets.push({ label: 'Saídas pendentes', data: dailyOutPend || [], backgroundColor: 'rgba(178, 58, 58, 0.35)', borderRadius: 10, maxBarThickness: 14 });
                 }
                 window.reportsMonthlyChart = new Chart(chartEl.getContext('2d'), {
                     type: 'bar',
@@ -15019,11 +15110,11 @@
 
             const incChartData = buildCategoryChartData(
                 incByCat,
-                ['#0F8A67', '#35A77A', '#79BE4D', '#A6CD39', '#1F4AA8', '#2E63C7', '#A9D7FF']
+                ['#0E6B4A', '#149463', '#3FAE7F', '#74C6A1', '#A8DCC3', '#D2EEE2', '#CBD5E1']
             );
             const expChartData = buildCategoryChartData(
                 expByCat,
-                ['#B23A3A', '#C94A34', '#DE6432', '#EE8833', '#F6AA2F', '#F8C24A', '#F9DA78']
+                ['#8F2E2E', '#B23A3A', '#C75F53', '#DA8878', '#EBB3A6', '#F7D9D2', '#CBD5E1']
             );
             const nextChartsSignature = JSON.stringify({
                 inc: incChartData,
@@ -15258,9 +15349,9 @@
                     data: {
                         labels: monthNames,
                         datasets: [
-                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#0F8A67', borderRadius: 8, stack: 'entrada' },
-                            { label: 'Aporte de capital', data: annualAporte, backgroundColor: '#8FD19E', borderRadius: 8, stack: 'entrada' },
-                            { label: 'Saídas', data: annualExp, backgroundColor: '#C94A34', borderRadius: 8, stack: 'saida' }
+                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#149463', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
+                            { label: 'Aporte de capital', data: annualAporte, backgroundColor: 'rgba(20, 148, 99, 0.45)', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
+                            { label: 'Saídas', data: annualExp, backgroundColor: '#B23A3A', borderRadius: 8, maxBarThickness: 22, stack: 'saida' }
                         ]
                     },
                     options: {
@@ -15564,21 +15655,21 @@
                     {
                         label: 'Entradas',
                         data: periods.map(item => item.inTotal || 0),
-                        backgroundColor: '#0F8A67',
+                        backgroundColor: '#149463',
                         borderRadius: 8,
                         maxBarThickness: 42
                     },
                     {
                         label: 'Aporte de Capital',
                         data: periods.map(item => item.capitalTotal || 0),
-                        backgroundColor: '#8FD19E',
+                        backgroundColor: 'rgba(20, 148, 99, 0.45)',
                         borderRadius: 8,
                         maxBarThickness: 42
                     },
                     {
                         label: 'Saídas',
                         data: periods.map(item => item.outTotal || 0),
-                        backgroundColor: '#C94A34',
+                        backgroundColor: '#B23A3A',
                         borderRadius: 8,
                         maxBarThickness: 42
                     }
