@@ -7230,8 +7230,9 @@
         /* secoes internas */
         .annual-explorer-section { padding: 20px 22px; }
         .annual-explorer-section + .annual-explorer-section { border-top: 1px solid #EEF2F6; }
-        .annual-explorer-section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+        .annual-explorer-section-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
         .annual-explorer-section-title { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #94A3B8; margin: 0; }
+        .annual-chart-hint { font-size: 11px; color: #94A3B8; margin: 4px 0 0; }
         /* legenda custom do grafico */
         .annual-chart-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; }
         .annual-legend-item { display: inline-flex; align-items: center; gap: 7px; background: transparent; border: 0; padding: 2px 0; font-size: 11.5px; font-weight: 500; color: #475569; cursor: pointer; user-select: none; }
@@ -7818,34 +7819,17 @@
                         <div id="annual-hierarchy-detail"></div>
                     </div>
 
-                    <!-- Seção: gráfico + legenda + comparação por período -->
+                    <!-- Seção: gráfico + legenda (comparação por período) -->
                     <div class="annual-explorer-section">
                         <div class="annual-explorer-section-head">
-                            <h5 class="annual-explorer-section-title">Comparação por período</h5>
+                            <div>
+                                <h5 class="annual-explorer-section-title">Comparação por período</h5>
+                                <p class="annual-chart-hint">Clique em uma barra para abrir os lançamentos do período.</p>
+                            </div>
                             <div id="annual-chart-legend" class="annual-chart-legend"></div>
                         </div>
-                        <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
-                            <div class="xl:col-span-3 h-[420px] annual-chart-box">
-                                <canvas id="chartAnnualTemporal"></canvas>
-                            </div>
-                            <div class="xl:col-span-2 annual-compare-wrap">
-                                <div class="table-mobile-scroll custom-scrollbar">
-                                    <table id="annual-temporal-table" class="w-full text-left annual-compare-table">
-                                        <thead class="bg-slate-50 border-b text-[10px] font-black uppercase text-slate-400">
-                                            <tr>
-                                                <th class="px-4 py-3">Período</th>
-                                                <th class="px-4 py-3 text-right">Entradas</th>
-                                                <th class="px-4 py-3 text-right">Aporte de Capital</th>
-                                                <th class="px-4 py-3 text-right">Saídas</th>
-                                                <th class="px-4 py-3 text-right">Saldo</th>
-                                                <th class="px-4 py-3 text-right">Lançamentos</th>
-                                                <th class="px-4 py-3 text-right">Abrir</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="annual-temporal-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                                    </table>
-                                </div>
-                            </div>
+                        <div class="h-[440px] annual-chart-box">
+                            <canvas id="chartAnnualTemporal"></canvas>
                         </div>
                     </div>
                 </div>
@@ -15572,7 +15556,7 @@
             const tableBody = document.getElementById('annual-temporal-table-body');
             const summaryEl = document.getElementById('annual-temporal-summary');
             const chartEl = document.getElementById('chartAnnualTemporal');
-            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !accountEl || !excludeDstEl || !tableBody || !summaryEl || !chartEl) return;
+            if(!flowEl || !modeEl || !yearEl || !catEl || !subEl || !dstEl || !accountEl || !excludeDstEl || !summaryEl || !chartEl) return;
 
             const validYears = Array.from(new Set(
                 getAnalyticalEntries(state.entries)
@@ -15768,13 +15752,13 @@
 
             const legendHost = document.getElementById('annual-chart-legend');
             if(periods.every(item => item.count === 0)) {
-                tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
+                if(tableBody) tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem dados para comparação</td></tr>';
                 if(legendHost) legendHost.innerHTML = '';
                 if(window.aTemporalChart) window.aTemporalChart.destroy();
                 return;
             }
 
-            tableBody.innerHTML = periods.map((item) => {
+            if(tableBody) tableBody.innerHTML = periods.map((item) => {
                 const current = Number(item.value) || 0;
                 const saldoClass = current < 0 ? 'flow-expense-text' : current > 0 ? 'flow-income-text' : 'annual-compare-muted';
                 return `<tr class="table-row">
@@ -15833,7 +15817,20 @@
                 options: {
                     maintainAspectRatio: false,
                     interaction: { mode: 'nearest', intersect: false },
-                    onClick: (event, elements, chart) => pinChartTooltip(chart, elements),
+                    onClick: (event, elements, chart) => {
+                        if (elements && elements.length) {
+                            const period = periods[elements[0].index];
+                            if (period && period.startIso && period.endIso) {
+                                openAnnualTemporalPeriodInEntries(period.startIso, period.endIso);
+                                return;
+                            }
+                        }
+                        pinChartTooltip(chart, elements);
+                    },
+                    onHover: (event, elements) => {
+                        const target = event && event.native && event.native.target;
+                        if (target) target.style.cursor = elements && elements.length ? 'pointer' : 'default';
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
