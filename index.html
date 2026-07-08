@@ -6789,6 +6789,22 @@
             font-size: 13px; font-weight: 700; padding: 0 10px;
             color: var(--text-primary); min-width: 120px; text-align: center;
         }
+        .goals-cards-monthbar {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .goals-cards-month-badge {
+            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em;
+            color: var(--primary-green); background: rgba(31,122,92,.10);
+            padding: 5px 10px; border-radius: 999px;
+        }
+        .goals-cards-today-btn {
+            font-size: 12px; font-weight: 700; color: var(--text-secondary);
+            background: transparent; border: 1px solid var(--border); border-radius: 999px;
+            padding: 6px 12px; cursor: pointer;
+            transition: all var(--dur-fast) var(--ease-premium);
+        }
+        .goals-cards-today-btn:hover { background: #F8FAFC; color: var(--text-primary); }
         .goal-form-toggle {
             flex: 1; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border);
             background: transparent; cursor: pointer; font-size: 12px; font-weight: 700;
@@ -21129,7 +21145,22 @@
 
             const now = new Date();
             const pad = n => String(n).padStart(2, '0');
-            const currentYYYYMM = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+            const todayYYYYMM = `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
+            // Mês navegável: respeita a navegação de mês a mês do usuário.
+            const currentYYYYMM = goalsGetCurrentMonth();
+            const isCurrentMonth = currentYYYYMM === todayYYYYMM;
+
+            // Cabeçalho com navegação de mês a mês (setas + rótulo do mês).
+            const navHtml = `<div class="goals-cards-monthbar">
+                <div class="goals-month-nav">
+                    <button type="button" onclick="goalsNavMonth(-1)" aria-label="Mês anterior"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                    <span>${goalMonthLabel(currentYYYYMM)}</span>
+                    <button type="button" onclick="goalsNavMonth(1)" aria-label="Próximo mês"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                </div>
+                ${isCurrentMonth
+                    ? '<span class="goals-cards-month-badge">Mês atual</span>'
+                    : `<button type="button" class="goals-cards-today-btn" onclick="goalsGoToCurrentMonth()">Voltar ao mês atual</button>`}
+            </div>`;
 
             // Monta os dados de cada meta e ordena como um ranking (maior realizado primeiro),
             // no mesmo estilo da lista de categorias do relatório.
@@ -21176,8 +21207,14 @@
                 </div>`;
             }).join('');
 
-            el.innerHTML = `<div class="goals-rank-card"><div class="goals-rank-list">${rows}</div></div>`;
+            el.innerHTML = `${navHtml}<div class="goals-rank-card"><div class="goals-rank-list">${rows}</div></div>`;
             refreshLucideIcons();
+        }
+
+        function goalsGoToCurrentMonth() {
+            const now = new Date();
+            goalsCurrentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            renderGoals();
         }
 
         function goalsRenderTreeCells(actuals, goal, flow, months, currentYYYYMM, hierarchyType, hierarchyId, itemName) {
