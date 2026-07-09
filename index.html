@@ -3834,6 +3834,87 @@
         .plan-section { display: block; }
         .plan-section.hidden { display: none; }
 
+        /* ══════════════════ NOTAS MENSAIS ══════════════════ */
+        .notes-month-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .notes-month-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .notes-month-arrow:hover { background: #F1F5F9; color: #1E293B; }
+        .notes-month-label {
+            min-width: 130px;
+            text-align: center;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-transform: capitalize;
+        }
+        .notes-month-today {
+            padding: 7px 14px;
+            border-radius: 10px;
+            border: 1px solid #E2E8F0;
+            background: #FFFFFF;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .notes-month-today:hover { background: #F1F5F9; color: #1E293B; }
+        .notes-textarea {
+            width: 100%;
+            resize: vertical;
+            min-height: 260px;
+            padding: 18px 20px;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+            background: #FBFCFE;
+            color: var(--text-primary);
+            font-size: 14.5px;
+            line-height: 1.7;
+            font-family: inherit;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(31, 122, 92, 0.12);
+            background: #FFFFFF;
+        }
+        .notes-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .notes-save-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+        .notes-save-status.saving { color: #B45309; }
+        .notes-char-count {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #94A3B8;
+        }
+
         /* ══════════════════ VENDER REDESIGN ══════════════════ */
         .vender-redesign-grid {
             display: grid;
@@ -7845,6 +7926,10 @@
                         <i data-lucide="target" class="w-4 h-4"></i>
                         <span>Metas</span>
                     </button>
+                    <button type="button" id="plantab-notes" class="plan-pill-btn" onclick="switchPlanTab('notes')">
+                        <i data-lucide="notebook-pen" class="w-4 h-4"></i>
+                        <span>Notas</span>
+                    </button>
                 </div>
 
                 <!-- Seção: Projeção -->
@@ -7955,6 +8040,35 @@
                     <div id="goals-cards-section" class="goals-cards-section"></div>
                     <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
                     <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- Seção: Notas mensais -->
+                <div id="plan-notes-section" class="plan-section hidden space-y-6">
+                    <div class="card-premium p-6 space-y-5">
+                        <div class="flex flex-wrap gap-4 items-center justify-between">
+                            <div>
+                                <p class="text-base font-black text-slate-900">Bloco de notas</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Anote o que você precisa lembrar em cada mês.</p>
+                            </div>
+                            <div class="notes-month-nav">
+                                <button type="button" class="notes-month-arrow" onclick="notesGoToMonth(-1)" aria-label="Mês anterior">
+                                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                </button>
+                                <span id="notes-month-label" class="notes-month-label">—</span>
+                                <button type="button" class="notes-month-arrow" onclick="notesGoToMonth(1)" aria-label="Próximo mês">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" class="notes-month-today" onclick="notesGoToToday()">Hoje</button>
+                            </div>
+                        </div>
+                        <textarea id="notes-textarea" class="notes-textarea" rows="14"
+                            placeholder="Escreva aqui suas anotações deste mês…&#10;&#10;Ex.: pagar fornecedor dia 10, comprar embalagens, cobrar cliente X…"
+                            oninput="handleNotesInput()"></textarea>
+                        <div class="notes-footer">
+                            <span id="notes-save-status" class="notes-save-status" aria-live="polite">Tudo salvo</span>
+                            <span id="notes-char-count" class="notes-char-count">0 caracteres</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -9637,6 +9751,7 @@
                 setSyncStatus('synced');
                 updateBackupIndicator();
                 await loadGoalsFromCloud();
+                loadNotesFromCloud();
                 updateLoaderPanel('initial', { title: 'Montando tela' });
                 render();
                 await finishInitialLoader();
@@ -9688,6 +9803,7 @@
                 setSyncStatus('synced');
                 updateBackupIndicator();
                 await loadGoalsFromCloud();
+                loadNotesFromCloud();
                 render();
             } catch (err) {
                 console.error("Erro ao atualizar estado da nuvem:", err);
@@ -12236,6 +12352,7 @@
                 sec.classList.toggle('hidden', sec.id !== `plan-${tab}-section`);
             });
             if (tab === 'projection') renderProjection();
+            else if (tab === 'notes') renderNotes();
             else renderGoals();
         }
 
@@ -12272,6 +12389,7 @@
             } else if (currentTab === 'planejamento') {
                 const activePlan = window.currentPlanTab || 'projection';
                 if (activePlan === 'projection') renderProjection();
+                else if (activePlan === 'notes') renderNotes();
                 else renderGoals();
             } else if (currentTab === 'vendas') {
                 const activeSales = window.currentSalesTab || 'treasury';
@@ -22053,11 +22171,134 @@
         }
         // ─── FIM METAS ────────────────────────────────────────────────────────────
 
+        // ─── NOTAS MENSAIS ─────────────────────────────────────────────────────────
+        let notesData = {};                 // { 'YYYY-MM': 'texto' }
+        let notesCurrentMonth = null;       // 'YYYY-MM'
+        let notesSaveTimer = null;
+
+        function notesGetCurrentMonth() {
+            if (!notesCurrentMonth) {
+                const now = new Date();
+                notesCurrentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            }
+            return notesCurrentMonth;
+        }
+
+        function notesMonthLabel(yyyyMM) {
+            const [y, m] = (yyyyMM || '').split('-');
+            if (!y || !m) return '—';
+            const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            return `${months[Number(m) - 1]} ${y}`;
+        }
+
+        function loadNotes() {
+            try { notesData = JSON.parse(localStorage.getItem('notas_mensais_v1') || '{}'); }
+            catch { notesData = {}; }
+            if (!notesData || typeof notesData !== 'object' || Array.isArray(notesData)) notesData = {};
+        }
+
+        function saveNotes() {
+            localStorage.setItem('notas_mensais_v1', JSON.stringify(notesData));
+        }
+
+        function renderNotes() {
+            const month = notesGetCurrentMonth();
+            const label = document.getElementById('notes-month-label');
+            const textarea = document.getElementById('notes-textarea');
+            const status = document.getElementById('notes-save-status');
+            const count = document.getElementById('notes-char-count');
+            if (label) label.innerText = notesMonthLabel(month);
+            if (textarea) textarea.value = notesData[month] || '';
+            if (status) { status.innerText = 'Tudo salvo'; status.classList.remove('saving'); }
+            if (count) { const n = (textarea ? textarea.value.length : 0); count.innerText = `${n} ${n === 1 ? 'caractere' : 'caracteres'}`; }
+            refreshLucideIcons();
+        }
+
+        function notesGoToMonth(delta) {
+            // Persiste o mês atual antes de trocar
+            notesFlushSave();
+            const [y, m] = notesGetCurrentMonth().split('-').map(Number);
+            const d = new Date(y, m - 1 + delta, 1);
+            notesCurrentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            renderNotes();
+        }
+
+        function notesGoToToday() {
+            notesFlushSave();
+            const now = new Date();
+            notesCurrentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            renderNotes();
+        }
+
+        function handleNotesInput() {
+            const month = notesGetCurrentMonth();
+            const textarea = document.getElementById('notes-textarea');
+            const status = document.getElementById('notes-save-status');
+            const count = document.getElementById('notes-char-count');
+            if (!textarea) return;
+            notesData[month] = textarea.value;
+            if (count) { const n = textarea.value.length; count.innerText = `${n} ${n === 1 ? 'caractere' : 'caracteres'}`; }
+            if (status) { status.innerText = 'Salvando…'; status.classList.add('saving'); }
+            if (notesSaveTimer) clearTimeout(notesSaveTimer);
+            notesSaveTimer = window.setTimeout(() => notesFlushSave(), 600);
+        }
+
+        function notesFlushSave() {
+            if (notesSaveTimer) { clearTimeout(notesSaveTimer); notesSaveTimer = null; }
+            const month = notesGetCurrentMonth();
+            const textarea = document.getElementById('notes-textarea');
+            if (textarea) notesData[month] = textarea.value;
+            saveNotes();
+            upsertNoteToCloud(month, notesData[month] || '');
+            const status = document.getElementById('notes-save-status');
+            if (status) { status.innerText = 'Tudo salvo'; status.classList.remove('saving'); }
+        }
+
+        // Sincronização opcional na nuvem (tabela "notes": month text PK, content text, updated_at).
+        // Degrada com elegância para localStorage quando a tabela não existe.
+        async function loadNotesFromCloud() {
+            if (!sbClient) return;
+            try {
+                const { data, error } = await withTimeout(
+                    sbClient.from('notes').select('*'),
+                    10000, 'Carregar notas'
+                );
+                if (error) {
+                    if (isMissingTableError(error)) return;
+                    throw error;
+                }
+                const rows = Array.isArray(data) ? data : [];
+                if (rows.length) {
+                    const merged = { ...notesData };
+                    rows.forEach(r => {
+                        const m = String(r.month || '');
+                        if (m) merged[m] = String(r.content || '');
+                    });
+                    notesData = merged;
+                    saveNotes();
+                    if (currentTab === 'planejamento' && window.currentPlanTab === 'notes') renderNotes();
+                }
+            } catch (err) {
+                console.error('Erro ao carregar notas da nuvem:', err);
+            }
+        }
+
+        async function upsertNoteToCloud(month, content) {
+            if (!sbClient || !month) return;
+            try {
+                await sbClient.from('notes').upsert({ month, content, updated_at: new Date().toISOString() });
+            } catch (err) {
+                // Silencioso: localStorage já guardou a nota.
+            }
+        }
+        // ─── FIM NOTAS MENSAIS ──────────────────────────────────────────────────────
+
         window.addEventListener('load', initPiggyMicroInteractions);
         window.addEventListener('focus', () => { requestCloudRefresh({ silent: true }); });
         window.addEventListener('online', () => { requestCloudRefresh({ silent: true, minIntervalMs: 0 }); });
         window.onload = async () => {
             loadGoals();
+            loadNotes();
             initLoginScreen();
             initCustomDatePickers();
             await initCloud();
