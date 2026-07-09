@@ -8858,6 +8858,20 @@
         let entriesSearchTimer = null;
         let entriesPage = 1;
         const entriesPageSize = 100;
+        // A tabela de lançamentos tem dois layouts (tabela no desktop e cartões no mobile)
+        // controlados por CSS neste breakpoint. Renderizar apenas o layout visível evita
+        // construir centenas de linhas/ícones invisíveis a cada atualização.
+        const entriesMobileLayoutQuery = typeof window.matchMedia === 'function'
+            ? window.matchMedia('(max-width: 767px)')
+            : { matches: false, addEventListener: null, addListener: null };
+        const handleEntriesLayoutChange = () => {
+            if (typeof renderEntries === 'function') renderEntries();
+        };
+        if (typeof entriesMobileLayoutQuery.addEventListener === 'function') {
+            entriesMobileLayoutQuery.addEventListener('change', handleEntriesLayoutChange);
+        } else if (typeof entriesMobileLayoutQuery.addListener === 'function') {
+            entriesMobileLayoutQuery.addListener(handleEntriesLayoutChange);
+        }
         let lastEntriesQueryKey = '';
         let reconFillState = { active: false, sourceIndex: -1, value: '' };
         let reconDestinationComboboxState = {
@@ -13529,7 +13543,21 @@
         function handleEntryDestinationInput(entryId) {
             clearEntryDestinationComboboxBlurTimer();
             const inputEl = document.getElementById(`entry-dst-${entryId}`);
-            openEntryDestinationCombobox(entryId, inputEl ? inputEl.value : '');
+            const query = inputEl ? inputEl.value : '';
+            // Enquanto o usuário digita, a lista de destinos válidos daquele lançamento não muda.
+            // Reaproveita as opções já calculadas na abertura e apenas refiltra, em vez de refazer
+            // filtro + ordenação de toda a lista de destinos a cada tecla (o que travava o campo).
+            const sameCombobox = entryDestinationComboboxState.isOpen
+                && String(entryDestinationComboboxState.entryId || '') === String(entryId || '')
+                && Array.isArray(entryDestinationComboboxState.options)
+                && entryDestinationComboboxState.options.length > 0;
+            if (sameCombobox) {
+                entryDestinationComboboxState.filteredOptions = filterDestinationOptions(query, entryDestinationComboboxState.options);
+                entryDestinationComboboxState.highlightedIndex = entryDestinationComboboxState.filteredOptions.length ? 0 : -1;
+                renderEntryDestinationComboboxOptions();
+                return;
+            }
+            openEntryDestinationCombobox(entryId, query);
         }
         function handleEntryDestinationFocus(entryId) {
             clearEntryDestinationComboboxBlurTimer();
@@ -14149,7 +14177,18 @@
             selectedEntryIds = new Set(Array.from(selectedEntryIds).filter((id) => allEntryIds.has(String(id || ''))));
             updateEntriesSummaryAndSelection(pageItems);
             renderEntriesPagination(totalRecords, totalPages, pageItems.length);
-            renderEntriesMobileList(pageItems, duplicateMeta);
+
+            // Só constrói o layout que está visível no momento. O outro é limpo para
+            // não deixar linhas/ícones antigos ocupando memória e travando a renderização.
+            const isMobileEntriesLayout = !!entriesMobileLayoutQuery.matches;
+            const mobileListEl = document.getElementById('entries-mobile-list');
+            if (isMobileEntriesLayout) {
+                renderEntriesMobileList(pageItems, duplicateMeta);
+                body.innerHTML = '';
+                refreshLucideIcons();
+                return;
+            }
+            if (mobileListEl) mobileListEl.innerHTML = '';
 
             body.innerHTML = pageItems.map((e, i) => {
                 const dstOptions = getDestinationOptionsForFlow(e.type);
@@ -16592,10 +16631,19 @@
                 : (Array.isArray(list) ? list : []).find(item => String((item || {}).id || '') === String(id || ''));
             return getDestinationDisplayLabel(match);
         }
+        const sortedDestinationOptionsCache = new WeakMap();
         function getSortedDestinationOptions(list = state.destinations) {
-            return (Array.isArray(list) ? [...list] : []).sort((a, b) =>
+            if (!Array.isArray(list)) return [];
+            // Ordenar com localeCompare pt-BR é caro e essa função é chamada a cada tecla no
+            // campo de destino. Como as listas usadas aqui são recriadas quando os dados mudam,
+            // é seguro guardar o resultado ordenado pela referência do array.
+            const cached = sortedDestinationOptionsCache.get(list);
+            if (cached) return cached;
+            const sorted = [...list].sort((a, b) =>
                 getDestinationDisplayLabel(a).localeCompare(getDestinationDisplayLabel(b), 'pt-BR', { sensitivity: 'base' })
             );
+            sortedDestinationOptionsCache.set(list, sorted);
+            return sorted;
         }
         function filterDestinationOptions(query, list = state.destinations) {
             const sorted = getSortedDestinationOptions(list);
