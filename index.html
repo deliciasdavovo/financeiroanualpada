@@ -2701,9 +2701,10 @@
         }
         .annual-matrix-table th,
         .annual-matrix-table td {
-            height: 44px;
+            height: 46px;
             padding: 9px 14px;
-            border-bottom: 1px solid #F1F5F9;
+            border-bottom: 1px solid #EDF1F6;
+            border-right: 1px solid #F4F6F9;
             font-size: 12.5px;
             font-weight: 400;
             white-space: nowrap;
@@ -2729,13 +2730,13 @@
             top: 0;
             z-index: 1;
             height: 42px;
-            background: #FAFBFC;
-            color: #94A3B8;
+            background: #F5F8FB;
+            color: #64748B;
             font-size: 10.5px;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            border-bottom: 1px solid #E2E8F0;
+            border-bottom: 2px solid #DDE5EE;
         }
         .annual-matrix-table th:first-child,
         .annual-matrix-table td:first-child {
@@ -2747,35 +2748,41 @@
             max-width: 340px;
             text-align: left;
             background: #FFFFFF;
-            box-shadow: 1px 0 0 #F1F5F9;
+            border-right: 2px solid #E4EAF1;
         }
         .annual-matrix-table th:first-child {
             z-index: 3;
-            background: #FAFBFC;
+            background: #F5F8FB;
         }
-        .annual-matrix-table tr:hover td {
-            background: #F8FAFC;
+        /* coluna Total destacada */
+        .annual-matrix-table th:last-child,
+        .annual-matrix-table td:last-child {
+            background: #FBFCFE;
+            border-left: 2px solid #E4EAF1;
         }
-        .annual-matrix-table tr:hover td:first-child {
-            background: #F8FAFC;
+        .annual-matrix-table th:last-child { background: #F0F4F9; }
+        /* hover: contorno da linha (coexiste com o mapa de calor) */
+        .annual-matrix-table tbody tr:hover td {
+            box-shadow: inset 0 1px 0 #C3D0E0, inset 0 -1px 0 #C3D0E0;
         }
-        .annual-matrix-group-row td,
-        .annual-matrix-group-row:hover td {
-            background: #FAFBFC !important;
-        }
-        .annual-matrix-total-row td,
-        .annual-matrix-total-row:hover td {
-            background: #F1F5F9 !important;
-            border-top: 1px solid #E2E8F0;
+        .annual-matrix-table tbody tr:hover td:first-child { box-shadow: inset 1px 0 0 #C3D0E0, inset 0 1px 0 #C3D0E0, inset 0 -1px 0 #C3D0E0; }
+        .annual-matrix-table tbody tr:hover td:last-child { box-shadow: inset -1px 0 0 #C3D0E0, inset 0 1px 0 #C3D0E0, inset 0 -1px 0 #C3D0E0; }
+        /* cabeçalho de grupo (Entradas / Saídas) com faixa por fluxo */
+        .annual-matrix-group-row td { background: #FAFBFC !important; }
+        .annual-matrix-group-row.is-in td { background: #F1FAF5 !important; }
+        .annual-matrix-group-row.is-out td { background: #FDF4F4 !important; }
+        .annual-matrix-total-row td {
+            background: #EDF2F8 !important;
+            border-top: 2px solid #D3DDEA;
         }
         .annual-matrix-group-row td {
-            height: 38px;
+            height: 40px;
             padding-top: 12px;
-            padding-bottom: 4px;
-            border-bottom: 1px solid #EEF2F6;
-            color: #94A3B8;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #E6ECF3;
+            color: #64748B;
             font-size: 10.5px;
-            font-weight: 600;
+            font-weight: 700;
         }
         .annual-matrix-group-label {
             display: inline-flex;
@@ -11621,6 +11628,16 @@
             const grandTotal = rows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
             const totalCount = rows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
 
+            // Mapa de calor: intensidade da cor de cada célula proporcional ao valor (dentro do recorte atual).
+            const heatMax = Math.max(1, ...rows.flatMap(row => visibleMonthIndexes.map(index => Math.abs(Number(row.months[index]) || 0))));
+            const heatBg = (value) => {
+                const amount = Number(value) || 0;
+                if (!amount) return '';
+                const intensity = Math.min(1, Math.abs(amount) / heatMax);
+                const alpha = (0.04 + intensity * 0.12).toFixed(3);
+                return ` style="background: rgba(${amount < 0 ? '178,58,58' : '20,148,99'}, ${alpha})"`;
+            };
+
             const breadcrumbHtml = `
                 <div class="annual-matrix-breadcrumb" aria-label="Navegação do detalhamento hierárquico">
                     <button type="button" onclick="setAnnualHierarchyPath('category')">Categorias</button>
@@ -11646,7 +11663,7 @@
                     const cellClass = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                     return `<td class="${cellClass}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
-                return `<tr class="annual-matrix-group-row">
+                return `<tr class="annual-matrix-group-row ${flow === 'entrada' ? 'is-in' : 'is-out'}">
                     <td><span class="annual-matrix-group-label ${className}">${label}</span></td>
                     ${monthTotalCells}
                     <td class="annual-matrix-total ${valueClass}"><span class="annual-matrix-money">${formatBRL(total)}</span></td>
@@ -11657,9 +11674,10 @@
                 const nameHtml = canDrill
                     ? `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${escapeHtml(row.label)} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`
                     : `<span class="annual-matrix-name">${escapeHtml(row.label)}</span>`;
-                const monthCells = visibleMonthIndexes.map(index => row.months[index]).map(value => {
+                const monthCells = visibleMonthIndexes.map(index => {
+                    const value = row.months[index];
                     const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
-                    return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
+                    return `<td class="${className}"${heatBg(value)}>${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 return `<tr>
