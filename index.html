@@ -11628,16 +11628,6 @@
             const grandTotal = rows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
             const totalCount = rows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
 
-            // Mapa de calor: intensidade da cor de cada célula proporcional ao valor (dentro do recorte atual).
-            const heatMax = Math.max(1, ...rows.flatMap(row => visibleMonthIndexes.map(index => Math.abs(Number(row.months[index]) || 0))));
-            const heatBg = (value) => {
-                const amount = Number(value) || 0;
-                if (!amount) return '';
-                const intensity = Math.min(1, Math.abs(amount) / heatMax);
-                const alpha = (0.04 + intensity * 0.12).toFixed(3);
-                return ` style="background: rgba(${amount < 0 ? '178,58,58' : '20,148,99'}, ${alpha})"`;
-            };
-
             const breadcrumbHtml = `
                 <div class="annual-matrix-breadcrumb" aria-label="Navegação do detalhamento hierárquico">
                     <button type="button" onclick="setAnnualHierarchyPath('category')">Categorias</button>
@@ -11677,7 +11667,7 @@
                 const monthCells = visibleMonthIndexes.map(index => {
                     const value = row.months[index];
                     const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
-                    return `<td class="${className}"${heatBg(value)}>${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
+                    return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 return `<tr>
