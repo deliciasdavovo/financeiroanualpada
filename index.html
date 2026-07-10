@@ -13902,23 +13902,31 @@
             if (!Array.isArray(ids) || ids.length === 0) return { ok: true, error: null };
             if (!sbClient) return { ok: false, error: new Error('Cliente Supabase não inicializado.') };
             setSyncStatus('syncing');
-            const { error, count } = await sbClient
-                .from(table)
-                .delete({ count: 'exact' })
-                .in('id', ids);
-            if (error) {
-                console.error(`Erro ao deletar em lote em ${table}:`, error);
-                setSyncStatus('offline');
-                return { ok: false, error };
-            } else if ((Number(count) || 0) < ids.length) {
-                const noEffectError = new Error(`Apenas ${Number(count) || 0} de ${ids.length} registro(s) foram removidos na nuvem. Verifique as políticas RLS de DELETE da tabela.`);
-                console.error(`Delete em lote parcial/sem efeito em ${table}:`, { count, expected: ids.length });
+            // Divide em lotes para evitar URLs longas demais (que retornam "Bad Request"/400)
+            // quando há muitos IDs, como ao excluir todos os lançamentos de um filtro.
+            const CHUNK_SIZE = 200;
+            let totalCount = 0;
+            for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+                const chunk = ids.slice(i, i + CHUNK_SIZE);
+                const { error, count } = await sbClient
+                    .from(table)
+                    .delete({ count: 'exact' })
+                    .in('id', chunk);
+                if (error) {
+                    console.error(`Erro ao deletar em lote em ${table}:`, error);
+                    setSyncStatus('offline');
+                    return { ok: false, error };
+                }
+                totalCount += Number(count) || 0;
+            }
+            if (totalCount < ids.length) {
+                const noEffectError = new Error(`Apenas ${totalCount} de ${ids.length} registro(s) foram removidos na nuvem. Verifique as políticas RLS de DELETE da tabela.`);
+                console.error(`Delete em lote parcial/sem efeito em ${table}:`, { count: totalCount, expected: ids.length });
                 setSyncStatus('offline');
                 return { ok: false, error: noEffectError };
-            } else {
-                setSyncStatus('synced');
-                return { ok: true, error: null };
             }
+            setSyncStatus('synced');
+            return { ok: true, error: null };
         }
         async function deleteTreasuryMovement(id) {
             if (!id) return;
