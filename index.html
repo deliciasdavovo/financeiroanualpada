@@ -21051,16 +21051,42 @@
             const type = getGoalNormalizedType(document.getElementById('goal-type-val')?.value || FLOW_OUT);
             const hierarchyType = document.getElementById('goal-level-sel')?.value || 'category';
             const hierarchyId = document.getElementById('goal-item-sel')?.value || '';
-            const stats = getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId);
+            // A sugestao sempre considera o historico em relacao ao mes atual real do
+            // calendario, e nao ao mes que o usuario esta navegando nos cards de Metas
+            // (goalsGetCurrentMonth pode ter sido movido para o passado). Sem isso, ao
+            // abrir a meta com os cards em um mes antigo, o historico ficava vazio.
+            const now = new Date();
+            const currentCalendarMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            let stats = getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId, currentCalendarMonth);
+
+            // Fallback: se o item nao tem meses anteriores com movimento (ex.: loja que
+            // comecou a lancar so agora), consideramos tambem o mes atual para ainda
+            // oferecer uma sugestao util, em vez de deixar o bloco vazio.
+            let usingCurrentMonth = false;
+            if (hierarchyId && !stats.months.length) {
+                const nextMonth = `${now.getFullYear()}-${String(now.getMonth() + 2).padStart(2, '0')}`;
+                const nextMonthRef = now.getMonth() === 11
+                    ? `${now.getFullYear() + 1}-01`
+                    : nextMonth;
+                const withCurrent = getGoalHistoricalMonthlyStats(type, hierarchyType, hierarchyId, nextMonthRef);
+                if (withCurrent.months.length) {
+                    stats = withCurrent;
+                    usingCurrentMonth = true;
+                }
+            }
 
             if (!hierarchyId || !stats.months.length) {
                 if (subtitleEl) subtitleEl.textContent = 'Sem meses anteriores para este item ainda.';
-                contentEl.innerHTML = '<p class="field-help">Quando houver lancamentos anteriores, eu mostro media, ultimo mes e maior mes para preencher a meta em um clique.</p>';
+                contentEl.innerHTML = '<p class="field-help">Quando houver lancamentos deste item, eu mostro media, ultimo mes e maior mes para preencher a meta em um clique.</p>';
                 return;
             }
 
             const flowLabel = type === FLOW_IN ? 'entradas' : 'saidas';
-            if (subtitleEl) subtitleEl.textContent = `Base: ${stats.months.length} mes(es) anteriores de ${flowLabel} deste item.`;
+            if (subtitleEl) {
+                subtitleEl.textContent = usingCurrentMonth
+                    ? `Base: mes atual (parcial) de ${flowLabel} deste item.`
+                    : `Base: ${stats.months.length} mes(es) anteriores de ${flowLabel} deste item.`;
+            }
             contentEl.innerHTML = `
                 <div class="goal-history-grid">
                     <div class="goal-history-stat">
