@@ -7262,6 +7262,67 @@
         .home-proj-link:hover { background: #E8F3EF; }
         .home-saldo-badge { font-size: 12px; font-weight: 600; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
+        /* ===== HOME — PAINEL RESUMO ===== */
+        .home-hero { position: relative; overflow: hidden; padding: 26px 30px; border-radius: 24px; background: linear-gradient(135deg, #123B2E 0%, #1F7A5C 58%, #2A8F6C 100%); color: #F1FBF7; }
+        .home-hero::after { content: ''; position: absolute; top: -60px; right: -40px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.16), rgba(255,255,255,0)); pointer-events: none; }
+        .home-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .home-hero-greeting { font-size: 13px; font-weight: 600; color: rgba(241,251,247,0.82); letter-spacing: 0.2px; }
+        .home-hero-month { font-size: 12px; font-weight: 600; color: rgba(241,251,247,0.72); text-transform: capitalize; margin-top: 2px; display: inline-flex; align-items: center; gap: 6px; }
+        .home-hero-eye { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: rgba(241,251,247,0.72); background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; padding: 5px 12px; }
+        .home-hero-eye svg { width: 14px; height: 14px; }
+        .home-hero-body { position: relative; z-index: 1; margin-top: 20px; }
+        .home-hero-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(241,251,247,0.72); }
+        .home-hero-balance { font-size: clamp(30px, 5vw, 42px); font-weight: 800; line-height: 1.05; margin-top: 6px; letter-spacing: -0.5px; }
+        .home-hero-sub { font-size: 12.5px; font-weight: 500; color: rgba(241,251,247,0.82); margin-top: 8px; display: inline-flex; align-items: center; gap: 7px; }
+        .home-hero-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,0.16); }
+        .home-hero-chip svg { width: 13px; height: 13px; }
+
+        .home-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .home-kpi-card { padding: 18px 20px; border-radius: 18px; border: 1px solid var(--divider); background: #fff; display: flex; flex-direction: column; gap: 3px; transition: transform 0.18s var(--ease-premium), box-shadow 0.18s var(--ease-premium); }
+        .home-kpi-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -18px rgba(15,23,42,0.28); }
+        .home-kpi-head { display: flex; align-items: center; gap: 8px; }
+        .home-kpi-icon { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; }
+        .home-kpi-icon svg { width: 16px; height: 16px; }
+        .home-kpi-icon.in { background: var(--bg-green-soft); color: var(--primary-green); }
+        .home-kpi-icon.out { background: var(--bg-red-soft); color: var(--soft-red); }
+        .home-kpi-icon.net { background: var(--bg-blue-soft); color: var(--primary-blue); }
+        .home-kpi-label { font-size: 11.5px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.4px; }
+        .home-kpi-value { font-size: 23px; font-weight: 800; letter-spacing: -0.4px; margin-top: 6px; }
+        .home-kpi-compare { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; margin-top: 4px; }
+        .home-kpi-compare svg { width: 13px; height: 13px; }
+        .home-kpi-compare.up { color: var(--primary-green); }
+        .home-kpi-compare.down { color: var(--soft-red); }
+        .home-kpi-compare.flat { color: #94A3B8; }
+        .home-kpi-compare-ref { color: #94A3B8; font-weight: 500; }
+
+        .home-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .home-action-btn { display: flex; align-items: center; gap: 11px; padding: 15px 16px; border-radius: 16px; border: 1px solid var(--divider); background: #fff; cursor: pointer; text-align: left; transition: transform 0.16s var(--ease-premium), border-color 0.16s, box-shadow 0.16s; }
+        .home-action-btn:hover { transform: translateY(-2px); border-color: #CBD5E1; box-shadow: 0 12px 26px -20px rgba(15,23,42,0.35); }
+        .home-action-icon { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; background: var(--bg-green-soft); color: var(--primary-green); }
+        .home-action-icon svg { width: 18px; height: 18px; }
+        .home-action-icon.blue { background: var(--bg-blue-soft); color: var(--primary-blue); }
+        .home-action-icon.slate { background: #F1F5F9; color: #475569; }
+        .home-action-text { display: flex; flex-direction: column; min-width: 0; }
+        .home-action-title { font-size: 13px; font-weight: 700; color: #1E293B; }
+        .home-action-sub { font-size: 11px; font-weight: 500; color: #94A3B8; }
+
+        .home-insight { display: flex; align-items: flex-start; gap: 13px; padding: 16px 18px; border-radius: 16px; border: 1px solid var(--bg-green-soft); background: linear-gradient(120deg, #F3FAF7 0%, #FBFDFC 100%); }
+        .home-insight-icon { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0; background: var(--primary-green); color: #fff; }
+        .home-insight-icon svg { width: 18px; height: 18px; }
+        .home-insight-body { min-width: 0; }
+        .home-insight-title { font-size: 12.5px; font-weight: 800; color: #0F172A; }
+        .home-insight-text { font-size: 12.5px; font-weight: 500; color: #475569; margin-top: 2px; line-height: 1.45; }
+
+        .home-block-title { font-size: 13px; font-weight: 800; color: #0F172A; letter-spacing: -0.2px; }
+        .home-block-sub { font-size: 11.5px; font-weight: 500; color: #94A3B8; margin-top: 2px; }
+
+        @media (max-width: 640px) {
+            .home-hero { padding: 22px 20px; border-radius: 20px; }
+            .home-kpi-grid { grid-template-columns: 1fr; }
+            .home-actions { grid-template-columns: repeat(2, 1fr); }
+            .home-kpi-value { font-size: 21px; }
+        }
+
         /* ===== DRE — COLUNA % DA RECEITA ===== */
         .dre-pct-col { text-align: right; color: #94A3B8; font-size: 11px; white-space: nowrap; min-width: 60px; padding: 9px 16px 9px 4px !important; }
         .dre-pct-col.pct-warn  { color: #B23A3A; font-weight: 600; }
@@ -14757,25 +14818,188 @@
 
             const dayRowsHtml = buildHomeStyleDayCards(futurePending);
 
-            host.innerHTML = `
-                <div class="card-premium p-8">
-                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            // ===== Resumo do mês atual (realizado) e comparação com o mês anterior =====
+            const monthPrefix = getCurrentMonthIso();
+            const curr = summarizeFinancialEntries(getRealizedEntriesForPrefix(monthPrefix));
+            const prevPrefix = getMonthPrefixShift(monthPrefix, -1);
+            const prev = summarizeFinancialEntries(getRealizedEntriesForPrefix(prevPrefix));
+
+            const monthName = capitalizeFirst(
+                (parseIsoDateLocal(`${monthPrefix}-01`) || new Date())
+                    .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+            );
+            const greeting = getHomeGreeting();
+            const netPositive = curr.net >= 0;
+
+            // Comparativo percentual com o mês anterior (para cada KPI).
+            const compareHtml = (currentVal, prevVal, higherIsBetter) => {
+                if (!prevVal) {
+                    return `<span class="home-kpi-compare flat"><i data-lucide="minus"></i>Sem base no mês anterior</span>`;
+                }
+                const pct = ((currentVal - prevVal) / Math.abs(prevVal)) * 100;
+                const rounded = Math.round(pct);
+                if (rounded === 0) {
+                    return `<span class="home-kpi-compare flat"><i data-lucide="minus"></i>Igual a ${escapeHtml(prevPrefix.split('-').reverse().join('/'))}</span>`;
+                }
+                const rising = pct > 0;
+                const good = higherIsBetter ? rising : !rising;
+                const icon = rising ? 'trending-up' : 'trending-down';
+                return `<span class="home-kpi-compare ${good ? 'up' : 'down'}"><i data-lucide="${icon}"></i>${rising ? '+' : ''}${rounded}% <span class="home-kpi-compare-ref">vs. mês anterior</span></span>`;
+            };
+
+            const kpisHtml = `
+                <div class="home-kpi-grid">
+                    <article class="home-kpi-card">
+                        <div class="home-kpi-head">
+                            <span class="home-kpi-icon in"><i data-lucide="arrow-down-left"></i></span>
+                            <span class="home-kpi-label">Entradas</span>
+                        </div>
+                        <p class="home-kpi-value flow-income-text">${formatBRLNoCents(curr.inc)}</p>
+                        ${compareHtml(curr.inc, prev.inc, true)}
+                    </article>
+                    <article class="home-kpi-card">
+                        <div class="home-kpi-head">
+                            <span class="home-kpi-icon out"><i data-lucide="arrow-up-right"></i></span>
+                            <span class="home-kpi-label">Saídas</span>
+                        </div>
+                        <p class="home-kpi-value flow-expense-text">${formatBRLNoCents(curr.exp)}</p>
+                        ${compareHtml(curr.exp, prev.exp, false)}
+                    </article>
+                    <article class="home-kpi-card">
+                        <div class="home-kpi-head">
+                            <span class="home-kpi-icon net"><i data-lucide="scale"></i></span>
+                            <span class="home-kpi-label">Resultado</span>
+                        </div>
+                        <p class="home-kpi-value ${netPositive ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRLNoCents(curr.net)}</p>
+                        ${compareHtml(curr.net, prev.net, true)}
+                    </article>
+                </div>
+            `;
+
+            const heroHtml = `
+                <div class="home-hero">
+                    <div class="home-hero-top">
                         <div>
-                            <h4 class="text-sm font-black text-slate-900">O que vem por aí</h4>
-                            <p class="text-xs text-slate-500 mt-1">Fique por dentro dos próximos lançamentos, de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
+                            <p class="home-hero-greeting">${escapeHtml(greeting)} 👋</p>
+                            <p class="home-hero-month"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>${escapeHtml(monthName)}</p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
-                        </div>
+                        <span class="home-hero-eye"><i data-lucide="shield-check"></i>${escapeHtml(formatLaunchCount(curr.count))} no mês</span>
                     </div>
-                    ${dayRowsHtml.length > 0
-                        ? `<div class="home-proj-list">${dayRowsHtml}</div>`
-                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
-                    }
+                    <div class="home-hero-body">
+                        <p class="home-hero-label">Saldo realizado do mês</p>
+                        <p class="home-hero-balance">${formatBRL(curr.net)}</p>
+                        <p class="home-hero-sub">
+                            <span class="home-hero-chip"><i data-lucide="${netPositive ? 'trending-up' : 'trending-down'}"></i>${netPositive ? 'No azul' : 'No vermelho'}</span>
+                            Entradas ${formatBRLNoCents(curr.inc)} · Saídas ${formatBRLNoCents(curr.exp)}
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            const actionsHtml = `
+                <div class="home-actions">
+                    <button type="button" class="home-action-btn" onclick="openEntryModal(null)">
+                        <span class="home-action-icon"><i data-lucide="plus"></i></span>
+                        <span class="home-action-text"><span class="home-action-title">Novo lançamento</span><span class="home-action-sub">Registrar entrada ou saída</span></span>
+                    </button>
+                    <button type="button" class="home-action-btn" onclick="switchTab('reports')">
+                        <span class="home-action-icon blue"><i data-lucide="chart-no-axes-combined"></i></span>
+                        <span class="home-action-text"><span class="home-action-title">Relatórios</span><span class="home-action-sub">Análises do período</span></span>
+                    </button>
+                    <button type="button" class="home-action-btn" onclick="switchTab('planejamento')">
+                        <span class="home-action-icon slate"><i data-lucide="compass"></i></span>
+                        <span class="home-action-text"><span class="home-action-title">Planejamento</span><span class="home-action-sub">Metas e projeção</span></span>
+                    </button>
+                    <button type="button" class="home-action-btn" onclick="switchTab('reconciliation')">
+                        <span class="home-action-icon slate"><i data-lucide="landmark"></i></span>
+                        <span class="home-action-text"><span class="home-action-title">Conciliação</span><span class="home-action-sub">Conferir extratos</span></span>
+                    </button>
+                </div>
+            `;
+
+            const insightHtml = buildHomeInsight(curr, prev, monthPrefix);
+
+            host.innerHTML = `
+                <div class="space-y-6">
+                    ${heroHtml}
+                    ${kpisHtml}
+                    ${actionsHtml}
+                    ${insightHtml}
+                    <div class="card-premium p-8">
+                        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                            <div>
+                                <h4 class="home-block-title">O que vem por aí</h4>
+                                <p class="home-block-sub">Próximos lançamentos, de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                            </div>
+                        </div>
+                        ${dayRowsHtml.length > 0
+                            ? `<div class="home-proj-list">${dayRowsHtml}</div>`
+                            : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
+                        }
+                    </div>
                 </div>
             `;
 
             refreshLucideIcons();
+        }
+
+        // Saudação pela hora do dia, para dar o tom pessoal dos apps financeiros.
+        function getHomeGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'Bom dia';
+            if (hour < 18) return 'Boa tarde';
+            return 'Boa noite';
+        }
+
+        // Insight automático da home: escolhe a leitura mais relevante do mês.
+        function buildHomeInsight(curr, prev, monthPrefix) {
+            const monthEntries = getRealizedEntriesForPrefix(monthPrefix);
+            let icon = 'sparkles';
+            let title = 'Resumo do mês';
+            let text = 'Seus lançamentos realizados aparecem aqui assim que forem registrados.';
+
+            if (curr.count === 0) {
+                icon = 'notebook-pen';
+                title = 'Comece o mês';
+                text = 'Ainda não há lançamentos realizados neste mês. Registre o primeiro para acompanhar seu resultado.';
+            } else if (prev.exp > 0 && curr.exp < prev.exp) {
+                const pct = Math.round(((prev.exp - curr.exp) / prev.exp) * 100);
+                icon = 'party-popper';
+                title = 'Saídas em queda';
+                text = `Suas saídas estão ${pct}% menores que no mês anterior. Bom controle! 👏`;
+            } else if (prev.exp > 0 && curr.exp > prev.exp) {
+                const pct = Math.round(((curr.exp - prev.exp) / prev.exp) * 100);
+                const topOut = getTopFlowDestination(monthEntries, FLOW_OUT);
+                icon = 'circle-alert';
+                title = 'Saídas em alta';
+                text = topOut
+                    ? `Suas saídas subiram ${pct}% no mês. A maior foi ${topOut.name}, com ${formatBRL(topOut.value)}.`
+                    : `Suas saídas subiram ${pct}% em relação ao mês anterior.`;
+            } else {
+                const topOut = getTopFlowDestination(monthEntries, FLOW_OUT);
+                if (topOut) {
+                    icon = 'shopping-bag';
+                    title = 'Maior saída do mês';
+                    text = `Sua maior saída foi ${topOut.name}, com ${formatBRL(topOut.value)}.`;
+                } else if (curr.net >= 0) {
+                    icon = 'thumbs-up';
+                    title = 'Mês no azul';
+                    text = 'Seu resultado realizado do mês está positivo. Continue assim!';
+                }
+            }
+
+            return `
+                <div class="home-insight">
+                    <span class="home-insight-icon"><i data-lucide="${icon}"></i></span>
+                    <div class="home-insight-body">
+                        <p class="home-insight-title">${escapeHtml(title)}</p>
+                        <p class="home-insight-text">${escapeHtml(text)}</p>
+                    </div>
+                </div>
+            `;
         }
 
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
