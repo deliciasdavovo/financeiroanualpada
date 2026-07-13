@@ -1265,6 +1265,36 @@
         .modal-body {
             padding: 22px 24px 24px;
         }
+        /* Modais de formulário (lançamento / banco de dados) no desktop: mantém o rodapé
+           com o botão Salvar sempre acessível em qualquer altura de tela ou zoom — o corpo
+           rola internamente e as ações ficam fixas na base. (No mobile isso já é tratado
+           mais abaixo, com safe-area.) */
+        @media (min-width: 768px) {
+            .modal-shell-entry,
+            .modal-shell-db {
+                max-height: calc(100dvh - 48px);
+                display: flex;
+                flex-direction: column;
+            }
+            .modal-shell-entry .modal-body,
+            .modal-shell-db .modal-body {
+                flex: 1 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 0;
+            }
+            .modal-shell-entry .modal-actions,
+            .modal-shell-db .modal-actions {
+                position: sticky;
+                bottom: 0;
+                z-index: 2;
+                margin-top: 14px;
+                padding-bottom: 20px;
+                background: #FFFFFF;
+                box-shadow: 0 -10px 18px -12px rgba(15, 23, 42, 0.25);
+            }
+        }
         .field-help {
             margin-top: 6px;
             font-size: 11px;
