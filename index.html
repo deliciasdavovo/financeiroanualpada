@@ -20191,8 +20191,21 @@
             }).join('');
         }
 
+        // Já existe um lançamento pendente igual (mesma data, destino e valor)?
+        // Usado para não recriar repetições em salvamentos repetidos.
+        function hasIdenticalPendingEntry(candidate) {
+            return state.entries.some(e =>
+                String(e.status || '').toUpperCase() === 'PENDENTE' &&
+                String(e.date || '') === String(candidate.date || '') &&
+                String(e.destinationId || '') === String(candidate.destinationId || '') &&
+                Math.abs((Number(e.amount) || 0) - (Number(candidate.amount) || 0)) < 0.005
+            );
+        }
+
+        let entryFormSaving = false;
         document.getElementById('entry-form').onsubmit = async (event) => {
             event.preventDefault();
+            if (entryFormSaving) return; // evita toque duplo no Salvar duplicar a série
             const id = document.getElementById('entry-id').value;
             const validation = validateEntryForm(true);
             if (!validation.valid) {
@@ -20225,8 +20238,8 @@
                 description: validation.values.description,
                 status: validation.values.status
             };
-            
-            const recurringEntries = buildRecurringEntries(
+
+            const generatedEntries = buildRecurringEntries(
                 data,
                 validation.values.repeatFrequency,
                 validation.values.repeatInterval,
@@ -20235,23 +20248,50 @@
                 validation.values.repeatUntil,
                 validation.values.repeatWeekdays
             );
-            const entriesToSave = [data, ...recurringEntries];
-            const saveResult = entriesToSave.length > 1
-                ? await cloudSaveBatched('entries', entriesToSave)
-                : await cloudSave('entries', data);
-            if (!saveResult?.ok) {
-                const msg = String(saveResult?.error?.message || 'Falha ao salvar no Supabase.');
-                alert(`Não foi possível salvar o lançamento.\n\nDetalhe: ${msg}`);
+            // Não recria repetições que já existem (salvar de novo após erro,
+            // editar um item da série com "Repete" ligado etc.). Com repetição
+            // ligada, o mesmo vale para o lançamento base do dia.
+            const recurringEntries = generatedEntries.filter(item => !hasIdenticalPendingEntry(item));
+            const skipBase = !id && generatedEntries.length > 0 &&
+                String(data.status || '').toUpperCase() === 'PENDENTE' && hasIdenticalPendingEntry(data);
+            const skippedCount = (generatedEntries.length - recurringEntries.length) + (skipBase ? 1 : 0);
+            if (skipBase && !recurringEntries.length) {
+                alert('Nada novo para salvar: esses lançamentos já existiam com a mesma data, destino e valor.');
+                closeModal('entry-modal');
                 return;
             }
-            
-            if(id) {
-                const idx = state.entries.findIndex(x => x.id === id);
-                if(idx !== -1) state.entries[idx] = data;
-                if (recurringEntries.length) state.entries.push(...recurringEntries);
-            } else state.entries.push(...entriesToSave);
-            
-            closeModal('entry-modal'); render();
+
+            entryFormSaving = true;
+            const submitBtn = document.querySelector('#entry-form .modal-btn-primary');
+            const submitLabel = submitBtn ? submitBtn.innerText : '';
+            if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = 'Salvando…'; }
+            let saveResult;
+            try {
+                const entriesToSave = [...(skipBase ? [] : [data]), ...recurringEntries];
+                saveResult = entriesToSave.length > 1
+                    ? await cloudSaveBatched('entries', entriesToSave)
+                    : await cloudSave('entries', entriesToSave[0]);
+                if (!saveResult?.ok) {
+                    const msg = String(saveResult?.error?.message || 'Falha ao salvar no Supabase.');
+                    alert(`Não foi possível salvar o lançamento.\n\nDetalhe: ${msg}`);
+                    return;
+                }
+
+                if(id) {
+                    const idx = state.entries.findIndex(x => x.id === id);
+                    if(idx !== -1) state.entries[idx] = data;
+                    if (recurringEntries.length) state.entries.push(...recurringEntries);
+                } else state.entries.push(...entriesToSave);
+
+                if (skippedCount > 0) {
+                    alert(`${skippedCount} repetição(ões) já existia(m) com a mesma data, destino e valor e não foi(ram) recriada(s).`);
+                }
+
+                closeModal('entry-modal'); render();
+            } finally {
+                entryFormSaving = false;
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = submitLabel || 'Salvar'; }
+            }
         };
         const treasuryMovementFormEl = document.getElementById('treasury-movement-form');
         if (treasuryMovementFormEl) treasuryMovementFormEl.onsubmit = async (event) => {
