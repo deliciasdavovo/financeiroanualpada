@@ -2841,11 +2841,10 @@
         }
         .annual-matrix-table th,
         .annual-matrix-table td {
-            height: 46px;
-            padding: 9px 14px;
-            border-bottom: 1px solid #EDF1F6;
-            border-right: 1px solid #F4F6F9;
-            font-size: 12.5px;
+            height: 52px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #EEF2F6;
+            font-size: 13px;
             font-weight: 400;
             white-space: nowrap;
             text-align: right;
@@ -2859,24 +2858,19 @@
         .annual-matrix-table th:last-child,
         .annual-matrix-table td:last-child {
             width: 150px;
-        }
-        .annual-matrix-table th:last-child,
-        .annual-matrix-table td:last-child {
-            border-right: 0;
             border-left: 1px solid #EEF2F6;
         }
         .annual-matrix-table th {
             position: sticky;
             top: 0;
             z-index: 1;
-            height: 42px;
-            background: #F5F8FB;
-            color: #64748B;
-            font-size: 10.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            border-bottom: 2px solid #DDE5EE;
+            height: 46px;
+            background: #F7F9FB;
+            color: #5B6B7F;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            border-bottom: 1px solid #E1E8F0;
         }
         .annual-matrix-table th:first-child,
         .annual-matrix-table td:first-child {
@@ -2888,40 +2882,40 @@
             max-width: 340px;
             text-align: left;
             background: #FFFFFF;
-            border-right: 2px solid #E4EAF1;
+            border-right: 1px solid #EAEEF3;
         }
         .annual-matrix-table th:first-child {
             z-index: 3;
-            background: #F5F8FB;
+            background: #F7F9FB;
         }
-        /* coluna Total destacada */
-        .annual-matrix-table th:last-child,
+        /* coluna Total levemente destacada */
         .annual-matrix-table td:last-child {
             background: #FBFCFE;
-            border-left: 2px solid #E4EAF1;
         }
-        .annual-matrix-table th:last-child { background: #F0F4F9; }
-        /* hover: contorno da linha (coexiste com o mapa de calor) */
-        .annual-matrix-table tbody tr:hover td {
-            box-shadow: inset 0 1px 0 #C3D0E0, inset 0 -1px 0 #C3D0E0;
+        .annual-matrix-table th:last-child {
+            background: #F7F9FB;
+            border-left: 1px solid #EAEEF3;
         }
-        .annual-matrix-table tbody tr:hover td:first-child { box-shadow: inset 1px 0 0 #C3D0E0, inset 0 1px 0 #C3D0E0, inset 0 -1px 0 #C3D0E0; }
-        .annual-matrix-table tbody tr:hover td:last-child { box-shadow: inset -1px 0 0 #C3D0E0, inset 0 1px 0 #C3D0E0, inset 0 -1px 0 #C3D0E0; }
-        /* cabeçalho de grupo (Entradas / Saídas) com faixa por fluxo */
-        .annual-matrix-group-row td { background: #FAFBFC !important; }
-        .annual-matrix-group-row.is-in td { background: #F1FAF5 !important; }
-        .annual-matrix-group-row.is-out td { background: #FDF4F4 !important; }
+        /* hover discreto nas linhas de dados */
+        .annual-matrix-table tbody tr:not(.annual-matrix-group-row):not(.annual-matrix-total-row):hover td {
+            background: #F5F9FD;
+        }
+        .annual-matrix-table tbody tr:not(.annual-matrix-group-row):not(.annual-matrix-total-row):hover td:last-child {
+            background: #F1F6FC;
+        }
+        /* cabeçalho de grupo (Entradas / Saídas): faixa neutra + rótulo colorido */
         .annual-matrix-total-row td {
-            background: #EDF2F8 !important;
-            border-top: 2px solid #D3DDEA;
+            background: #F3F6FB !important;
+            border-top: 2px solid #DCE4EE;
         }
         .annual-matrix-group-row td {
+            background: #F6F8FB !important;
             height: 40px;
-            padding-top: 12px;
-            padding-bottom: 6px;
+            padding-top: 11px;
+            padding-bottom: 7px;
             border-bottom: 1px solid #E6ECF3;
             color: #64748B;
-            font-size: 10.5px;
+            font-size: 11px;
             font-weight: 700;
         }
         .annual-matrix-group-label {
