@@ -7273,6 +7273,22 @@
         .goals-daily-expand-item { display:flex; justify-content:space-between; gap:8px; padding:2px 0; }
         .goals-daily-expand-desc-inline { font-size:11px; color:#64748B; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:130px; }
         .goals-daily-expand-amount-inline { font-size:11px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+        /* Célula do dia aberta: destaca a coluna/mês clicado */
+        .goals-daily-cell-open { box-shadow: inset 0 0 0 1.5px #C7D2FE; background:#EEF2FF !important; }
+        .goals-daily-cell-open .goals-daily-expand-icon { color:#4F46E5; }
+        /* Linha de lançamentos expandida — ocupa a largura toda da tabela para o
+           nome do lançamento aparecer por inteiro, sem cortar/apertar na coluna */
+        .goals-daily-launch-row td { padding:0; border-bottom:1px solid #E2E8F0; }
+        .goals-daily-launch-wrap { display:flex; flex-wrap:wrap; gap:10px; padding:10px 12px; background:#F5F7FF; }
+        .goals-daily-launch-group { flex:1 1 260px; min-width:230px; background:#fff; border:1px solid #E4E9F5; border-radius:10px; padding:8px 12px; }
+        .goals-daily-launch-head { font-size:11px; font-weight:700; color:#4F46E5; text-transform:uppercase; letter-spacing:.02em; margin-bottom:6px; }
+        .goals-daily-launch-line { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:5px 0; border-top:1px dashed #EEF2F7; }
+        .goals-daily-launch-line:first-of-type { border-top:none; }
+        .goals-daily-launch-main { display:flex; align-items:baseline; gap:8px; min-width:0; flex:1; flex-wrap:wrap; }
+        .goals-daily-launch-desc { font-size:12.5px; color:#334155; font-weight:600; overflow-wrap:anywhere; }
+        .goals-daily-launch-dest { font-size:11px; color:#94A3B8; white-space:nowrap; }
+        .goals-daily-launch-amount { font-size:12.5px; font-weight:700; white-space:nowrap; flex-shrink:0; }
+        .goals-daily-launch-line.is-pending .goals-daily-launch-desc { color:#64748B; font-weight:500; }
         .goals-daily-total-row { border-top:2px solid #E2E8F0; background:#F8FAFC; }
         .goals-daily-total-cell { padding:8px 12px; font-size:13px; }
         .goals-detail-link {
@@ -22512,6 +22528,9 @@
                 const todayMon = todayStr.slice(0, 7);
 
                 let rowClass = 'goals-daily-row';
+                // Painéis de lançamentos expandidos deste dia (renderizados em linha
+                // separada de largura total, para o nome do lançamento não ficar cortado)
+                const expandedPanels = [];
                 const cellsHtml = monthData.map(md => {
                     if (day > md.daysInMonth) return `<td class="goals-daily-cell goals-daily-cell-na"><span class="goals-cell-zero">—</span></td>`;
                     const dateStr = `${md.yyyyMM}-${dd}`;
@@ -22522,7 +22541,7 @@
                     const pendingDay  = dayData.pending.reduce((s,e)=>s+(Number(e.amount)||0),0);
                     const hasLaunches = dayData.realized.length + dayData.pending.length > 0;
                     const expandKey = `${dateStr}|${md.yyyyMM}`;
-                    const isExpanded = goalsExpandedDays.has(expandKey);
+                    const isExpanded = hasLaunches && goalsExpandedDays.has(expandKey);
 
                     let cellBg = '';
                     if (isToday) cellBg = 'background:#EEF2FF';
@@ -22534,19 +22553,30 @@
                     const pendHtml = pendingDay > 0 ? `<br><span class="goals-pending-tag">↻ ${formatBRL(pendingDay)}</span>` : '';
                     const expandIcon = hasLaunches ? (isExpanded ? '▾ ' : '▸ ') : '';
                     const clickAttr = hasLaunches ? `onclick="goalsToggleDay('${expandKey}')" style="cursor:pointer;${cellBg}"` : `style="${cellBg}"`;
+                    const cellCls = 'goals-daily-cell' + (isExpanded ? ' goals-daily-cell-open' : '');
 
-                    let expandRows = '';
                     if (isExpanded) {
+                        const mn = Number(md.yyyyMM.split('-')[1]);
+                        const yr2 = md.yyyyMM.split('-')[0].slice(2);
                         const allDay = [...dayData.realized, ...dayData.pending];
-                        expandRows = allDay.map(e => {
+                        const lines = allDay.map(e => {
                             const dest = state.destinations.find(d => String(d.id) === getGoalEntryDestinationId(e));
-                            const destName = dest?.name || '—';
+                            const destName = dest?.name || '';
                             const isPend = (e.status || 'REALIZADO').toUpperCase() === 'PENDENTE';
-                            return `<div class="goals-daily-expand-item">${isPend ? '<span class="goals-pending-tag">↻</span> ' : ''}<span class="goals-daily-expand-desc-inline">${e.description || destName}</span><span class="goals-daily-expand-amount-inline" style="color:${isPend ? '#94A3B8' : typeColor}">${formatBRL(Number(e.amount)||0)}</span></div>`;
+                            const desc = e.description || destName || '—';
+                            const showDest = destName && destName !== desc;
+                            return `<div class="goals-daily-launch-line${isPend ? ' is-pending' : ''}">
+                                <span class="goals-daily-launch-main">${isPend ? '<span class="goals-pending-tag">↻</span> ' : ''}<span class="goals-daily-launch-desc">${desc}</span>${showDest ? `<span class="goals-daily-launch-dest">${destName}</span>` : ''}</span>
+                                <span class="goals-daily-launch-amount" style="color:${isPend ? '#94A3B8' : typeColor}">${formatBRL(Number(e.amount)||0)}</span>
+                            </div>`;
                         }).join('');
+                        expandedPanels.push(`<div class="goals-daily-launch-group">
+                            <div class="goals-daily-launch-head">${monthNames[mn-1]}/${yr2} · dia ${dd}</div>
+                            ${lines}
+                        </div>`);
                     }
 
-                    return `<td class="goals-daily-cell" ${clickAttr}><span class="goals-daily-expand-icon">${expandIcon}</span>${realHtml}${pendHtml}${expandRows ? `<div class="goals-daily-cell-expand">${expandRows}</div>` : ''}</td>`;
+                    return `<td class="${cellCls}" ${clickAttr}><span class="goals-daily-expand-icon">${expandIcon}</span>${realHtml}${pendHtml}</td>`;
                 }).join('');
 
                 // Dia da semana — usar o primeiro mês com esse dia
@@ -22559,6 +22589,9 @@
                     <td class="goals-daily-date-cell"><strong>${dd}</strong> <span class="goals-daily-weekday">${dayOfWeek}</span>${isTodayRow ? ' <span class="goals-detail-now-badge">Hoje</span>' : ''}</td>
                     ${cellsHtml}
                 </tr>`;
+                if (expandedPanels.length) {
+                    dailyRows += `<tr class="goals-daily-launch-row"><td colspan="${1 + monthData.length}" class="goals-daily-launch-cell"><div class="goals-daily-launch-wrap">${expandedPanels.join('')}</div></td></tr>`;
+                }
             }
 
             // Linha de totais
