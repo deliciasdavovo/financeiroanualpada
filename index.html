@@ -7288,21 +7288,15 @@
         /* Cobranças */
         .cob-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .cob-kpi { border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px 16px; background: #fff; }
-        .cob-kpi.danger { border-color: #F3C1C1; background: #FDF6F6; }
         .cob-kpi-label { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
-        .cob-kpi.danger .cob-kpi-label { color: #B23A3A; }
         .cob-kpi-label svg { width: 13px; height: 13px; }
         .cob-kpi-value { display: block; font-size: 18px; font-weight: 800; margin-top: 5px; white-space: nowrap; }
         .cob-kpi-sub { display: block; font-size: 11px; font-weight: 600; color: #94A3B8; margin-top: 2px; }
         .cob-group { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
         .cob-group + .cob-group { margin-top: 12px; }
-        .cob-group.danger { border-color: #F3C1C1; }
         .cob-group-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 11px 16px; background: #F8FAFC; border: none; border-bottom: 1px solid #E2E8F0; cursor: pointer; text-align: left; }
-        .cob-group.danger .cob-group-header { background: #FDF3F3; border-bottom-color: #F3C1C1; }
         .cob-group-title { font-size: 12.5px; font-weight: 800; color: #1E293B; display: flex; align-items: center; gap: 8px; }
-        .cob-group.danger .cob-group-title { color: #B23A3A; }
         .cob-group-count { font-size: 10.5px; font-weight: 700; color: #64748B; background: #E2E8F0; border-radius: 99px; padding: 1px 8px; }
-        .cob-group.danger .cob-group-count { background: #F6D9D9; color: #B23A3A; }
         .cob-group-total { font-size: 13px; font-weight: 800; white-space: nowrap; }
         .cob-group-body.is-collapsed { display: none; }
         .cob-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #F1F5F9; }
@@ -7310,7 +7304,6 @@
         .cob-row-main { flex: 1; min-width: 0; }
         .cob-row-dest { font-size: 12.5px; font-weight: 700; color: #1E293B; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .cob-row-meta { font-size: 10.5px; color: #64748B; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
-        .cob-badge-late { font-size: 9.5px; font-weight: 800; color: #B23A3A; background: #F6D9D9; border-radius: 99px; padding: 1px 7px; text-transform: uppercase; letter-spacing: 0.3px; }
         .cob-row-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
         .cob-row-actions { display: flex; gap: 5px; flex-shrink: 0; }
         .cob-act-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #E2E8F0; background: #fff; color: #64748B; display: grid; place-items: center; cursor: pointer; }
@@ -7354,6 +7347,12 @@
         .goals-risk-chip { display: inline-flex; align-items: center; gap: 7px; background: #fff; border: 1px solid #F3C1C1; border-radius: 99px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; color: #1E293B; }
         .goals-risk-chip .pct { color: #B23A3A; font-weight: 800; }
         .goals-risk-chip .detail { color: #64748B; font-weight: 600; }
+        /* Recorrência: atalhos */
+        .recurrence-preset-btn { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: #1F7A5C; background: #E8F3EF; border: 1px solid #BFDFD3; border-radius: 10px; padding: 8px 14px; cursor: pointer; }
+        .recurrence-preset-btn:hover { background: #DCEDE5; }
+        .weekday-quick-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 7px; }
+        .weekday-quick-btn { font-size: 10.5px; font-weight: 700; color: #475569; background: #F1F5F9; border: 1px solid #E2E8F0; border-radius: 99px; padding: 3px 10px; cursor: pointer; }
+        .weekday-quick-btn:hover { background: #E2E8F0; }
         .home-saldo-badge { font-size: 12px; font-weight: 600; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
         /* ===== DRE — COLUNA % DA RECEITA ===== */
@@ -8700,16 +8699,21 @@
                         <button type="button" id="toggle-repeat-on" onclick="toggleEntryRecurrenceMode(true)" aria-pressed="false">Repete</button>
                     </div>
                     <div id="entry-recurrence-grid" class="recurrence-grid hidden">
+                        <div class="recurrence-field recurrence-field-full" id="recurrence-field-preset">
+                            <button type="button" class="recurrence-preset-btn" onclick="applyWeekdayRecurrencePreset()">
+                                <i data-lucide="zap" class="w-3.5 h-3.5"></i>Atalho: toda semana, de segunda a sábado
+                            </button>
+                        </div>
                         <div class="recurrence-field" id="recurrence-field-frequency">
-                            <label for="form-repeat-frequency" class="label-mini">Período</label>
+                            <label for="form-repeat-frequency" class="label-mini">Com que frequência?</label>
                             <select id="form-repeat-frequency" onchange="onRepeatFrequencyChange()" aria-describedby="form-repeat-frequency-help form-repeat-frequency-error">
                                 <option value="NONE">Não repetir</option>
-                                <option value="DAY">Diariamente</option>
-                                <option value="WEEK">Semanalmente</option>
-                                <option value="MONTH">Mensalmente</option>
-                                <option value="YEAR">Anualmente</option>
+                                <option value="DAY">Todo dia</option>
+                                <option value="WEEK">Toda semana</option>
+                                <option value="MONTH">Todo mês</option>
+                                <option value="YEAR">Todo ano</option>
                             </select>
-                            <p id="form-repeat-frequency-help" class="field-help">Define o tipo de intervalo para os próximos lançamentos.</p>
+                            <p id="form-repeat-frequency-help" class="field-help">Em "Toda semana" você marca os dias em que acontece (ex.: Seg a Sáb).</p>
                             <p id="form-repeat-frequency-error" class="field-error hidden" role="alert"></p>
                         </div>
                         <div class="recurrence-field" id="recurrence-field-interval">
@@ -8719,7 +8723,12 @@
                             <p id="form-repeat-interval-error" class="field-error hidden" role="alert"></p>
                         </div>
                         <div class="recurrence-field recurrence-field-full hidden" id="recurrence-field-weekdays">
-                            <label class="label-mini">Dias da semana</label>
+                            <label class="label-mini">Em quais dias?</label>
+                            <div class="weekday-quick-row">
+                                <button type="button" class="weekday-quick-btn" onclick="setRepeatWeekdays([1,2,3,4,5,6]); syncRecurrenceFieldVisibility(); updateEntryRecurrenceSummary();">Seg a Sáb</button>
+                                <button type="button" class="weekday-quick-btn" onclick="setRepeatWeekdays([1,2,3,4,5]); syncRecurrenceFieldVisibility(); updateEntryRecurrenceSummary();">Seg a Sex</button>
+                                <button type="button" class="weekday-quick-btn" onclick="setRepeatWeekdays([]); syncRecurrenceFieldVisibility(); updateEntryRecurrenceSummary();">Limpar</button>
+                            </div>
                             <div id="form-repeat-weekdays" class="weekday-chips" role="group" aria-label="Dias da semana em que o lançamento se repete">
                                 <button type="button" data-weekday="0" onclick="toggleRepeatWeekday(0)" aria-pressed="false">Dom</button>
                                 <button type="button" data-weekday="1" onclick="toggleRepeatWeekday(1)" aria-pressed="false">Seg</button>
@@ -8733,10 +8742,10 @@
                             <p id="form-repeat-weekdays-error" class="field-error hidden" role="alert"></p>
                         </div>
                         <div class="recurrence-field recurrence-field-full" id="recurrence-field-endmode">
-                            <label class="label-mini">Terminar</label>
+                            <label class="label-mini">Repetir até quando?</label>
                             <div class="status-toggle recurrence-endmode-toggle" role="group" aria-label="Como a repetição termina">
-                                <button type="button" id="toggle-repeat-end-count" onclick="setRepeatEndMode('count')" aria-pressed="true">Nº de repetições</button>
-                                <button type="button" id="toggle-repeat-end-until" onclick="setRepeatEndMode('until')" aria-pressed="false">Data final</button>
+                                <button type="button" id="toggle-repeat-end-until" onclick="setRepeatEndMode('until')" aria-pressed="false">Até uma data</button>
+                                <button type="button" id="toggle-repeat-end-count" onclick="setRepeatEndMode('count')" aria-pressed="true">Nº de vezes</button>
                             </div>
                             <input type="hidden" id="form-repeat-end-mode" value="count">
                         </div>
@@ -9482,8 +9491,8 @@
             const startEl = document.getElementById('filter-date-start');
             const endEl = document.getElementById('filter-date-end');
             if (monthEl) monthEl.value = monthText;
-            if (startEl) startEl.value = formatLocalDate(first);
-            if (endEl) endEl.value = formatLocalDate(last);
+            setPickerValue(startEl, formatLocalDate(first));
+            setPickerValue(endEl, formatLocalDate(last));
             entriesChipYear = year;
             entriesPage = 1;
             renderEntries();
@@ -12420,10 +12429,22 @@
             renderMonthly();
         }
 
+        // Define o valor (ISO) de um campo de data sincronizando o visor dd/mm/aaaa do flatpickr.
+        function setPickerValue(el, value) {
+            if (!el) return;
+            const v = String(value || '');
+            if (el._flatpickr) {
+                if (v) el._flatpickr.setDate(v, false, 'Y-m-d');
+                else el._flatpickr.clear(false);
+            } else {
+                el.value = v;
+            }
+        }
+
         function initCustomDatePickers() {
             if (!window.flatpickr) return;
             const localePt = window.flatpickr?.l10ns?.pt || 'pt';
-            const datePickerIds = ['filter-date-start', 'filter-date-end', 'treasury-summary-date', 'treasury-mv-date', 'form-date', 'treasury-sales-reference'];
+            const datePickerIds = ['filter-date-start', 'filter-date-end', 'treasury-summary-date', 'treasury-mv-date', 'form-date', 'treasury-sales-reference', 'form-repeat-until'];
 
             datePickerIds.forEach((id) => {
                 const input = document.getElementById(id);
@@ -12432,9 +12453,13 @@
                 input.type = 'text';
                 input.autocomplete = 'off';
 
+                // O valor interno segue Y-m-d (usado por toda a lógica);
+                // o campo visível mostra e aceita dd/mm/aaaa.
                 flatpickr(input, {
                     locale: localePt,
                     dateFormat: 'Y-m-d',
+                    altInput: true,
+                    altFormat: 'd/m/Y',
                     allowInput: true,
                     disableMobile: true,
                     onChange: () => {
@@ -12824,7 +12849,7 @@
             const today = getTodayIsoDate();
 
             if (editIdEl) editIdEl.value = '';
-            if (dateEl && (!keepDate || !dateEl.value)) dateEl.value = today;
+            if (dateEl && (!keepDate || !dateEl.value)) setPickerValue(dateEl, today);
             if (cashEl) cashEl.value = '0';
             if (cardEl) cardEl.value = '0';
             if (paymentsEl) paymentsEl.value = '0';
@@ -12847,7 +12872,7 @@
             if (!item) return;
             const totals = getMovementTotals(item);
             document.getElementById('treasury-mv-edit-id').value = String(item.id || '');
-            document.getElementById('treasury-mv-date').value = String(item.date || '');
+            setPickerValue(document.getElementById('treasury-mv-date'), String(item.date || ''));
             document.getElementById('treasury-mv-cash').value = String(totals.cashIn || 0);
             document.getElementById('treasury-mv-card').value = String(totals.cardIn || 0);
             document.getElementById('treasury-mv-payments').value = String(totals.paymentsOut || 0);
@@ -13053,10 +13078,10 @@
             const salesReferenceEl = document.getElementById('treasury-sales-reference');
             const salesPeriodEl = document.getElementById('treasury-sales-period');
             const todayMonth = today.slice(0, 7);
-            if (movementDateEl && !movementDateEl.value) movementDateEl.value = today;
-            if (summaryDateEl && !summaryDateEl.value) summaryDateEl.value = today;
+            if (movementDateEl && !movementDateEl.value) setPickerValue(movementDateEl, today);
+            if (summaryDateEl && !summaryDateEl.value) setPickerValue(summaryDateEl, today);
             if (movementFilterMonthEl && !movementFilterMonthEl.value) movementFilterMonthEl.value = todayMonth;
-            if (salesReferenceEl && !salesReferenceEl.value) salesReferenceEl.value = today;
+            if (salesReferenceEl && !salesReferenceEl.value) setPickerValue(salesReferenceEl, today);
             if (salesPeriodEl && !salesPeriodEl.value) salesPeriodEl.value = 'SEMANA';
             resetTreasuryMovementForm({ keepDate: true });
             renderTreasuryMovements();
@@ -14580,16 +14605,8 @@
 
         // ---------- Cobranças (contas a receber / a pagar) ----------
 
-        // Lançamentos pendentes com data anterior a hoje (vencidos), mais antigos primeiro.
-        function getOverdueEntries() {
-            const today = getTodayIsoDate();
-            return getAnalyticalEntries(state.entries)
-                .filter(e => String(e.status || '').toUpperCase() === 'PENDENTE' && String(e.date || '') !== '' && String(e.date) < today)
-                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
-        }
-
         // Agrupa os pendentes por fluxo (receber/pagar) e por prazo:
-        // vencidas, vence hoje, próximos COBRANCAS_WEEK_DAYS dias e mais adiante.
+        // vence hoje, próximos COBRANCAS_WEEK_DAYS dias, mais adiante e dias anteriores.
         function getCobrancasData() {
             const today = getTodayIsoDate();
             const todayDate = parseIsoDateLocal(today) || new Date();
@@ -14636,12 +14653,6 @@
             const destName = getDestinationById(entry.destinationId)?.name || 'Sem destino';
             const cat = state.categories.find(c => String(c.id || '') === String(entry.categoryId || ''));
             const dateIso = String(entry.date || '');
-            let lateBadge = '';
-            if (dateIso && dateIso < today) {
-                const dayMs = 24 * 60 * 60 * 1000;
-                const lateDays = Math.max(1, Math.round(((parseIsoDateLocal(today) || new Date()) - (parseIsoDateLocal(dateIso) || new Date())) / dayMs));
-                lateBadge = `<span class="cob-badge-late">há ${lateDays} dia${lateDays > 1 ? 's' : ''}</span>`;
-            }
             const metaParts = [escapeHtml(formatDateBRV2(dateIso))];
             if (cat) metaParts.push(escapeHtml(cat.name));
             if (entry.description) metaParts.push(escapeHtml(entry.description));
@@ -14649,7 +14660,7 @@
                 <div class="home-proj-item-icon ${isReceber ? 'in' : 'out'}"><i data-lucide="${isReceber ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
                 <div class="cob-row-main">
                     <span class="cob-row-dest">${escapeHtml(destName)}</span>
-                    <span class="cob-row-meta">${metaParts.join(' • ')} ${lateBadge}</span>
+                    <span class="cob-row-meta">${metaParts.join(' • ')}</span>
                 </div>
                 <span class="cob-row-val ${isReceber ? 'flow-income-text' : 'flow-expense-text'}">${isReceber ? '+' : '-'}${formatBRL(Number(entry.amount) || 0)}</span>
                 <div class="cob-row-actions">
@@ -14661,13 +14672,12 @@
 
         function buildCobrancaGroup(title, entries, groupTotal, isReceber, today, options = {}) {
             if (!entries.length) return '';
-            const danger = Boolean(options.danger);
             const collapsed = Boolean(options.collapsed);
             const rows = entries.map(e => buildCobrancaRow(e, isReceber, today)).join('');
-            const totalClass = danger ? 'flow-expense-text' : (isReceber ? 'flow-income-text' : 'flow-expense-text');
-            return `<div class="cob-group${danger ? ' danger' : ''}">
+            const totalClass = isReceber ? 'flow-income-text' : 'flow-expense-text';
+            return `<div class="cob-group">
                 <button type="button" class="cob-group-header" onclick="toggleCobGroup(this)" aria-expanded="${String(!collapsed)}">
-                    <span class="cob-group-title">${danger ? '<i data-lucide="alert-triangle" class="w-4 h-4"></i>' : ''}${escapeHtml(title)}<span class="cob-group-count">${entries.length}</span></span>
+                    <span class="cob-group-title">${escapeHtml(title)}<span class="cob-group-count">${entries.length}</span></span>
                     <span style="display:flex;align-items:center;gap:8px;">
                         <span class="cob-group-total ${totalClass}">${formatBRL(groupTotal)}</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 cob-group-chevron" style="transition: transform 0.2s;${collapsed ? '' : 'transform: rotate(180deg);'}"></i>
@@ -14684,14 +14694,14 @@
             const data = getCobrancasData();
             const isReceber = cobrancasFlowTab === 'receber';
             const side = isReceber ? data.receber : data.pagar;
-            const overdueCount = data.pagar.groups.overdue.length + data.receber.groups.overdue.length;
-            const overdueTotal = data.pagar.totals.overdue + data.receber.totals.overdue;
+            const todayCount = data.pagar.groups.today.length + data.receber.groups.today.length;
+            const todayNet = data.receber.totals.today - data.pagar.totals.today;
 
             const groupsHtml = [
-                buildCobrancaGroup('Vencidas', side.groups.overdue, side.totals.overdue, isReceber, data.today, { danger: true }),
                 buildCobrancaGroup('Vence hoje', side.groups.today, side.totals.today, isReceber, data.today),
                 buildCobrancaGroup(`Próximos ${COBRANCAS_WEEK_DAYS} dias`, side.groups.week, side.totals.week, isReceber, data.today),
-                buildCobrancaGroup('Mais adiante', side.groups.later, side.totals.later, isReceber, data.today, { collapsed: true })
+                buildCobrancaGroup('Mais adiante', side.groups.later, side.totals.later, isReceber, data.today, { collapsed: true }),
+                buildCobrancaGroup('Dias anteriores (sem baixa)', side.groups.overdue, side.totals.overdue, isReceber, data.today, { collapsed: true })
             ].join('');
 
             host.innerHTML = `
@@ -14706,10 +14716,10 @@
                         <span class="cob-kpi-value flow-expense-text">${formatBRL(data.pagar.total)}</span>
                         <span class="cob-kpi-sub">${data.pagar.list.length} lançamento(s) pendente(s)</span>
                     </div>
-                    <div class="cob-kpi${overdueCount > 0 ? ' danger' : ''}">
-                        <span class="cob-kpi-label"><i data-lucide="alert-triangle"></i>Vencidas</span>
-                        <span class="cob-kpi-value ${overdueCount > 0 ? 'flow-expense-text' : ''}">${formatBRL(overdueTotal)}</span>
-                        <span class="cob-kpi-sub">${overdueCount > 0 ? `${overdueCount} lançamento(s) em atraso` : 'Nada em atraso 🎉'}</span>
+                    <div class="cob-kpi">
+                        <span class="cob-kpi-label"><i data-lucide="calendar-check-2"></i>Hoje</span>
+                        <span class="cob-kpi-value ${todayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}">${todayNet > 0 ? '+' : ''}${formatBRL(todayNet)}</span>
+                        <span class="cob-kpi-sub">${todayCount > 0 ? `${todayCount} lançamento(s) para hoje` : 'Nada para hoje 🎉'}</span>
                     </div>
                 </div>
                 <div class="card-premium p-6 md:p-8 mt-6">
@@ -16327,9 +16337,7 @@
             document.getElementById('projection-card-out').innerText = formatBRL(summary.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(summary.net);
             document.getElementById('projection-chart-title').innerText = `Saldo agendado por ${getProjectionGranularityLabel()}`;
-            const overdueCount = getOverdueEntries().length;
-            const overdueNote = overdueCount > 0 ? ` Atenção: ${overdueCount} lançamento(s) vencido(s) fora desta janela — veja em Cobranças.` : '';
-            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} • soma dos lançamentos pendentes já cadastrados, agrupados por ${getProjectionGranularityLabel()}.${overdueNote}`;
+            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} • soma dos lançamentos pendentes já cadastrados, agrupados por ${getProjectionGranularityLabel()}.`;
             document.getElementById('projection-list-title').innerText = projectionViewMode === 'calendar' ? 'Calendário financeiro' : 'Lançamentos usados na projeção';
             document.getElementById('projection-list-subtitle').innerText = projectionViewMode === 'calendar'
                 ? 'Resultado agendado por dia. Toque em um dia para ver os lançamentos.'
@@ -19675,6 +19683,29 @@
             updateEntryRecurrenceSummary();
         }
 
+        // Atalho "vendas da padaria": repete toda semana de segunda a sábado,
+        // terminando em uma data (sugere ~1 mês à frente da data do lançamento).
+        function applyWeekdayRecurrencePreset() {
+            const frequencyEl = document.getElementById('form-repeat-frequency');
+            if (frequencyEl) {
+                frequencyEl.value = 'WEEK';
+                frequencyEl.dataset.lastFrequency = 'WEEK';
+            }
+            const intervalEl = document.getElementById('form-repeat-interval');
+            if (intervalEl) intervalEl.value = '1';
+            setRepeatWeekdays([1, 2, 3, 4, 5, 6]);
+            const modeEl = document.getElementById('form-repeat-end-mode');
+            if (modeEl) modeEl.value = 'until';
+            const untilEl = document.getElementById('form-repeat-until');
+            const dateEl = document.getElementById('form-date');
+            if (untilEl && !untilEl.value) {
+                const base = parseIsoDateLocal(String(dateEl?.value || '')) || new Date();
+                setPickerValue(untilEl, formatLocalDate(addLocalDays(base, 27)));
+            }
+            syncEntryRecurrenceToggleUI();
+            updateEntryRecurrenceSummary();
+        }
+
         function setRepeatEndMode(mode) {
             const safe = mode === 'until' ? 'until' : 'count';
             const modeEl = document.getElementById('form-repeat-end-mode');
@@ -19682,7 +19713,7 @@
             if (safe === 'until') {
                 const untilEl = document.getElementById('form-repeat-until');
                 const dateEl = document.getElementById('form-date');
-                if (untilEl && !untilEl.value && dateEl && dateEl.value) untilEl.value = dateEl.value;
+                if (untilEl && !untilEl.value && dateEl && dateEl.value) setPickerValue(untilEl, dateEl.value);
             }
             setEntryFieldError('form-repeat-count', '');
             setEntryFieldError('form-repeat-until', '');
@@ -20054,7 +20085,7 @@
 
         function fillEntryFormFromEntry(e, forceStatus = '') {
             if (!e) return;
-            document.getElementById('form-date').value = e.date;
+            setPickerValue(document.getElementById('form-date'), e.date);
             document.getElementById('form-value').value = Number(e.amount || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('form-desc').value = e.description || "";
             populateDestinationCombobox('form-dst-search', 'form-dst', 'form-dst-panel', state.destinations, e.destinationId);
@@ -20089,7 +20120,7 @@
             if (repeatIntervalEl) repeatIntervalEl.value = '1';
             if (repeatCountEl) repeatCountEl.value = '1';
             const repeatUntilEl = document.getElementById('form-repeat-until');
-            if (repeatUntilEl) repeatUntilEl.value = '';
+            if (repeatUntilEl) setPickerValue(repeatUntilEl, '');
             const repeatEndModeEl = document.getElementById('form-repeat-end-mode');
             if (repeatEndModeEl) repeatEndModeEl.value = 'count';
             setRepeatWeekdays([]);
@@ -20110,7 +20141,7 @@
                 }
             }
             if (!id && !duplicated) {
-                document.getElementById('form-date').value = formatLocalDate(new Date());
+                setPickerValue(document.getElementById('form-date'), formatLocalDate(new Date()));
                 toggleStatus('REALIZADO');
                 const movTypeEl = document.getElementById('form-mov-type-entry');
                 if (movTypeEl) populateMovementTypeSelect('form-mov-type-entry', 'OPERACIONAL');
@@ -22571,7 +22602,7 @@
             if (result.date) {
                 const dateEl = document.getElementById('form-date');
                 if (dateEl) {
-                    dateEl.value = result.date;
+                    setPickerValue(dateEl, result.date);
                     setEntryFieldError('form-date', '');
                     applied.push(`Vencimento: ${result.date.split('-').reverse().join('/')}`);
                 }
