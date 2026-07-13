@@ -8940,6 +8940,12 @@
         const OPTIONAL_STATE_TABLES = ['storeDailyMovements', 'dailyBalances'];
         const LOAD_STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances'];
         const STATE_TABLES = [...LOAD_STATE_TABLES, 'movementTypes'];
+        const HOME_UPCOMING_DAYS = 14;      // janela da lista "O que vem por aí" no Início
+        const COBRANCAS_WEEK_DAYS = 7;      // janela "próximos dias" nas Cobranças
+        const GOAL_WARN_PCT = 70;           // meta em atenção
+        const GOAL_DANGER_PCT = 90;         // meta em risco
+        const AVG_WEEKS_PER_MONTH = 4.345;  // semanas médias por mês (recorrência)
+        const AVG_FORTNIGHTS_PER_MONTH = 2.174;
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -10630,48 +10636,6 @@
                 icon: 'file-down'
             });
         }
-        function buildMonthlyHierarchyTableV2Legacy(entries) {
-            const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>';
-
-            const grouped = new Map();
-            dadosBase.forEach((item) => {
-                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
-                const categoria = item.categoria || 'Sem categoria';
-                const subcategoria = item.subcategoria || 'Sem subcategoria';
-                const destino = item.destino || 'Sem destino';
-                const valor = Number(item.valor) || 0;
-                const flowKey = `${fluxo}::${categoria}`;
-
-                if (!grouped.has(flowKey)) grouped.set(flowKey, { flow: fluxo, categoria, total: 0, count: 0, subs: new Map() });
-                const catRef = grouped.get(flowKey);
-                catRef.total += valor;
-                catRef.count += 1;
-
-                if (!catRef.subs.has(subcategoria)) catRef.subs.set(subcategoria, { total: 0, count: 0, destinos: new Map() });
-                const subRef = catRef.subs.get(subcategoria);
-                subRef.total += valor;
-                subRef.count += 1;
-
-                if (!subRef.destinos.has(destino)) subRef.destinos.set(destino, { total: 0, count: 0 });
-                const dstRef = subRef.destinos.get(destino);
-                dstRef.total += valor;
-                dstRef.count += 1;
-            });
-
-            const rows = [];
-            Array.from(grouped.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([categoria, catData]) => {
-                rows.push(`<tr><td class="level-cell level-1">${escapeHtml(categoria)}</td><td>Categoria</td><td class="r">${catData.count}</td><td class="r">${formatBRL(catData.total)}</td></tr>`);
-                Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([subcategoria, subData]) => {
-                    rows.push(`<tr><td class="level-cell level-2">${escapeHtml(subcategoria)}</td><td>Subcategoria</td><td class="r">${subData.count}</td><td class="r">${formatBRL(subData.total)}</td></tr>`);
-                    Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([destino, dstData]) => {
-                        rows.push(`<tr><td class="level-cell level-3">${escapeHtml(destino)}</td><td>Destino</td><td class="r">${dstData.count}</td><td class="r">${formatBRL(dstData.total)}</td></tr>`);
-                    });
-                });
-            });
-
-            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
-        }
         function buildMonthlyHierarchyExportHtmlV2(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
             if (!dadosBase.length) return buildExportSectionV2('Resumo', '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>');
@@ -10736,62 +10700,6 @@
             });
 
             return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Fluxo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
-        }
-        function exportCurrentReportPDFLegacy() {
-            let title = '';
-            let subtitle = `Gerado em ${getExportTimestamp()}`;
-            let tableHtml = '<p>Sem dados para exportação.</p>';
-
-            if (currentTab === 'entries') {
-                const rows = getEntriesForExport();
-                title = 'Relatório de Lançamentos';
-                tableHtml = `<table><thead><tr><th>Data</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
-                    ${rows.map(e => {
-                        const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
-                        return `<tr>
-                            <td>${formatDateBRV2(e.date)}</td>
-                            <td>${escapeHtml(dst)}</td>
-                            <td>${escapeHtml(e.description || '')}</td>
-                            <td class="c">${escapeHtml(e.status || '-')}</td>
-                            <td class="r">${formatBRL(e.amount)}</td>
-                        </tr>`;
-                    }).join('')}
-                </tbody></table>`;
-            } else if (currentTab === 'reports' && reportsMode === 'monthly') {
-                const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
-                const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
-                title = `Relatório Mensal (${filter})`;
-                subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
-                tableHtml = buildMonthlyHierarchyExportHtml(entries);
-            } else if (currentTab === 'annual') {
-                const year = new Date().getFullYear();
-                const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-                const data = monthNames.map((_, idx) => {
-                    const prefix = `${year}-${String(idx + 1).padStart(2,'0')}`;
-                    const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
-                    const inc = mEntries.filter(e=>normalizeFlowType(e.type)==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                    const exp = mEntries.filter(e=>normalizeFlowType(e.type)==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                    return { month: monthNames[idx], inc, exp, bal: inc - exp };
-                });
-                title = `Relatório Anual (${year})`;
-                tableHtml = `<table><thead><tr><th>Mês</th><th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th></tr></thead><tbody>
-                    ${data.map(r => `<tr><td>${r.month}</td><td class="r">${formatBRL(r.inc)}</td><td class="r">${formatBRL(r.exp)}</td><td class="r">${formatBRL(r.bal)}</td></tr>`).join('')}
-                </tbody></table>`;
-            } else {
-                title = 'Relatório';
-                tableHtml = `<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>`;
-            }
-
-            const win = window.open('', '_blank');
-            if (!win) {
-                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
-                return;
-            }
-            win.document.open();
-            win.document.write(buildPrintableShell(title, subtitle, tableHtml));
-            win.document.close();
-            win.focus();
-            setTimeout(() => win.print(), 250);
         }
         function exportCurrentReportPDFV2() {
             let title = '';
@@ -12006,131 +11914,6 @@
             </div>`;
         }
 
-        function renderAnaliseHierarquicaMensalLegacy(entries) {
-            const section = document.getElementById('analise-hierarquica-mensal');
-            if(!section) return;
-            const dados = getMonthlyHierarchyData(entries);
-            const dadosFluxo = fluxoSelecionado === 'ENTRADAS'
-                ? dados.filter(d => d.tipo === 'entrada')
-                : fluxoSelecionado === 'SAIDAS'
-                    ? dados.filter(d => d.tipo === 'saida')
-                    : [...dados];
-            const categoriasDisponiveis = Array.from(new Set(dadosFluxo.map(d => d.categoria))).sort((a, b) => a.localeCompare(b));
-            if(categoriaFiltroSelecionada && !categoriasDisponiveis.includes(categoriaFiltroSelecionada)) categoriaFiltroSelecionada = '';
-            const dadosCategoria = categoriaFiltroSelecionada ? dadosFluxo.filter(d => d.categoria === categoriaFiltroSelecionada) : dadosFluxo;
-            const subcategoriasDisponiveis = Array.from(new Set(dadosCategoria.map(d => d.subcategoria))).sort((a, b) => a.localeCompare(b));
-            if(subcategoriaFiltroSelecionada && !subcategoriasDisponiveis.includes(subcategoriaFiltroSelecionada)) subcategoriaFiltroSelecionada = '';
-            const dadosSubcategoria = subcategoriaFiltroSelecionada ? dadosCategoria.filter(d => d.subcategoria === subcategoriaFiltroSelecionada) : dadosCategoria;
-            const destinosDisponiveis = Array.from(new Set(dadosSubcategoria.map(d => d.destino))).sort((a, b) => a.localeCompare(b));
-            if(!Array.isArray(destinosFiltroSelecionados)) destinosFiltroSelecionados = [];
-            destinosFiltroSelecionados = destinosFiltroSelecionados.filter(dest => destinosDisponiveis.includes(dest));
-            if(destinosDisponiveis.length && destinosFiltroSelecionados.length === 0) destinosFiltroSelecionados = [...destinosDisponiveis];
-
-            section.className = 'card-premium p-8 space-y-6';
-            section.innerHTML = `
-                <div class="flex items-center justify-between gap-4 flex-wrap">
-                    <h4 class="text-sm font-black text-slate-900">Análise hierárquica mensal</h4>
-                    <div class="hm-breadcrumb">
-                        <button onclick="hmBreadcrumbTo('categoria')">Relatório Mensal</button>
-                        ${categoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('subcategoria')">${categoriaSelecionada}</button>` : ''}
-                        ${subcategoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('destino')">${subcategoriaSelecionada}</button>` : ''}
-                        ${destinoSelecionado ? `<span class="hm-sep">></span><span class="text-slate-700 font-semibold">${destinoSelecionado}</span>` : ''}
-                    </div>
-                </div>
-                <div class="hm-filters">
-                    <div>
-                        <label class="label-mini" for="hm-flow-filter">Fluxo</label>
-                        <select id="hm-flow-filter">
-                            <option value="TODOS">Todos</option>
-                            <option value="ENTRADAS">Entradas</option>
-                            <option value="SAIDAS">Saídas</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini" for="hm-category-filter">Categoria (opcional)</label>
-                        <select id="hm-category-filter">
-                            <option value="">Todas</option>
-                            ${categoriasDisponiveis.map(c => `<option value="${c}">${c}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini" for="hm-subcategory-filter">Subcategoria</label>
-                        <select id="hm-subcategory-filter">
-                            <option value="">Todas</option>
-                            ${subcategoriasDisponiveis.map(s => `<option value="${s}">${s}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini">Destinos</label>
-                        <div class="hm-destination-picker">
-                            <div class="hm-destination-actions">
-                                <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(true)">Todos</button>
-                                <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(false)">Limpar</button>
-                            </div>
-                            <div class="hm-destination-list">
-                                ${destinosDisponiveis.map(d => `<label class="hm-check"><input type="checkbox" ${destinosFiltroSelecionados.includes(d) ? 'checked' : ''} onchange="hmToggleDestinationSelection(decodeURIComponent('${encodeSafe(d)}'), this.checked)"><span>${d}</span></label>`).join('') || '<span class="text-[11px] text-slate-400">Nenhum destino disponível</span>'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="hm-content"></div>
-            `;
-
-            const flowFilterEl = document.getElementById('hm-flow-filter');
-            const catFilterEl = document.getElementById('hm-category-filter');
-            const subFilterEl = document.getElementById('hm-subcategory-filter');
-            if(flowFilterEl) {
-                flowFilterEl.value = fluxoSelecionado;
-                flowFilterEl.onchange = () => {
-                    fluxoSelecionado = flowFilterEl.value;
-                    categoriaFiltroSelecionada = '';
-                    subcategoriaFiltroSelecionada = '';
-                    destinosFiltroSelecionados = [];
-                    nivelAtual = 'categoria';
-                    categoriaSelecionada = '';
-                    subcategoriaSelecionada = '';
-                    destinoSelecionado = '';
-                    renderMonthly();
-                };
-            }
-            if(catFilterEl) {
-                catFilterEl.value = categoriaFiltroSelecionada;
-                catFilterEl.onchange = () => {
-                    categoriaFiltroSelecionada = catFilterEl.value;
-                    subcategoriaFiltroSelecionada = '';
-                    destinosFiltroSelecionados = [];
-                    nivelAtual = 'categoria';
-                    categoriaSelecionada = '';
-                    subcategoriaSelecionada = '';
-                    destinoSelecionado = '';
-                    renderMonthly();
-                };
-            }
-            if(subFilterEl) {
-                subFilterEl.value = subcategoriaFiltroSelecionada;
-                subFilterEl.onchange = () => {
-                    subcategoriaFiltroSelecionada = subFilterEl.value;
-                    destinosFiltroSelecionados = [];
-                    nivelAtual = 'categoria';
-                    categoriaSelecionada = '';
-                    subcategoriaSelecionada = '';
-                    destinoSelecionado = '';
-                    renderMonthly();
-                };
-            }
-
-            const dadosBase = aplicarFiltrosBaseHierarquia(dados);
-            if(dadosBase.length === 0) {
-                const content = document.getElementById('hm-content');
-                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponível para o mês e filtros selecionados.</div>`;
-                return;
-            }
-
-            if(nivelAtual === 'categoria') return renderCategorias(dadosBase);
-            if(nivelAtual === 'subcategoria') return renderSubcategorias(dadosBase);
-            if(nivelAtual === 'destino') return renderDestinos(dadosBase);
-            return renderLancamentos(dadosBase);
-        }
 
         function renderAnaliseHierarquicaMensal(entries) {
             const section = document.getElementById('analise-hierarquica-mensal');
@@ -12984,7 +12767,18 @@
                     return String(b.date || '').localeCompare(String(a.date || ''));
                 });
 
-            if (summaryEl) summaryEl.textContent = `${filtered.length} lançamento(s) encontrados.`;
+            const summaryTotals = filtered.reduce((acc, item) => {
+                const totals = getMovementTotals(item);
+                acc.totalIn += totals.totalIn;
+                acc.paymentsOut += totals.paymentsOut;
+                acc.dailyResult += totals.dailyResult;
+                return acc;
+            }, { totalIn: 0, paymentsOut: 0, dailyResult: 0 });
+
+            if (summaryEl) {
+                const unitText = filterUnit ? filterUnit.replace('_', ' ') : 'todas as unidades';
+                summaryEl.innerText = `${filtered.length} lançamento(s) • ${unitText} • vendas ${formatBRL(summaryTotals.totalIn)} • saídas ${formatBRL(summaryTotals.paymentsOut)} • fechamento ${formatBRL(summaryTotals.dailyResult)}`;
+            }
 
             if (!filtered.length) {
                 historyBody.innerHTML = '<div class="vender-empty-state">Nenhum fechamento para os filtros aplicados.</div>';
@@ -13127,70 +12921,6 @@
                         }
                     }
                 });
-            }
-            refreshLucideIcons();
-        }
-
-        function renderTreasuryMovements() {
-            const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
-            const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
-            const historyBody = document.getElementById('treasury-mv-history-body');
-            const summaryEl = document.getElementById('treasury-mv-history-summary');
-            if (!historyBody) return;
-
-            const filtered = (state.storeDailyMovements || [])
-                .filter(item => !filterMonth || String(item.date || '').startsWith(filterMonth))
-                .filter(item => !filterUnit || item.unit === filterUnit)
-                .sort((a, b) => {
-                    if (a.date === b.date) return String(a.unit || '').localeCompare(String(b.unit || ''));
-                    return String(b.date || '').localeCompare(String(a.date || ''));
-                });
-
-            const summaryTotals = filtered.reduce((acc, item) => {
-                const totals = getMovementTotals(item);
-                acc.totalIn += totals.totalIn;
-                acc.paymentsOut += totals.paymentsOut;
-                acc.dailyResult += totals.dailyResult;
-                return acc;
-            }, { totalIn: 0, paymentsOut: 0, dailyResult: 0 });
-
-            if (summaryEl) {
-                const unitText = filterUnit ? filterUnit.replace('_', ' ') : 'todas as unidades';
-                summaryEl.innerText = `${filtered.length} lançamento(s) • ${unitText} • vendas ${formatBRL(summaryTotals.totalIn)} • saídas ${formatBRL(summaryTotals.paymentsOut)} • fechamento ${formatBRL(summaryTotals.dailyResult)}`;
-            }
-
-            if (!filtered.length) {
-                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem fechamentos para os filtros aplicados</td></tr>';
-            } else {
-                historyBody.innerHTML = filtered.map(item => {
-                    const totals = getMovementTotals(item);
-                    const resultClass = totals.dailyResult < 0 ? 'text-red-600' : 'text-slate-700';
-                    return `<tr class="table-row">
-                        <td class="px-4 py-3">
-                            <div class="treasury-cell-main text-slate-700">${escapeHtml(formatDateBRV2(item.date))}</div>
-                            <div class="treasury-cell-sub">${escapeHtml(String(item.unit || '-').replace('_', ' '))}</div>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} | Cartão: ${formatBRL(totals.cardIn)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main ${resultClass}">${formatBRL(totals.dailyResult)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs text-slate-600 treasury-notes">${escapeHtml(String(item.notes || '—'))}</td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="treasury-action-group">
-                                <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar movimento" aria-label="Editar movimento">
-                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                </button>
-                                <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="treasury-action-btn danger" title="Excluir movimento" aria-label="Excluir movimento">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>`;
-                }).join('');
             }
             refreshLucideIcons();
         }
@@ -13559,15 +13289,6 @@
             }
             refreshEntryRowInlineUI(id);
             return true;
-        }
-        async function updateEntryDestinationInlineByLabelLegacy(id, label, validDestinations) {
-            const destinationId = findDestinationIdByLabel(label, validDestinations);
-            if (!destinationId) {
-                alert('Selecione um destino válido da lista.');
-                renderEntries();
-                return;
-            }
-            await updateEntryDestinationInline(id, destinationId);
         }
         function getValidDestinationsForEntry(entry) {
             if (!entry) return getValidDestinations();
@@ -16504,8 +16225,8 @@
                     count,
                     total,
                     perMonth: count / spanMonths,
-                    perWeek: count / (spanMonths * 4.345),
-                    perFortnight: count / (spanMonths * 2.174),
+                    perWeek: count / (spanMonths * AVG_WEEKS_PER_MONTH),
+                    perFortnight: count / (spanMonths * AVG_FORTNIGHTS_PER_MONTH),
                     medianInterval,
                     cadence: getRecurrenceCadenceLabel(medianInterval, count),
                     lastDate: dates[dates.length - 1] || ''
@@ -18519,50 +18240,6 @@
             };
         }
 
-        function getReconReviewBadgeLegacy(meta, invalidDestination) {
-            if (invalidDestination) {
-                return {
-                    badgeClass: 'bg-red-50 text-red-700 border border-red-200',
-                    badgeText: 'Revisar destino',
-                    note: 'Escolha um destino válido antes de importar.'
-                };
-            }
-            if (meta.status === 'select-account') {
-                return {
-                    badgeClass: 'bg-slate-50 text-slate-600 border border-slate-200',
-                    badgeText: 'Escolha a conta',
-                    note: 'Selecione a conta para comparar com os lançamentos já cadastrados.'
-                };
-            }
-            if (meta.status === 'exact') {
-                return {
-                    badgeClass: 'bg-green-50 text-green-700 border border-green-200',
-                    badgeText: 'Já lançado',
-                    note: 'Esse lançamento já existe com a mesma conta, destino e descrição.'
-                };
-            }
-            if (meta.status === 'conflict') {
-                const firstConflict = meta.otherDestinationLabels[0] || 'outro destino';
-                const suffix = meta.otherDestinationLabels.length > 1 ? ` e mais ${meta.otherDestinationLabels.length - 1}` : '';
-                return {
-                    badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
-                    badgeText: 'Conferir destino',
-                    note: `Há lançamento parecido em ${firstConflict}${suffix}.`
-                };
-            }
-            if (meta.status === 'similar') {
-                return {
-                    badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-                    badgeText: 'Destino confere',
-                    note: 'Já existe lançamento parecido com este mesmo destino.'
-                };
-            }
-            return {
-                badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',
-                badgeText: 'Novo lançamento',
-                note: 'Não encontrei registro parecido nesta conta.'
-            };
-        }
         function renderReconPreview() {
             const preview = document.getElementById('recon-preview');
             const summary = document.getElementById('recon-summary-count');
@@ -20934,9 +20611,9 @@
 
             let status;
             if (targetFlow === FLOW_OUT) {
-                status = rawPct > 100 ? 'over' : rawPct > 90 ? 'danger' : rawPct > 70 ? 'warn' : 'ok';
+                status = rawPct > 100 ? 'over' : rawPct > GOAL_DANGER_PCT ? 'danger' : rawPct > GOAL_WARN_PCT ? 'warn' : 'ok';
             } else {
-                status = rawPct >= 90 ? 'rev_ok' : rawPct >= 70 ? 'warn' : 'rev_danger';
+                status = rawPct >= GOAL_DANGER_PCT ? 'rev_ok' : rawPct >= GOAL_WARN_PCT ? 'warn' : 'rev_danger';
             }
 
             return { actual, target: goal.amount, pct, rawPct, status, remaining: goal.amount - actual };
@@ -22051,50 +21728,6 @@
             if (wrap) wrap.classList.toggle('hidden', recurring);
         }
 
-        function updateGoalHierarchyOptionsLegacy() {
-            const level   = document.getElementById('goal-level-sel')?.value || 'category';
-            const itemEl  = document.getElementById('goal-item-sel');
-            const labelEl = document.getElementById('goal-item-label');
-            if (!itemEl) return;
-
-            const labels = { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' };
-            if (labelEl) labelEl.textContent = labels[level] || 'Item';
-
-            let options = [];
-            if (level === 'category') {
-                options = [...state.categories]
-                    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
-                    .map(c => ({ id: c.id, label: c.name }));
-            } else if (level === 'subcategory') {
-                options = [...state.subCategories]
-                    .sort((a, b) => {
-                        const cA = state.categories.find(c => c.id === a.categoryId)?.name || '';
-                        const cB = state.categories.find(c => c.id === b.categoryId)?.name || '';
-                        return cA.localeCompare(cB, 'pt-BR') || a.name.localeCompare(b.name, 'pt-BR');
-                    })
-                    .map(s => {
-                        const cat = state.categories.find(c => c.id === s.categoryId)?.name || '';
-                        return { id: s.id, label: `${cat} › ${s.name}` };
-                    });
-            } else {
-                options = [...state.destinations]
-                    .sort((a, b) => {
-                        const subA = state.subCategories.find(s => s.id === a.subCategoryId);
-                        const subB = state.subCategories.find(s => s.id === b.subCategoryId);
-                        const cA = state.categories.find(c => c.id === subA?.categoryId)?.name || '';
-                        const cB = state.categories.find(c => c.id === subB?.categoryId)?.name || '';
-                        return cA.localeCompare(cB, 'pt-BR') || (subA?.name || '').localeCompare(subB?.name || '', 'pt-BR') || a.name.localeCompare(b.name, 'pt-BR');
-                    })
-                    .map(d => {
-                        const sub = state.subCategories.find(s => s.id === d.subCategoryId);
-                        const cat = state.categories.find(c => c.id === sub?.categoryId)?.name || '';
-                        return { id: d.id, label: `${cat} › ${sub?.name || ''} › ${d.name}` };
-                    });
-            }
-
-            itemEl.innerHTML = options.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
-            updateGoalHierarchyOptions();
-        }
 
         function updateGoalHierarchyOptions() {
             const level = document.getElementById('goal-level-sel')?.value || 'category';
