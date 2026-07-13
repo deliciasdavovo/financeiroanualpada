@@ -2655,8 +2655,9 @@
         .annual-matrix-summary-pill {
             display: inline-flex;
             align-items: center;
+            gap: 4px;
             min-height: 30px;
-            padding: 0 11px;
+            padding: 0 12px;
             border-radius: 999px;
             border: 1px solid #E5ECF4;
             background: #F8FAFC;
@@ -2665,23 +2666,132 @@
             font-weight: 600;
             white-space: nowrap;
         }
+        .annual-matrix-summary-pill strong { color: #1E293B; font-weight: 700; }
+        .annual-matrix-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #94A3B8;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .annual-matrix-eyebrow i { width: 13px; height: 13px; }
+        .annual-matrix-level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 8px;
+            padding: 2px 9px;
+            border-radius: 999px;
+            border: 1px solid #D8E2F0;
+            background: #EEF3FB;
+            color: #244A94;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            vertical-align: middle;
+        }
+        .annual-matrix-level-badge i { width: 12px; height: 12px; }
+        /* trilha de níveis (Categoria › Subcategoria › Destino › Lançamento) */
+        .annual-matrix-steps {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .annual-matrix-step {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid #E7EDF5;
+            background: #F8FAFC;
+            color: #94A3B8;
+            font-size: 10.5px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+        }
+        .annual-matrix-step i { width: 12px; height: 12px; }
+        .annual-matrix-step.is-done {
+            border-color: #D6E4F5;
+            background: #F1F6FC;
+            color: #4B72B8;
+        }
+        .annual-matrix-step.is-active {
+            border-color: #244A94;
+            background: #244A94;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(36, 74, 148, 0.22);
+        }
+        .annual-matrix-step-sep {
+            width: 13px;
+            height: 13px;
+            color: #CBD5E1;
+        }
+        .annual-matrix-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 11px;
+            border-radius: 10px;
+            border: 1px solid #DCE9E1;
+            background: #F2FBF6;
+            color: #1F7A5C;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .annual-matrix-hint i { width: 13px; height: 13px; }
         .annual-matrix-breadcrumb {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 7px;
+            gap: 4px;
             font-size: 11px;
             font-weight: 500;
             color: #94A3B8;
         }
-        .annual-matrix-breadcrumb button {
+        .annual-matrix-crumb {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             min-height: 30px;
-            padding: 0 10px;
+            padding: 0 11px;
             border-radius: 999px;
             border: 1px solid #E5ECF4;
             background: #FFFFFF;
-            color: #244A94;
+            color: #64748B;
+            font-size: 11px;
             font-weight: 600;
+            max-width: 220px;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+        .annual-matrix-crumb i { width: 12px; height: 12px; flex-shrink: 0; }
+        .annual-matrix-crumb span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .annual-matrix-crumb:hover {
+            border-color: #C7D6EA;
+            background: #F5F8FC;
+            color: #244A94;
+        }
+        .annual-matrix-crumb.is-current {
+            border-color: #244A94;
+            background: #EEF3FB;
+            color: #244A94;
+            cursor: default;
+        }
+        .annual-matrix-crumb-sep {
+            width: 13px;
+            height: 13px;
+            color: #CBD5E1;
         }
         .annual-matrix-wrap {
             border: 1px solid #E5ECF4;
@@ -2798,7 +2908,7 @@
         .annual-matrix-name {
             display: inline-flex;
             align-items: center;
-            gap: 7px;
+            gap: 8px;
             max-width: 100%;
             color: #334155;
             font-size: 12.5px;
@@ -2807,13 +2917,76 @@
             white-space: normal;
             line-height: 1.25;
         }
+        .annual-matrix-name-icon {
+            width: 26px;
+            height: 26px;
+            flex-shrink: 0;
+            padding: 5px;
+            border-radius: 8px;
+            background: #F1F5FB;
+            color: #7C8DA6;
+            box-sizing: border-box;
+        }
+        .annual-matrix-name-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .annual-matrix-name-chevron,
+        .annual-matrix-name-edit {
+            flex-shrink: 0;
+            color: #B4C0D2;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
         .annual-matrix-name.can-drill {
             color: #244A94;
-            font-weight: 500;
+            font-weight: 600;
         }
-        .annual-matrix-name.can-drill:hover {
+        .annual-matrix-name.can-drill .annual-matrix-name-icon {
+            background: #EAF0FA;
+            color: #3B63A8;
+        }
+        .annual-matrix-name.can-drill:hover .annual-matrix-name-text {
             text-decoration: underline;
             text-underline-offset: 3px;
+        }
+        .annual-matrix-name.can-drill:hover .annual-matrix-name-chevron {
+            color: #244A94;
+            transform: translateX(2px);
+        }
+        .annual-matrix-name.can-edit {
+            color: #1F5FA8;
+            font-weight: 600;
+        }
+        .annual-matrix-name.can-edit .annual-matrix-name-icon {
+            background: #E9F4EE;
+            color: #1F7A5C;
+        }
+        .annual-matrix-name.can-edit:hover .annual-matrix-name-text {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .annual-matrix-name.can-edit:hover .annual-matrix-name-edit {
+            color: #1F7A5C;
+        }
+        .annual-mobile-title-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            padding: 5px;
+            border-radius: 8px;
+            background: #F1F5FB;
+            color: #7C8DA6;
+            box-sizing: border-box;
+        }
+        .annual-mobile-title.can-edit { color: #1F5FA8; }
+        .annual-mobile-title.can-edit .annual-mobile-title-icon {
+            background: #E9F4EE;
+            color: #1F7A5C;
+        }
+        .annual-mobile-title.can-drill .annual-mobile-title-icon {
+            background: #EAF0FA;
+            color: #3B63A8;
         }
         .annual-matrix-sub {
             display: block;
@@ -11569,6 +11742,7 @@
                 const rawAmount = Number((e || {}).amount || 0) || 0;
                 const amount = annualTemporalFlow === 'TODOS' && type === 'saida' ? -rawAmount : rawAmount;
                 return {
+                    id: String((e || {}).id || ''),
                     categoria: String((cat || {}).name || 'Sem categoria'),
                     subcategoria: String((sub || {}).name || 'Sem subcategoria'),
                     destino: String((dst || {}).name || 'Sem destino'),
@@ -11611,6 +11785,14 @@
             annualHierarchyLevel = currentLevel;
             const dimensionKey = currentLevel === 'category' ? 'categoria' : currentLevel === 'subcategory' ? 'subcategoria' : currentLevel === 'destination' ? 'destino' : 'descricao';
             const levelLabel = currentLevel === 'category' ? 'Categoria' : currentLevel === 'subcategory' ? 'Subcategoria' : currentLevel === 'destination' ? 'Destino' : 'Lançamento';
+            const levelMeta = {
+                category: { icon: 'layers', step: 1, name: 'Categorias' },
+                subcategory: { icon: 'folder-tree', step: 2, name: 'Subcategorias' },
+                destination: { icon: 'target', step: 3, name: 'Destinos' },
+                launch: { icon: 'receipt', step: 4, name: 'Lançamentos' }
+            };
+            const currentMeta = levelMeta[currentLevel] || levelMeta.category;
+            const rowIcon = levelMeta[currentLevel] ? levelMeta[currentLevel].icon : 'circle';
             const canDrill = currentLevel !== 'launch';
             const availableLaunchMonths = currentLevel === 'launch'
                 ? monthNames.map((name, index) => {
@@ -11644,6 +11826,8 @@
                         label,
                         flow: flowGroup,
                         sub: currentLevel === 'launch' ? `${item.descricao || 'Sem descrição'} | ${item.destino || 'Sem destino'}` : '',
+                        entryId: currentLevel === 'launch' ? item.id : '',
+                        destino: currentLevel === 'launch' ? (item.destino || 'Sem destino') : '',
                         months: Array(12).fill(0),
                         count: 0,
                         total: 0
@@ -11662,18 +11846,39 @@
             const grandTotal = rows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
             const totalCount = rows.reduce((sum, row) => sum + (Number(row.count) || 0), 0);
 
+            const crumbs = [
+                { level: 'category', label: 'Todas as categorias', icon: 'layers' }
+            ];
+            if(annualHierarchyCategory) crumbs.push({ level: 'subcategory', label: annualHierarchyCategory, icon: 'folder-tree' });
+            if(annualHierarchySubCategory) crumbs.push({ level: 'destination', label: annualHierarchySubCategory, icon: 'target' });
+            if(annualHierarchyDestination) crumbs.push({ level: 'launch', label: annualHierarchyDestination, icon: 'receipt' });
             const breadcrumbHtml = `
-                <div class="annual-matrix-breadcrumb" aria-label="Navegação do detalhamento hierárquico">
-                    <button type="button" onclick="setAnnualHierarchyPath('category')">Categorias</button>
-                    ${annualHierarchyCategory ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('subcategory')">${escapeHtml(annualHierarchyCategory)}</button>` : ''}
-                    ${annualHierarchySubCategory ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('destination')">${escapeHtml(annualHierarchySubCategory)}</button>` : ''}
-                    ${annualHierarchyDestination ? `<span>/</span><button type="button" onclick="setAnnualHierarchyPath('launch')">${escapeHtml(annualHierarchyDestination)}</button>` : ''}
-                </div>
+                <nav class="annual-matrix-breadcrumb" aria-label="Navegação do detalhamento hierárquico">
+                    ${crumbs.map((crumb, index) => {
+                        const isCurrent = index === crumbs.length - 1;
+                        const sep = index > 0 ? `<i data-lucide="chevron-right" class="annual-matrix-crumb-sep" aria-hidden="true"></i>` : '';
+                        return `${sep}<button type="button" class="annual-matrix-crumb${isCurrent ? ' is-current' : ''}" ${isCurrent ? 'aria-current="page"' : ''} onclick="setAnnualHierarchyPath('${crumb.level}')"><i data-lucide="${crumb.icon}" aria-hidden="true"></i><span>${escapeHtml(crumb.label)}</span></button>`;
+                    }).join('')}
+                </nav>
             `;
             const monthSelectorHtml = currentLevel === 'launch' && availableLaunchMonths.length
                 ? `<div class="reports-month-chips" aria-label="Mês dos lançamentos">
                     ${availableLaunchMonths.map(item => `<button type="button" class="reports-chip ${String(item.index) === String(annualHierarchyLaunchMonth) ? 'active' : ''}" onclick="setAnnualHierarchyLaunchMonth('${item.index}')">${item.name} (${item.count})</button>`).join('')}
                 </div>`
+                : '';
+            const stepOrder = ['category', 'subcategory', 'destination', 'launch'];
+            const stepLabels = { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino', launch: 'Lançamento' };
+            const currentStepIndex = stepOrder.indexOf(currentLevel);
+            const levelStepsHtml = `
+                <ol class="annual-matrix-steps" aria-label="Nível do detalhamento">
+                    ${stepOrder.map((level, index) => {
+                        const meta = levelMeta[level];
+                        const stateClass = index < currentStepIndex ? 'is-done' : index === currentStepIndex ? 'is-active' : 'is-todo';
+                        return `<li class="annual-matrix-step ${stateClass}"><i data-lucide="${meta.icon}" aria-hidden="true"></i><span>${stepLabels[level]}</span></li>`;
+                    }).join('<i data-lucide="chevron-right" class="annual-matrix-step-sep" aria-hidden="true"></i>')}
+                </ol>`;
+            const launchHintHtml = currentLevel === 'launch'
+                ? `<p class="annual-matrix-hint"><i data-lucide="mouse-pointer-click" aria-hidden="true"></i> Clique em um lançamento para abri-lo e alterar o destino.</p>`
                 : '';
             const renderGroupHeader = (flow, groupRows) => {
                 if(!groupRows.length) return '';
@@ -11695,9 +11900,15 @@
             };
             const renderRow = (row) => {
                 const encoded = encodeSafe(row.label);
-                const nameHtml = canDrill
-                    ? `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${escapeHtml(row.label)} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`
-                    : `<span class="annual-matrix-name">${escapeHtml(row.label)}</span>`;
+                const leadIcon = `<i data-lucide="${rowIcon}" class="annual-matrix-name-icon" aria-hidden="true"></i>`;
+                let nameHtml;
+                if(canDrill) {
+                    nameHtml = `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${leadIcon}<span class="annual-matrix-name-text">${escapeHtml(row.label)}</span><i data-lucide="chevron-right" class="annual-matrix-name-chevron w-3.5 h-3.5" aria-hidden="true"></i></button>`;
+                } else if(row.entryId) {
+                    nameHtml = `<button type="button" class="annual-matrix-name can-edit" onclick="openEntryModal('${escapeHtml(row.entryId)}')" title="Abrir lançamento para editar o destino" aria-label="Abrir lançamento ${escapeHtml(row.label)} para editar o destino">${leadIcon}<span class="annual-matrix-name-text">${escapeHtml(row.label)}</span><i data-lucide="pencil" class="annual-matrix-name-edit w-3.5 h-3.5" aria-hidden="true"></i></button>`;
+                } else {
+                    nameHtml = `<span class="annual-matrix-name">${leadIcon}<span class="annual-matrix-name-text">${escapeHtml(row.label)}</span></span>`;
+                }
                 const monthCells = visibleMonthIndexes.map(index => {
                     const value = row.months[index];
                     const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
@@ -11745,9 +11956,14 @@
             };
             const renderMobileRow = (row) => {
                 const encoded = encodeSafe(row.label);
-                const titleHtml = canDrill
-                    ? `<button type="button" class="annual-mobile-title can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${escapeHtml(row.label)} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`
-                    : `<span class="annual-mobile-title">${escapeHtml(row.label)}</span>`;
+                let titleHtml;
+                if(canDrill) {
+                    titleHtml = `<button type="button" class="annual-mobile-title can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))"><i data-lucide="${rowIcon}" class="annual-mobile-title-icon" aria-hidden="true"></i><span>${escapeHtml(row.label)}</span> <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`;
+                } else if(row.entryId) {
+                    titleHtml = `<button type="button" class="annual-mobile-title can-edit" onclick="openEntryModal('${escapeHtml(row.entryId)}')" title="Abrir lançamento para editar o destino"><i data-lucide="${rowIcon}" class="annual-mobile-title-icon" aria-hidden="true"></i><span>${escapeHtml(row.label)}</span> <i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>`;
+                } else {
+                    titleHtml = `<span class="annual-mobile-title"><i data-lucide="${rowIcon}" class="annual-mobile-title-icon" aria-hidden="true"></i><span>${escapeHtml(row.label)}</span></span>`;
+                }
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 return `<article class="annual-mobile-card">
                     <div class="annual-mobile-card-head">
@@ -11784,15 +12000,21 @@
                     <div>
                         <div class="annual-matrix-headline">
                             <div>
-                                <h4 class="annual-matrix-title">Detalhamento Hierárquico</h4>
-                                <p class="annual-matrix-subtitle">Tabela mensal navegável por categoria, subcategoria, destino e lançamentos.</p>
+                                <span class="annual-matrix-eyebrow"><i data-lucide="table-2" aria-hidden="true"></i> Relatório anual</span>
+                                <h4 class="annual-matrix-title">
+                                    Detalhamento Hierárquico
+                                    <span class="annual-matrix-level-badge"><i data-lucide="${currentMeta.icon}" aria-hidden="true"></i> ${levelLabel}</span>
+                                </h4>
+                                <p class="annual-matrix-subtitle">Navegue de categoria a subcategoria, destino e lançamentos — mês a mês.</p>
                             </div>
-                            <span class="annual-matrix-summary-pill">${totalCount} lanç. | Total ${formatBRL(grandTotal)}</span>
+                            <span class="annual-matrix-summary-pill"><strong>${totalCount}</strong> lanç. · Total <strong>${formatBRL(grandTotal)}</strong></span>
                         </div>
+                        ${levelStepsHtml}
                         <div class="annual-matrix-toolbar">
                             ${breadcrumbHtml}
                         </div>
                         ${monthSelectorHtml}
+                        ${launchHintHtml}
                     </div>
                     <div class="annual-matrix-wrap custom-scrollbar">
                         <table class="annual-matrix-table ${currentLevel === 'launch' ? 'annual-matrix-table-compact' : ''}">
