@@ -7260,6 +7260,31 @@
         .home-proj-item-val { font-size: 13px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
         .home-proj-link { font-size: 12px; font-weight: 600; color: #1F7A5C; background: none; border: 1px solid #1F7A5C; cursor: pointer; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
         .home-proj-link:hover { background: #E8F3EF; }
+        .home-proj-day.is-today { border-color: #1F7A5C; box-shadow: 0 0 0 1px #1F7A5C inset; }
+        .home-proj-day.is-today .home-proj-day-header { background: #E8F3EF; border-bottom-color: #CBE3D9; }
+        .home-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 4px 2px; }
+        .home-hero-greeting { font-size: 20px; font-weight: 800; color: #0F172A; line-height: 1.2; }
+        .home-hero-date { font-size: 12.5px; font-weight: 600; color: #64748B; margin-top: 3px; text-transform: capitalize; }
+        .home-hero-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .home-hero-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 10px; cursor: pointer; white-space: nowrap; border: 1px solid #E2E8F0; background: #fff; color: #334155; transition: background 0.15s; }
+        .home-hero-btn:hover { background: #F8FAFC; }
+        .home-hero-btn.primary { background: #1F7A5C; border-color: #1F7A5C; color: #fff; }
+        .home-hero-btn.primary:hover { background: #196349; }
+        .home-hero-btn svg { width: 14px; height: 14px; }
+        .home-summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        .home-summary-cell { border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 14px; background: #F8FAFC; }
+        .home-summary-label { display: block; font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .home-summary-value { display: block; font-size: 15px; font-weight: 800; margin-top: 3px; white-space: nowrap; }
+        .home-summary-sub { display: block; font-size: 10.5px; font-weight: 600; color: #94A3B8; margin-top: 1px; }
+        .home-empty-state { text-align: center; padding: 36px 16px; }
+        .home-empty-icon { width: 52px; height: 52px; border-radius: 50%; background: #E8F3EF; color: #1F7A5C; display: grid; place-items: center; margin: 0 auto 12px; }
+        .home-empty-icon svg { width: 26px; height: 26px; }
+        .home-empty-title { font-size: 14px; font-weight: 800; color: #1E293B; }
+        .home-empty-text { font-size: 12px; color: #64748B; margin-top: 4px; }
+        @media (max-width: 480px) {
+            .home-summary-strip { grid-template-columns: 1fr; gap: 8px; }
+            .home-hero-greeting { font-size: 18px; }
+        }
         .home-saldo-badge { font-size: 12px; font-weight: 600; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
         /* ===== DRE — COLUNA % DA RECEITA ===== */
@@ -14430,7 +14455,7 @@
                     </div>`;
                 }).join('');
 
-                return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}">
+                return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}${dateIso === today ? ' is-today' : ''}">
                     <div class="home-proj-day-header">
                         <span class="home-proj-day-label">${escapeHtml(dateLabel)}</span>
                         <span class="home-proj-day-weekday">${escapeHtml(weekdayLine)}</span>
@@ -14464,9 +14489,9 @@
 
             const today = getTodayIsoDate();
 
-            // Lançamentos pendentes futuros (hoje + 14 dias)
+            // Lançamentos pendentes futuros (hoje + HOME_UPCOMING_DAYS dias)
             const todayDate = parseIsoDateLocal(today) || new Date();
-            const futureDate = addLocalDays(todayDate, 14);
+            const futureDate = addLocalDays(todayDate, HOME_UPCOMING_DAYS);
             const futureEnd = formatLocalDate(futureDate);
 
             const futurePending = getAnalyticalEntries(state.entries)
@@ -14478,20 +14503,56 @@
 
             const dayRowsHtml = buildHomeStyleDayCards(futurePending);
 
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? 'Bom dia!' : hour < 18 ? 'Boa tarde!' : 'Boa noite!';
+            const todayLong = todayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            const periodSummary = summarizeFinancialEntries(futurePending, false);
+            const periodLabel = `${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}`;
+
             host.innerHTML = `
-                <div class="card-premium p-8">
-                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <div class="home-hero">
+                    <div>
+                        <p class="home-hero-greeting">${greeting}</p>
+                        <p class="home-hero-date">${escapeHtml(todayLong)}</p>
+                    </div>
+                    <div class="home-hero-actions">
+                        <button type="button" class="home-hero-btn primary" onclick="openEntryModal(null)"><i data-lucide="plus"></i>Lançamento</button>
+                        <button type="button" class="home-hero-btn" onclick="switchTab('cobrancas')"><i data-lucide="hand-coins"></i>Cobranças</button>
+                        <button type="button" class="home-hero-btn" onclick="switchTab('planejamento'); switchPlanTab('projection');"><i data-lucide="trending-up"></i>Projeção</button>
+                    </div>
+                </div>
+                <div class="card-premium p-6 md:p-8">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
                         <div>
                             <h4 class="text-sm font-black text-slate-900">O que vem por aí</h4>
-                            <p class="text-xs text-slate-500 mt-1">Fique por dentro dos próximos lançamentos, de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                            <p class="text-xs text-slate-500 mt-1">Próximos lançamentos pendentes, de ${periodLabel}</p>
                         </div>
                     </div>
+                    ${futurePending.length > 0 ? `
+                    <div class="home-summary-strip">
+                        <div class="home-summary-cell">
+                            <span class="home-summary-label">A receber no período</span>
+                            <span class="home-summary-value flow-income-text">+${formatBRLNoCents(periodSummary.inc)}</span>
+                        </div>
+                        <div class="home-summary-cell">
+                            <span class="home-summary-label">A pagar no período</span>
+                            <span class="home-summary-value flow-expense-text">-${formatBRLNoCents(periodSummary.exp)}</span>
+                        </div>
+                        <div class="home-summary-cell">
+                            <span class="home-summary-label">Resultado do período</span>
+                            <span class="home-summary-value ${periodSummary.net < 0 ? 'flow-expense-text' : 'flow-income-text'}">${periodSummary.net > 0 ? '+' : ''}${formatBRLNoCents(periodSummary.net)}</span>
+                            <span class="home-summary-sub">${futurePending.length} lançamento(s) em ${HOME_UPCOMING_DAYS + 1} dias</span>
+                        </div>
+                    </div>` : ''}
                     ${dayRowsHtml.length > 0
                         ? `<div class="home-proj-list">${dayRowsHtml}</div>`
-                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
+                        : `<div class="home-empty-state">
+                            <div class="home-empty-icon"><i data-lucide="calendar-check-2"></i></div>
+                            <p class="home-empty-title">Tudo em dia por aqui</p>
+                            <p class="home-empty-text">Nenhum lançamento pendente nos próximos ${HOME_UPCOMING_DAYS} dias.</p>
+                            <button type="button" onclick="openEntryModal(null)" class="home-hero-btn primary mt-4 mx-auto"><i data-lucide="plus"></i>Adicionar lançamento</button>
+                        </div>`
                     }
                 </div>
             `;
