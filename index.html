@@ -7324,6 +7324,36 @@
             .cob-row { flex-wrap: wrap; }
             .cob-row-val { margin-left: 40px; }
         }
+        /* Calendário financeiro (Planejamento > Projeção) */
+        .proj-cal-wrap { display: flex; flex-direction: column; gap: 20px; }
+        .proj-cal-month-title { font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 8px; }
+        .proj-cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+        .proj-cal-weekdays span { text-align: center; font-size: 10px; font-weight: 800; color: #94A3B8; text-transform: uppercase; }
+        .proj-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .proj-cal-cell { min-height: 52px; border: 1px solid #EDF2F7; border-radius: 9px; background: #fff; padding: 5px 4px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: inherit; }
+        .proj-cal-cell.is-blank { border: none; background: none; }
+        .proj-cal-cell.is-out { opacity: 0.35; background: #F8FAFC; }
+        .proj-cal-cell.is-today { border-color: #1F7A5C; box-shadow: 0 0 0 1px #1F7A5C inset; }
+        .proj-cal-cell.has-positive { background: #F2FAF6; border-color: #CBE3D9; }
+        .proj-cal-cell.has-negative { background: #FDF6F6; border-color: #F3C1C1; }
+        button.proj-cal-cell { cursor: pointer; }
+        button.proj-cal-cell:hover { filter: brightness(0.97); }
+        .proj-cal-cell.is-selected { outline: 2px solid #2F4F9D; outline-offset: 1px; }
+        .proj-cal-daynum { font-size: 11px; font-weight: 700; color: #475569; }
+        .proj-cal-val { font-size: 10px; font-weight: 800; white-space: nowrap; }
+        .proj-cal-detail { margin-top: 16px; }
+        @media (max-width: 480px) {
+            .proj-cal-cell { min-height: 44px; padding: 3px 2px; }
+            .proj-cal-val { font-size: 8.5px; }
+        }
+        /* Metas em risco (Planejamento > Metas) */
+        #goals-risk-strip:empty { display: none; }
+        .goals-risk-strip { display: flex; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border: 1px solid #F3C1C1; background: #FDF6F6; border-radius: 14px; align-items: center; }
+        .goals-risk-title { font-size: 11px; font-weight: 800; color: #B23A3A; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+        .goals-risk-title svg { width: 14px; height: 14px; }
+        .goals-risk-chip { display: inline-flex; align-items: center; gap: 7px; background: #fff; border: 1px solid #F3C1C1; border-radius: 99px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; color: #1E293B; }
+        .goals-risk-chip .pct { color: #B23A3A; font-weight: 800; }
+        .goals-risk-chip .detail { color: #64748B; font-weight: 600; }
         .home-saldo-badge { font-size: 12px; font-weight: 600; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
         /* ===== DRE — COLUNA % DA RECEITA ===== */
@@ -8016,10 +8046,11 @@
                     <section class="reports-section-head" aria-labelledby="projection-title">
                         <div>
                             <h3 id="projection-title" class="reports-section-title">Projeção financeira</h3>
+                            <p class="text-xs text-slate-500 mt-1">Agendado = o que já está cadastrado. Previsão = estimativa pela média dos meses anteriores.</p>
                         </div>
                         <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
-                            <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
-                            <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
+                            <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="calendar-check" class="w-4 h-4"></i>Agendado (pendentes)</button>
+                            <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Previsão (histórico)</button>
                         </div>
                     </section>
                     <section class="projection-control-card">
@@ -8051,6 +8082,11 @@
                             <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
                             <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
                             <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
+                        </div>
+                        <div class="reports-control-row" id="projection-view-row" aria-label="Visualização dos lançamentos">
+                            <span class="reports-control-label">Lançamentos em</span>
+                            <button type="button" id="projection-view-list" class="reports-chip active" onclick="setProjectionViewMode('list')">Lista</button>
+                            <button type="button" id="projection-view-calendar" class="reports-chip" onclick="setProjectionViewMode('calendar')">Calendário</button>
                         </div>
                     </section>
                     <div class="reports-summary-grid">
@@ -8116,6 +8152,7 @@
                             </div>
                         </div>
                     </div>
+                    <div id="goals-risk-strip"></div>
                     <div id="goals-cards-section" class="goals-cards-section"></div>
                     <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
                     <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
@@ -9058,6 +9095,8 @@
         let projectionHistoryMonths = 1;
         let projectionHistoryPeriod = 7;
         let projectionGranularity = 'day';
+        let projectionViewMode = 'list';
+        let projectionCalendarSelectedDay = '';
         let cashProjectionPeriod = 7;
         let cashProjectionDailyOpen = false;
         let entriesSearchTimer = null;
@@ -16054,6 +16093,12 @@
             renderProjection();
         }
 
+        function setProjectionViewMode(mode) {
+            projectionViewMode = mode === 'calendar' ? 'calendar' : 'list';
+            projectionCalendarSelectedDay = '';
+            renderProjection();
+        }
+
         function getProjectionDays() {
             if (projectionPeriod !== 'custom') return Number(projectionPeriod) || 7;
             const custom = Number(document.getElementById('projection-custom-days')?.value);
@@ -16074,6 +16119,10 @@
             ['day', 'week', 'month'].forEach(item => {
                 document.getElementById(`projection-granularity-${item}`)?.classList.toggle('active', projectionGranularity === item);
             });
+            // Toggle Lista/Calendário só faz sentido no modo Agendado
+            document.getElementById('projection-view-row')?.classList.toggle('hidden', isHistory);
+            document.getElementById('projection-view-list')?.classList.toggle('active', projectionViewMode === 'list');
+            document.getElementById('projection-view-calendar')?.classList.toggle('active', projectionViewMode === 'calendar');
         }
 
         function getProjectionGranularityLabel() {
@@ -16233,6 +16282,8 @@
             const chartEl = document.getElementById('projection-chart');
             if (!chartEl || !window.Chart) return;
             if (window.projectionChart) window.projectionChart.destroy();
+            let running = 0;
+            const cumulativeData = netData.map(value => { running += (Number(value) || 0); return running; });
             window.projectionChart = new Chart(chartEl.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -16240,7 +16291,8 @@
                     datasets: [
                         { type: 'bar', label: 'Entradas', data: incomeData, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 26 },
                         { type: 'bar', label: 'Saídas', data: expenseData, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 26 },
-                        { type: 'line', label: 'Saldo', data: netData, borderColor: '#2F4F9D', backgroundColor: '#2F4F9D', tension: 0.35, borderWidth: 3, pointRadius: 3 }
+                        { type: 'line', label: 'Saldo do período', data: netData, borderColor: '#2F4F9D', backgroundColor: '#2F4F9D', tension: 0.35, borderWidth: 3, pointRadius: 3 },
+                        { type: 'line', label: 'Saldo acumulado', data: cumulativeData, borderColor: '#7C93C9', backgroundColor: '#7C93C9', borderDash: [6, 4], tension: 0.35, borderWidth: 2.5, pointRadius: 2 }
                     ]
                 },
                 options: {
@@ -16268,16 +16320,20 @@
                 })
                 .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
             const summary = summarizeFinancialEntries(entries, false);
-            document.getElementById('projection-card-in-label').innerText = 'Entradas previstas';
-            document.getElementById('projection-card-out-label').innerText = 'Saídas previstas';
-            document.getElementById('projection-card-net-label').innerText = 'Saldo projetado';
+            document.getElementById('projection-card-in-label').innerText = 'Entradas agendadas';
+            document.getElementById('projection-card-out-label').innerText = 'Saídas agendadas';
+            document.getElementById('projection-card-net-label').innerText = 'Saldo agendado';
             document.getElementById('projection-card-in').innerText = formatBRL(summary.inc);
             document.getElementById('projection-card-out').innerText = formatBRL(summary.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(summary.net);
-            document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
-            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} com lançamentos pendentes cadastrados, agrupados por ${getProjectionGranularityLabel()}.`;
-            document.getElementById('projection-list-title').innerText = 'Lançamentos usados na projeção';
-            document.getElementById('projection-list-subtitle').innerText = 'Somente pendências futuras dentro do prazo escolhido.';
+            document.getElementById('projection-chart-title').innerText = `Saldo agendado por ${getProjectionGranularityLabel()}`;
+            const overdueCount = getOverdueEntries().length;
+            const overdueNote = overdueCount > 0 ? ` Atenção: ${overdueCount} lançamento(s) vencido(s) fora desta janela — veja em Cobranças.` : '';
+            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} • soma dos lançamentos pendentes já cadastrados, agrupados por ${getProjectionGranularityLabel()}.${overdueNote}`;
+            document.getElementById('projection-list-title').innerText = projectionViewMode === 'calendar' ? 'Calendário financeiro' : 'Lançamentos usados na projeção';
+            document.getElementById('projection-list-subtitle').innerText = projectionViewMode === 'calendar'
+                ? 'Resultado agendado por dia. Toque em um dia para ver os lançamentos.'
+                : 'Somente pendências futuras dentro do prazo escolhido.';
 
             const buckets = getProjectionBuckets(range.startIso, range.endIso);
             entries.forEach(entry => addEntryToProjectionBuckets(buckets, entry));
@@ -16292,9 +16348,13 @@
             if (listEl) {
                 if (!entries.length) {
                     listEl.innerHTML = '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+                } else if (projectionViewMode === 'calendar') {
+                    listEl.innerHTML = renderProjectionCalendar(entries, range.startIso, range.endIso);
                 } else {
+                    let runningNet = 0;
                     const rows = buckets.map(bucket => {
                         const net = bucket.inc - bucket.exp;
+                        runningNet += net;
                         const periodDetail = bucket.startIso === bucket.endIso
                             ? formatDateBRV2(bucket.startIso)
                             : `${formatDateBRV2(bucket.startIso)} a ${formatDateBRV2(bucket.endIso)}`;
@@ -16306,6 +16366,7 @@
                             <td><span class="projection-table-value flow-income-text">${formatBRL(bucket.inc)}</span></td>
                             <td><span class="projection-table-value flow-expense-text">${formatBRL(bucket.exp)}</span></td>
                             <td><span class="projection-table-value ${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(net)}</span></td>
+                            <td><span class="projection-table-value ${runningNet < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(runningNet)}</span></td>
                         </tr>`;
                     }).join('');
                     const tableHtml = `<div class="projection-table-wrap custom-scrollbar">
@@ -16316,17 +16377,19 @@
                                     <th>Entradas</th>
                                     <th>Saídas</th>
                                     <th>Resultado</th>
+                                    <th>Acumulado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${rows}
                                 <tr class="projection-table-total">
                                     <td>
-                                        <div class="projection-table-date">Total previsto</div>
+                                        <div class="projection-table-date">Total agendado</div>
                                         <div class="projection-table-sub">${days} dias de pendências futuras</div>
                                     </td>
                                     <td><span class="projection-table-value flow-income-text">${formatBRL(summary.inc)}</span></td>
                                     <td><span class="projection-table-value flow-expense-text">${formatBRL(summary.exp)}</span></td>
+                                    <td><span class="projection-table-value ${summary.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(summary.net)}</span></td>
                                     <td><span class="projection-table-value ${summary.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(summary.net)}</span></td>
                                 </tr>
                             </tbody>
@@ -16339,6 +16402,76 @@
                     listEl.innerHTML = summaryTableHtml + `<div class="home-proj-list">${dayCardsHtml}</div>`;
                 }
             }
+        }
+
+        // Calendário financeiro: um grid por mês dentro da janela, com o
+        // resultado agendado de cada dia; tocar no dia mostra os lançamentos.
+        function toggleProjectionCalendarDay(dateIso) {
+            projectionCalendarSelectedDay = projectionCalendarSelectedDay === dateIso ? '' : dateIso;
+            renderProjection();
+        }
+
+        function renderProjectionCalendar(entries, startIso, endIso) {
+            const start = parseIsoDateLocal(startIso);
+            const end = parseIsoDateLocal(endIso);
+            if (!start || !end) return '';
+
+            const byDay = new Map();
+            (entries || []).forEach(e => {
+                const key = String(e.date || '');
+                if (!byDay.has(key)) byDay.set(key, { inc: 0, exp: 0, items: [] });
+                const day = byDay.get(key);
+                if (normalizeFlowType(e.type) === FLOW_IN) day.inc += Number(e.amount) || 0;
+                else day.exp += Number(e.amount) || 0;
+                day.items.push(e);
+            });
+
+            const todayIso = getTodayIsoDate();
+            const compactMoney = v => valuesHidden ? '•••' : formatChartBRLCompact(v);
+            const monthsHtml = [];
+            const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+            while (cursor <= end) {
+                const year = cursor.getFullYear();
+                const month = cursor.getMonth();
+                const firstWeekday = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const cells = [];
+                for (let i = 0; i < firstWeekday; i++) cells.push('<div class="proj-cal-cell is-blank" aria-hidden="true"></div>');
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const inRange = iso >= startIso && iso <= endIso;
+                    const day = byDay.get(iso);
+                    const net = day ? day.inc - day.exp : 0;
+                    const isSelected = projectionCalendarSelectedDay === iso;
+                    const classes = ['proj-cal-cell'];
+                    if (!inRange) classes.push('is-out');
+                    if (iso === todayIso) classes.push('is-today');
+                    if (day) classes.push(net < 0 ? 'has-negative' : 'has-positive');
+                    if (isSelected) classes.push('is-selected');
+                    const valueHtml = day
+                        ? `<span class="proj-cal-val ${net < 0 ? 'flow-expense-text' : 'flow-income-text'}">${net > 0 ? '+' : ''}${compactMoney(net)}</span>`
+                        : '';
+                    const clickable = Boolean(day) && inRange;
+                    cells.push(`<${clickable ? 'button type="button"' : 'div'} class="${classes.join(' ')}"${clickable ? ` onclick="toggleProjectionCalendarDay('${iso}')" aria-pressed="${String(isSelected)}" aria-label="Dia ${d}, ${day ? day.items.length : 0} lançamento(s)"` : ''}>
+                        <span class="proj-cal-daynum">${d}</span>
+                        ${valueHtml}
+                    </${clickable ? 'button' : 'div'}>`);
+                }
+                monthsHtml.push(`<div class="proj-cal-month">
+                    <p class="proj-cal-month-title">${MONTH_NAMES_PT[month]} ${year}</p>
+                    <div class="proj-cal-weekdays">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(w => `<span>${w}</span>`).join('')}</div>
+                    <div class="proj-cal-grid">${cells.join('')}</div>
+                </div>`);
+                cursor.setMonth(cursor.getMonth() + 1);
+            }
+
+            let detailHtml = '';
+            if (projectionCalendarSelectedDay && byDay.has(projectionCalendarSelectedDay)) {
+                const dayEntries = byDay.get(projectionCalendarSelectedDay).items;
+                detailHtml = `<div class="proj-cal-detail"><div class="home-proj-list">${buildHomeStyleDayCards(dayEntries)}</div></div>`;
+            }
+
+            return `<div class="proj-cal-wrap">${monthsHtml.join('')}</div>${detailHtml}`;
         }
 
         function renderHistoryProjection() {
@@ -16362,14 +16495,14 @@
                 return acc;
             }, { inc: 0, exp: 0 });
             projected.net = projected.inc - projected.exp;
-            document.getElementById('projection-card-in-label').innerText = 'Entrada projetada';
-            document.getElementById('projection-card-out-label').innerText = 'Saída projetada';
-            document.getElementById('projection-card-net-label').innerText = 'Resultado projetado';
+            document.getElementById('projection-card-in-label').innerText = 'Entradas previstas';
+            document.getElementById('projection-card-out-label').innerText = 'Saídas previstas';
+            document.getElementById('projection-card-net-label').innerText = 'Resultado previsto';
             document.getElementById('projection-card-in').innerText = formatBRL(projected.inc);
             document.getElementById('projection-card-out').innerText = formatBRL(projected.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(projected.net);
-            document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
-            document.getElementById('projection-explain').innerText = `Projeção calculada usando o mesmo dia útil do mês no histórico dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
+            document.getElementById('projection-chart-title').innerText = `Resultado previsto por ${getProjectionGranularityLabel()}`;
+            document.getElementById('projection-explain').innerText = `Estimativa pela média do mesmo dia útil do mês nos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()} (domingos contam como zero — loja fechada).`;
             document.getElementById('projection-list-title').innerText = 'Tabela da projeção';
             document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia útil do mês no histórico.`;
             renderProjectionChart(
@@ -21144,6 +21277,41 @@
             return goal.targetMonth === yyyyMM;
         }
 
+        // Metas de saída do mês que já passaram do limiar de atenção, mais críticas primeiro.
+        function getGoalsAtRisk(yyyyMM, limit = 3) {
+            return (goalsData || [])
+                .filter(goal => goalsIsApplicable(goal, yyyyMM) && getGoalNormalizedType(goal.type) === FLOW_OUT)
+                .map(goal => ({ goal, progress: calcGoalProgress(goal, yyyyMM) }))
+                .filter(item => item.progress.rawPct >= GOAL_WARN_PCT)
+                .sort((a, b) => b.progress.rawPct - a.progress.rawPct)
+                .slice(0, limit);
+        }
+
+        function renderGoalsRiskStrip() {
+            const strip = document.getElementById('goals-risk-strip');
+            if (!strip) return;
+            const atRisk = getGoalsAtRisk(goalsGetCurrentMonth());
+            if (!atRisk.length) {
+                strip.innerHTML = '';
+                return;
+            }
+            const chips = atRisk.map(({ goal, progress }) => {
+                const over = progress.remaining < 0;
+                const detail = over
+                    ? `estourou ${formatBRL(Math.abs(progress.remaining))}`
+                    : `faltam ${formatBRL(progress.remaining)}`;
+                return `<span class="goals-risk-chip">${escapeHtml(getGoalHierarchyName(goal))}
+                    <span class="pct">${Math.round(progress.rawPct)}%</span>
+                    <span class="detail">${detail}</span>
+                </span>`;
+            }).join('');
+            strip.innerHTML = `<div class="goals-risk-strip">
+                <span class="goals-risk-title"><i data-lucide="alert-triangle"></i>Metas em risco</span>
+                ${chips}
+            </div>`;
+            refreshLucideIcons();
+        }
+
         function setGoalsDisplayMode(mode) {
             goalsDisplayMode = mode;
             document.getElementById('goals-mode-cards')?.classList.toggle('active', mode === 'cards');
@@ -21163,6 +21331,8 @@
             const lblEl = document.getElementById('goals-month-label');
             if (navEl) navEl.style.display = 'none';
             if (lblEl) lblEl.textContent = '';
+
+            renderGoalsRiskStrip();
 
             // Sincroniza o toggle visual com o estado atual
             document.getElementById('goals-mode-cards')?.classList.toggle('active', goalsDisplayMode === 'cards');
