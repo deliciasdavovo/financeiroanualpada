@@ -7285,6 +7285,45 @@
             .home-summary-strip { grid-template-columns: 1fr; gap: 8px; }
             .home-hero-greeting { font-size: 18px; }
         }
+        /* Cobranças */
+        .cob-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .cob-kpi { border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px 16px; background: #fff; }
+        .cob-kpi.danger { border-color: #F3C1C1; background: #FDF6F6; }
+        .cob-kpi-label { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cob-kpi.danger .cob-kpi-label { color: #B23A3A; }
+        .cob-kpi-label svg { width: 13px; height: 13px; }
+        .cob-kpi-value { display: block; font-size: 18px; font-weight: 800; margin-top: 5px; white-space: nowrap; }
+        .cob-kpi-sub { display: block; font-size: 11px; font-weight: 600; color: #94A3B8; margin-top: 2px; }
+        .cob-group { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
+        .cob-group + .cob-group { margin-top: 12px; }
+        .cob-group.danger { border-color: #F3C1C1; }
+        .cob-group-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 11px 16px; background: #F8FAFC; border: none; border-bottom: 1px solid #E2E8F0; cursor: pointer; text-align: left; }
+        .cob-group.danger .cob-group-header { background: #FDF3F3; border-bottom-color: #F3C1C1; }
+        .cob-group-title { font-size: 12.5px; font-weight: 800; color: #1E293B; display: flex; align-items: center; gap: 8px; }
+        .cob-group.danger .cob-group-title { color: #B23A3A; }
+        .cob-group-count { font-size: 10.5px; font-weight: 700; color: #64748B; background: #E2E8F0; border-radius: 99px; padding: 1px 8px; }
+        .cob-group.danger .cob-group-count { background: #F6D9D9; color: #B23A3A; }
+        .cob-group-total { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .cob-group-body.is-collapsed { display: none; }
+        .cob-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #F1F5F9; }
+        .cob-row:last-child { border-bottom: none; }
+        .cob-row-main { flex: 1; min-width: 0; }
+        .cob-row-dest { font-size: 12.5px; font-weight: 700; color: #1E293B; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cob-row-meta { font-size: 10.5px; color: #64748B; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
+        .cob-badge-late { font-size: 9.5px; font-weight: 800; color: #B23A3A; background: #F6D9D9; border-radius: 99px; padding: 1px 7px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .cob-row-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .cob-row-actions { display: flex; gap: 5px; flex-shrink: 0; }
+        .cob-act-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #E2E8F0; background: #fff; color: #64748B; display: grid; place-items: center; cursor: pointer; }
+        .cob-act-btn svg { width: 14px; height: 14px; }
+        .cob-act-btn.ok { color: #1F7A5C; border-color: #BFDFD3; }
+        .cob-act-btn.ok:hover { background: #E8F3EF; }
+        .cob-act-btn:hover { background: #F8FAFC; }
+        .cob-empty { text-align: center; padding: 26px 14px; font-size: 12px; font-weight: 600; color: #64748B; }
+        @media (max-width: 640px) {
+            .cob-kpis { grid-template-columns: 1fr; gap: 8px; }
+            .cob-row { flex-wrap: wrap; }
+            .cob-row-val { margin-left: 40px; }
+        }
         .home-saldo-badge { font-size: 12px; font-weight: 600; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
         /* ===== DRE — COLUNA % DA RECEITA ===== */
@@ -7459,6 +7498,9 @@
             <button type="button" onclick="switchTab('home')" id="nav-home" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
                 <i data-lucide="layout-dashboard" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Início</span>
             </button>
+            <button type="button" onclick="switchTab('cobrancas')" id="nav-cobrancas" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="hand-coins" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Cobranças</span>
+            </button>
             <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
@@ -7530,6 +7572,11 @@
             <!-- INÍCIO -->
             <div id="home" class="tab-content active space-y-6">
                 <div id="home-content"></div>
+            </div>
+
+            <!-- COBRANÇAS -->
+            <div id="cobrancas" class="tab-content space-y-6">
+                <div id="cobrancas-content"></div>
             </div>
 
             <!-- LANÇAMENTOS -->
@@ -8505,6 +8552,11 @@
         <div class="mobile-more-backdrop" onclick="toggleMobileMore()"></div>
         <div class="mobile-more-panel" role="menu">
             <div class="mobile-more-grip" aria-hidden="true"></div>
+            <button type="button" role="menuitem" onclick="switchTab('cobrancas')" id="mmore-cobrancas" class="mobile-more-item">
+                <span class="mobile-more-item-icon"><i data-lucide="hand-coins" class="w-5 h-5" aria-hidden="true"></i></span>
+                <span class="mobile-more-item-label">Cobranças</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 mobile-more-item-chevron" aria-hidden="true"></i>
+            </button>
             <button type="button" role="menuitem" onclick="switchTab('planejamento')" id="mmore-planejamento" class="mobile-more-item">
                 <span class="mobile-more-item-icon"><i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i></span>
                 <span class="mobile-more-item-label">Planejamento</span>
@@ -8998,6 +9050,7 @@
         let annualHierarchyDestination = '';
         let annualHierarchyLaunchMonth = '';
         let currentTab = 'home';
+        let cobrancasFlowTab = 'pagar';
         let reportsMode = 'annual';
         let monthlyCompareMode = 'prev';
         let projectionMode = 'pending';
@@ -9680,7 +9733,7 @@
         });
 
         // Folha "Mais" do menu inferior mobile (abas Planejamento / Conciliação / Dados)
-        const MOBILE_MORE_TABS = ['planejamento', 'reconciliation', 'vendas'];
+        const MOBILE_MORE_TABS = ['cobrancas', 'planejamento', 'reconciliation', 'vendas'];
         function toggleMobileMore(event) {
             if (event) event.stopPropagation();
             const sheet = document.getElementById('mobile-more-sheet');
@@ -12147,6 +12200,7 @@
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
                 home: 'Início',
+                cobrancas: 'Cobranças',
                 entries: 'Lançamentos',
                 reports: 'Relatórios financeiros',
                 planejamento: 'Planejamento',
@@ -12191,6 +12245,8 @@
             populateMovementTypeSelect('db-mov-type-filter');
             if (currentTab === 'home') {
                 renderHomeTab();
+            } else if (currentTab === 'cobrancas') {
+                renderCobrancas();
             } else if (currentTab === 'entries') {
                 applyEntriesToolbarState();
                 renderEntries();
@@ -14481,6 +14537,164 @@
                     <div class="home-proj-items is-collapsed">${itemsHtml}</div>
                 </div>`;
             }).join('');
+        }
+
+        // ---------- Cobranças (contas a receber / a pagar) ----------
+
+        // Lançamentos pendentes com data anterior a hoje (vencidos), mais antigos primeiro.
+        function getOverdueEntries() {
+            const today = getTodayIsoDate();
+            return getAnalyticalEntries(state.entries)
+                .filter(e => String(e.status || '').toUpperCase() === 'PENDENTE' && String(e.date || '') !== '' && String(e.date) < today)
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+        }
+
+        // Agrupa os pendentes por fluxo (receber/pagar) e por prazo:
+        // vencidas, vence hoje, próximos COBRANCAS_WEEK_DAYS dias e mais adiante.
+        function getCobrancasData() {
+            const today = getTodayIsoDate();
+            const todayDate = parseIsoDateLocal(today) || new Date();
+            const weekEnd = formatLocalDate(addLocalDays(todayDate, COBRANCAS_WEEK_DAYS));
+            const pending = getAnalyticalEntries(state.entries)
+                .filter(e => String(e.status || '').toUpperCase() === 'PENDENTE')
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+            const sum = arr => arr.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const build = flow => {
+                const list = pending.filter(e => normalizeFlowType(e.type) === flow);
+                const groups = { overdue: [], today: [], week: [], later: [] };
+                list.forEach(e => {
+                    const d = String(e.date || '');
+                    if (d && d < today) groups.overdue.push(e);
+                    else if (d === today) groups.today.push(e);
+                    else if (d <= weekEnd) groups.week.push(e);
+                    else groups.later.push(e);
+                });
+                return {
+                    list,
+                    groups,
+                    total: sum(list),
+                    totals: { overdue: sum(groups.overdue), today: sum(groups.today), week: sum(groups.week), later: sum(groups.later) }
+                };
+            };
+            return { receber: build(FLOW_IN), pagar: build(FLOW_OUT), today, weekEnd };
+        }
+
+        function switchCobrancasTab(tab) {
+            cobrancasFlowTab = tab === 'receber' ? 'receber' : 'pagar';
+            renderCobrancas();
+        }
+
+        function toggleCobGroup(btn) {
+            const body = btn.parentElement.querySelector('.cob-group-body');
+            if (!body) return;
+            const collapsed = body.classList.toggle('is-collapsed');
+            btn.setAttribute('aria-expanded', String(!collapsed));
+            const icon = btn.querySelector('.cob-group-chevron');
+            if (icon) icon.style.transform = collapsed ? '' : 'rotate(180deg)';
+        }
+
+        function buildCobrancaRow(entry, isReceber, today) {
+            const destName = getDestinationById(entry.destinationId)?.name || 'Sem destino';
+            const cat = state.categories.find(c => String(c.id || '') === String(entry.categoryId || ''));
+            const dateIso = String(entry.date || '');
+            let lateBadge = '';
+            if (dateIso && dateIso < today) {
+                const dayMs = 24 * 60 * 60 * 1000;
+                const lateDays = Math.max(1, Math.round(((parseIsoDateLocal(today) || new Date()) - (parseIsoDateLocal(dateIso) || new Date())) / dayMs));
+                lateBadge = `<span class="cob-badge-late">há ${lateDays} dia${lateDays > 1 ? 's' : ''}</span>`;
+            }
+            const metaParts = [escapeHtml(formatDateBRV2(dateIso))];
+            if (cat) metaParts.push(escapeHtml(cat.name));
+            if (entry.description) metaParts.push(escapeHtml(entry.description));
+            return `<div class="cob-row">
+                <div class="home-proj-item-icon ${isReceber ? 'in' : 'out'}"><i data-lucide="${isReceber ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
+                <div class="cob-row-main">
+                    <span class="cob-row-dest">${escapeHtml(destName)}</span>
+                    <span class="cob-row-meta">${metaParts.join(' • ')} ${lateBadge}</span>
+                </div>
+                <span class="cob-row-val ${isReceber ? 'flow-income-text' : 'flow-expense-text'}">${isReceber ? '+' : '-'}${formatBRL(Number(entry.amount) || 0)}</span>
+                <div class="cob-row-actions">
+                    <button type="button" class="cob-act-btn ok" onclick="toggleQuickStatus('${String(entry.id || '')}')" title="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}" aria-label="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}"><i data-lucide="check"></i></button>
+                    <button type="button" class="cob-act-btn" onclick="openEntryModal('${String(entry.id || '')}')" title="Editar" aria-label="Editar"><i data-lucide="pencil"></i></button>
+                </div>
+            </div>`;
+        }
+
+        function buildCobrancaGroup(title, entries, groupTotal, isReceber, today, options = {}) {
+            if (!entries.length) return '';
+            const danger = Boolean(options.danger);
+            const collapsed = Boolean(options.collapsed);
+            const rows = entries.map(e => buildCobrancaRow(e, isReceber, today)).join('');
+            const totalClass = danger ? 'flow-expense-text' : (isReceber ? 'flow-income-text' : 'flow-expense-text');
+            return `<div class="cob-group${danger ? ' danger' : ''}">
+                <button type="button" class="cob-group-header" onclick="toggleCobGroup(this)" aria-expanded="${String(!collapsed)}">
+                    <span class="cob-group-title">${danger ? '<i data-lucide="alert-triangle" class="w-4 h-4"></i>' : ''}${escapeHtml(title)}<span class="cob-group-count">${entries.length}</span></span>
+                    <span style="display:flex;align-items:center;gap:8px;">
+                        <span class="cob-group-total ${totalClass}">${formatBRL(groupTotal)}</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 cob-group-chevron" style="transition: transform 0.2s;${collapsed ? '' : 'transform: rotate(180deg);'}"></i>
+                    </span>
+                </button>
+                <div class="cob-group-body${collapsed ? ' is-collapsed' : ''}">${rows}</div>
+            </div>`;
+        }
+
+        function renderCobrancas() {
+            const host = document.getElementById('cobrancas-content');
+            if (!host) return;
+
+            const data = getCobrancasData();
+            const isReceber = cobrancasFlowTab === 'receber';
+            const side = isReceber ? data.receber : data.pagar;
+            const overdueCount = data.pagar.groups.overdue.length + data.receber.groups.overdue.length;
+            const overdueTotal = data.pagar.totals.overdue + data.receber.totals.overdue;
+
+            const groupsHtml = [
+                buildCobrancaGroup('Vencidas', side.groups.overdue, side.totals.overdue, isReceber, data.today, { danger: true }),
+                buildCobrancaGroup('Vence hoje', side.groups.today, side.totals.today, isReceber, data.today),
+                buildCobrancaGroup(`Próximos ${COBRANCAS_WEEK_DAYS} dias`, side.groups.week, side.totals.week, isReceber, data.today),
+                buildCobrancaGroup('Mais adiante', side.groups.later, side.totals.later, isReceber, data.today, { collapsed: true })
+            ].join('');
+
+            host.innerHTML = `
+                <div class="cob-kpis">
+                    <div class="cob-kpi">
+                        <span class="cob-kpi-label"><i data-lucide="arrow-down-left"></i>Total a receber</span>
+                        <span class="cob-kpi-value flow-income-text">${formatBRL(data.receber.total)}</span>
+                        <span class="cob-kpi-sub">${data.receber.list.length} lançamento(s) pendente(s)</span>
+                    </div>
+                    <div class="cob-kpi">
+                        <span class="cob-kpi-label"><i data-lucide="arrow-up-right"></i>Total a pagar</span>
+                        <span class="cob-kpi-value flow-expense-text">${formatBRL(data.pagar.total)}</span>
+                        <span class="cob-kpi-sub">${data.pagar.list.length} lançamento(s) pendente(s)</span>
+                    </div>
+                    <div class="cob-kpi${overdueCount > 0 ? ' danger' : ''}">
+                        <span class="cob-kpi-label"><i data-lucide="alert-triangle"></i>Vencidas</span>
+                        <span class="cob-kpi-value ${overdueCount > 0 ? 'flow-expense-text' : ''}">${formatBRL(overdueTotal)}</span>
+                        <span class="cob-kpi-sub">${overdueCount > 0 ? `${overdueCount} lançamento(s) em atraso` : 'Nada em atraso 🎉'}</span>
+                    </div>
+                </div>
+                <div class="card-premium p-6 md:p-8 mt-6">
+                    <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+                        <div class="plan-pill-nav" role="tablist" aria-label="Tipo de cobrança">
+                            <button type="button" id="cobtab-pagar" class="plan-pill-btn${!isReceber ? ' is-active' : ''}" onclick="switchCobrancasTab('pagar')">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                <span>A pagar (${data.pagar.list.length})</span>
+                            </button>
+                            <button type="button" id="cobtab-receber" class="plan-pill-btn${isReceber ? ' is-active' : ''}" onclick="switchCobrancasTab('receber')">
+                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+                                <span>A receber (${data.receber.list.length})</span>
+                            </button>
+                        </div>
+                        <button type="button" class="home-hero-btn primary" onclick="openEntryModal(null)"><i data-lucide="plus"></i>Lançamento</button>
+                    </div>
+                    ${side.list.length
+                        ? groupsHtml
+                        : `<div class="cob-empty">Nenhuma conta ${isReceber ? 'a receber' : 'a pagar'} pendente. Tudo em dia! 🎉</div>`
+                    }
+                </div>
+            `;
+
+            refreshLucideIcons();
         }
 
         function renderHomeTab() {
