@@ -3027,6 +3027,65 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        /* Botão "Editar destino" nas linhas de lançamento da tabela hierárquica anual. */
+        .annual-matrix-edit-dest {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid #D6E0EE;
+            background: #F4F7FC;
+            color: #244A94;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .annual-matrix-edit-dest:hover {
+            background: #E9F0FA;
+            border-color: #B9CBE6;
+            color: #1B3A76;
+        }
+        .annual-matrix-edit-dest i { flex-shrink: 0; }
+        .annual-matrix-edit-dest-mobile {
+            margin-top: 12px;
+            width: 100%;
+            justify-content: center;
+            min-height: 38px;
+            padding: 8px 12px;
+            font-size: 11.5px;
+        }
+        /* Bloco de contexto do modal "Alterar destino". */
+        .dest-edit-context {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid #E8EDF4;
+            background: #F8FAFC;
+        }
+        .dest-edit-context-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #94A3B8;
+        }
+        .dest-edit-context-main {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #0F172A;
+            line-height: 1.3;
+        }
+        .dest-edit-context-meta {
+            font-size: 11.5px;
+            font-weight: 500;
+            color: #64748B;
+            line-height: 1.35;
+        }
         .annual-matrix-total {
             color: #1E293B;
             font-weight: 600;
@@ -8985,6 +9044,35 @@
         </div>
     </div>
 
+    <!-- MODAL ALTERAR DESTINO (foco: trocar apenas o destino de um lançamento) -->
+    <div id="dest-edit-modal" class="hidden modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6" onclick="if(event.target===this) closeModal('dest-edit-modal')">
+        <div class="modal-shell modal-shell-db">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title">Alterar destino</h3>
+                    <p class="modal-head-sub" id="dest-edit-sub">Escolha o novo destino do lançamento.</p>
+                </div>
+                <button onclick="closeModal('dest-edit-modal')" class="modal-close-btn" type="button" aria-label="Fechar modal">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="modal-body space-y-4">
+                <input type="hidden" id="dest-edit-entry-id">
+                <div id="dest-edit-context" class="dest-edit-context"></div>
+                <div>
+                    <label class="label-mini" for="dest-edit-select">Novo destino</label>
+                    <select id="dest-edit-select" aria-label="Novo destino do lançamento"></select>
+                    <p class="field-help">O destino define automaticamente a categoria, subcategoria e o tipo (entrada/saída).</p>
+                    <p id="dest-edit-error" class="field-error hidden" role="alert"></p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn-primary" onclick="saveDestinationEdit()">Salvar destino</button>
+                    <button type="button" class="modal-btn-danger" onclick="closeModal('dest-edit-modal')" style="background:#F1F5F9;color:#475569;border-color:#E2E8F0;">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL CÂMERA SCANNER -->
     <div id="camera-scanner-modal" class="hidden modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6">
         <div class="modal-shell" style="max-width:480px;width:100%">
@@ -11936,8 +12024,11 @@
                     return `<td class="${className}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                const editDestBtn = row.entryId
+                    ? `<button type="button" class="annual-matrix-edit-dest" onclick="openDestinationEditModal('${escapeHtml(row.entryId)}')" title="Alterar o destino deste lançamento">Editar destino</button>`
+                    : '';
                 return `<tr>
-                    <td>${nameHtml}${row.sub ? `<span class="annual-matrix-sub">${escapeHtml(row.sub)}</span>` : `<span class="annual-matrix-sub">${row.count} lanç.</span>`}</td>
+                    <td>${nameHtml}${row.sub ? `<span class="annual-matrix-sub">${escapeHtml(row.sub)}</span>` : `<span class="annual-matrix-sub">${row.count} lanç.</span>`}${editDestBtn}</td>
                     ${monthCells}
                     <td class="annual-matrix-total ${totalClass}"><span class="annual-matrix-money">${formatBRL(row.total)}</span></td>
                 </tr>`;
@@ -11981,6 +12072,9 @@
                     ? `<button type="button" class="annual-mobile-title can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))"><span>${escapeHtml(row.label)}</span></button>`
                     : `<span class="annual-mobile-title"><span>${escapeHtml(row.label)}</span></span>`;
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
+                const editDestBtn = row.entryId
+                    ? `<button type="button" class="annual-matrix-edit-dest annual-matrix-edit-dest-mobile" onclick="openDestinationEditModal('${escapeHtml(row.entryId)}')" title="Alterar o destino deste lançamento">Editar destino</button>`
+                    : '';
                 return `<article class="annual-mobile-card">
                     <div class="annual-mobile-card-head">
                         <div>
@@ -11990,6 +12084,7 @@
                         <strong class="annual-mobile-total ${totalClass}">${row.total ? formatBRL(row.total) : '-'}</strong>
                     </div>
                     ${renderMobileMonths(row)}
+                    ${editDestBtn}
                 </article>`;
             };
             const mobileRowsHtml = [
@@ -12095,6 +12190,73 @@
         function setAnnualHierarchyLaunchMonth(monthIndex) {
             annualHierarchyLaunchMonth = String(monthIndex || '0');
             renderAnnualTemporalComparison(annualTemporalYear);
+        }
+        // Abre o modal enxuto para trocar apenas o destino de um lançamento (usado na
+        // tabela hierárquica do relatório anual).
+        function openDestinationEditModal(entryId) {
+            const id = String(entryId || '');
+            const entry = state.entries.find(e => String(e.id || '') === id);
+            const modal = document.getElementById('dest-edit-modal');
+            if (!entry || !modal) return;
+            lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+            const { destination: dst, subCategory: sub, category: cat } = getDestinationHierarchyById(entry.destinationId, entry);
+            const idEl = document.getElementById('dest-edit-entry-id');
+            if (idEl) idEl.value = id;
+            const ctxEl = document.getElementById('dest-edit-context');
+            if (ctxEl) {
+                ctxEl.innerHTML = `
+                    <span class="dest-edit-context-label">Lançamento</span>
+                    <span class="dest-edit-context-main">${escapeHtml(entry.description || 'Sem descrição')}</span>
+                    <span class="dest-edit-context-meta">${escapeHtml(formatDateBRV2(entry.date))} · ${formatBRL(Number(entry.amount) || 0)}</span>
+                    <span class="dest-edit-context-meta">Destino atual: <strong>${escapeHtml((dst || {}).name || 'Sem destino')}</strong>${(cat || {}).name ? ` · ${escapeHtml((sub || {}).name || '')} / ${escapeHtml((cat || {}).name || '')}` : ''}</span>`;
+            }
+            const selectEl = document.getElementById('dest-edit-select');
+            if (selectEl) {
+                const options = getSortedDestinationOptions(state.destinations);
+                selectEl.innerHTML = options.map(item => {
+                    const oid = String(item.id || '');
+                    return `<option value="${escapeHtml(oid)}" ${oid === String(entry.destinationId || '') ? 'selected' : ''}>${escapeHtml(getDestinationDisplayLabel(item))}</option>`;
+                }).join('');
+                selectEl.value = String(entry.destinationId || '');
+            }
+            const errEl = document.getElementById('dest-edit-error');
+            if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
+            modal.classList.remove('hidden');
+            window.setTimeout(() => { try { selectEl && selectEl.focus(); } catch (_) {} }, 40);
+            refreshLucideIcons();
+        }
+        async function saveDestinationEdit() {
+            const id = String(document.getElementById('dest-edit-entry-id')?.value || '');
+            const newDestId = String(document.getElementById('dest-edit-select')?.value || '');
+            const errEl = document.getElementById('dest-edit-error');
+            const showErr = (msg) => { if (errEl) { errEl.textContent = msg; errEl.classList.remove('hidden'); } };
+            const idx = state.entries.findIndex(e => String(e.id || '') === id);
+            if (idx === -1) { showErr('Lançamento não encontrado.'); return; }
+            if (!newDestId) { showErr('Selecione um destino.'); return; }
+            const dst = state.destinations.find(d => String(d.id || '') === newDestId);
+            const sub = state.subCategories.find(s => String(s.id || '') === String((dst || {}).subCategoryId || ''));
+            const cat = state.categories.find(c => String(c.id || '') === String((sub || {}).categoryId || ''));
+            if (!(cat || {}).type) { showErr('Destino sem categoria/tipo válido. Revise Categoria > Subcategoria > Destino.'); return; }
+            const current = state.entries[idx];
+            if (String(current.destinationId || '') === newDestId) { closeModal('dest-edit-modal'); return; }
+            const updated = {
+                ...current,
+                destinationId: newDestId,
+                subCategoryId: (sub || {}).id,
+                categoryId: (cat || {}).id,
+                type: (cat || {}).type
+            };
+            const btn = document.querySelector('#dest-edit-modal .modal-btn-primary');
+            if (btn) { btn.disabled = true; btn.textContent = 'Salvando...'; }
+            const result = await cloudSave('entries', updated);
+            if (btn) { btn.disabled = false; btn.textContent = 'Salvar destino'; }
+            if (!result?.ok) {
+                showErr('Não foi possível salvar. Verifique a conexão e tente novamente.');
+                return;
+            }
+            state.entries[idx] = updated;
+            closeModal('dest-edit-modal');
+            render();
         }
         function applyMonthlySelectionFiltersToEntries(entries) {
             return (entries || []).filter(e => {
