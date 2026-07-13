@@ -11856,8 +11856,8 @@
                 <nav class="annual-matrix-breadcrumb" aria-label="Navegação do detalhamento hierárquico">
                     ${crumbs.map((crumb, index) => {
                         const isCurrent = index === crumbs.length - 1;
-                        const sep = index > 0 ? `<i data-lucide="chevron-right" class="annual-matrix-crumb-sep" aria-hidden="true"></i>` : '';
-                        return `${sep}<button type="button" class="annual-matrix-crumb${isCurrent ? ' is-current' : ''}" ${isCurrent ? 'aria-current="page"' : ''} onclick="setAnnualHierarchyPath('${crumb.level}')"><i data-lucide="${crumb.icon}" aria-hidden="true"></i><span>${escapeHtml(crumb.label)}</span></button>`;
+                        const sep = index > 0 ? `<span class="annual-matrix-crumb-sep" aria-hidden="true">/</span>` : '';
+                        return `${sep}<button type="button" class="annual-matrix-crumb${isCurrent ? ' is-current' : ''}" ${isCurrent ? 'aria-current="page"' : ''} onclick="setAnnualHierarchyPath('${crumb.level}')"><span>${escapeHtml(crumb.label)}</span></button>`;
                     }).join('')}
                 </nav>
             `;
@@ -11872,14 +11872,11 @@
             const levelStepsHtml = `
                 <ol class="annual-matrix-steps" aria-label="Nível do detalhamento">
                     ${stepOrder.map((level, index) => {
-                        const meta = levelMeta[level];
                         const stateClass = index < currentStepIndex ? 'is-done' : index === currentStepIndex ? 'is-active' : 'is-todo';
-                        return `<li class="annual-matrix-step ${stateClass}"><i data-lucide="${meta.icon}" aria-hidden="true"></i><span>${stepLabels[level]}</span></li>`;
-                    }).join('<i data-lucide="chevron-right" class="annual-matrix-step-sep" aria-hidden="true"></i>')}
+                        return `<li class="annual-matrix-step ${stateClass}"><span>${stepLabels[level]}</span></li>`;
+                    }).join('<span class="annual-matrix-step-sep" aria-hidden="true">/</span>')}
                 </ol>`;
-            const launchHintHtml = currentLevel === 'launch'
-                ? `<p class="annual-matrix-hint"><i data-lucide="mouse-pointer-click" aria-hidden="true"></i> Clique em um lançamento para abri-lo e alterar o destino.</p>`
-                : '';
+            const launchHintHtml = '';
             const renderGroupHeader = (flow, groupRows) => {
                 if(!groupRows.length) return '';
                 const total = groupRows.reduce((sum, row) => sum + (Number(row.total) || 0), 0);
@@ -11900,15 +11897,9 @@
             };
             const renderRow = (row) => {
                 const encoded = encodeSafe(row.label);
-                const leadIcon = `<i data-lucide="${rowIcon}" class="annual-matrix-name-icon" aria-hidden="true"></i>`;
-                let nameHtml;
-                if(canDrill) {
-                    nameHtml = `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))">${leadIcon}<span class="annual-matrix-name-text">${escapeHtml(row.label)}</span><i data-lucide="chevron-right" class="annual-matrix-name-chevron w-3.5 h-3.5" aria-hidden="true"></i></button>`;
-                } else if(row.entryId) {
-                    nameHtml = `<button type="button" class="annual-matrix-name can-edit" onclick="openEntryModal('${escapeHtml(row.entryId)}')" title="Abrir lançamento para editar o destino" aria-label="Abrir lançamento ${escapeHtml(row.label)} para editar o destino">${leadIcon}<span class="annual-matrix-name-text">${escapeHtml(row.label)}</span><i data-lucide="pencil" class="annual-matrix-name-edit w-3.5 h-3.5" aria-hidden="true"></i></button>`;
-                } else {
-                    nameHtml = `<span class="annual-matrix-name">${leadIcon}<span class="annual-matrix-name-text">${escapeHtml(row.label)}</span></span>`;
-                }
+                const nameHtml = canDrill
+                    ? `<button type="button" class="annual-matrix-name can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))"><span class="annual-matrix-name-text">${escapeHtml(row.label)}</span></button>`
+                    : `<span class="annual-matrix-name"><span class="annual-matrix-name-text">${escapeHtml(row.label)}</span></span>`;
                 const monthCells = visibleMonthIndexes.map(index => {
                     const value = row.months[index];
                     const className = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
@@ -11956,14 +11947,9 @@
             };
             const renderMobileRow = (row) => {
                 const encoded = encodeSafe(row.label);
-                let titleHtml;
-                if(canDrill) {
-                    titleHtml = `<button type="button" class="annual-mobile-title can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))"><i data-lucide="${rowIcon}" class="annual-mobile-title-icon" aria-hidden="true"></i><span>${escapeHtml(row.label)}</span> <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></button>`;
-                } else if(row.entryId) {
-                    titleHtml = `<button type="button" class="annual-mobile-title can-edit" onclick="openEntryModal('${escapeHtml(row.entryId)}')" title="Abrir lançamento para editar o destino"><i data-lucide="${rowIcon}" class="annual-mobile-title-icon" aria-hidden="true"></i><span>${escapeHtml(row.label)}</span> <i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>`;
-                } else {
-                    titleHtml = `<span class="annual-mobile-title"><i data-lucide="${rowIcon}" class="annual-mobile-title-icon" aria-hidden="true"></i><span>${escapeHtml(row.label)}</span></span>`;
-                }
+                const titleHtml = canDrill
+                    ? `<button type="button" class="annual-mobile-title can-drill" onclick="drillAnnualHierarchy('${currentLevel}', decodeURIComponent('${encoded}'))"><span>${escapeHtml(row.label)}</span></button>`
+                    : `<span class="annual-mobile-title"><span>${escapeHtml(row.label)}</span></span>`;
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 return `<article class="annual-mobile-card">
                     <div class="annual-mobile-card-head">
@@ -12000,10 +11986,10 @@
                     <div>
                         <div class="annual-matrix-headline">
                             <div>
-                                <span class="annual-matrix-eyebrow"><i data-lucide="table-2" aria-hidden="true"></i> Relatório anual</span>
+                                <span class="annual-matrix-eyebrow">Relatório anual</span>
                                 <h4 class="annual-matrix-title">
                                     Detalhamento Hierárquico
-                                    <span class="annual-matrix-level-badge"><i data-lucide="${currentMeta.icon}" aria-hidden="true"></i> ${levelLabel}</span>
+                                    <span class="annual-matrix-level-badge">${levelLabel}</span>
                                 </h4>
                                 <p class="annual-matrix-subtitle">Navegue de categoria a subcategoria, destino e lançamentos — mês a mês.</p>
                             </div>
