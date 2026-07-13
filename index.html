@@ -12025,7 +12025,7 @@
                 }).join('');
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 const editDestBtn = row.entryId
-                    ? `<button type="button" class="annual-matrix-edit-dest" onclick="openDestinationEditModal('${escapeHtml(row.entryId)}')" title="Alterar o destino deste lançamento">Editar destino</button>`
+                    ? `<button type="button" class="annual-matrix-edit-dest" onclick="openDestinationEditModal('${escapeHtml(row.entryId)}')" title="Alterar o destino deste lançamento"><i data-lucide="pencil" class="w-3 h-3" aria-hidden="true"></i> Editar destino</button>`
                     : '';
                 return `<tr>
                     <td>${nameHtml}${row.sub ? `<span class="annual-matrix-sub">${escapeHtml(row.sub)}</span>` : `<span class="annual-matrix-sub">${row.count} lanç.</span>`}${editDestBtn}</td>
@@ -12073,7 +12073,7 @@
                     : `<span class="annual-mobile-title"><span>${escapeHtml(row.label)}</span></span>`;
                 const totalClass = row.total < 0 ? 'flow-expense-text' : row.total > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                 const editDestBtn = row.entryId
-                    ? `<button type="button" class="annual-matrix-edit-dest annual-matrix-edit-dest-mobile" onclick="openDestinationEditModal('${escapeHtml(row.entryId)}')" title="Alterar o destino deste lançamento">Editar destino</button>`
+                    ? `<button type="button" class="annual-matrix-edit-dest annual-matrix-edit-dest-mobile" onclick="openDestinationEditModal('${escapeHtml(row.entryId)}')" title="Alterar o destino deste lançamento"><i data-lucide="pencil" class="w-3 h-3" aria-hidden="true"></i> Editar destino</button>`
                     : '';
                 return `<article class="annual-mobile-card">
                     <div class="annual-mobile-card-head">
