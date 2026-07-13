@@ -7260,6 +7260,100 @@
         .home-proj-item-val { font-size: 13px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
         .home-proj-link { font-size: 12px; font-weight: 600; color: #1F7A5C; background: none; border: 1px solid #1F7A5C; cursor: pointer; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
         .home-proj-link:hover { background: #E8F3EF; }
+        .home-proj-day.is-today { border-color: #1F7A5C; box-shadow: 0 0 0 1px #1F7A5C inset; }
+        .home-proj-day.is-today .home-proj-day-header { background: #E8F3EF; border-bottom-color: #CBE3D9; }
+        .home-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 4px 2px; }
+        .home-hero-greeting { font-size: 20px; font-weight: 800; color: #0F172A; line-height: 1.2; }
+        .home-hero-date { font-size: 12.5px; font-weight: 600; color: #64748B; margin-top: 3px; text-transform: capitalize; }
+        .home-hero-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .home-hero-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 10px; cursor: pointer; white-space: nowrap; border: 1px solid #E2E8F0; background: #fff; color: #334155; transition: background 0.15s; }
+        .home-hero-btn:hover { background: #F8FAFC; }
+        .home-hero-btn.primary { background: #1F7A5C; border-color: #1F7A5C; color: #fff; }
+        .home-hero-btn.primary:hover { background: #196349; }
+        .home-hero-btn svg { width: 14px; height: 14px; }
+        .home-summary-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+        .home-summary-cell { border: 1px solid #E2E8F0; border-radius: 12px; padding: 10px 14px; background: #F8FAFC; }
+        .home-summary-label { display: block; font-size: 10px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .home-summary-value { display: block; font-size: 15px; font-weight: 800; margin-top: 3px; white-space: nowrap; }
+        .home-summary-sub { display: block; font-size: 10.5px; font-weight: 600; color: #94A3B8; margin-top: 1px; }
+        .home-empty-state { text-align: center; padding: 36px 16px; }
+        .home-empty-icon { width: 52px; height: 52px; border-radius: 50%; background: #E8F3EF; color: #1F7A5C; display: grid; place-items: center; margin: 0 auto 12px; }
+        .home-empty-icon svg { width: 26px; height: 26px; }
+        .home-empty-title { font-size: 14px; font-weight: 800; color: #1E293B; }
+        .home-empty-text { font-size: 12px; color: #64748B; margin-top: 4px; }
+        @media (max-width: 480px) {
+            .home-summary-strip { grid-template-columns: 1fr; gap: 8px; }
+            .home-hero-greeting { font-size: 18px; }
+        }
+        /* Cobranças */
+        .cob-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .cob-kpi { border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px 16px; background: #fff; }
+        .cob-kpi.danger { border-color: #F3C1C1; background: #FDF6F6; }
+        .cob-kpi-label { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cob-kpi.danger .cob-kpi-label { color: #B23A3A; }
+        .cob-kpi-label svg { width: 13px; height: 13px; }
+        .cob-kpi-value { display: block; font-size: 18px; font-weight: 800; margin-top: 5px; white-space: nowrap; }
+        .cob-kpi-sub { display: block; font-size: 11px; font-weight: 600; color: #94A3B8; margin-top: 2px; }
+        .cob-group { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
+        .cob-group + .cob-group { margin-top: 12px; }
+        .cob-group.danger { border-color: #F3C1C1; }
+        .cob-group-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 11px 16px; background: #F8FAFC; border: none; border-bottom: 1px solid #E2E8F0; cursor: pointer; text-align: left; }
+        .cob-group.danger .cob-group-header { background: #FDF3F3; border-bottom-color: #F3C1C1; }
+        .cob-group-title { font-size: 12.5px; font-weight: 800; color: #1E293B; display: flex; align-items: center; gap: 8px; }
+        .cob-group.danger .cob-group-title { color: #B23A3A; }
+        .cob-group-count { font-size: 10.5px; font-weight: 700; color: #64748B; background: #E2E8F0; border-radius: 99px; padding: 1px 8px; }
+        .cob-group.danger .cob-group-count { background: #F6D9D9; color: #B23A3A; }
+        .cob-group-total { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .cob-group-body.is-collapsed { display: none; }
+        .cob-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #F1F5F9; }
+        .cob-row:last-child { border-bottom: none; }
+        .cob-row-main { flex: 1; min-width: 0; }
+        .cob-row-dest { font-size: 12.5px; font-weight: 700; color: #1E293B; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cob-row-meta { font-size: 10.5px; color: #64748B; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
+        .cob-badge-late { font-size: 9.5px; font-weight: 800; color: #B23A3A; background: #F6D9D9; border-radius: 99px; padding: 1px 7px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .cob-row-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .cob-row-actions { display: flex; gap: 5px; flex-shrink: 0; }
+        .cob-act-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #E2E8F0; background: #fff; color: #64748B; display: grid; place-items: center; cursor: pointer; }
+        .cob-act-btn svg { width: 14px; height: 14px; }
+        .cob-act-btn.ok { color: #1F7A5C; border-color: #BFDFD3; }
+        .cob-act-btn.ok:hover { background: #E8F3EF; }
+        .cob-act-btn:hover { background: #F8FAFC; }
+        .cob-empty { text-align: center; padding: 26px 14px; font-size: 12px; font-weight: 600; color: #64748B; }
+        @media (max-width: 640px) {
+            .cob-kpis { grid-template-columns: 1fr; gap: 8px; }
+            .cob-row { flex-wrap: wrap; }
+            .cob-row-val { margin-left: 40px; }
+        }
+        /* Calendário financeiro (Planejamento > Projeção) */
+        .proj-cal-wrap { display: flex; flex-direction: column; gap: 20px; }
+        .proj-cal-month-title { font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 8px; }
+        .proj-cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px; }
+        .proj-cal-weekdays span { text-align: center; font-size: 10px; font-weight: 800; color: #94A3B8; text-transform: uppercase; }
+        .proj-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .proj-cal-cell { min-height: 52px; border: 1px solid #EDF2F7; border-radius: 9px; background: #fff; padding: 5px 4px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: inherit; }
+        .proj-cal-cell.is-blank { border: none; background: none; }
+        .proj-cal-cell.is-out { opacity: 0.35; background: #F8FAFC; }
+        .proj-cal-cell.is-today { border-color: #1F7A5C; box-shadow: 0 0 0 1px #1F7A5C inset; }
+        .proj-cal-cell.has-positive { background: #F2FAF6; border-color: #CBE3D9; }
+        .proj-cal-cell.has-negative { background: #FDF6F6; border-color: #F3C1C1; }
+        button.proj-cal-cell { cursor: pointer; }
+        button.proj-cal-cell:hover { filter: brightness(0.97); }
+        .proj-cal-cell.is-selected { outline: 2px solid #2F4F9D; outline-offset: 1px; }
+        .proj-cal-daynum { font-size: 11px; font-weight: 700; color: #475569; }
+        .proj-cal-val { font-size: 10px; font-weight: 800; white-space: nowrap; }
+        .proj-cal-detail { margin-top: 16px; }
+        @media (max-width: 480px) {
+            .proj-cal-cell { min-height: 44px; padding: 3px 2px; }
+            .proj-cal-val { font-size: 8.5px; }
+        }
+        /* Metas em risco (Planejamento > Metas) */
+        #goals-risk-strip:empty { display: none; }
+        .goals-risk-strip { display: flex; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border: 1px solid #F3C1C1; background: #FDF6F6; border-radius: 14px; align-items: center; }
+        .goals-risk-title { font-size: 11px; font-weight: 800; color: #B23A3A; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; }
+        .goals-risk-title svg { width: 14px; height: 14px; }
+        .goals-risk-chip { display: inline-flex; align-items: center; gap: 7px; background: #fff; border: 1px solid #F3C1C1; border-radius: 99px; padding: 5px 12px; font-size: 11.5px; font-weight: 700; color: #1E293B; }
+        .goals-risk-chip .pct { color: #B23A3A; font-weight: 800; }
+        .goals-risk-chip .detail { color: #64748B; font-weight: 600; }
         .home-saldo-badge { font-size: 12px; font-weight: 600; color: #475569; background: #F1F5F9; border-radius: 8px; padding: 4px 10px; }
 
         /* ===== DRE — COLUNA % DA RECEITA ===== */
@@ -7434,6 +7528,9 @@
             <button type="button" onclick="switchTab('home')" id="nav-home" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
                 <i data-lucide="layout-dashboard" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Início</span>
             </button>
+            <button type="button" onclick="switchTab('cobrancas')" id="nav-cobrancas" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
+                <i data-lucide="hand-coins" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Cobranças</span>
+            </button>
             <button type="button" onclick="switchTab('reports')" id="nav-reports" class="sidebar-btn w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50">
                 <i data-lucide="chart-no-axes-combined" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Relatórios</span>
             </button>
@@ -7505,6 +7602,11 @@
             <!-- INÍCIO -->
             <div id="home" class="tab-content active space-y-6">
                 <div id="home-content"></div>
+            </div>
+
+            <!-- COBRANÇAS -->
+            <div id="cobrancas" class="tab-content space-y-6">
+                <div id="cobrancas-content"></div>
             </div>
 
             <!-- LANÇAMENTOS -->
@@ -7944,10 +8046,11 @@
                     <section class="reports-section-head" aria-labelledby="projection-title">
                         <div>
                             <h3 id="projection-title" class="reports-section-title">Projeção financeira</h3>
+                            <p class="text-xs text-slate-500 mt-1">Agendado = o que já está cadastrado. Previsão = estimativa pela média dos meses anteriores.</p>
                         </div>
                         <div class="pill-segment" role="tablist" aria-label="Modo de projeção">
-                            <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="clock-3" class="w-4 h-4"></i>Pendentes futuros</button>
-                            <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Histórico</button>
+                            <button type="button" id="projection-mode-pending" class="pill-segment-btn active" onclick="setProjectionMode('pending')"><i data-lucide="calendar-check" class="w-4 h-4"></i>Agendado (pendentes)</button>
+                            <button type="button" id="projection-mode-history" class="pill-segment-btn" onclick="setProjectionMode('history')"><i data-lucide="history" class="w-4 h-4"></i>Previsão (histórico)</button>
                         </div>
                     </section>
                     <section class="projection-control-card">
@@ -7979,6 +8082,11 @@
                             <button type="button" id="projection-granularity-day" class="reports-chip active" onclick="setProjectionGranularity('day')">Dia</button>
                             <button type="button" id="projection-granularity-week" class="reports-chip" onclick="setProjectionGranularity('week')">Semana</button>
                             <button type="button" id="projection-granularity-month" class="reports-chip" onclick="setProjectionGranularity('month')">Mês</button>
+                        </div>
+                        <div class="reports-control-row" id="projection-view-row" aria-label="Visualização dos lançamentos">
+                            <span class="reports-control-label">Lançamentos em</span>
+                            <button type="button" id="projection-view-list" class="reports-chip active" onclick="setProjectionViewMode('list')">Lista</button>
+                            <button type="button" id="projection-view-calendar" class="reports-chip" onclick="setProjectionViewMode('calendar')">Calendário</button>
                         </div>
                     </section>
                     <div class="reports-summary-grid">
@@ -8044,6 +8152,7 @@
                             </div>
                         </div>
                     </div>
+                    <div id="goals-risk-strip"></div>
                     <div id="goals-cards-section" class="goals-cards-section"></div>
                     <div id="goals-kpi-row" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
                     <div id="goals-grid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"></div>
@@ -8480,6 +8589,11 @@
         <div class="mobile-more-backdrop" onclick="toggleMobileMore()"></div>
         <div class="mobile-more-panel" role="menu">
             <div class="mobile-more-grip" aria-hidden="true"></div>
+            <button type="button" role="menuitem" onclick="switchTab('cobrancas')" id="mmore-cobrancas" class="mobile-more-item">
+                <span class="mobile-more-item-icon"><i data-lucide="hand-coins" class="w-5 h-5" aria-hidden="true"></i></span>
+                <span class="mobile-more-item-label">Cobranças</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 mobile-more-item-chevron" aria-hidden="true"></i>
+            </button>
             <button type="button" role="menuitem" onclick="switchTab('planejamento')" id="mmore-planejamento" class="mobile-more-item">
                 <span class="mobile-more-item-icon"><i data-lucide="compass" class="w-5 h-5" aria-hidden="true"></i></span>
                 <span class="mobile-more-item-label">Planejamento</span>
@@ -8940,6 +9054,12 @@
         const OPTIONAL_STATE_TABLES = ['storeDailyMovements', 'dailyBalances'];
         const LOAD_STATE_TABLES = ['categories', 'subCategories', 'destinations', 'accounts', 'entries', 'storeDailyMovements', 'dailyBalances'];
         const STATE_TABLES = [...LOAD_STATE_TABLES, 'movementTypes'];
+        const HOME_UPCOMING_DAYS = 14;      // janela da lista "O que vem por aí" no Início
+        const COBRANCAS_WEEK_DAYS = 7;      // janela "próximos dias" nas Cobranças
+        const GOAL_WARN_PCT = 70;           // meta em atenção
+        const GOAL_DANGER_PCT = 90;         // meta em risco
+        const AVG_WEEKS_PER_MONTH = 4.345;  // semanas médias por mês (recorrência)
+        const AVG_FORTNIGHTS_PER_MONTH = 2.174;
         let currentSort = { field: 'date', order: 'desc' };
         let tempRecon = [];
         let sidebarCollapsed = false;
@@ -8967,6 +9087,7 @@
         let annualHierarchyDestination = '';
         let annualHierarchyLaunchMonth = '';
         let currentTab = 'home';
+        let cobrancasFlowTab = 'pagar';
         let reportsMode = 'annual';
         let monthlyCompareMode = 'prev';
         let projectionMode = 'pending';
@@ -8974,6 +9095,8 @@
         let projectionHistoryMonths = 1;
         let projectionHistoryPeriod = 7;
         let projectionGranularity = 'day';
+        let projectionViewMode = 'list';
+        let projectionCalendarSelectedDay = '';
         let cashProjectionPeriod = 7;
         let cashProjectionDailyOpen = false;
         let entriesSearchTimer = null;
@@ -9649,7 +9772,7 @@
         });
 
         // Folha "Mais" do menu inferior mobile (abas Planejamento / Conciliação / Dados)
-        const MOBILE_MORE_TABS = ['planejamento', 'reconciliation', 'vendas'];
+        const MOBILE_MORE_TABS = ['cobrancas', 'planejamento', 'reconciliation', 'vendas'];
         function toggleMobileMore(event) {
             if (event) event.stopPropagation();
             const sheet = document.getElementById('mobile-more-sheet');
@@ -10630,48 +10753,6 @@
                 icon: 'file-down'
             });
         }
-        function buildMonthlyHierarchyTableV2Legacy(entries) {
-            const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
-            if (!dadosBase.length) return '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>';
-
-            const grouped = new Map();
-            dadosBase.forEach((item) => {
-                const fluxo = item.tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA';
-                const categoria = item.categoria || 'Sem categoria';
-                const subcategoria = item.subcategoria || 'Sem subcategoria';
-                const destino = item.destino || 'Sem destino';
-                const valor = Number(item.valor) || 0;
-                const flowKey = `${fluxo}::${categoria}`;
-
-                if (!grouped.has(flowKey)) grouped.set(flowKey, { flow: fluxo, categoria, total: 0, count: 0, subs: new Map() });
-                const catRef = grouped.get(flowKey);
-                catRef.total += valor;
-                catRef.count += 1;
-
-                if (!catRef.subs.has(subcategoria)) catRef.subs.set(subcategoria, { total: 0, count: 0, destinos: new Map() });
-                const subRef = catRef.subs.get(subcategoria);
-                subRef.total += valor;
-                subRef.count += 1;
-
-                if (!subRef.destinos.has(destino)) subRef.destinos.set(destino, { total: 0, count: 0 });
-                const dstRef = subRef.destinos.get(destino);
-                dstRef.total += valor;
-                dstRef.count += 1;
-            });
-
-            const rows = [];
-            Array.from(grouped.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([categoria, catData]) => {
-                rows.push(`<tr><td class="level-cell level-1">${escapeHtml(categoria)}</td><td>Categoria</td><td class="r">${catData.count}</td><td class="r">${formatBRL(catData.total)}</td></tr>`);
-                Array.from(catData.subs.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([subcategoria, subData]) => {
-                    rows.push(`<tr><td class="level-cell level-2">${escapeHtml(subcategoria)}</td><td>Subcategoria</td><td class="r">${subData.count}</td><td class="r">${formatBRL(subData.total)}</td></tr>`);
-                    Array.from(subData.destinos.entries()).sort((a, b) => b[1].total - a[1].total).forEach(([destino, dstData]) => {
-                        rows.push(`<tr><td class="level-cell level-3">${escapeHtml(destino)}</td><td>Destino</td><td class="r">${dstData.count}</td><td class="r">${formatBRL(dstData.total)}</td></tr>`);
-                    });
-                });
-            });
-
-            return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
-        }
         function buildMonthlyHierarchyExportHtmlV2(entries) {
             const dadosBase = aplicarFiltrosBaseHierarquia(getMonthlyHierarchyData(entries));
             if (!dadosBase.length) return buildExportSectionV2('Resumo', '<div class="print-card"><p>Sem dados para exportação no período/filtro selecionado.</p></div>');
@@ -10736,62 +10817,6 @@
             });
 
             return `<div class="print-card"><table><thead><tr><th>Grupo</th><th>Fluxo</th><th>Nível</th><th class="r">Lançamentos</th><th class="r">Valor</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
-        }
-        function exportCurrentReportPDFLegacy() {
-            let title = '';
-            let subtitle = `Gerado em ${getExportTimestamp()}`;
-            let tableHtml = '<p>Sem dados para exportação.</p>';
-
-            if (currentTab === 'entries') {
-                const rows = getEntriesForExport();
-                title = 'Relatório de Lançamentos';
-                tableHtml = `<table><thead><tr><th>Data</th><th>Destino</th><th>Descrição</th><th class="c">Status</th><th class="r">Valor</th></tr></thead><tbody>
-                    ${rows.map(e => {
-                        const dst = state.destinations.find(d => d.id === e.destinationId)?.name || '-';
-                        return `<tr>
-                            <td>${formatDateBRV2(e.date)}</td>
-                            <td>${escapeHtml(dst)}</td>
-                            <td>${escapeHtml(e.description || '')}</td>
-                            <td class="c">${escapeHtml(e.status || '-')}</td>
-                            <td class="r">${formatBRL(e.amount)}</td>
-                        </tr>`;
-                    }).join('')}
-                </tbody></table>`;
-            } else if (currentTab === 'reports' && reportsMode === 'monthly') {
-                const filter = document.getElementById('monthly-filter')?.value || getCurrentMonthIso();
-                const entries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(filter));
-                title = `Relatório Mensal (${filter})`;
-                subtitle += ` | Fluxo: ${fluxoSelecionado || 'TODOS'} | Categoria: ${categoriaFiltroSelecionada || 'Todas'}`;
-                tableHtml = buildMonthlyHierarchyExportHtml(entries);
-            } else if (currentTab === 'annual') {
-                const year = new Date().getFullYear();
-                const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-                const data = monthNames.map((_, idx) => {
-                    const prefix = `${year}-${String(idx + 1).padStart(2,'0')}`;
-                    const mEntries = getAnalyticalEntries(state.entries).filter(e=>e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
-                    const inc = mEntries.filter(e=>normalizeFlowType(e.type)==='ENTRADA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                    const exp = mEntries.filter(e=>normalizeFlowType(e.type)==='SAÍDA').reduce((a,b)=>a+(Number(b.amount)||0),0);
-                    return { month: monthNames[idx], inc, exp, bal: inc - exp };
-                });
-                title = `Relatório Anual (${year})`;
-                tableHtml = `<table><thead><tr><th>Mês</th><th class="r">Entradas</th><th class="r">Saídas</th><th class="r">Saldo</th></tr></thead><tbody>
-                    ${data.map(r => `<tr><td>${r.month}</td><td class="r">${formatBRL(r.inc)}</td><td class="r">${formatBRL(r.exp)}</td><td class="r">${formatBRL(r.bal)}</td></tr>`).join('')}
-                </tbody></table>`;
-            } else {
-                title = 'Relatório';
-                tableHtml = `<p>A exportação PDF está disponível para as abas Lançamentos, Relatório Mensal e Relatório Anual.</p>`;
-            }
-
-            const win = window.open('', '_blank');
-            if (!win) {
-                alert('Não foi possível abrir a janela de impressão. Verifique bloqueador de pop-up.');
-                return;
-            }
-            win.document.open();
-            win.document.write(buildPrintableShell(title, subtitle, tableHtml));
-            win.document.close();
-            win.focus();
-            setTimeout(() => win.print(), 250);
         }
         function exportCurrentReportPDFV2() {
             let title = '';
@@ -12006,131 +12031,6 @@
             </div>`;
         }
 
-        function renderAnaliseHierarquicaMensalLegacy(entries) {
-            const section = document.getElementById('analise-hierarquica-mensal');
-            if(!section) return;
-            const dados = getMonthlyHierarchyData(entries);
-            const dadosFluxo = fluxoSelecionado === 'ENTRADAS'
-                ? dados.filter(d => d.tipo === 'entrada')
-                : fluxoSelecionado === 'SAIDAS'
-                    ? dados.filter(d => d.tipo === 'saida')
-                    : [...dados];
-            const categoriasDisponiveis = Array.from(new Set(dadosFluxo.map(d => d.categoria))).sort((a, b) => a.localeCompare(b));
-            if(categoriaFiltroSelecionada && !categoriasDisponiveis.includes(categoriaFiltroSelecionada)) categoriaFiltroSelecionada = '';
-            const dadosCategoria = categoriaFiltroSelecionada ? dadosFluxo.filter(d => d.categoria === categoriaFiltroSelecionada) : dadosFluxo;
-            const subcategoriasDisponiveis = Array.from(new Set(dadosCategoria.map(d => d.subcategoria))).sort((a, b) => a.localeCompare(b));
-            if(subcategoriaFiltroSelecionada && !subcategoriasDisponiveis.includes(subcategoriaFiltroSelecionada)) subcategoriaFiltroSelecionada = '';
-            const dadosSubcategoria = subcategoriaFiltroSelecionada ? dadosCategoria.filter(d => d.subcategoria === subcategoriaFiltroSelecionada) : dadosCategoria;
-            const destinosDisponiveis = Array.from(new Set(dadosSubcategoria.map(d => d.destino))).sort((a, b) => a.localeCompare(b));
-            if(!Array.isArray(destinosFiltroSelecionados)) destinosFiltroSelecionados = [];
-            destinosFiltroSelecionados = destinosFiltroSelecionados.filter(dest => destinosDisponiveis.includes(dest));
-            if(destinosDisponiveis.length && destinosFiltroSelecionados.length === 0) destinosFiltroSelecionados = [...destinosDisponiveis];
-
-            section.className = 'card-premium p-8 space-y-6';
-            section.innerHTML = `
-                <div class="flex items-center justify-between gap-4 flex-wrap">
-                    <h4 class="text-sm font-black text-slate-900">Análise hierárquica mensal</h4>
-                    <div class="hm-breadcrumb">
-                        <button onclick="hmBreadcrumbTo('categoria')">Relatório Mensal</button>
-                        ${categoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('subcategoria')">${categoriaSelecionada}</button>` : ''}
-                        ${subcategoriaSelecionada ? `<span class="hm-sep">></span><button onclick="hmBreadcrumbTo('destino')">${subcategoriaSelecionada}</button>` : ''}
-                        ${destinoSelecionado ? `<span class="hm-sep">></span><span class="text-slate-700 font-semibold">${destinoSelecionado}</span>` : ''}
-                    </div>
-                </div>
-                <div class="hm-filters">
-                    <div>
-                        <label class="label-mini" for="hm-flow-filter">Fluxo</label>
-                        <select id="hm-flow-filter">
-                            <option value="TODOS">Todos</option>
-                            <option value="ENTRADAS">Entradas</option>
-                            <option value="SAIDAS">Saídas</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini" for="hm-category-filter">Categoria (opcional)</label>
-                        <select id="hm-category-filter">
-                            <option value="">Todas</option>
-                            ${categoriasDisponiveis.map(c => `<option value="${c}">${c}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini" for="hm-subcategory-filter">Subcategoria</label>
-                        <select id="hm-subcategory-filter">
-                            <option value="">Todas</option>
-                            ${subcategoriasDisponiveis.map(s => `<option value="${s}">${s}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="label-mini">Destinos</label>
-                        <div class="hm-destination-picker">
-                            <div class="hm-destination-actions">
-                                <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(true)">Todos</button>
-                                <button type="button" class="hm-mini-btn" onclick="hmSetAllDestinations(false)">Limpar</button>
-                            </div>
-                            <div class="hm-destination-list">
-                                ${destinosDisponiveis.map(d => `<label class="hm-check"><input type="checkbox" ${destinosFiltroSelecionados.includes(d) ? 'checked' : ''} onchange="hmToggleDestinationSelection(decodeURIComponent('${encodeSafe(d)}'), this.checked)"><span>${d}</span></label>`).join('') || '<span class="text-[11px] text-slate-400">Nenhum destino disponível</span>'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="hm-content"></div>
-            `;
-
-            const flowFilterEl = document.getElementById('hm-flow-filter');
-            const catFilterEl = document.getElementById('hm-category-filter');
-            const subFilterEl = document.getElementById('hm-subcategory-filter');
-            if(flowFilterEl) {
-                flowFilterEl.value = fluxoSelecionado;
-                flowFilterEl.onchange = () => {
-                    fluxoSelecionado = flowFilterEl.value;
-                    categoriaFiltroSelecionada = '';
-                    subcategoriaFiltroSelecionada = '';
-                    destinosFiltroSelecionados = [];
-                    nivelAtual = 'categoria';
-                    categoriaSelecionada = '';
-                    subcategoriaSelecionada = '';
-                    destinoSelecionado = '';
-                    renderMonthly();
-                };
-            }
-            if(catFilterEl) {
-                catFilterEl.value = categoriaFiltroSelecionada;
-                catFilterEl.onchange = () => {
-                    categoriaFiltroSelecionada = catFilterEl.value;
-                    subcategoriaFiltroSelecionada = '';
-                    destinosFiltroSelecionados = [];
-                    nivelAtual = 'categoria';
-                    categoriaSelecionada = '';
-                    subcategoriaSelecionada = '';
-                    destinoSelecionado = '';
-                    renderMonthly();
-                };
-            }
-            if(subFilterEl) {
-                subFilterEl.value = subcategoriaFiltroSelecionada;
-                subFilterEl.onchange = () => {
-                    subcategoriaFiltroSelecionada = subFilterEl.value;
-                    destinosFiltroSelecionados = [];
-                    nivelAtual = 'categoria';
-                    categoriaSelecionada = '';
-                    subcategoriaSelecionada = '';
-                    destinoSelecionado = '';
-                    renderMonthly();
-                };
-            }
-
-            const dadosBase = aplicarFiltrosBaseHierarquia(dados);
-            if(dadosBase.length === 0) {
-                const content = document.getElementById('hm-content');
-                if(content) content.innerHTML = `<div class="hm-empty">Nenhum dado disponível para o mês e filtros selecionados.</div>`;
-                return;
-            }
-
-            if(nivelAtual === 'categoria') return renderCategorias(dadosBase);
-            if(nivelAtual === 'subcategoria') return renderSubcategorias(dadosBase);
-            if(nivelAtual === 'destino') return renderDestinos(dadosBase);
-            return renderLancamentos(dadosBase);
-        }
 
         function renderAnaliseHierarquicaMensal(entries) {
             const section = document.getElementById('analise-hierarquica-mensal');
@@ -12339,6 +12239,7 @@
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
                 home: 'Início',
+                cobrancas: 'Cobranças',
                 entries: 'Lançamentos',
                 reports: 'Relatórios financeiros',
                 planejamento: 'Planejamento',
@@ -12383,6 +12284,8 @@
             populateMovementTypeSelect('db-mov-type-filter');
             if (currentTab === 'home') {
                 renderHomeTab();
+            } else if (currentTab === 'cobrancas') {
+                renderCobrancas();
             } else if (currentTab === 'entries') {
                 applyEntriesToolbarState();
                 renderEntries();
@@ -12984,7 +12887,18 @@
                     return String(b.date || '').localeCompare(String(a.date || ''));
                 });
 
-            if (summaryEl) summaryEl.textContent = `${filtered.length} lançamento(s) encontrados.`;
+            const summaryTotals = filtered.reduce((acc, item) => {
+                const totals = getMovementTotals(item);
+                acc.totalIn += totals.totalIn;
+                acc.paymentsOut += totals.paymentsOut;
+                acc.dailyResult += totals.dailyResult;
+                return acc;
+            }, { totalIn: 0, paymentsOut: 0, dailyResult: 0 });
+
+            if (summaryEl) {
+                const unitText = filterUnit ? filterUnit.replace('_', ' ') : 'todas as unidades';
+                summaryEl.innerText = `${filtered.length} lançamento(s) • ${unitText} • vendas ${formatBRL(summaryTotals.totalIn)} • saídas ${formatBRL(summaryTotals.paymentsOut)} • fechamento ${formatBRL(summaryTotals.dailyResult)}`;
+            }
 
             if (!filtered.length) {
                 historyBody.innerHTML = '<div class="vender-empty-state">Nenhum fechamento para os filtros aplicados.</div>';
@@ -13127,70 +13041,6 @@
                         }
                     }
                 });
-            }
-            refreshLucideIcons();
-        }
-
-        function renderTreasuryMovements() {
-            const filterMonth = getTreasuryMonthPrefix('treasury-mv-filter-month');
-            const filterUnit = String(document.getElementById('treasury-mv-filter-unit')?.value || '');
-            const historyBody = document.getElementById('treasury-mv-history-body');
-            const summaryEl = document.getElementById('treasury-mv-history-summary');
-            if (!historyBody) return;
-
-            const filtered = (state.storeDailyMovements || [])
-                .filter(item => !filterMonth || String(item.date || '').startsWith(filterMonth))
-                .filter(item => !filterUnit || item.unit === filterUnit)
-                .sort((a, b) => {
-                    if (a.date === b.date) return String(a.unit || '').localeCompare(String(b.unit || ''));
-                    return String(b.date || '').localeCompare(String(a.date || ''));
-                });
-
-            const summaryTotals = filtered.reduce((acc, item) => {
-                const totals = getMovementTotals(item);
-                acc.totalIn += totals.totalIn;
-                acc.paymentsOut += totals.paymentsOut;
-                acc.dailyResult += totals.dailyResult;
-                return acc;
-            }, { totalIn: 0, paymentsOut: 0, dailyResult: 0 });
-
-            if (summaryEl) {
-                const unitText = filterUnit ? filterUnit.replace('_', ' ') : 'todas as unidades';
-                summaryEl.innerText = `${filtered.length} lançamento(s) • ${unitText} • vendas ${formatBRL(summaryTotals.totalIn)} • saídas ${formatBRL(summaryTotals.paymentsOut)} • fechamento ${formatBRL(summaryTotals.dailyResult)}`;
-            }
-
-            if (!filtered.length) {
-                historyBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem fechamentos para os filtros aplicados</td></tr>';
-            } else {
-                historyBody.innerHTML = filtered.map(item => {
-                    const totals = getMovementTotals(item);
-                    const resultClass = totals.dailyResult < 0 ? 'text-red-600' : 'text-slate-700';
-                    return `<tr class="table-row">
-                        <td class="px-4 py-3">
-                            <div class="treasury-cell-main text-slate-700">${escapeHtml(formatDateBRV2(item.date))}</div>
-                            <div class="treasury-cell-sub">${escapeHtml(String(item.unit || '-').replace('_', ' '))}</div>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main text-slate-700">${formatBRL(totals.totalIn)}</div>
-                            <div class="treasury-cell-sub">Dinheiro: ${formatBRL(totals.cashIn)} | Cartão: ${formatBRL(totals.cardIn)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-bold text-right text-slate-700">${formatBRL(totals.paymentsOut)}</td>
-                        <td class="px-4 py-3 text-right">
-                            <div class="treasury-cell-main ${resultClass}">${formatBRL(totals.dailyResult)}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs text-slate-600 treasury-notes">${escapeHtml(String(item.notes || '—'))}</td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="treasury-action-group">
-                                <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar movimento" aria-label="Editar movimento">
-                                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                </button>
-                                <button type="button" onclick="deleteTreasuryMovement('${String(item.id || '')}')" class="treasury-action-btn danger" title="Excluir movimento" aria-label="Excluir movimento">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>`;
-                }).join('');
             }
             refreshLucideIcons();
         }
@@ -13559,15 +13409,6 @@
             }
             refreshEntryRowInlineUI(id);
             return true;
-        }
-        async function updateEntryDestinationInlineByLabelLegacy(id, label, validDestinations) {
-            const destinationId = findDestinationIdByLabel(label, validDestinations);
-            if (!destinationId) {
-                alert('Selecione um destino válido da lista.');
-                renderEntries();
-                return;
-            }
-            await updateEntryDestinationInline(id, destinationId);
         }
         function getValidDestinationsForEntry(entry) {
             if (!entry) return getValidDestinations();
@@ -14709,7 +14550,7 @@
                     </div>`;
                 }).join('');
 
-                return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}">
+                return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}${dateIso === today ? ' is-today' : ''}">
                     <div class="home-proj-day-header">
                         <span class="home-proj-day-label">${escapeHtml(dateLabel)}</span>
                         <span class="home-proj-day-weekday">${escapeHtml(weekdayLine)}</span>
@@ -14737,15 +14578,173 @@
             }).join('');
         }
 
+        // ---------- Cobranças (contas a receber / a pagar) ----------
+
+        // Lançamentos pendentes com data anterior a hoje (vencidos), mais antigos primeiro.
+        function getOverdueEntries() {
+            const today = getTodayIsoDate();
+            return getAnalyticalEntries(state.entries)
+                .filter(e => String(e.status || '').toUpperCase() === 'PENDENTE' && String(e.date || '') !== '' && String(e.date) < today)
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+        }
+
+        // Agrupa os pendentes por fluxo (receber/pagar) e por prazo:
+        // vencidas, vence hoje, próximos COBRANCAS_WEEK_DAYS dias e mais adiante.
+        function getCobrancasData() {
+            const today = getTodayIsoDate();
+            const todayDate = parseIsoDateLocal(today) || new Date();
+            const weekEnd = formatLocalDate(addLocalDays(todayDate, COBRANCAS_WEEK_DAYS));
+            const pending = getAnalyticalEntries(state.entries)
+                .filter(e => String(e.status || '').toUpperCase() === 'PENDENTE')
+                .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+            const sum = arr => arr.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+            const build = flow => {
+                const list = pending.filter(e => normalizeFlowType(e.type) === flow);
+                const groups = { overdue: [], today: [], week: [], later: [] };
+                list.forEach(e => {
+                    const d = String(e.date || '');
+                    if (d && d < today) groups.overdue.push(e);
+                    else if (d === today) groups.today.push(e);
+                    else if (d <= weekEnd) groups.week.push(e);
+                    else groups.later.push(e);
+                });
+                return {
+                    list,
+                    groups,
+                    total: sum(list),
+                    totals: { overdue: sum(groups.overdue), today: sum(groups.today), week: sum(groups.week), later: sum(groups.later) }
+                };
+            };
+            return { receber: build(FLOW_IN), pagar: build(FLOW_OUT), today, weekEnd };
+        }
+
+        function switchCobrancasTab(tab) {
+            cobrancasFlowTab = tab === 'receber' ? 'receber' : 'pagar';
+            renderCobrancas();
+        }
+
+        function toggleCobGroup(btn) {
+            const body = btn.parentElement.querySelector('.cob-group-body');
+            if (!body) return;
+            const collapsed = body.classList.toggle('is-collapsed');
+            btn.setAttribute('aria-expanded', String(!collapsed));
+            const icon = btn.querySelector('.cob-group-chevron');
+            if (icon) icon.style.transform = collapsed ? '' : 'rotate(180deg)';
+        }
+
+        function buildCobrancaRow(entry, isReceber, today) {
+            const destName = getDestinationById(entry.destinationId)?.name || 'Sem destino';
+            const cat = state.categories.find(c => String(c.id || '') === String(entry.categoryId || ''));
+            const dateIso = String(entry.date || '');
+            let lateBadge = '';
+            if (dateIso && dateIso < today) {
+                const dayMs = 24 * 60 * 60 * 1000;
+                const lateDays = Math.max(1, Math.round(((parseIsoDateLocal(today) || new Date()) - (parseIsoDateLocal(dateIso) || new Date())) / dayMs));
+                lateBadge = `<span class="cob-badge-late">há ${lateDays} dia${lateDays > 1 ? 's' : ''}</span>`;
+            }
+            const metaParts = [escapeHtml(formatDateBRV2(dateIso))];
+            if (cat) metaParts.push(escapeHtml(cat.name));
+            if (entry.description) metaParts.push(escapeHtml(entry.description));
+            return `<div class="cob-row">
+                <div class="home-proj-item-icon ${isReceber ? 'in' : 'out'}"><i data-lucide="${isReceber ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
+                <div class="cob-row-main">
+                    <span class="cob-row-dest">${escapeHtml(destName)}</span>
+                    <span class="cob-row-meta">${metaParts.join(' • ')} ${lateBadge}</span>
+                </div>
+                <span class="cob-row-val ${isReceber ? 'flow-income-text' : 'flow-expense-text'}">${isReceber ? '+' : '-'}${formatBRL(Number(entry.amount) || 0)}</span>
+                <div class="cob-row-actions">
+                    <button type="button" class="cob-act-btn ok" onclick="toggleQuickStatus('${String(entry.id || '')}')" title="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}" aria-label="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}"><i data-lucide="check"></i></button>
+                    <button type="button" class="cob-act-btn" onclick="openEntryModal('${String(entry.id || '')}')" title="Editar" aria-label="Editar"><i data-lucide="pencil"></i></button>
+                </div>
+            </div>`;
+        }
+
+        function buildCobrancaGroup(title, entries, groupTotal, isReceber, today, options = {}) {
+            if (!entries.length) return '';
+            const danger = Boolean(options.danger);
+            const collapsed = Boolean(options.collapsed);
+            const rows = entries.map(e => buildCobrancaRow(e, isReceber, today)).join('');
+            const totalClass = danger ? 'flow-expense-text' : (isReceber ? 'flow-income-text' : 'flow-expense-text');
+            return `<div class="cob-group${danger ? ' danger' : ''}">
+                <button type="button" class="cob-group-header" onclick="toggleCobGroup(this)" aria-expanded="${String(!collapsed)}">
+                    <span class="cob-group-title">${danger ? '<i data-lucide="alert-triangle" class="w-4 h-4"></i>' : ''}${escapeHtml(title)}<span class="cob-group-count">${entries.length}</span></span>
+                    <span style="display:flex;align-items:center;gap:8px;">
+                        <span class="cob-group-total ${totalClass}">${formatBRL(groupTotal)}</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 cob-group-chevron" style="transition: transform 0.2s;${collapsed ? '' : 'transform: rotate(180deg);'}"></i>
+                    </span>
+                </button>
+                <div class="cob-group-body${collapsed ? ' is-collapsed' : ''}">${rows}</div>
+            </div>`;
+        }
+
+        function renderCobrancas() {
+            const host = document.getElementById('cobrancas-content');
+            if (!host) return;
+
+            const data = getCobrancasData();
+            const isReceber = cobrancasFlowTab === 'receber';
+            const side = isReceber ? data.receber : data.pagar;
+            const overdueCount = data.pagar.groups.overdue.length + data.receber.groups.overdue.length;
+            const overdueTotal = data.pagar.totals.overdue + data.receber.totals.overdue;
+
+            const groupsHtml = [
+                buildCobrancaGroup('Vencidas', side.groups.overdue, side.totals.overdue, isReceber, data.today, { danger: true }),
+                buildCobrancaGroup('Vence hoje', side.groups.today, side.totals.today, isReceber, data.today),
+                buildCobrancaGroup(`Próximos ${COBRANCAS_WEEK_DAYS} dias`, side.groups.week, side.totals.week, isReceber, data.today),
+                buildCobrancaGroup('Mais adiante', side.groups.later, side.totals.later, isReceber, data.today, { collapsed: true })
+            ].join('');
+
+            host.innerHTML = `
+                <div class="cob-kpis">
+                    <div class="cob-kpi">
+                        <span class="cob-kpi-label"><i data-lucide="arrow-down-left"></i>Total a receber</span>
+                        <span class="cob-kpi-value flow-income-text">${formatBRL(data.receber.total)}</span>
+                        <span class="cob-kpi-sub">${data.receber.list.length} lançamento(s) pendente(s)</span>
+                    </div>
+                    <div class="cob-kpi">
+                        <span class="cob-kpi-label"><i data-lucide="arrow-up-right"></i>Total a pagar</span>
+                        <span class="cob-kpi-value flow-expense-text">${formatBRL(data.pagar.total)}</span>
+                        <span class="cob-kpi-sub">${data.pagar.list.length} lançamento(s) pendente(s)</span>
+                    </div>
+                    <div class="cob-kpi${overdueCount > 0 ? ' danger' : ''}">
+                        <span class="cob-kpi-label"><i data-lucide="alert-triangle"></i>Vencidas</span>
+                        <span class="cob-kpi-value ${overdueCount > 0 ? 'flow-expense-text' : ''}">${formatBRL(overdueTotal)}</span>
+                        <span class="cob-kpi-sub">${overdueCount > 0 ? `${overdueCount} lançamento(s) em atraso` : 'Nada em atraso 🎉'}</span>
+                    </div>
+                </div>
+                <div class="card-premium p-6 md:p-8 mt-6">
+                    <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+                        <div class="plan-pill-nav" role="tablist" aria-label="Tipo de cobrança">
+                            <button type="button" id="cobtab-pagar" class="plan-pill-btn${!isReceber ? ' is-active' : ''}" onclick="switchCobrancasTab('pagar')">
+                                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                <span>A pagar (${data.pagar.list.length})</span>
+                            </button>
+                            <button type="button" id="cobtab-receber" class="plan-pill-btn${isReceber ? ' is-active' : ''}" onclick="switchCobrancasTab('receber')">
+                                <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+                                <span>A receber (${data.receber.list.length})</span>
+                            </button>
+                        </div>
+                        <button type="button" class="home-hero-btn primary" onclick="openEntryModal(null)"><i data-lucide="plus"></i>Lançamento</button>
+                    </div>
+                    ${side.list.length
+                        ? groupsHtml
+                        : `<div class="cob-empty">Nenhuma conta ${isReceber ? 'a receber' : 'a pagar'} pendente. Tudo em dia! 🎉</div>`
+                    }
+                </div>
+            `;
+
+            refreshLucideIcons();
+        }
+
         function renderHomeTab() {
             const host = document.getElementById('home-content');
             if (!host) return;
 
             const today = getTodayIsoDate();
 
-            // Lançamentos pendentes futuros (hoje + 14 dias)
+            // Lançamentos pendentes futuros (hoje + HOME_UPCOMING_DAYS dias)
             const todayDate = parseIsoDateLocal(today) || new Date();
-            const futureDate = addLocalDays(todayDate, 14);
+            const futureDate = addLocalDays(todayDate, HOME_UPCOMING_DAYS);
             const futureEnd = formatLocalDate(futureDate);
 
             const futurePending = getAnalyticalEntries(state.entries)
@@ -14757,20 +14756,56 @@
 
             const dayRowsHtml = buildHomeStyleDayCards(futurePending);
 
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? 'Bom dia!' : hour < 18 ? 'Boa tarde!' : 'Boa noite!';
+            const todayLong = todayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+            const periodSummary = summarizeFinancialEntries(futurePending, false);
+            const periodLabel = `${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}`;
+
             host.innerHTML = `
-                <div class="card-premium p-8">
-                    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <div class="home-hero">
+                    <div>
+                        <p class="home-hero-greeting">${greeting}</p>
+                        <p class="home-hero-date">${escapeHtml(todayLong)}</p>
+                    </div>
+                    <div class="home-hero-actions">
+                        <button type="button" class="home-hero-btn primary" onclick="openEntryModal(null)"><i data-lucide="plus"></i>Lançamento</button>
+                        <button type="button" class="home-hero-btn" onclick="switchTab('cobrancas')"><i data-lucide="hand-coins"></i>Cobranças</button>
+                        <button type="button" class="home-hero-btn" onclick="switchTab('planejamento'); switchPlanTab('projection');"><i data-lucide="trending-up"></i>Projeção</button>
+                    </div>
+                </div>
+                <div class="card-premium p-6 md:p-8">
+                    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
                         <div>
                             <h4 class="text-sm font-black text-slate-900">O que vem por aí</h4>
-                            <p class="text-xs text-slate-500 mt-1">Fique por dentro dos próximos lançamentos, de ${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="switchTab('planejamento')" class="home-proj-link">Ver projeção <i data-lucide="arrow-right" class="w-3.5 h-3.5 inline-block ml-1"></i></button>
+                            <p class="text-xs text-slate-500 mt-1">Próximos lançamentos pendentes, de ${periodLabel}</p>
                         </div>
                     </div>
+                    ${futurePending.length > 0 ? `
+                    <div class="home-summary-strip">
+                        <div class="home-summary-cell">
+                            <span class="home-summary-label">A receber no período</span>
+                            <span class="home-summary-value flow-income-text">+${formatBRLNoCents(periodSummary.inc)}</span>
+                        </div>
+                        <div class="home-summary-cell">
+                            <span class="home-summary-label">A pagar no período</span>
+                            <span class="home-summary-value flow-expense-text">-${formatBRLNoCents(periodSummary.exp)}</span>
+                        </div>
+                        <div class="home-summary-cell">
+                            <span class="home-summary-label">Resultado do período</span>
+                            <span class="home-summary-value ${periodSummary.net < 0 ? 'flow-expense-text' : 'flow-income-text'}">${periodSummary.net > 0 ? '+' : ''}${formatBRLNoCents(periodSummary.net)}</span>
+                            <span class="home-summary-sub">${futurePending.length} lançamento(s) em ${HOME_UPCOMING_DAYS + 1} dias</span>
+                        </div>
+                    </div>` : ''}
                     ${dayRowsHtml.length > 0
                         ? `<div class="home-proj-list">${dayRowsHtml}</div>`
-                        : `<div class="cash-projection-empty">Nenhum lançamento pendente nos próximos 14 dias. <button onclick="openEntryModal(null)" class="text-[#1F7A5C] font-bold underline ml-1">Adicionar lançamento</button></div>`
+                        : `<div class="home-empty-state">
+                            <div class="home-empty-icon"><i data-lucide="calendar-check-2"></i></div>
+                            <p class="home-empty-title">Tudo em dia por aqui</p>
+                            <p class="home-empty-text">Nenhum lançamento pendente nos próximos ${HOME_UPCOMING_DAYS} dias.</p>
+                            <button type="button" onclick="openEntryModal(null)" class="home-hero-btn primary mt-4 mx-auto"><i data-lucide="plus"></i>Adicionar lançamento</button>
+                        </div>`
                     }
                 </div>
             `;
@@ -16058,6 +16093,12 @@
             renderProjection();
         }
 
+        function setProjectionViewMode(mode) {
+            projectionViewMode = mode === 'calendar' ? 'calendar' : 'list';
+            projectionCalendarSelectedDay = '';
+            renderProjection();
+        }
+
         function getProjectionDays() {
             if (projectionPeriod !== 'custom') return Number(projectionPeriod) || 7;
             const custom = Number(document.getElementById('projection-custom-days')?.value);
@@ -16078,6 +16119,10 @@
             ['day', 'week', 'month'].forEach(item => {
                 document.getElementById(`projection-granularity-${item}`)?.classList.toggle('active', projectionGranularity === item);
             });
+            // Toggle Lista/Calendário só faz sentido no modo Agendado
+            document.getElementById('projection-view-row')?.classList.toggle('hidden', isHistory);
+            document.getElementById('projection-view-list')?.classList.toggle('active', projectionViewMode === 'list');
+            document.getElementById('projection-view-calendar')?.classList.toggle('active', projectionViewMode === 'calendar');
         }
 
         function getProjectionGranularityLabel() {
@@ -16237,6 +16282,8 @@
             const chartEl = document.getElementById('projection-chart');
             if (!chartEl || !window.Chart) return;
             if (window.projectionChart) window.projectionChart.destroy();
+            let running = 0;
+            const cumulativeData = netData.map(value => { running += (Number(value) || 0); return running; });
             window.projectionChart = new Chart(chartEl.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -16244,7 +16291,8 @@
                     datasets: [
                         { type: 'bar', label: 'Entradas', data: incomeData, backgroundColor: '#1F7A5C', borderRadius: 10, maxBarThickness: 26 },
                         { type: 'bar', label: 'Saídas', data: expenseData, backgroundColor: '#B23A3A', borderRadius: 10, maxBarThickness: 26 },
-                        { type: 'line', label: 'Saldo', data: netData, borderColor: '#2F4F9D', backgroundColor: '#2F4F9D', tension: 0.35, borderWidth: 3, pointRadius: 3 }
+                        { type: 'line', label: 'Saldo do período', data: netData, borderColor: '#2F4F9D', backgroundColor: '#2F4F9D', tension: 0.35, borderWidth: 3, pointRadius: 3 },
+                        { type: 'line', label: 'Saldo acumulado', data: cumulativeData, borderColor: '#7C93C9', backgroundColor: '#7C93C9', borderDash: [6, 4], tension: 0.35, borderWidth: 2.5, pointRadius: 2 }
                     ]
                 },
                 options: {
@@ -16272,16 +16320,20 @@
                 })
                 .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
             const summary = summarizeFinancialEntries(entries, false);
-            document.getElementById('projection-card-in-label').innerText = 'Entradas previstas';
-            document.getElementById('projection-card-out-label').innerText = 'Saídas previstas';
-            document.getElementById('projection-card-net-label').innerText = 'Saldo projetado';
+            document.getElementById('projection-card-in-label').innerText = 'Entradas agendadas';
+            document.getElementById('projection-card-out-label').innerText = 'Saídas agendadas';
+            document.getElementById('projection-card-net-label').innerText = 'Saldo agendado';
             document.getElementById('projection-card-in').innerText = formatBRL(summary.inc);
             document.getElementById('projection-card-out').innerText = formatBRL(summary.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(summary.net);
-            document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
-            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} com lançamentos pendentes cadastrados, agrupados por ${getProjectionGranularityLabel()}.`;
-            document.getElementById('projection-list-title').innerText = 'Lançamentos usados na projeção';
-            document.getElementById('projection-list-subtitle').innerText = 'Somente pendências futuras dentro do prazo escolhido.';
+            document.getElementById('projection-chart-title').innerText = `Saldo agendado por ${getProjectionGranularityLabel()}`;
+            const overdueCount = getOverdueEntries().length;
+            const overdueNote = overdueCount > 0 ? ` Atenção: ${overdueCount} lançamento(s) vencido(s) fora desta janela — veja em Cobranças.` : '';
+            document.getElementById('projection-explain').innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} • soma dos lançamentos pendentes já cadastrados, agrupados por ${getProjectionGranularityLabel()}.${overdueNote}`;
+            document.getElementById('projection-list-title').innerText = projectionViewMode === 'calendar' ? 'Calendário financeiro' : 'Lançamentos usados na projeção';
+            document.getElementById('projection-list-subtitle').innerText = projectionViewMode === 'calendar'
+                ? 'Resultado agendado por dia. Toque em um dia para ver os lançamentos.'
+                : 'Somente pendências futuras dentro do prazo escolhido.';
 
             const buckets = getProjectionBuckets(range.startIso, range.endIso);
             entries.forEach(entry => addEntryToProjectionBuckets(buckets, entry));
@@ -16296,9 +16348,13 @@
             if (listEl) {
                 if (!entries.length) {
                     listEl.innerHTML = '<div class="cash-projection-empty">Nenhum lançamento pendente futuro para este prazo.</div>';
+                } else if (projectionViewMode === 'calendar') {
+                    listEl.innerHTML = renderProjectionCalendar(entries, range.startIso, range.endIso);
                 } else {
+                    let runningNet = 0;
                     const rows = buckets.map(bucket => {
                         const net = bucket.inc - bucket.exp;
+                        runningNet += net;
                         const periodDetail = bucket.startIso === bucket.endIso
                             ? formatDateBRV2(bucket.startIso)
                             : `${formatDateBRV2(bucket.startIso)} a ${formatDateBRV2(bucket.endIso)}`;
@@ -16310,6 +16366,7 @@
                             <td><span class="projection-table-value flow-income-text">${formatBRL(bucket.inc)}</span></td>
                             <td><span class="projection-table-value flow-expense-text">${formatBRL(bucket.exp)}</span></td>
                             <td><span class="projection-table-value ${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(net)}</span></td>
+                            <td><span class="projection-table-value ${runningNet < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(runningNet)}</span></td>
                         </tr>`;
                     }).join('');
                     const tableHtml = `<div class="projection-table-wrap custom-scrollbar">
@@ -16320,17 +16377,19 @@
                                     <th>Entradas</th>
                                     <th>Saídas</th>
                                     <th>Resultado</th>
+                                    <th>Acumulado</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${rows}
                                 <tr class="projection-table-total">
                                     <td>
-                                        <div class="projection-table-date">Total previsto</div>
+                                        <div class="projection-table-date">Total agendado</div>
                                         <div class="projection-table-sub">${days} dias de pendências futuras</div>
                                     </td>
                                     <td><span class="projection-table-value flow-income-text">${formatBRL(summary.inc)}</span></td>
                                     <td><span class="projection-table-value flow-expense-text">${formatBRL(summary.exp)}</span></td>
+                                    <td><span class="projection-table-value ${summary.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(summary.net)}</span></td>
                                     <td><span class="projection-table-value ${summary.net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(summary.net)}</span></td>
                                 </tr>
                             </tbody>
@@ -16343,6 +16402,76 @@
                     listEl.innerHTML = summaryTableHtml + `<div class="home-proj-list">${dayCardsHtml}</div>`;
                 }
             }
+        }
+
+        // Calendário financeiro: um grid por mês dentro da janela, com o
+        // resultado agendado de cada dia; tocar no dia mostra os lançamentos.
+        function toggleProjectionCalendarDay(dateIso) {
+            projectionCalendarSelectedDay = projectionCalendarSelectedDay === dateIso ? '' : dateIso;
+            renderProjection();
+        }
+
+        function renderProjectionCalendar(entries, startIso, endIso) {
+            const start = parseIsoDateLocal(startIso);
+            const end = parseIsoDateLocal(endIso);
+            if (!start || !end) return '';
+
+            const byDay = new Map();
+            (entries || []).forEach(e => {
+                const key = String(e.date || '');
+                if (!byDay.has(key)) byDay.set(key, { inc: 0, exp: 0, items: [] });
+                const day = byDay.get(key);
+                if (normalizeFlowType(e.type) === FLOW_IN) day.inc += Number(e.amount) || 0;
+                else day.exp += Number(e.amount) || 0;
+                day.items.push(e);
+            });
+
+            const todayIso = getTodayIsoDate();
+            const compactMoney = v => valuesHidden ? '•••' : formatChartBRLCompact(v);
+            const monthsHtml = [];
+            const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+            while (cursor <= end) {
+                const year = cursor.getFullYear();
+                const month = cursor.getMonth();
+                const firstWeekday = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const cells = [];
+                for (let i = 0; i < firstWeekday; i++) cells.push('<div class="proj-cal-cell is-blank" aria-hidden="true"></div>');
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const inRange = iso >= startIso && iso <= endIso;
+                    const day = byDay.get(iso);
+                    const net = day ? day.inc - day.exp : 0;
+                    const isSelected = projectionCalendarSelectedDay === iso;
+                    const classes = ['proj-cal-cell'];
+                    if (!inRange) classes.push('is-out');
+                    if (iso === todayIso) classes.push('is-today');
+                    if (day) classes.push(net < 0 ? 'has-negative' : 'has-positive');
+                    if (isSelected) classes.push('is-selected');
+                    const valueHtml = day
+                        ? `<span class="proj-cal-val ${net < 0 ? 'flow-expense-text' : 'flow-income-text'}">${net > 0 ? '+' : ''}${compactMoney(net)}</span>`
+                        : '';
+                    const clickable = Boolean(day) && inRange;
+                    cells.push(`<${clickable ? 'button type="button"' : 'div'} class="${classes.join(' ')}"${clickable ? ` onclick="toggleProjectionCalendarDay('${iso}')" aria-pressed="${String(isSelected)}" aria-label="Dia ${d}, ${day ? day.items.length : 0} lançamento(s)"` : ''}>
+                        <span class="proj-cal-daynum">${d}</span>
+                        ${valueHtml}
+                    </${clickable ? 'button' : 'div'}>`);
+                }
+                monthsHtml.push(`<div class="proj-cal-month">
+                    <p class="proj-cal-month-title">${MONTH_NAMES_PT[month]} ${year}</p>
+                    <div class="proj-cal-weekdays">${['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map(w => `<span>${w}</span>`).join('')}</div>
+                    <div class="proj-cal-grid">${cells.join('')}</div>
+                </div>`);
+                cursor.setMonth(cursor.getMonth() + 1);
+            }
+
+            let detailHtml = '';
+            if (projectionCalendarSelectedDay && byDay.has(projectionCalendarSelectedDay)) {
+                const dayEntries = byDay.get(projectionCalendarSelectedDay).items;
+                detailHtml = `<div class="proj-cal-detail"><div class="home-proj-list">${buildHomeStyleDayCards(dayEntries)}</div></div>`;
+            }
+
+            return `<div class="proj-cal-wrap">${monthsHtml.join('')}</div>${detailHtml}`;
         }
 
         function renderHistoryProjection() {
@@ -16366,14 +16495,14 @@
                 return acc;
             }, { inc: 0, exp: 0 });
             projected.net = projected.inc - projected.exp;
-            document.getElementById('projection-card-in-label').innerText = 'Entrada projetada';
-            document.getElementById('projection-card-out-label').innerText = 'Saída projetada';
-            document.getElementById('projection-card-net-label').innerText = 'Resultado projetado';
+            document.getElementById('projection-card-in-label').innerText = 'Entradas previstas';
+            document.getElementById('projection-card-out-label').innerText = 'Saídas previstas';
+            document.getElementById('projection-card-net-label').innerText = 'Resultado previsto';
             document.getElementById('projection-card-in').innerText = formatBRL(projected.inc);
             document.getElementById('projection-card-out').innerText = formatBRL(projected.exp);
             document.getElementById('projection-card-net').innerText = formatBRL(projected.net);
-            document.getElementById('projection-chart-title').innerText = `Saldo projetado por ${getProjectionGranularityLabel()}`;
-            document.getElementById('projection-explain').innerText = `Projeção calculada usando o mesmo dia útil do mês no histórico dos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()}.`;
+            document.getElementById('projection-chart-title').innerText = `Resultado previsto por ${getProjectionGranularityLabel()}`;
+            document.getElementById('projection-explain').innerText = `Estimativa pela média do mesmo dia útil do mês nos últimos ${months} ${months === 1 ? 'mês' : 'meses'}, agrupada por ${getProjectionGranularityLabel()} (domingos contam como zero — loja fechada).`;
             document.getElementById('projection-list-title').innerText = 'Tabela da projeção';
             document.getElementById('projection-list-subtitle').innerText = `Valores projetados por ${getProjectionGranularityLabel()} usando o mesmo dia útil do mês no histórico.`;
             renderProjectionChart(
@@ -16504,8 +16633,8 @@
                     count,
                     total,
                     perMonth: count / spanMonths,
-                    perWeek: count / (spanMonths * 4.345),
-                    perFortnight: count / (spanMonths * 2.174),
+                    perWeek: count / (spanMonths * AVG_WEEKS_PER_MONTH),
+                    perFortnight: count / (spanMonths * AVG_FORTNIGHTS_PER_MONTH),
                     medianInterval,
                     cadence: getRecurrenceCadenceLabel(medianInterval, count),
                     lastDate: dates[dates.length - 1] || ''
@@ -18519,50 +18648,6 @@
             };
         }
 
-        function getReconReviewBadgeLegacy(meta, invalidDestination) {
-            if (invalidDestination) {
-                return {
-                    badgeClass: 'bg-red-50 text-red-700 border border-red-200',
-                    badgeText: 'Revisar destino',
-                    note: 'Escolha um destino válido antes de importar.'
-                };
-            }
-            if (meta.status === 'select-account') {
-                return {
-                    badgeClass: 'bg-slate-50 text-slate-600 border border-slate-200',
-                    badgeText: 'Escolha a conta',
-                    note: 'Selecione a conta para comparar com os lançamentos já cadastrados.'
-                };
-            }
-            if (meta.status === 'exact') {
-                return {
-                    badgeClass: 'bg-green-50 text-green-700 border border-green-200',
-                    badgeText: 'Já lançado',
-                    note: 'Esse lançamento já existe com a mesma conta, destino e descrição.'
-                };
-            }
-            if (meta.status === 'conflict') {
-                const firstConflict = meta.otherDestinationLabels[0] || 'outro destino';
-                const suffix = meta.otherDestinationLabels.length > 1 ? ` e mais ${meta.otherDestinationLabels.length - 1}` : '';
-                return {
-                    badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
-                    badgeText: 'Conferir destino',
-                    note: `Há lançamento parecido em ${firstConflict}${suffix}.`
-                };
-            }
-            if (meta.status === 'similar') {
-                return {
-                    badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-                    badgeText: 'Destino confere',
-                    note: 'Já existe lançamento parecido com este mesmo destino.'
-                };
-            }
-            return {
-                badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',
-                badgeText: 'Novo lançamento',
-                note: 'Não encontrei registro parecido nesta conta.'
-            };
-        }
         function renderReconPreview() {
             const preview = document.getElementById('recon-preview');
             const summary = document.getElementById('recon-summary-count');
@@ -20934,9 +21019,9 @@
 
             let status;
             if (targetFlow === FLOW_OUT) {
-                status = rawPct > 100 ? 'over' : rawPct > 90 ? 'danger' : rawPct > 70 ? 'warn' : 'ok';
+                status = rawPct > 100 ? 'over' : rawPct > GOAL_DANGER_PCT ? 'danger' : rawPct > GOAL_WARN_PCT ? 'warn' : 'ok';
             } else {
-                status = rawPct >= 90 ? 'rev_ok' : rawPct >= 70 ? 'warn' : 'rev_danger';
+                status = rawPct >= GOAL_DANGER_PCT ? 'rev_ok' : rawPct >= GOAL_WARN_PCT ? 'warn' : 'rev_danger';
             }
 
             return { actual, target: goal.amount, pct, rawPct, status, remaining: goal.amount - actual };
@@ -21192,6 +21277,41 @@
             return goal.targetMonth === yyyyMM;
         }
 
+        // Metas de saída do mês que já passaram do limiar de atenção, mais críticas primeiro.
+        function getGoalsAtRisk(yyyyMM, limit = 3) {
+            return (goalsData || [])
+                .filter(goal => goalsIsApplicable(goal, yyyyMM) && getGoalNormalizedType(goal.type) === FLOW_OUT)
+                .map(goal => ({ goal, progress: calcGoalProgress(goal, yyyyMM) }))
+                .filter(item => item.progress.rawPct >= GOAL_WARN_PCT)
+                .sort((a, b) => b.progress.rawPct - a.progress.rawPct)
+                .slice(0, limit);
+        }
+
+        function renderGoalsRiskStrip() {
+            const strip = document.getElementById('goals-risk-strip');
+            if (!strip) return;
+            const atRisk = getGoalsAtRisk(goalsGetCurrentMonth());
+            if (!atRisk.length) {
+                strip.innerHTML = '';
+                return;
+            }
+            const chips = atRisk.map(({ goal, progress }) => {
+                const over = progress.remaining < 0;
+                const detail = over
+                    ? `estourou ${formatBRL(Math.abs(progress.remaining))}`
+                    : `faltam ${formatBRL(progress.remaining)}`;
+                return `<span class="goals-risk-chip">${escapeHtml(getGoalHierarchyName(goal))}
+                    <span class="pct">${Math.round(progress.rawPct)}%</span>
+                    <span class="detail">${detail}</span>
+                </span>`;
+            }).join('');
+            strip.innerHTML = `<div class="goals-risk-strip">
+                <span class="goals-risk-title"><i data-lucide="alert-triangle"></i>Metas em risco</span>
+                ${chips}
+            </div>`;
+            refreshLucideIcons();
+        }
+
         function setGoalsDisplayMode(mode) {
             goalsDisplayMode = mode;
             document.getElementById('goals-mode-cards')?.classList.toggle('active', mode === 'cards');
@@ -21211,6 +21331,8 @@
             const lblEl = document.getElementById('goals-month-label');
             if (navEl) navEl.style.display = 'none';
             if (lblEl) lblEl.textContent = '';
+
+            renderGoalsRiskStrip();
 
             // Sincroniza o toggle visual com o estado atual
             document.getElementById('goals-mode-cards')?.classList.toggle('active', goalsDisplayMode === 'cards');
@@ -22051,50 +22173,6 @@
             if (wrap) wrap.classList.toggle('hidden', recurring);
         }
 
-        function updateGoalHierarchyOptionsLegacy() {
-            const level   = document.getElementById('goal-level-sel')?.value || 'category';
-            const itemEl  = document.getElementById('goal-item-sel');
-            const labelEl = document.getElementById('goal-item-label');
-            if (!itemEl) return;
-
-            const labels = { category: 'Categoria', subcategory: 'Subcategoria', destination: 'Destino' };
-            if (labelEl) labelEl.textContent = labels[level] || 'Item';
-
-            let options = [];
-            if (level === 'category') {
-                options = [...state.categories]
-                    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
-                    .map(c => ({ id: c.id, label: c.name }));
-            } else if (level === 'subcategory') {
-                options = [...state.subCategories]
-                    .sort((a, b) => {
-                        const cA = state.categories.find(c => c.id === a.categoryId)?.name || '';
-                        const cB = state.categories.find(c => c.id === b.categoryId)?.name || '';
-                        return cA.localeCompare(cB, 'pt-BR') || a.name.localeCompare(b.name, 'pt-BR');
-                    })
-                    .map(s => {
-                        const cat = state.categories.find(c => c.id === s.categoryId)?.name || '';
-                        return { id: s.id, label: `${cat} › ${s.name}` };
-                    });
-            } else {
-                options = [...state.destinations]
-                    .sort((a, b) => {
-                        const subA = state.subCategories.find(s => s.id === a.subCategoryId);
-                        const subB = state.subCategories.find(s => s.id === b.subCategoryId);
-                        const cA = state.categories.find(c => c.id === subA?.categoryId)?.name || '';
-                        const cB = state.categories.find(c => c.id === subB?.categoryId)?.name || '';
-                        return cA.localeCompare(cB, 'pt-BR') || (subA?.name || '').localeCompare(subB?.name || '', 'pt-BR') || a.name.localeCompare(b.name, 'pt-BR');
-                    })
-                    .map(d => {
-                        const sub = state.subCategories.find(s => s.id === d.subCategoryId);
-                        const cat = state.categories.find(c => c.id === sub?.categoryId)?.name || '';
-                        return { id: d.id, label: `${cat} › ${sub?.name || ''} › ${d.name}` };
-                    });
-            }
-
-            itemEl.innerHTML = options.map(o => `<option value="${o.id}">${o.label}</option>`).join('');
-            updateGoalHierarchyOptions();
-        }
 
         function updateGoalHierarchyOptions() {
             const level = document.getElementById('goal-level-sel')?.value || 'category';
