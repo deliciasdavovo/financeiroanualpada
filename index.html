@@ -1574,18 +1574,6 @@
             color: #FFFFFF;
             box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
         }
-        .recurrence-cadence-badge {
-            display: inline-block;
-            padding: 3px 9px;
-            border-radius: 999px;
-            background: #EEF2FF;
-            color: #4338CA;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            white-space: nowrap;
-        }
         .modal-actions {
             display: flex;
             gap: 10px;
@@ -8401,21 +8389,6 @@
                             </div>
                         </div>
                         <div id="projection-list" class="projection-list"></div>
-                    </section>
-                    <section class="card-premium reports-insights-card" id="destino-recurrence-panel">
-                        <div class="reports-card-head">
-                            <div>
-                                <h4>Recorrência por destino</h4>
-                                <p>Quantas vezes você paga cada destino e com que frequência (base: lançamentos realizados).</p>
-                            </div>
-                        </div>
-                        <div class="reports-control-row" role="group" aria-label="Período da análise de recorrência">
-                            <button type="button" id="destino-recurrence-period-3" class="reports-chip" onclick="setDestinoRecurrencePeriod(3)">Últimos 3 meses</button>
-                            <button type="button" id="destino-recurrence-period-6" class="reports-chip active" onclick="setDestinoRecurrencePeriod(6)">Últimos 6 meses</button>
-                            <button type="button" id="destino-recurrence-period-12" class="reports-chip" onclick="setDestinoRecurrencePeriod(12)">Últimos 12 meses</button>
-                            <input type="search" id="destino-recurrence-search" class="reports-small-input" placeholder="Buscar destino..." oninput="renderDestinoRecurrence()" aria-label="Buscar destino" style="min-width:160px;">
-                        </div>
-                        <div id="destino-recurrence-content"></div>
                     </section>
                 </div>
 
@@ -17026,140 +16999,7 @@
             updateProjectionControls();
             if (projectionMode === 'history') renderHistoryProjection();
             else renderPendingProjection();
-            renderDestinoRecurrence();
             refreshLucideIcons();
-        }
-
-        let destinoRecurrencePeriodMonths = 6;
-
-        function setDestinoRecurrencePeriod(months) {
-            destinoRecurrencePeriodMonths = [3, 6, 12].includes(months) ? months : 6;
-            [3, 6, 12].forEach(m => {
-                document.getElementById(`destino-recurrence-period-${m}`)?.classList.toggle('active', m === destinoRecurrencePeriodMonths);
-            });
-            renderDestinoRecurrence();
-        }
-
-        function getRecurrenceCadenceLabel(medianInterval, count) {
-            if (!Number.isFinite(medianInterval) || count < 2) return count >= 1 ? 'Pontual' : '—';
-            if (medianInterval <= 2) return 'Diária';
-            if (medianInterval <= 10) return 'Semanal';
-            if (medianInterval <= 20) return 'Quinzenal';
-            if (medianInterval <= 45) return 'Mensal';
-            if (medianInterval <= 75) return 'Bimestral';
-            return 'Esporádica';
-        }
-
-        function computeDestinoRecurrence(months) {
-            const today = new Date();
-            const startDate = new Date(today.getFullYear(), today.getMonth() - months, today.getDate());
-            const startIso = formatLocalDate(startDate);
-            const todayIso = formatLocalDate(today);
-            const spanMonths = Math.max(1, months);
-
-            const groups = new Map();
-            getAnalyticalEntries(state.entries).forEach(entry => {
-                if (String(entry.status || '').toUpperCase() !== 'REALIZADO') return;
-                const date = String(entry.date || '');
-                if (!date || date < startIso || date > todayIso) return;
-                const destId = String(entry.destinationId || '');
-                if (!destId) return;
-                if (!groups.has(destId)) groups.set(destId, []);
-                groups.get(destId).push(entry);
-            });
-
-            const rows = [];
-            groups.forEach((items, destId) => {
-                const { destination: dst, category: cat } = getDestinationHierarchyById(destId);
-                if (!dst) return;
-                const dates = items.map(e => String(e.date || '')).filter(Boolean).sort();
-                const count = dates.length;
-                const total = items.reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                const intervals = [];
-                for (let i = 1; i < dates.length; i += 1) {
-                    const prev = parseIsoDateLocal(dates[i - 1]);
-                    const cur = parseIsoDateLocal(dates[i]);
-                    if (prev && cur) intervals.push(Math.round((cur.getTime() - prev.getTime()) / 86400000));
-                }
-                let medianInterval = NaN;
-                if (intervals.length) {
-                    const sorted = [...intervals].sort((a, b) => a - b);
-                    const mid = Math.floor(sorted.length / 2);
-                    medianInterval = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-                }
-                rows.push({
-                    id: destId,
-                    name: getDestinationLabel(dst) || 'Sem destino',
-                    flow: normalizeFlowType((cat || {}).type),
-                    count,
-                    total,
-                    perMonth: count / spanMonths,
-                    perWeek: count / (spanMonths * AVG_WEEKS_PER_MONTH),
-                    perFortnight: count / (spanMonths * AVG_FORTNIGHTS_PER_MONTH),
-                    medianInterval,
-                    cadence: getRecurrenceCadenceLabel(medianInterval, count),
-                    lastDate: dates[dates.length - 1] || ''
-                });
-            });
-            rows.sort((a, b) => b.count - a.count || b.total - a.total);
-            return rows;
-        }
-
-        function formatRecurrenceNumber(value) {
-            if (!Number.isFinite(value) || value <= 0) return '0';
-            if (value >= 10) return String(Math.round(value));
-            return value.toFixed(1).replace('.', ',');
-        }
-
-        function renderDestinoRecurrence() {
-            const content = document.getElementById('destino-recurrence-content');
-            if (!content) return;
-            const search = normalizeDestinationLookupLabel(document.getElementById('destino-recurrence-search')?.value || '');
-            let rows = computeDestinoRecurrence(destinoRecurrencePeriodMonths);
-            if (search) rows = rows.filter(r => normalizeDestinationLookupLabel(r.name).includes(search));
-
-            if (!rows.length) {
-                content.innerHTML = '<div class="cash-projection-empty">Nenhum destino com lançamentos realizados no período selecionado.</div>';
-                return;
-            }
-
-            const bodyRows = rows.map(r => {
-                const flowClass = r.flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text';
-                const intervalLabel = Number.isFinite(r.medianInterval) && r.count >= 2
-                    ? `${Math.round(r.medianInterval)} dias`
-                    : '—';
-                return `<tr>
-                    <td>
-                        <div class="projection-table-date">${escapeHtml(r.name)}</div>
-                        <div class="projection-table-sub"><span class="${flowClass}">${escapeHtml(formatBRL(r.total))}</span> no período</div>
-                    </td>
-                    <td><span class="projection-table-value">${r.count}x</span></td>
-                    <td><span class="projection-table-value">${formatRecurrenceNumber(r.perMonth)}</span></td>
-                    <td><span class="projection-table-value">${formatRecurrenceNumber(r.perWeek)}</span></td>
-                    <td><span class="projection-table-value">${formatRecurrenceNumber(r.perFortnight)}</span></td>
-                    <td><span class="projection-table-value">${intervalLabel}</span></td>
-                    <td><span class="recurrence-cadence-badge">${escapeHtml(r.cadence)}</span></td>
-                    <td><span class="projection-table-sub">${r.lastDate ? escapeHtml(formatDateBRV2(r.lastDate)) : '—'}</span></td>
-                </tr>`;
-            }).join('');
-
-            content.innerHTML = `<div class="projection-table-wrap custom-scrollbar">
-                <table class="projection-table" aria-label="Recorrência por destino">
-                    <thead>
-                        <tr>
-                            <th>Destino</th>
-                            <th>Vezes</th>
-                            <th>Por mês</th>
-                            <th>Por semana</th>
-                            <th>Por 15 dias</th>
-                            <th>Intervalo médio</th>
-                            <th>Cadência</th>
-                            <th>Último</th>
-                        </tr>
-                    </thead>
-                    <tbody>${bodyRows}</tbody>
-                </table>
-            </div>`;
         }
 
         function normalizeMinusSigns(text) {
