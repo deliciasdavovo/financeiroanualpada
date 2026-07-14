@@ -6715,6 +6715,17 @@
             color: var(--num-color);
             white-space: nowrap;
         }
+        .reports-summary-split {
+            display: block;
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.35;
+            color: var(--text-muted, #64748B);
+            letter-spacing: 0;
+            white-space: normal;
+        }
+        .reports-summary-split:empty { display: none; }
         .reports-summary-card.in span { color: var(--positive); background: var(--bg-green-soft); }
         .reports-summary-card.out span { color: var(--negative); background: var(--bg-red-soft); }
         .reports-summary-card.net span { color: var(--info); background: var(--bg-blue-soft); }
@@ -8186,7 +8197,7 @@
                     </div>
                 </section>
                 <div class="reports-summary-grid">
-                    <article class="reports-summary-card in"><span><i data-lucide="trending-up" class="w-4 h-4"></i></span><p>Entradas no ano</p><strong id="reports-annual-in">R$ 0,00</strong></article>
+                    <article class="reports-summary-card in"><span><i data-lucide="trending-up" class="w-4 h-4"></i></span><p>Entradas no ano</p><strong id="reports-annual-in">R$ 0,00</strong><small id="reports-annual-in-split" class="reports-summary-split"></small></article>
                     <article class="reports-summary-card out"><span><i data-lucide="trending-down" class="w-4 h-4"></i></span><p>Saídas no ano</p><strong id="reports-annual-out">R$ 0,00</strong></article>
                     <article class="reports-summary-card net"><span><i data-lucide="wallet" class="w-4 h-4"></i></span><p>Resultado anual</p><strong id="reports-annual-net">R$ 0,00</strong></article>
                     <article class="reports-summary-card avg"><span><i data-lucide="calendar-range" class="w-4 h-4"></i></span><p>Média mensal</p><strong id="reports-annual-avg">R$ 0,00</strong></article>
@@ -11786,6 +11797,18 @@
         }
         function isCapitalContributionEntry(entry) {
             return getEntryHierarchyNames(entry).some(isCapitalContributionName);
+        }
+        // "Venda da padaria" = entrada classificada como Operacional que NÃO é aporte de capital.
+        // Aportes, entradas financeiras, de sócios, investimentos e transferências entram como "outras entradas".
+        function isSalesRevenueEntry(entry) {
+            return normalizeFlowType((entry || {}).type) === FLOW_IN
+                && isOperacional(entry)
+                && !isCapitalContributionEntry(entry);
+        }
+        function sumSalesRevenue(entries) {
+            return (Array.isArray(entries) ? entries : [])
+                .filter(isSalesRevenueEntry)
+                .reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
         }
         const isInternalEntry = () => false;
         const getAnalyticalEntries = (entries) => (Array.isArray(entries) ? entries : []);
@@ -15511,8 +15534,10 @@
                 ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
                 : filter;
 
-            // Revenue
-            const receitaBruta = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            // Revenue — só vendas (entradas operacionais que NÃO são aporte de capital)
+            const receitaBruta = opEntries.filter(isSalesRevenueEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            // Aporte de capital entre as entradas realizadas — não conta como venda.
+            const aporteReceita = realized.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
 
             // Deductions
             const deducaoEntries = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes');
@@ -15576,9 +15601,12 @@
 
             let rows = '';
             rows += groupHeader('Receita');
-            rows += row('Receita bruta', receitaBruta, 'dre-row-line', false, false, '');
+            rows += row('Receita bruta de vendas', receitaBruta, 'dre-row-line', false, false, '');
             if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true, '');
             rows += subtotalRow('Receita líquida', receitaLiquida);
+            if (aporteReceita > 0) {
+                rows += `<tr class="dre-row-line"><td class="dre-label" style="color:#94A3B8">Aporte de capital <span style="font-weight:600">(não é venda)</span></td><td class="dre-value-col dre-neutral" style="color:#94A3B8">${formatBRL(aporteReceita)}</td><td class="dre-pct-col"></td></tr>`;
+            }
 
             rows += groupHeader('Custos');
             rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true, 'cmv');
@@ -15612,7 +15640,7 @@
                     <thead><tr><th style="text-align:left;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Descrição</th><th style="text-align:right;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Valor</th><th style="text-align:right;padding:8px 16px 8px 4px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">% Receita</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
-                <p class="dre-note">* Não inclui sócios, investimentos e transferências. % em vermelho = fora do benchmark de mercado (CMV 25–35%, Equipe 25–35%, Fixas &lt;15%). Altere o "Tipo de movimento" nos lançamentos para ajustar a classificação.</p>
+                <p class="dre-note">* Receita bruta = só vendas. Aporte de capital, sócios, investimentos e transferências não entram como venda. % em vermelho = fora do benchmark de mercado (CMV 25–35%, Equipe 25–35%, Fixas &lt;15%). Altere o "Tipo de movimento" da categoria do lançamento para ajustar a classificação.</p>
             `;
         }
 
@@ -15965,6 +15993,8 @@
             const totalInc = data.reduce((acc, item) => acc + item.inc, 0);
             const totalExp = data.reduce((acc, item) => acc + item.exp, 0);
             const totalNet = totalInc - totalExp;
+            const totalVendas = data.reduce((acc, item) => acc + (Number(item.vendas) || 0), 0);
+            const totalOutras = data.reduce((acc, item) => acc + (Number(item.outras) || 0), 0);
             const activeMonths = data.filter(item => item.inc > 0 || item.exp > 0).length || 12;
             const avg = totalNet / activeMonths;
             const setText = (id, value) => {
@@ -15972,6 +16002,9 @@
                 if (el) el.innerText = value;
             };
             setText('reports-annual-in', formatBRLNoCents(totalInc));
+            setText('reports-annual-in-split', totalOutras > 0
+                ? `Vendas ${formatBRLNoCents(totalVendas)} · Outras ${formatBRLNoCents(totalOutras)}`
+                : '');
             setText('reports-annual-out', formatBRLNoCents(totalExp));
             setText('reports-annual-net', formatBRLNoCents(totalNet));
             setText('reports-annual-avg', formatBRLNoCents(avg));
@@ -16022,14 +16055,16 @@
                 const inc = mEntries.filter(e=>normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const exp = mEntries.filter(e=>normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
                 const aporte = mEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e)).reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                data.push({m, inc, exp, aporte, bal: inc-exp});
+                const vendas = sumSalesRevenue(mEntries);
+                const outras = Math.max(inc - vendas, 0);
+                data.push({m, inc, exp, aporte, vendas, outras, bal: inc-exp});
             }
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
             document.getElementById('annual-table-body').innerHTML = data.map((d,i) => `<tr class="table-row">
                 <td class="px-12 py-5 uppercase text-slate-600 font-bold">${monthNames[i]}</td>
                 <td class="px-12 py-5 text-right flow-income-text font-bold">
                     <div>${formatBRL(d.inc)}</div>
-                    ${d.aporte > 0 ? `<div class="annual-aporte-note">Aporte: ${formatBRL(d.aporte)}</div>` : ''}
+                    ${d.outras > 0 ? `<div class="annual-aporte-note">Vendas: ${formatBRL(d.vendas)} · Outras: ${formatBRL(d.outras)}</div>` : ''}
                 </td>
                 <td class="px-12 py-5 text-right flow-expense-text font-bold">${formatBRL(d.exp)}</td>
                 <td class="px-12 py-5 text-right font-black ${d.bal>=0?'flow-balance-text':'flow-expense-text'}">${formatBRL(d.bal)}</td>
@@ -16040,8 +16075,8 @@
             if(ctxEl) {
                 if(window.aChart) window.aChart.destroy();
                 const annualInc = data.map(x => x.inc);
-                const annualIncOperational = data.map(x => Math.max((Number(x.inc) || 0) - (Number(x.aporte) || 0), 0));
-                const annualAporte = data.map(x => Number(x.aporte) || 0);
+                const annualVendas = data.map(x => Number(x.vendas) || 0);
+                const annualOutras = data.map(x => Math.max(Number(x.outras) || 0, 0));
                 const annualExp = data.map(x => x.exp);
                 const annualMax = Math.max(...annualInc, ...annualExp, 0);
                 const annualAxisMax = annualMax > 0 ? Math.ceil(annualMax * 1.15) : 100;
@@ -16051,8 +16086,8 @@
                     data: {
                         labels: monthNames,
                         datasets: [
-                            { label: 'Entradas operacionais', data: annualIncOperational, backgroundColor: '#149463', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
-                            { label: 'Aporte de capital', data: annualAporte, backgroundColor: 'rgba(20, 148, 99, 0.45)', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
+                            { label: 'Vendas', data: annualVendas, backgroundColor: '#149463', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
+                            { label: 'Outras entradas', data: annualOutras, backgroundColor: 'rgba(20, 148, 99, 0.45)', borderRadius: 8, maxBarThickness: 22, stack: 'entrada' },
                             { label: 'Saídas', data: annualExp, backgroundColor: '#B23A3A', borderRadius: 8, maxBarThickness: 22, stack: 'saida' }
                         ]
                     },
