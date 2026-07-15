@@ -666,19 +666,72 @@
             overflow-y: auto;
         }
 
+        /* ===== Menu lateral estilo Supabase (trilho de ícones que abre ao passar o mouse) ===== */
         #sidebar {
-            transition: width var(--dur-slow) var(--ease-premium);
             position: relative;
-            background: #111827 !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+            width: 88px;                 /* reserva o espaço do trilho (só ícones) */
+            transition: width var(--dur-slow) var(--ease-premium);
+            background: transparent !important;
+            border: 0 !important;
+            z-index: 40;
         }
-        #sidebar.collapsed { width: 88px; }
-        #sidebar.collapsed .nav-text, #sidebar.collapsed .sidebar-header-text { display: none; }
-        #sidebar.collapsed .sidebar-btn { padding-left: 0; justify-content: center; }
-        #sidebar.collapsed .sidebar-btn i { margin-right: 0; }
+        #sidebar.pinned { width: 264px; } /* fixado aberto: empurra o conteúdo */
+
+        .sidebar-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 88px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #111827;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            transition: width var(--dur-slow) var(--ease-premium),
+                        box-shadow var(--dur-std) var(--ease-premium);
+            z-index: 60;
+        }
+        /* Expande ao passar o mouse (quando não estiver fixado) — sobrepõe o conteúdo */
+        #sidebar:not(.pinned):hover .sidebar-panel {
+            width: 264px;
+            box-shadow: 12px 0 44px rgba(0, 0, 0, 0.38);
+        }
+        /* Fixado: permanece aberto */
+        #sidebar.pinned .sidebar-panel { width: 264px; }
+
+        /* Rótulos: escondidos no modo trilho, revelados ao expandir */
+        #sidebar .nav-text {
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 0;
+            opacity: 0;
+            transition: opacity var(--dur-std) var(--ease-premium),
+                        max-width var(--dur-slow) var(--ease-premium);
+        }
+        #sidebar:not(.pinned):hover .nav-text,
+        #sidebar.pinned .nav-text {
+            max-width: 160px;
+            opacity: 1;
+        }
+
+        /* Botões: centrados no trilho, alinhados à esquerda quando expandido */
+        #sidebar .sidebar-btn {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            justify-content: center;
+            gap: 0;
+        }
+        #sidebar:not(.pinned):hover .sidebar-btn,
+        #sidebar.pinned .sidebar-btn {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            justify-content: flex-start;
+            gap: 16px;
+        }
         #sidebar .sidebar-header-text h1 { color: #E5E7EB !important; }
         #sidebar .sidebar-header-text p { color: #9CA3AF !important; }
-        #sidebar nav.space-y-2 > * + * { margin-top: 16px !important; }
+        #sidebar nav.space-y-2 > * + * { margin-top: 12px !important; }
 
         .sidebar-toggle {
             position: absolute;
@@ -693,9 +746,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 50;
+            z-index: 70;
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+            transition: right var(--dur-slow) var(--ease-premium);
         }
+        .sidebar-toggle i { transition: transform var(--dur-std) var(--ease-premium); }
+        /* Acompanha a borda quando fixado aberto */
+        #sidebar.pinned .sidebar-toggle { right: -14px; }
         .logo-pig-wrap {
             position: relative;
             transform-origin: 50% 60%;
@@ -2449,7 +2506,7 @@
             background: #3AA47D;
             opacity: 1;
         }
-        #sidebar.collapsed .sidebar-btn.active::before {
+        #sidebar:not(.pinned):not(:hover) .sidebar-btn.active::before {
             display: none;
         }
         thead {
@@ -7827,11 +7884,11 @@
     </div>
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="w-80 bg-white border-r flex flex-col shrink-0 hidden lg:flex">
-        <button onclick="toggleSidebar()" class="sidebar-toggle" type="button" aria-label="Expandir ou recolher menu lateral" aria-controls="sidebar" aria-expanded="true">
-            <i data-lucide="chevron-left" id="sidebar-icon" class="w-4 h-4"></i>
+    <aside id="sidebar" class="shrink-0 hidden lg:flex" aria-label="Menu lateral">
+        <button onclick="toggleSidebar()" class="sidebar-toggle" type="button" aria-label="Fixar ou recolher menu lateral" aria-controls="sidebar" aria-expanded="false">
+            <i data-lucide="chevron-right" id="sidebar-icon" class="w-4 h-4"></i>
         </button>
-        
+        <div class="sidebar-panel">
         <nav class="flex-1 px-4 space-y-2 mt-8" aria-label="Navegação principal">
             <button type="button" onclick="switchTab('home')" id="nav-home" class="sidebar-btn active w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50" aria-current="page">
                 <i data-lucide="layout-dashboard" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Início</span>
@@ -7855,6 +7912,7 @@
                 <i data-lucide="database" class="w-5 shrink-0" aria-hidden="true"></i><span class="nav-text text-sm font-bold">Dados</span>
             </button>
         </nav>
+        </div>
     </aside>
 
     <!-- MAIN -->
@@ -12640,13 +12698,15 @@
             return renderLancamentos(dadosBase);
         }
         function toggleSidebar() {
+            // sidebarCollapsed reaproveitado como "fixado aberto" (pinned)
             sidebarCollapsed = !sidebarCollapsed;
+            const pinned = sidebarCollapsed;
             const sidebar = document.getElementById('sidebar');
             const icon = document.getElementById('sidebar-icon');
             const toggleBtn = document.querySelector('.sidebar-toggle');
-            if(sidebar) sidebar.classList.toggle('collapsed', sidebarCollapsed);
-            if(icon) icon.style.transform = sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
-            if(toggleBtn) toggleBtn.setAttribute('aria-expanded', sidebarCollapsed ? 'false' : 'true');
+            if(sidebar) sidebar.classList.toggle('pinned', pinned);
+            if(icon) icon.style.transform = pinned ? 'rotate(180deg)' : 'rotate(0deg)';
+            if(toggleBtn) toggleBtn.setAttribute('aria-expanded', pinned ? 'true' : 'false');
         }
 
         function initPiggyMicroInteractions() {
