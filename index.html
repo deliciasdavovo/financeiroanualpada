@@ -7639,6 +7639,36 @@
         .dre-pct-col.pct-warn  { color: #B23A3A; font-weight: 600; }
         .dre-pct-col.pct-ok    { color: #15803D; font-weight: 600; }
 
+        /* ===== DRE COMPARATIVO POR MÊS (RELATÓRIO ANUAL) ===== */
+        .dre-comp-wrap { overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 16px; background: #fff; }
+        .dre-comp-table { border-collapse: collapse; font-size: 12px; width: 100%; min-width: 900px; }
+        .dre-comp-table th, .dre-comp-table td { padding: 8px 12px; white-space: nowrap; text-align: right; }
+        .dre-comp-table thead th { position: sticky; top: 0; background: #F8FAFC; color: #64748B; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; border-bottom: 1px solid #E2E8F0; z-index: 2; }
+        .dre-comp-table th.dre-comp-label, .dre-comp-table td.dre-comp-label { text-align: left; position: sticky; left: 0; background: #fff; z-index: 1; min-width: 200px; color: #0F172A; font-weight: 600; }
+        .dre-comp-table thead th.dre-comp-label { background: #F8FAFC; z-index: 3; }
+        .dre-comp-table th.dre-comp-total, .dre-comp-table td.dre-comp-total { position: sticky; right: 0; background: #F1F5F9; z-index: 1; font-weight: 700; box-shadow: -1px 0 0 #E2E8F0; }
+        .dre-comp-table thead th.dre-comp-total { background: #EEF2F7; z-index: 3; }
+        .dre-comp-row-line td { color: #1E293B; }
+        .dre-comp-row-line:hover td { background: #F8FAFC; }
+        .dre-comp-row-line:hover td.dre-comp-label { background: #F8FAFC; }
+        .dre-comp-row-subtotal td { background: #F1F5F9; font-weight: 700; border-top: 1px solid #E2E8F0; }
+        .dre-comp-row-subtotal td.dre-comp-label { background: #F1F5F9; }
+        .dre-comp-row-result td { background: #EFF6FF; font-weight: 700; border-top: 2px solid #BFDBFE; }
+        .dre-comp-row-result td.dre-comp-label { background: #EFF6FF; }
+        .dre-comp-row-lucro td { background: #0F7A5C; color: #fff !important; font-weight: 800; }
+        .dre-comp-row-lucro td.dre-comp-label { background: #0F7A5C; color: #fff !important; }
+        .dre-comp-row-lucro td.dre-comp-total { background: #0C6B50; }
+        .dre-comp-row-lucro td span { color: #fff !important; }
+        .dre-comp-row-lucro td span.dre-comp-neg { color: #FECACA !important; }
+        .dre-comp-row-lucro td span.dre-comp-zero { color: rgba(255,255,255,0.55) !important; }
+        .dre-comp-group td { background: #FAFBFC; color: #64748B; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; text-align: left; }
+        .dre-comp-group td.dre-comp-label { background: #FAFBFC; }
+        .dre-comp-pos { color: #0F7A5C; }
+        .dre-comp-neg { color: #B23A3A; }
+        .dre-comp-zero { color: #CBD5E1; }
+        .dre-comp-deduct { padding-left: 28px !important; color: #64748B; font-weight: 500; }
+        .dre-comp-note { font-size: 11px; color: #94A3B8; padding: 12px 4px 0; }
+
         /* ===== ANÁLISE HORIZONTAL POR CATEGORIA ===== */
         .horiz-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
         .horiz-tab-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid var(--divider); background: white; cursor: pointer; color: #64748B; transition: all 0.15s; }
@@ -8191,6 +8221,7 @@
                     <article class="reports-summary-card avg"><span><i data-lucide="calendar-range" class="w-4 h-4"></i></span><p>Média mensal</p><strong id="reports-annual-avg">R$ 0,00</strong></article>
                 </div>
                 <div class="card-premium p-10 h-[450px] reports-chart-card"><div class="reports-card-head"><div><h4>Gráfico anual</h4><p>Comparação mês a mês de entradas e saídas.</p></div></div><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
+                <section id="annual-dre-comparativo" class="card-premium p-8"></section>
                 <div class="card-premium overflow-hidden reports-legacy-annual-table hidden">
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="annual-main-table" class="w-full text-left">
@@ -15489,13 +15520,53 @@
             clearMonthlyCategoryCharts();
         }
 
+        // Ordem e rótulos dos grupos de despesa operacional na DRE (usado no mês e no comparativo anual)
+        const DRE_EXP_GROUP_ORDER = ['equipe','fixas','manutencao','administrativo','marketing','outras'];
+        const DRE_EXP_GROUP_LABELS = { equipe:'Equipe', fixas:'Despesas fixas', manutencao:'Manutenção', administrativo:'Administrativo', marketing:'Marketing', outras:'Outras despesas' };
+
+        // Calcula todas as linhas de uma DRE gerencial a partir de um conjunto de lançamentos.
+        // Reaproveitado pela DRE do mês e pela DRE comparativa por mês do relatório anual.
+        function computeDreLines(entries) {
+            const realized = (Array.isArray(entries) ? entries : []).filter(e => e.status === 'REALIZADO');
+            const opEntries  = realized.filter(isOperacional);
+            const finEntries = realized.filter(isFinanceiro);
+
+            const receitaBruta = opEntries.filter(isSalesRevenueEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const aporteReceita = realized.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
+
+            const deducoes = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const receitaLiquida = receitaBruta - deducoes;
+
+            const cmv = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'cmv').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const margemBruta = receitaLiquida - cmv;
+
+            const expGroups = {};
+            opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
+                const gk = classifyDreGroup(e);
+                if (!expGroups[gk]) expGroups[gk] = 0;
+                expGroups[gk] += Number(e.amount) || 0;
+            });
+
+            const finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+
+            const totalOpExp = Object.values(expGroups).reduce((a,b)=>a+b, 0);
+            const resultadoOp = margemBruta - totalOpExp;
+            const lucroGerencial = resultadoOp - finExp + finInc;
+
+            return {
+                realizedCount: realized.length,
+                receitaBruta, aporteReceita, deducoes, receitaLiquida,
+                cmv, margemBruta, expGroups, finExp, finInc,
+                totalOpExp, resultadoOp, lucroGerencial
+            };
+        }
+
         function renderDRE(filter, allMonthEntries) {
             const section = document.getElementById('dre-mensal-section');
             if (!section) return;
 
             const realized = (allMonthEntries || []).filter(e => e.status === 'REALIZADO');
-            const opEntries  = realized.filter(isOperacional);
-            const finEntries = realized.filter(isFinanceiro);
 
             if (realized.length === 0) {
                 section.innerHTML = '';
@@ -15507,36 +15578,18 @@
                 ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
                 : filter;
 
-            // Revenue — só vendas (entradas operacionais que NÃO são aporte de capital)
-            const receitaBruta = opEntries.filter(isSalesRevenueEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            // Aporte de capital entre as entradas realizadas — não conta como venda.
-            const aporteReceita = realized.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
-
-            // Deductions
-            const deducaoEntries = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes');
-            const deducoes = deducaoEntries.reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const receitaLiquida = receitaBruta - deducoes;
-
-            // CMV
-            const cmvEntries = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'cmv');
-            const cmv = cmvEntries.reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const margemBruta = receitaLiquida - cmv;
-
-            // Operating expense groups
-            const expGroups = {};
-            opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
-                const gk = classifyDreGroup(e);
-                if (!expGroups[gk]) expGroups[gk] = 0;
-                expGroups[gk] += Number(e.amount) || 0;
-            });
-
-            // Financial expenses/income
-            const finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
-
-            const totalOpExp = Object.values(expGroups).reduce((a,b)=>a+b, 0);
-            const resultadoOp = margemBruta - totalOpExp;
-            const lucroGerencial = resultadoOp - finExp + finInc;
+            const dre = computeDreLines(realized);
+            const receitaBruta = dre.receitaBruta;
+            const aporteReceita = dre.aporteReceita;
+            const deducoes = dre.deducoes;
+            const receitaLiquida = dre.receitaLiquida;
+            const cmv = dre.cmv;
+            const margemBruta = dre.margemBruta;
+            const expGroups = dre.expGroups;
+            const finExp = dre.finExp;
+            const finInc = dre.finInc;
+            const resultadoOp = dre.resultadoOp;
+            const lucroGerencial = dre.lucroGerencial;
 
             // Helpers para % sobre receita bruta (Análise Vertical)
             const pctOf = (value) => receitaBruta > 0 ? ((value / receitaBruta) * 100) : null;
@@ -15586,11 +15639,9 @@
             rows += subtotalRow('Margem bruta', margemBruta);
 
             rows += groupHeader('Despesas operacionais');
-            const expGroupOrder = ['equipe','fixas','manutencao','administrativo','marketing','outras'];
-            const expGroupLabels = { equipe:'Equipe', fixas:'Despesas fixas', manutencao:'Manutenção', administrativo:'Administrativo', marketing:'Marketing', outras:'Outras despesas' };
-            expGroupOrder.forEach(gk => {
+            DRE_EXP_GROUP_ORDER.forEach(gk => {
                 const val = expGroups[gk] || 0;
-                if (val > 0) rows += row(expGroupLabels[gk] || gk, val, 'dre-row-line', false, true, gk);
+                if (val > 0) rows += row(DRE_EXP_GROUP_LABELS[gk] || gk, val, 'dre-row-line', false, true, gk);
             });
             const resOpPct = fmtPct(resultadoOp);
             rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:700">${formatBRL(resultadoOp)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${resOpPct}</td></tr>`;
@@ -16100,7 +16151,112 @@
             }
             const yearEntries = getAnalyticalEntries(state.entries).filter(e => e.date && e.date.startsWith(`${year}-`));
             renderAnnualReportExtras(year, data, yearEntries);
+            renderAnnualDREComparativo(year);
             renderAnnualTemporalComparison(year);
+        }
+
+        // DRE gerencial comparativa: uma coluna por mês do ano + coluna Total.
+        function renderAnnualDREComparativo(year) {
+            const section = document.getElementById('annual-dre-comparativo');
+            if (!section) return;
+
+            const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const all = getAnalyticalEntries(state.entries);
+            const months = [];
+            for (let m = 0; m < 12; m++) {
+                const prefix = `${year}-${(m + 1).toString().padStart(2, '0')}`;
+                const mEntries = all.filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
+                months.push(computeDreLines(mEntries));
+            }
+
+            const hasData = months.some(d => d.realizedCount > 0);
+            if (!hasData) {
+                section.innerHTML = `
+                    <div class="reports-card-head"><div>
+                        <h4>DRE comparativa por mês</h4>
+                        <p>Resultado gerencial de cada mês de ${year}, lado a lado.</p>
+                    </div></div>
+                    <div class="dre-empty" style="border:1px dashed #E2E8F0;border-radius:16px;margin-top:12px">Nenhum lançamento realizado em ${year} para montar a DRE.</div>`;
+                return;
+            }
+
+            // Agregado do ano (soma de cada linha)
+            const sumField = (fn) => months.reduce((a, d) => a + fn(d), 0);
+            const total = {
+                receitaBruta: sumField(d => d.receitaBruta),
+                deducoes: sumField(d => d.deducoes),
+                receitaLiquida: sumField(d => d.receitaLiquida),
+                cmv: sumField(d => d.cmv),
+                margemBruta: sumField(d => d.margemBruta),
+                finExp: sumField(d => d.finExp),
+                finInc: sumField(d => d.finInc),
+                resultadoOp: sumField(d => d.resultadoOp),
+                lucroGerencial: sumField(d => d.lucroGerencial),
+                expGroups: DRE_EXP_GROUP_ORDER.reduce((acc, gk) => {
+                    acc[gk] = sumField(d => d.expGroups[gk] || 0);
+                    return acc;
+                }, {})
+            };
+
+            const fmt = (v, opts = {}) => {
+                if (!v) return `<span class="dre-comp-zero">–</span>`;
+                const cls = opts.deduct ? 'dre-comp-neg' : (v > 0 ? 'dre-comp-pos' : 'dre-comp-neg');
+                const prefix = opts.deduct ? '(-) ' : '';
+                return `<span class="${cls}">${prefix}${formatBRLNoCents(v)}</span>`;
+            };
+
+            // Monta uma linha: label + 12 meses + total
+            const line = (label, getVal, opts = {}) => {
+                const rowCls = opts.rowCls || 'dre-comp-row-line';
+                const labelCls = opts.indent ? 'dre-comp-label dre-comp-deduct' : 'dre-comp-label';
+                let cells = '';
+                for (let m = 0; m < 12; m++) cells += `<td>${fmt(getVal(months[m]), opts)}</td>`;
+                cells += `<td class="dre-comp-total">${fmt(getVal(total), opts)}</td>`;
+                return `<tr class="${rowCls}"><td class="${labelCls}">${label}</td>${cells}</tr>`;
+            };
+            const groupRow = (label) => `<tr class="dre-comp-group"><td class="dre-comp-label">${label}</td><td colspan="13"></td></tr>`;
+
+            let body = '';
+            body += groupRow('Receita');
+            body += line('Receita bruta de vendas', d => d.receitaBruta);
+            if (total.deducoes > 0) body += line('Deduções da receita', d => d.deducoes, { indent: true, deduct: true });
+            body += line('Receita líquida', d => d.receitaLiquida, { rowCls: 'dre-comp-row-subtotal' });
+
+            body += groupRow('Custos');
+            body += line('CMV / Custos de produção', d => d.cmv, { indent: true, deduct: true });
+            body += line('Margem bruta', d => d.margemBruta, { rowCls: 'dre-comp-row-subtotal' });
+
+            body += groupRow('Despesas operacionais');
+            DRE_EXP_GROUP_ORDER.forEach(gk => {
+                if ((total.expGroups[gk] || 0) > 0) {
+                    body += line(DRE_EXP_GROUP_LABELS[gk] || gk, d => d.expGroups[gk] || 0, { indent: true, deduct: true });
+                }
+            });
+            body += line('Resultado operacional', d => d.resultadoOp, { rowCls: 'dre-comp-row-result' });
+
+            if (total.finExp > 0 || total.finInc > 0) {
+                body += groupRow('Financeiro');
+                if (total.finExp > 0) body += line('Juros e despesas financeiras', d => d.finExp, { indent: true, deduct: true });
+                if (total.finInc > 0) body += line('Receitas financeiras', d => d.finInc);
+            }
+
+            body += line('Lucro gerencial', d => d.lucroGerencial, { rowCls: 'dre-comp-row-lucro' });
+
+            const headCells = monthNames.map(n => `<th>${n}</th>`).join('');
+
+            section.innerHTML = `
+                <div class="reports-card-head" style="margin-bottom:16px"><div>
+                    <h4>DRE comparativa por mês</h4>
+                    <p>Resultado gerencial de cada mês de ${year}, lado a lado. Role a tabela na horizontal para ver todos os meses.</p>
+                </div></div>
+                <div class="dre-comp-wrap custom-scrollbar">
+                    <table class="dre-comp-table">
+                        <thead><tr><th class="dre-comp-label">Descrição</th>${headCells}<th class="dre-comp-total">Total ${year}</th></tr></thead>
+                        <tbody>${body}</tbody>
+                    </table>
+                </div>
+                <p class="dre-comp-note">* Receita bruta considera apenas vendas. Aportes de capital, sócios, investimentos e transferências não entram como venda. Valores arredondados. A classificação dos grupos segue o "Tipo de movimento" e as categorias de cada lançamento.</p>
+            `;
         }
         function formatVariation(current, prev) {
             if (!prev) return '-';
