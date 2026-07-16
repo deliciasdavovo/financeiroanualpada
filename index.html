@@ -7569,6 +7569,15 @@
         .dre-separator { border: none; border-top: 1px solid #F1F5F9; margin: 0; }
         .dre-empty { text-align: center; padding: 32px; color: #94A3B8; font-size: 13px; font-weight: 600; }
         .dre-note { font-size: 11px; color: #94A3B8; padding: 10px 24px 14px; }
+        .dre-row-sobra td { background: #F1F5F9; font-weight: 700; border-top: 2px solid #CBD5E1; }
+        /* Tooltip explicativo em cada linha do DRE */
+        .dre-tip { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 7px; border-radius: 50%; background: rgba(148,163,184,.28); color: #64748B; font-size: 10px; font-weight: 700; font-style: normal; line-height: 1; cursor: help; position: relative; vertical-align: middle; text-transform: none; letter-spacing: normal; }
+        .dre-tip:hover, .dre-tip:focus { background: #64748B; color: #fff; outline: none; }
+        .dre-tip .dre-tip-box { visibility: hidden; opacity: 0; position: absolute; top: calc(100% + 8px); left: 0; width: 240px; max-width: 62vw; background: #1E293B; color: #F1F5F9; font-size: 11.5px; font-weight: 400; font-style: normal; line-height: 1.5; text-align: left; text-transform: none; letter-spacing: normal; padding: 9px 11px; border-radius: 9px; box-shadow: 0 10px 30px rgba(15,23,42,.28); z-index: 60; transition: opacity .12s ease; pointer-events: none; white-space: normal; }
+        .dre-tip.up .dre-tip-box { top: auto; bottom: calc(100% + 8px); }
+        .dre-tip .dre-tip-box::after { content: ''; position: absolute; top: -5px; left: 4px; border: 5px solid transparent; border-top: 0; border-bottom-color: #1E293B; }
+        .dre-tip.up .dre-tip-box::after { top: auto; bottom: -5px; border-bottom: 0; border-top-color: #1E293B; }
+        .dre-tip:hover .dre-tip-box, .dre-tip:focus .dre-tip-box { visibility: visible; opacity: 1; }
 
         /* ===== ABA INÍCIO — HOME TAB ===== */
         .home-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -11906,12 +11915,37 @@
         function isCapitalContributionEntry(entry) {
             return getEntryHierarchyNames(entry).some(isCapitalContributionName);
         }
-        // "Venda da padaria" = entrada classificada como Operacional que NÃO é aporte de capital.
-        // Aportes, entradas financeiras, de sócios, investimentos e transferências entram como "outras entradas".
+        // Receita de aluguel (ex.: salas alugadas) = entrada NÃO operacional para a padaria.
+        // Soma ao lucro em "Outras receitas", mas fica fora da "Receita de vendas".
+        function isRentalIncomeName(value) {
+            const n = normalizeDestinationLookupLabel(value);
+            return n.includes('aluguel') || n.includes('alugue') || n.includes('locacao')
+                || n.includes('arrendamento') || n.includes('sublocacao');
+        }
+        function isRentalIncomeEntry(entry) {
+            return normalizeFlowType((entry || {}).type) === FLOW_IN
+                && getEntryHierarchyNames(entry).some(isRentalIncomeName);
+        }
+        // Retirada dos sócios / despesas pessoais pagas pela empresa (pró-labore, distribuição de lucro).
+        // Não é despesa do negócio: aparece ABAIXO do Lucro gerencial.
+        function isPartnerWithdrawalName(value) {
+            const n = normalizeDestinationLookupLabel(value);
+            return n.includes('pro labore') || n.includes('prolabore') || n.includes('retirada')
+                || n.includes('distribuicao de lucro') || n.includes('distribuicao lucro')
+                || (n.includes('socio') && (n.includes('pessoal') || n.includes('despesa') || n.includes('particular')));
+        }
+        function isPartnerWithdrawalEntry(entry) {
+            if (normalizeFlowType((entry || {}).type) !== FLOW_OUT) return false;
+            if (getMovimentoType(entry) === 'SOCIOS') return true;
+            return getEntryHierarchyNames(entry).some(isPartnerWithdrawalName);
+        }
+        // "Venda da padaria" = entrada classificada como Operacional que NÃO é aporte de capital nem aluguel.
+        // Aportes, aluguéis, entradas financeiras, de sócios, investimentos e transferências entram como "outras entradas".
         function isSalesRevenueEntry(entry) {
             return normalizeFlowType((entry || {}).type) === FLOW_IN
                 && isOperacional(entry)
-                && !isCapitalContributionEntry(entry);
+                && !isCapitalContributionEntry(entry)
+                && !isRentalIncomeEntry(entry);
         }
         function sumSalesRevenue(entries) {
             return (Array.isArray(entries) ? entries : [])
@@ -15647,7 +15681,7 @@
             const margemBruta = receitaLiquida - cmv;
 
             const expGroups = {};
-            opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
+            opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && !isPartnerWithdrawalEntry(e) && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
                 const gk = classifyDreGroup(e);
                 if (!expGroups[gk]) expGroups[gk] = 0;
                 expGroups[gk] += Number(e.amount) || 0;
@@ -15656,15 +15690,21 @@
             const finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
             const finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
 
+            // Outras receitas não operacionais (aluguéis) — somam ao lucro, fora das vendas.
+            const outrasReceitas = realized.filter(isRentalIncomeEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            // Retiradas / distribuição aos sócios — abaixo do lucro gerencial (não é despesa do negócio).
+            const retiradaSocios = realized.filter(isPartnerWithdrawalEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
+
             const totalOpExp = Object.values(expGroups).reduce((a,b)=>a+b, 0);
             const resultadoOp = margemBruta - totalOpExp;
-            const lucroGerencial = resultadoOp - finExp + finInc;
+            const lucroGerencial = resultadoOp - finExp + finInc + outrasReceitas;
+            const sobraAposRetiradas = lucroGerencial - retiradaSocios;
 
             return {
                 realizedCount: realized.length,
                 receitaBruta, aporteReceita, deducoes, receitaLiquida,
-                cmv, margemBruta, expGroups, finExp, finInc,
-                totalOpExp, resultadoOp, lucroGerencial
+                cmv, margemBruta, expGroups, finExp, finInc, outrasReceitas,
+                totalOpExp, resultadoOp, lucroGerencial, retiradaSocios, sobraAposRetiradas
             };
         }
 
@@ -15694,8 +15734,38 @@
             const expGroups = dre.expGroups;
             const finExp = dre.finExp;
             const finInc = dre.finInc;
+            const outrasReceitas = dre.outrasReceitas;
             const resultadoOp = dre.resultadoOp;
             const lucroGerencial = dre.lucroGerencial;
+            const retiradaSocios = dre.retiradaSocios;
+            const sobraAposRetiradas = dre.sobraAposRetiradas;
+
+            // Textos de ajuda (aparecem ao passar o mouse no "i" de cada linha)
+            const DRE_TIPS = {
+                receita: 'Tudo que a padaria vendeu de produtos e serviços. Não inclui aportes, empréstimos nem aluguéis.',
+                deducoes: 'Impostos sobre a venda (Simples/DAS), devoluções e cancelamentos que reduzem a receita.',
+                receitaLiq: 'Receita de vendas menos as deduções e impostos.',
+                aporte: 'Dinheiro que os sócios colocam na empresa (capital). Não é venda, por isso fica fora da receita.',
+                cmv: 'Custo da Mercadoria Vendida: matéria-prima, insumos, ingredientes e embalagens do que foi vendido.',
+                margem: 'O que sobra das vendas depois de pagar os custos de produção. É o dinheiro para cobrir as despesas.',
+                despOp: 'Gastos para manter o negócio funcionando no dia a dia (equipe, aluguel, luz, etc.).',
+                equipe: 'Salários, encargos, benefícios, vale, férias, FGTS e INSS da equipe.',
+                fixas: 'Contas que se repetem todo mês: aluguel, água, luz, internet, condomínio.',
+                manutencao: 'Reparos, consertos, reformas e conservação de equipamentos e do imóvel.',
+                administrativo: 'Contabilidade, jurídico, seguros, licenças, alvará e material de escritório.',
+                marketing: 'Publicidade, divulgação, campanhas, anúncios e redes sociais.',
+                outras: 'Despesas operacionais que não se encaixam nos grupos acima.',
+                resultadoOp: 'Lucro só da operação da padaria, antes do financeiro, dos aluguéis e das retiradas dos sócios.',
+                finExp: 'Juros, tarifas bancárias, multas e IOF.',
+                finInc: 'Rendimentos de aplicações e juros recebidos.',
+                outrasRec: 'Receitas fora da atividade principal, como o aluguel das salas. Somam ao lucro, mas não são "venda" da padaria.',
+                lucro: 'Resultado final do negócio no período — antes de descontar as retiradas dos sócios.',
+                retirada: 'Dinheiro que os sócios tiram do lucro (retiradas, pró-labore, despesas pessoais). Não é despesa do negócio, por isso fica abaixo do lucro.',
+                sobra: 'O que sobra em caixa depois de remunerar os sócios. É quanto o negócio realmente gerou de sobra no período.'
+            };
+            const TIP = (key, up=false) => DRE_TIPS[key]
+                ? `<span class="dre-tip${up?' up':''}" tabindex="0" aria-label="${DRE_TIPS[key].replace(/"/g,'&quot;')}">i<span class="dre-tip-box">${DRE_TIPS[key]}</span></span>`
+                : '';
 
             // Helpers para % sobre receita bruta (Análise Vertical)
             const pctOf = (value) => receitaBruta > 0 ? ((value / receitaBruta) * 100) : null;
@@ -15719,58 +15789,71 @@
                 return `<td class="dre-pct-col${cls ? ' ' + cls : ''}" title="% da receita bruta">${fmtPct(value)}</td>`;
             };
 
-            const row = (label, value, cls='dre-row-line', indent=false, deduct=false, groupKey='') => {
+            const row = (label, value, cls='dre-row-line', indent=false, deduct=false, groupKey='', tip='') => {
                 const valCls = value === 0 ? 'dre-neutral' : (deduct ? 'dre-negative' : (value > 0 ? 'dre-positive' : 'dre-negative'));
                 const prefix = deduct && value !== 0 ? '(-) ' : '';
-                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}</td><td class="dre-value-col ${valCls}">${formatBRL(value)}</td>${pctCell(value, groupKey)}</tr>`;
+                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}${TIP(tip)}</td><td class="dre-value-col ${valCls}">${formatBRL(value)}</td>${pctCell(value, groupKey)}</tr>`;
             };
-            const subtotalRow = (label, value) => {
+            const subtotalRow = (label, value, tip='') => {
                 const valCls = value >= 0 ? 'dre-positive' : 'dre-negative';
                 const p = fmtPct(value);
-                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:700">${label}</td><td class="dre-value-col ${valCls}" style="font-weight:700">${formatBRL(value)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${p}</td></tr>`;
+                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:700">${label}${TIP(tip)}</td><td class="dre-value-col ${valCls}" style="font-weight:700">${formatBRL(value)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${p}</td></tr>`;
             };
             const groupHeader = (label) => `<tr><td colspan="3" class="dre-group-label">${label}</td></tr>`;
 
             let rows = '';
             rows += groupHeader('Receita');
-            rows += row('Receita bruta de vendas', receitaBruta, 'dre-row-line', false, false, '');
-            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true, '');
-            rows += subtotalRow('Receita líquida', receitaLiquida);
+            rows += row('Receita bruta de vendas', receitaBruta, 'dre-row-line', false, false, '', 'receita');
+            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true, '', 'deducoes');
+            rows += subtotalRow('Receita líquida', receitaLiquida, 'receitaLiq');
             if (aporteReceita > 0) {
-                rows += `<tr class="dre-row-line"><td class="dre-label" style="color:#94A3B8">Aporte de capital <span style="font-weight:600">(não é venda)</span></td><td class="dre-value-col dre-neutral" style="color:#94A3B8">${formatBRL(aporteReceita)}</td><td class="dre-pct-col"></td></tr>`;
+                rows += `<tr class="dre-row-line"><td class="dre-label" style="color:#94A3B8">Aporte de capital <span style="font-weight:600">(não é venda)</span>${TIP('aporte')}</td><td class="dre-value-col dre-neutral" style="color:#94A3B8">${formatBRL(aporteReceita)}</td><td class="dre-pct-col"></td></tr>`;
             }
 
             rows += groupHeader('Custos');
-            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true, 'cmv');
-            rows += subtotalRow('Margem bruta', margemBruta);
+            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true, 'cmv', 'cmv');
+            rows += subtotalRow('Margem bruta', margemBruta, 'margem');
 
             rows += groupHeader('Despesas operacionais');
             DRE_EXP_GROUP_ORDER.forEach(gk => {
                 const val = expGroups[gk] || 0;
-                if (val > 0) rows += row(DRE_EXP_GROUP_LABELS[gk] || gk, val, 'dre-row-line', false, true, gk);
+                if (val > 0) rows += row(DRE_EXP_GROUP_LABELS[gk] || gk, val, 'dre-row-line', false, true, gk, gk);
             });
             const resOpPct = fmtPct(resultadoOp);
-            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:700">${formatBRL(resultadoOp)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${resOpPct}</td></tr>`;
+            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional${TIP('resultadoOp')}</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:700">${formatBRL(resultadoOp)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${resOpPct}</td></tr>`;
 
-            rows += groupHeader('Financeiro');
-            if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true, '');
-            if (finInc > 0) rows += row('Receitas financeiras', finInc, 'dre-row-line', false, false, '');
+            if (finExp > 0 || finInc > 0) {
+                rows += groupHeader('Financeiro');
+                if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true, '', 'finExp');
+                if (finInc > 0) rows += row('Receitas financeiras', finInc, 'dre-row-line', false, false, '', 'finInc');
+            }
+
+            if (outrasReceitas > 0) {
+                rows += groupHeader('Outras receitas (não operacionais)');
+                rows += row('Receitas de aluguel', outrasReceitas, 'dre-row-line', false, false, '', 'outrasRec');
+            }
 
             const lucroGerPct = fmtPct(lucroGerencial);
-            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial</td><td class="dre-value-col" style="color:#fff;font-weight:700">${formatBRL(lucroGerencial)}</td><td class="dre-pct-col" style="color:rgba(255,255,255,0.75);font-weight:600">${lucroGerPct}</td></tr>`;
+            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial${TIP('lucro', true)}</td><td class="dre-value-col" style="color:#fff;font-weight:700">${formatBRL(lucroGerencial)}</td><td class="dre-pct-col" style="color:rgba(255,255,255,0.75);font-weight:600">${lucroGerPct}</td></tr>`;
+
+            if (retiradaSocios > 0) {
+                rows += groupHeader('Sócios');
+                rows += `<tr class="dre-row-line"><td class="dre-label dre-deduct">(-) Retirada dos sócios${TIP('retirada', true)}</td><td class="dre-value-col dre-negative">${formatBRL(retiradaSocios)}</td><td class="dre-pct-col"></td></tr>`;
+                rows += `<tr class="dre-row-sobra"><td class="dre-label" style="font-weight:700">Sobra após retiradas${TIP('sobra', true)}</td><td class="dre-value-col ${sobraAposRetiradas>=0?'dre-positive':'dre-negative'}" style="font-weight:700">${formatBRL(sobraAposRetiradas)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${fmtPct(sobraAposRetiradas)}</td></tr>`;
+            }
 
             section.innerHTML = `
                 <div class="dre-header">
                     <div>
                         <h4>Resultado Gerencial do Mês</h4>
-                        <p>DRE simplificada — apenas movimentos operacionais e financeiros realizados em ${monthName}. Coluna % = participação na receita bruta.</p>
+                        <p>DRE simplificada — movimentos realizados em ${monthName}. Passe o mouse no “i” de cada linha para ver o que ela significa. Coluna % = participação na receita bruta.</p>
                     </div>
                 </div>
                 <table class="dre-table">
                     <thead><tr><th style="text-align:left;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Descrição</th><th style="text-align:right;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Valor</th><th style="text-align:right;padding:8px 16px 8px 4px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">% Receita</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
-                <p class="dre-note">* Receita bruta = só vendas. Aporte de capital, sócios, investimentos e transferências não entram como venda. % em vermelho = fora do benchmark de mercado (CMV 25–35%, Equipe 25–35%, Fixas &lt;15%). Altere o "Tipo de movimento" da categoria do lançamento para ajustar a classificação.</p>
+                <p class="dre-note">* Receita bruta = só vendas. Aluguéis entram em “Outras receitas”, e retiradas dos sócios ficam abaixo do lucro (não são despesa do negócio). Aporte de capital, investimentos e transferências não entram como venda. % em vermelho = fora do benchmark de mercado (CMV 25–35%, Equipe 25–35%, Fixas &lt;15%). Altere o “Tipo de movimento” da categoria do lançamento para ajustar a classificação.</p>
             `;
         }
 
@@ -16296,8 +16379,11 @@
                 margemBruta: sumField(d => d.margemBruta),
                 finExp: sumField(d => d.finExp),
                 finInc: sumField(d => d.finInc),
+                outrasReceitas: sumField(d => d.outrasReceitas || 0),
                 resultadoOp: sumField(d => d.resultadoOp),
                 lucroGerencial: sumField(d => d.lucroGerencial),
+                retiradaSocios: sumField(d => d.retiradaSocios || 0),
+                sobraAposRetiradas: sumField(d => d.sobraAposRetiradas || 0),
                 expGroups: DRE_EXP_GROUP_ORDER.reduce((acc, gk) => {
                     acc[gk] = sumField(d => d.expGroups[gk] || 0);
                     return acc;
@@ -16346,7 +16432,18 @@
                 if (total.finInc > 0) body += line('Receitas financeiras', d => d.finInc);
             }
 
+            if (total.outrasReceitas > 0) {
+                body += groupRow('Outras receitas (não operacionais)');
+                body += line('Receitas de aluguel', d => d.outrasReceitas || 0, { indent: true });
+            }
+
             body += line('Lucro gerencial', d => d.lucroGerencial, { rowCls: 'dre-comp-row-lucro' });
+
+            if (total.retiradaSocios > 0) {
+                body += groupRow('Sócios');
+                body += line('Retirada dos sócios', d => d.retiradaSocios || 0, { indent: true, deduct: true });
+                body += line('Sobra após retiradas', d => d.sobraAposRetiradas || 0, { rowCls: 'dre-comp-row-subtotal' });
+            }
 
             const headCells = monthNames.map(n => `<th>${n}</th>`).join('');
 
@@ -16361,7 +16458,7 @@
                         <tbody>${body}</tbody>
                     </table>
                 </div>
-                <p class="dre-comp-note">* Receita bruta considera apenas vendas. Aportes de capital, sócios, investimentos e transferências não entram como venda. Valores arredondados. A classificação dos grupos segue o "Tipo de movimento" e as categorias de cada lançamento.</p>
+                <p class="dre-comp-note">* Receita bruta considera apenas vendas. Aluguéis entram em “Outras receitas” e as retiradas dos sócios ficam abaixo do lucro (não são despesa do negócio). Aportes de capital, investimentos e transferências não entram como venda. Valores arredondados. A classificação dos grupos segue o "Tipo de movimento" e as categorias de cada lançamento.</p>
             `;
         }
         function formatVariation(current, prev) {
