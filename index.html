@@ -11781,6 +11781,102 @@
                 window.setTimeout(() => overlay.querySelector('[data-dialog-confirm]')?.focus(), 50);
             });
         }
+        // Dialogo de conferencia de destino na conciliacao. Aparece para as linhas do extrato
+        // marcadas como "Conferir destino": existe um lancamento parecido (mesma data, fluxo e
+        // valor) em OUTRO destino. Aqui o usuario decide, linha a linha, se mantem o destino atual
+        // (importa como novo) ou muda para o destino onde ja existe o parecido (passa a conciliar,
+        // reaproveitando/realizando o existente sem duplicar). Resolve com um Map de
+        // idDaLinha -> destinoEscolhido, ou null se o usuario cancelar toda a importacao.
+        function showReconDestinationReviewDialog(conflicts = []) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'modal-overlay fixed inset-0 z-[10020] flex items-center justify-center p-4';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                const rowsHtml = conflicts.map((conflict, idx) => {
+                    const entry = conflict.entry || {};
+                    const rowId = String(entry.id || idx);
+                    const flowClass = normalizeFlowType(entry.type) === 'ENTRADA' ? 'text-emerald-600' : 'text-red-600';
+                    const desc = String(entry.description || '').trim();
+                    const optionsHtml = [
+                        `<option value="${escapeHtml(conflict.currentDestId)}" selected>Manter: ${escapeHtml(conflict.currentLabel || 'destino atual')}</option>`,
+                        ...conflict.candidates.map(cand => `<option value="${escapeHtml(cand.id)}">Mudar para: ${escapeHtml(cand.label)}</option>`)
+                    ].join('');
+                    return `
+                        <div class="recon-review-row flex items-start gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5">
+                            <span class="w-8 h-8 rounded-lg border text-amber-700 bg-amber-50 border-amber-100 inline-flex items-center justify-center shrink-0 mt-0.5">
+                                <i data-lucide="git-compare" class="w-4 h-4"></i>
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[11px] font-black text-slate-500 whitespace-nowrap">${escapeHtml(formatDateBRV2(entry.date))}</span>
+                                    <span class="text-[12px] font-black ${flowClass} whitespace-nowrap">${escapeHtml(formatBRL(entry.amount))}</span>
+                                </div>
+                                ${desc ? `<div class="text-[11px] font-semibold text-slate-400 truncate">${escapeHtml(desc)}</div>` : ''}
+                                <div class="mt-2">
+                                    <select data-conflict-id="${escapeHtml(rowId)}" class="recon-conflict-select w-full text-[12px] font-bold text-slate-700 border border-slate-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-amber-400">
+                                        ${optionsHtml}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>`;
+                }).join('');
+                overlay.innerHTML = `
+                    <div class="modal-shell modal-shell-db">
+                        <div class="modal-head">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-10 h-10 rounded-xl border text-amber-700 bg-amber-50 border-amber-100 inline-flex items-center justify-center shrink-0">
+                                    <i data-lucide="git-compare" class="w-5 h-5"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="modal-head-title">Conferir destino dos lançamentos</p>
+                                    <p class="modal-head-sub">Existe algo parecido em outro destino.</p>
+                                </div>
+                            </div>
+                            <button type="button" class="modal-close-btn" data-dialog-cancel aria-label="Fechar">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="space-y-2 text-[12px] font-bold text-slate-600 leading-5">
+                                <p>Encontrei ${conflicts.length} linha(s) do extrato com data, fluxo e valor iguais a lançamentos de <b>outro destino</b>.</p>
+                                <p>Escolha <b>Manter</b> para importar no destino atual, ou <b>Mudar para</b> o destino onde já existe o lançamento parecido (assim eu reaproveito o existente, sem duplicar).</p>
+                            </div>
+                            <div class="space-y-2 max-h-[46vh] overflow-y-auto custom-scrollbar pr-1 mt-3">
+                                ${rowsHtml}
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="treasury-secondary-btn flex-1" data-dialog-cancel>Cancelar</button>
+                                <button type="button" class="modal-btn-primary" data-dialog-confirm>Continuar importação</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const cleanup = (value) => {
+                    document.removeEventListener('keydown', handleKeydown);
+                    overlay.remove();
+                    resolve(value);
+                };
+                const confirm = () => {
+                    const choices = new Map();
+                    Array.from(overlay.querySelectorAll('.recon-conflict-select')).forEach(sel => {
+                        choices.set(String(sel.getAttribute('data-conflict-id') || ''), String(sel.value || ''));
+                    });
+                    cleanup(choices);
+                };
+                const handleKeydown = (event) => {
+                    if (event.key === 'Escape') cleanup(null);
+                };
+                overlay.addEventListener('click', (event) => {
+                    if (event.target === overlay || event.target.closest('[data-dialog-cancel]')) { cleanup(null); return; }
+                    if (event.target.closest('[data-dialog-confirm]')) { confirm(); return; }
+                });
+                document.addEventListener('keydown', handleKeydown);
+                document.body.appendChild(overlay);
+                refreshLucideIcons();
+                window.setTimeout(() => overlay.querySelector('[data-dialog-confirm]')?.focus(), 50);
+            });
+        }
         function isCapitalContributionName(value) {
             const normalized = normalizeDestinationLookupLabel(value);
             return normalized.includes('aporte') && normalized.includes('capital');
@@ -19593,6 +19689,60 @@
                 // que estava planejado. Num lote PENDENTE o usuário está apenas cadastrando
                 // lançamentos planejados, então não mexemos em nada que já existe: só adicionamos.
                 const shouldReconcileAgainstExisting = batchStatus === 'REALIZADO';
+                // Antes de conciliar, ofereço trocar o destino das linhas marcadas como
+                // "Conferir destino": existe algo parecido (mesma data, fluxo e valor) em OUTRO
+                // destino. Se o usuário mudar para esse destino, a linha passa a bater com o
+                // existente e entra na conciliação abaixo (reaproveita/realiza sem duplicar).
+                if (shouldReconcileAgainstExisting) {
+                    const cache = getReconExistingMatchCache();
+                    const destinationConflicts = [];
+                    newEntries.forEach(entry => {
+                        const meta = getReconExistingMatchMeta(entry);
+                        // Só as linhas que exibem "Conferir destino" no preview: parecido em outro
+                        // destino e nada igual no mesmo destino (senão já reconciliaria por lá).
+                        if (meta.status !== 'conflict') return;
+                        if (meta.pendingMatches > 0 || meta.realizedMatches > 0) return;
+                        const movementKey = buildEntryReconMatchKey(entry, false);
+                        const currentDestId = String(entry.destinationId || '');
+                        const labelsByDestination = cache.movementDestinationLabels.get(movementKey) || new Map();
+                        const allowedIds = new Set(getValidDestinationsByFlow(entry.type).map(d => String(d.id)));
+                        const candidates = [];
+                        labelsByDestination.forEach((labels, destId) => {
+                            const id = String(destId || '');
+                            if (!id || id === currentDestId) return;
+                            if (allowedIds.size > 0 && !allowedIds.has(id)) return;
+                            const label = Array.from(labels)[0] || getDestinationDisplayLabelById(id);
+                            candidates.push({ id, label });
+                        });
+                        if (candidates.length === 0) return;
+                        destinationConflicts.push({
+                            entry,
+                            currentDestId,
+                            currentLabel: getDestinationDisplayLabelById(currentDestId) || 'destino atual',
+                            candidates
+                        });
+                    });
+                    if (destinationConflicts.length > 0) {
+                        const choices = await showReconDestinationReviewDialog(destinationConflicts);
+                        if (choices === null) {
+                            if (summaryEl) summaryEl.innerText = 'Importação cancelada.';
+                            return;
+                        }
+                        choices.forEach((chosenDestId, entryId) => {
+                            const target = newEntries.find(e => String(e.id || '') === String(entryId));
+                            if (!target) return;
+                            const nextDestId = String(chosenDestId || '');
+                            if (!nextDestId || nextDestId === String(target.destinationId || '')) return;
+                            const dst = state.destinations.find(d => String(d.id) === nextDestId);
+                            if (!dst) return;
+                            const sub = state.subCategories.find(s => s.id === (dst || {}).subCategoryId);
+                            const cat = state.categories.find(c => c.id === (sub || {}).categoryId);
+                            target.destinationId = String(dst.id);
+                            target.subCategoryId = String((sub || {}).id || '');
+                            target.categoryId = String((cat || {}).id || '');
+                        });
+                    }
+                }
                 const consumedExistingIds = new Set();
                 const matchPairs = [];
                 if (shouldReconcileAgainstExisting) {
