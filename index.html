@@ -2760,9 +2760,9 @@
             margin-left: 8px;
             padding: 2px 9px;
             border-radius: 999px;
-            border: 1px solid #D8E2F0;
-            background: #EEF3FB;
-            color: #244A94;
+            border: 1px solid #E2E8F0;
+            background: #F1F5F9;
+            color: #475569;
             font-size: 10.5px;
             font-weight: 700;
             letter-spacing: 0.01em;
@@ -2793,15 +2793,15 @@
         }
         .annual-matrix-step i { width: 12px; height: 12px; }
         .annual-matrix-step.is-done {
-            border-color: #D6E4F5;
-            background: #F1F6FC;
-            color: #4B72B8;
+            border-color: #E2E8F0;
+            background: #F1F5F9;
+            color: #64748B;
         }
         .annual-matrix-step.is-active {
-            border-color: #244A94;
-            background: #244A94;
+            border-color: #334155;
+            background: #334155;
             color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(36, 74, 148, 0.22);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
         }
         .annual-matrix-step-sep {
             width: 13px;
@@ -2853,14 +2853,14 @@
             white-space: nowrap;
         }
         .annual-matrix-crumb:hover {
-            border-color: #C7D6EA;
+            border-color: #CBD5E1;
             background: #F5F8FC;
-            color: #244A94;
+            color: #334155;
         }
         .annual-matrix-crumb.is-current {
-            border-color: #244A94;
-            background: #EEF3FB;
-            color: #244A94;
+            border-color: #CBD5E1;
+            background: #F1F5F9;
+            color: #334155;
             cursor: default;
         }
         .annual-matrix-crumb-sep {
@@ -2949,33 +2949,33 @@
         .annual-matrix-table tbody tr:not(.annual-matrix-group-row):not(.annual-matrix-total-row):hover td:last-child {
             background: #F1F6FC;
         }
-        /* Linha de total: barra escura no estilo DRE (dre-row-total) */
+        /* Linha de total: barra verde de resultado, igual ao DRE (dre-comp-row-lucro) */
         .annual-matrix-total-row td {
-            background: #0F172A !important;
+            background: #0F7A5C !important;
             color: #FFFFFF !important;
-            border-top: 2px solid #0F172A;
+            border-top: 2px solid #0F7A5C;
             border-bottom: none;
         }
         .annual-matrix-total-row td:first-child {
-            background: #0F172A !important;
-            border-right-color: #1E293B;
+            background: #0F7A5C !important;
+            border-right-color: #0C6B50;
         }
         .annual-matrix-total-row td:last-child {
-            background: #0B1120 !important;
-            border-left-color: #1E293B;
+            background: #0C6B50 !important;
+            border-left-color: #0C6B50;
         }
-        /* valores da barra de total legíveis sobre fundo escuro (padrão dre-comp-lucro) */
+        /* valores da barra de total legíveis sobre o verde (padrão dre-comp-lucro) */
         .annual-matrix-total-row td.flow-income-text,
         .annual-matrix-total-row td.flow-income-text .annual-matrix-money {
             color: #FFFFFF !important;
         }
         .annual-matrix-total-row td.flow-expense-text,
         .annual-matrix-total-row td.flow-expense-text .annual-matrix-money {
-            color: #FCA5A5 !important;
+            color: #FECACA !important;
         }
         .annual-matrix-total-row td.annual-matrix-zero,
         .annual-matrix-total-row td.annual-matrix-zero .annual-matrix-money {
-            color: rgba(255, 255, 255, 0.5) !important;
+            color: rgba(255, 255, 255, 0.55) !important;
         }
         /* cabeçalho de grupo (Entradas / Saídas): faixa neutra estilo DRE + rótulo colorido */
         .annual-matrix-group-row td {
@@ -3036,23 +3036,24 @@
             transition: color 0.15s ease, transform 0.15s ease;
         }
         .annual-matrix-name.can-drill {
-            color: #244A94;
+            color: #0F172A;
             font-weight: 600;
         }
         .annual-matrix-name.can-drill .annual-matrix-name-icon {
-            background: #EAF0FA;
-            color: #3B63A8;
+            background: #F1F5F9;
+            color: #64748B;
         }
         .annual-matrix-name.can-drill:hover .annual-matrix-name-text {
             text-decoration: underline;
+            text-decoration-color: #94A3B8;
             text-underline-offset: 3px;
         }
         .annual-matrix-name.can-drill:hover .annual-matrix-name-chevron {
-            color: #244A94;
+            color: #64748B;
             transform: translateX(2px);
         }
         .annual-matrix-name.can-edit {
-            color: #1F5FA8;
+            color: #1F7A5C;
             font-weight: 600;
         }
         .annual-matrix-name.can-edit .annual-matrix-name-icon {
@@ -3076,7 +3077,7 @@
             color: #7C8DA6;
             box-sizing: border-box;
         }
-        .annual-mobile-title.can-edit { color: #1F5FA8; }
+        .annual-mobile-title.can-edit { color: #1F7A5C; }
         .annual-mobile-title.can-edit .annual-mobile-title-icon {
             background: #E9F4EE;
             color: #1F7A5C;
@@ -3240,7 +3241,7 @@
             text-align: left;
         }
         .annual-mobile-title.can-drill {
-            color: #244A94;
+            color: #0F172A;
         }
         .annual-mobile-sub {
             margin-top: 4px;
@@ -3291,21 +3292,21 @@
             text-align: center;
         }
         .annual-mobile-total-card {
-            background: #0F172A;
-            border-color: #0F172A;
+            background: #0F7A5C;
+            border-color: #0F7A5C;
         }
         .annual-mobile-total-card .annual-mobile-title { color: #FFFFFF; }
-        .annual-mobile-total-card .annual-mobile-sub { color: rgba(255, 255, 255, 0.6); }
+        .annual-mobile-total-card .annual-mobile-sub { color: rgba(255, 255, 255, 0.7); }
         .annual-mobile-total-card .annual-mobile-total.flow-income-text { color: #FFFFFF !important; }
-        .annual-mobile-total-card .annual-mobile-total.flow-expense-text { color: #FCA5A5 !important; }
+        .annual-mobile-total-card .annual-mobile-total.flow-expense-text { color: #FECACA !important; }
         .annual-mobile-total-card .annual-mobile-month {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.12);
         }
         .annual-mobile-total-card .annual-mobile-month b { color: rgba(255, 255, 255, 0.6); }
         .annual-mobile-total-card .annual-mobile-month .flow-income-text { color: #FFFFFF !important; }
-        .annual-mobile-total-card .annual-mobile-month .flow-expense-text { color: #FCA5A5 !important; }
-        .annual-mobile-total-card .annual-mobile-month .annual-matrix-zero { color: rgba(255, 255, 255, 0.4) !important; }
+        .annual-mobile-total-card .annual-mobile-month .flow-expense-text { color: #FECACA !important; }
+        .annual-mobile-total-card .annual-mobile-month .annual-matrix-zero { color: rgba(255, 255, 255, 0.45) !important; }
         @media (max-width: 767px) {
             #annual-hierarchy-detail {
                 padding: 14px;
