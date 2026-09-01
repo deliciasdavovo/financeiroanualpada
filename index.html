@@ -4866,6 +4866,176 @@
         .recon-toolbar-primary {
             min-width: 0;
         }
+
+        /* --- Conciliação em passos --- */
+        /* Regra própria em vez de depender do .hidden do Tailwind (CDN externo):
+           esconder painel de origem, prévia e avisos é comportamento, não estilo. */
+        .recon-source-panel.hidden,
+        .recon-preview-empty.hidden,
+        .recon-issue-btn.hidden {
+            display: none;
+        }
+        .recon-step {
+            transition: opacity var(--dur-std) var(--ease-premium);
+        }
+        .recon-step.is-locked {
+            opacity: 0.5;
+        }
+        .recon-step.is-locked .recon-config-grid,
+        .recon-step.is-locked #recon-preview {
+            pointer-events: none;
+        }
+        .recon-step-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .recon-step-badge {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: var(--radius-pill);
+            background: var(--accent);
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .recon-step.is-locked .recon-step-badge {
+            background: var(--text-muted);
+        }
+        .recon-step-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        .recon-step-sub {
+            margin-top: 2px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .recon-config-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+        .recon-primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 42px;
+            padding: 0 22px;
+            border-radius: var(--radius-md);
+            background: var(--accent);
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 800;
+            box-shadow: var(--shadow-card);
+            transition: filter var(--dur-fast) var(--ease-premium);
+        }
+        .recon-primary-btn:hover:not(:disabled) {
+            filter: brightness(1.08);
+        }
+        .recon-primary-btn:disabled {
+            background: var(--divider);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        .recon-file-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 42px;
+            padding: 0 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-card);
+            transition: border-color var(--dur-fast) var(--ease-premium);
+        }
+        .recon-file-btn:hover {
+            border-color: var(--text-muted);
+        }
+        .recon-preview-empty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 22px;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            background: #F8FAFC;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .recon-summary-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            box-shadow: var(--shadow-card);
+        }
+        .recon-summary-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .recon-summary-forecast {
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .recon-summary-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .recon-issue-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 38px;
+            padding: 0 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid #FECACA;
+            background: var(--bg-red-soft);
+            color: var(--soft-red);
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .recon-clear-btn {
+            height: 38px;
+            padding: 0 16px;
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .recon-clear-btn:hover {
+            color: var(--text-secondary);
+        }
+        .recon-import-btn {
+            height: 38px;
+        }
         .recon-toolbar-preview {
             min-width: 0;
         }
@@ -5992,6 +6162,16 @@
             }
             .recon-toolbar-primary {
                 min-width: 0;
+            }
+            .recon-config-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .recon-summary-bar {
+                align-items: flex-start;
+            }
+            .recon-summary-actions {
+                width: 100%;
             }
             #reconciliation .card-premium {
                 overflow: hidden;
@@ -8855,7 +9035,7 @@
                             <input id="db-search" type="text" placeholder="Ex.: fornecedores, aluguel, cartão..." oninput="renderDatabase()">
                         </div>
                         <div style="min-width:180px">
-                            <label class="label-mini" for="db-mov-type-filter">Classificacao da categoria</label>
+                            <label class="label-mini" for="db-mov-type-filter">Classificação da categoria</label>
                             <select id="db-mov-type-filter" onchange="renderDatabase()" style="font-size:12px;padding:7px 10px">
                                 <option value="">Todos</option>
                                 <option value="OPERACIONAL">Operacional</option>
@@ -8870,7 +9050,7 @@
                     <div id="db-list"></div>
                 </section>
                 <section>
-                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Classificacoes de categorias</h4><button onclick="openDbModal('MOVEMENT_TYPE')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Classificacao</button></div>
+                    <div class="flex justify-between items-center mb-6"><h4 class="text-sm font-black uppercase text-slate-400">Classificações de categorias</h4><button onclick="openDbModal('MOVEMENT_TYPE')" class="bg-slate-900 text-white px-6 py-2 rounded-lg text-xs font-black uppercase shadow-lg">+ Classificação</button></div>
                     <div id="movement-type-list"></div>
                 </section>
                 <section>
@@ -8882,87 +9062,164 @@
 
             <!-- CONCILIAÇÃO -->
             <div id="reconciliation" class="tab-content space-y-5">
-                <div class="card-premium p-6 lg:p-7 space-y-5">
-                    <div class="recon-toolbar">
-                        <div class="recon-toolbar-primary"><label class="label-mini" for="recon-paste-area">Copie e cole os dados do extrato</label><textarea id="recon-paste-area" rows="8" placeholder="Cole aqui seu extrato para análise inteligente..."></textarea></div>
-                        <div class="w-72"><label class="label-mini" for="recon-account-select">Conta de Destino</label><select id="recon-account-select" onchange="renderReconPreview()"></select></div>
-                        <div class="w-52">
-                            <label class="label-mini" for="recon-batch-status">Status do Lote</label>
-                            <select id="recon-batch-status" onchange="applyReconBatchStatus(this.value)">
-                                <option value="REALIZADO" selected>Realizado</option>
-                                <option value="PENDENTE">Pendente</option>
-                            </select>
-                        </div>
-                        <button onclick="processPaste()" class="bg-slate-900 text-white px-10 h-[50px] rounded-xl font-black text-xs uppercase shadow-xl hover:bg-black transition-all">Analisar</button>
-                    </div>
-                    <!-- Import buttons -->
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        <label class="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 hover:border-slate-400 text-slate-700 px-5 h-[42px] rounded-xl font-bold text-xs uppercase shadow-sm hover:shadow transition-all">
-                            <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i> Importar Excel / CSV
-                            <input type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="importExcel(this)">
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 hover:border-slate-400 text-slate-700 px-5 h-[42px] rounded-xl font-bold text-xs uppercase shadow-sm hover:shadow transition-all">
-                            <i data-lucide="file-text" class="w-4 h-4 text-red-500"></i> Importar PDF
-                            <input type="file" accept=".pdf" class="hidden" onchange="importPDF(this)">
-                        </label>
-                    </div>
-                </div>
-
-                <!-- PLANILHA MANUAL DE LANÇAMENTOS -->
-                <div class="card-premium p-6 lg:p-7 space-y-4">
-                    <div class="flex flex-wrap gap-3 items-center justify-between">
+                <!-- PASSO 1: origem dos dados -->
+                <div class="card-premium recon-step p-6 lg:p-7 space-y-5" id="recon-step-1">
+                    <div class="recon-step-head">
+                        <span class="recon-step-badge">1</span>
                         <div>
-                            <p class="text-sm font-black uppercase text-slate-700">Planilha de Lançamentos</p>
-                            <p class="text-xs text-slate-400 mt-0.5">Preencha manualmente e adicione à conciliação</p>
+                            <p class="recon-step-title">De onde vêm os dados</p>
+                            <p class="recon-step-sub">Escolha uma das três formas de trazer o extrato. Você só precisa de uma.</p>
                         </div>
-                        <button onclick="addReconSheetToRecon()" class="bg-[#E09132] text-white px-6 py-2.5 rounded-xl font-black text-xs uppercase shadow-xl hover:bg-[#C57A22] transition-all">Adicionar à Conciliação</button>
                     </div>
-                    <div class="table-mobile-scroll custom-scrollbar">
-                        <table class="w-full text-left" id="recon-sheet-table">
-                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
-                                <tr>
-                                    <th class="px-3 py-3 w-[130px]">Data</th>
-                                    <th class="px-3 py-3">Destino</th>
-                                    <th class="px-3 py-3 w-[130px] text-right">Valor</th>
-                                    <th class="px-3 py-3 w-[72px] text-center">+/−</th>
-                                    <th class="px-3 py-3 w-[220px]">Descrição</th>
-                                    <th class="px-3 py-3 w-[52px] text-center">Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recon-sheet-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                        </table>
-                    </div>
-                    <button onclick="addReconSheetRow()" class="flex items-center gap-2 text-slate-400 hover:text-slate-700 font-bold text-xs uppercase transition-all">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Linha
-                    </button>
-                </div>
 
-                <div id="recon-preview" class="hidden space-y-6 animate-slide-up">
-                    <div class="flex justify-between items-center bg-white p-6 rounded-3xl border border-blue-100 shadow-xl">
-                        <div><p id="recon-summary-count" class="text-lg font-black text-slate-900 uppercase">Processando...</p></div>
-                        <div class="flex gap-3"><button onclick="cancelRecon()" class="text-slate-400 font-black text-xs uppercase px-6">Limpar</button><button id="recon-import-btn" onclick="finalizeRecon()" class="bg-[#E09132] text-white px-8 py-3 rounded-xl font-black text-sm uppercase shadow-xl hover:bg-[#C57A22]">Importar</button></div>
+                    <div class="pill-segment" role="tablist" aria-label="Origem dos dados">
+                        <button type="button" id="recon-src-btn-paste" class="pill-segment-btn active" onclick="setReconSource('paste')" role="tab" aria-selected="true" aria-controls="recon-source-paste">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>Colar o extrato
+                        </button>
+                        <button type="button" id="recon-src-btn-file" class="pill-segment-btn" onclick="setReconSource('file')" role="tab" aria-selected="false" aria-controls="recon-source-file">
+                            <i data-lucide="file-up" class="w-4 h-4"></i>Enviar um arquivo
+                        </button>
+                        <button type="button" id="recon-src-btn-manual" class="pill-segment-btn" onclick="setReconSource('manual')" role="tab" aria-selected="false" aria-controls="recon-source-manual">
+                            <i data-lucide="table-2" class="w-4 h-4"></i>Digitar à mão
+                        </button>
                     </div>
-                    <div class="card-premium recon-toolbar-preview recon-preview-card overflow-hidden">
-                        <div class="recon-preview-head">
-                            <div>
-                                <p class="recon-preview-title">Prévia para edição</p>
-                                <p class="recon-preview-sub">Revise descrição, destino e conferência antes de importar.</p>
-                            </div>
+
+                    <!-- Origem: colar -->
+                    <div id="recon-source-paste" class="recon-source-panel" role="tabpanel" aria-labelledby="recon-src-btn-paste">
+                        <label class="label-mini" for="recon-paste-area">Cole aqui as linhas do extrato</label>
+                        <textarea id="recon-paste-area" rows="8" placeholder="01/03/2026&#9;PAGAMENTO FORNECEDOR ABC&#9;1.250,00&#9;D&#10;02/03/2026&#9;RECEBIMENTO CARTAO&#9;3.480,55&#9;C"></textarea>
+                        <p class="field-help">Copie direto do site do banco e cole. Cada linha precisa ter, no mínimo, <b>uma data</b> e <b>um valor</b>. Linhas de saldo são ignoradas.</p>
+                        <button type="button" onclick="processPaste()" class="recon-primary-btn mt-3">
+                            <i data-lucide="wand-sparkles" class="w-4 h-4"></i>Ler os dados
+                        </button>
+                    </div>
+
+                    <!-- Origem: arquivo -->
+                    <div id="recon-source-file" class="recon-source-panel hidden" role="tabpanel" aria-labelledby="recon-src-btn-file">
+                        <p class="field-help mb-3">Escolha o arquivo que você baixou do banco. Eu leio o conteúdo e mostro a prévia logo abaixo.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <label class="recon-file-btn">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4 text-green-600"></i> Escolher Excel / CSV
+                                <input type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="importExcel(this)">
+                            </label>
+                            <label class="recon-file-btn">
+                                <i data-lucide="file-text" class="w-4 h-4 text-red-500"></i> Escolher PDF
+                                <input type="file" accept=".pdf" class="hidden" onchange="importPDF(this)">
+                            </label>
                         </div>
+                    </div>
+
+                    <!-- Origem: manual -->
+                    <div id="recon-source-manual" class="recon-source-panel hidden" role="tabpanel" aria-labelledby="recon-src-btn-manual">
+                        <p class="field-help mb-3">Preencha linha a linha e clique em <b>Adicionar à prévia</b> quando terminar.</p>
                         <div class="table-mobile-scroll custom-scrollbar">
-                            <table id="recon-preview-table" class="w-full text-left">
+                            <table class="w-full text-left" id="recon-sheet-table">
                                 <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
                                     <tr>
-                                        <th class="px-4 py-3 w-[90px]">Data</th>
-                                        <th class="px-4 py-3 w-[180px]">Descrição</th>
-                                        <th class="px-4 py-3 w-[320px]">Destino</th>
-                                        <th class="px-4 py-3 w-[170px]">Conferência</th>
-                                        <th class="px-4 py-3 w-[70px] text-center">Ação</th>
-                                        <th class="px-4 py-3 w-[130px] text-right">Valor</th>
+                                        <th class="px-3 py-3 w-[130px]">Data</th>
+                                        <th class="px-3 py-3">Destino</th>
+                                        <th class="px-3 py-3 w-[130px] text-right">Valor</th>
+                                        <th class="px-3 py-3 w-[72px] text-center">+/−</th>
+                                        <th class="px-3 py-3 w-[220px]">Descrição</th>
+                                        <th class="px-3 py-3 w-[52px] text-center">Ação</th>
                                     </tr>
                                 </thead>
-                                <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                <tbody id="recon-sheet-body" class="divide-y divide-slate-50 bg-white"></tbody>
                             </table>
+                        </div>
+                        <div class="flex flex-wrap gap-3 items-center justify-between mt-3">
+                            <button onclick="addReconSheetRow()" class="flex items-center gap-2 text-slate-400 hover:text-slate-700 font-bold text-xs uppercase transition-all">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar linha
+                            </button>
+                            <button type="button" onclick="addReconSheetToRecon()" class="recon-primary-btn">
+                                <i data-lucide="corner-down-right" class="w-4 h-4"></i>Adicionar à prévia
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 2: destino da gravação -->
+                <div class="card-premium recon-step is-locked p-6 lg:p-7 space-y-5" id="recon-step-2">
+                    <div class="recon-step-head">
+                        <span class="recon-step-badge">2</span>
+                        <div>
+                            <p class="recon-step-title">Para onde vai</p>
+                            <p class="recon-step-sub">Diga em qual conta gravar e se estes lançamentos já aconteceram.</p>
+                        </div>
+                    </div>
+                    <div class="recon-config-grid">
+                        <div>
+                            <label class="label-mini" for="recon-account-select">Conta bancária (onde vai ser lançado)</label>
+                            <select id="recon-account-select" onchange="renderReconPreview()"></select>
+                            <p class="field-help">É a conta do extrato que você está conferindo. Todos os lançamentos desta importação vão para ela.</p>
+                        </div>
+                        <div>
+                            <span class="label-mini" id="recon-batch-status-label">Estes lançamentos já aconteceram?</span>
+                            <div class="pill-segment mt-1" role="group" aria-labelledby="recon-batch-status-label">
+                                <button type="button" id="recon-batch-btn-realizado" class="pill-segment-btn active" onclick="setReconBatchStatus('REALIZADO')" aria-pressed="true">
+                                    <i data-lucide="check-check" class="w-4 h-4"></i>Já aconteceram
+                                </button>
+                                <button type="button" id="recon-batch-btn-pendente" class="pill-segment-btn" onclick="setReconBatchStatus('PENDENTE')" aria-pressed="false">
+                                    <i data-lucide="clock" class="w-4 h-4"></i>Ainda vão acontecer
+                                </button>
+                            </div>
+                            <input type="hidden" id="recon-batch-status" value="REALIZADO">
+                            <p class="field-help" id="recon-batch-status-help">Vou conferir com o que já está cadastrado e dar baixa nos pendentes que baterem.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 3: conferir e importar -->
+                <div class="card-premium recon-step is-locked p-6 lg:p-7 space-y-5" id="recon-step-3">
+                    <div class="recon-step-head">
+                        <span class="recon-step-badge">3</span>
+                        <div>
+                            <p class="recon-step-title">Conferir e importar</p>
+                            <p class="recon-step-sub">Revise linha a linha antes de gravar. Nada é salvo até você confirmar.</p>
+                        </div>
+                    </div>
+
+                    <div id="recon-preview-empty" class="recon-preview-empty">
+                        <i data-lucide="inbox" class="w-5 h-5"></i>
+                        <p>A prévia aparece aqui depois que você trouxer os dados no passo 1.</p>
+                    </div>
+
+                    <div id="recon-preview" class="hidden space-y-5 animate-slide-up">
+                        <div class="recon-summary-bar">
+                            <div class="min-w-0">
+                                <p id="recon-summary-count" class="recon-summary-title">Processando...</p>
+                                <p id="recon-summary-forecast" class="recon-summary-forecast"></p>
+                            </div>
+                            <div class="recon-summary-actions">
+                                <button type="button" id="recon-next-issue-btn" class="recon-issue-btn hidden" onclick="goToNextReconIssue()">
+                                    <i data-lucide="locate-fixed" class="w-3.5 h-3.5"></i><span id="recon-next-issue-label">Ir para a próxima pendência</span>
+                                </button>
+                                <button type="button" onclick="cancelRecon()" class="recon-clear-btn">Limpar</button>
+                                <button type="button" id="recon-import-btn" onclick="finalizeRecon()" class="recon-primary-btn recon-import-btn">Importar</button>
+                            </div>
+                        </div>
+                        <div class="card-premium recon-toolbar-preview recon-preview-card overflow-hidden">
+                            <div class="recon-preview-head">
+                                <div>
+                                    <p class="recon-preview-title">Prévia para edição</p>
+                                    <p class="recon-preview-sub">Confira o valor contra o extrato e ajuste o destino de cada linha.</p>
+                                </div>
+                            </div>
+                            <div class="table-mobile-scroll custom-scrollbar">
+                                <table id="recon-preview-table" class="w-full text-left">
+                                    <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
+                                        <tr>
+                                            <th class="px-4 py-3 w-[90px]">Data</th>
+                                            <th class="px-4 py-3 w-[130px] text-right">Valor</th>
+                                            <th class="px-4 py-3 w-[180px]">Descrição</th>
+                                            <th class="px-4 py-3 w-[320px]">Destino</th>
+                                            <th class="px-4 py-3 w-[170px]">Conferência</th>
+                                            <th class="px-4 py-3 w-[70px] text-center">Ação</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -9364,7 +9621,7 @@
                 <div id="goal-history-box" class="goal-history-box">
                     <div class="flex items-start justify-between gap-3">
                         <div>
-                            <p class="label-mini">Sugestao pelo historico</p>
+                            <p class="label-mini">Sugestão pelo histórico</p>
                             <p id="goal-history-subtitle" class="field-help mt-1">Escolha um item para calcular media, ultimo mes e pico.</p>
                         </div>
                         <i data-lucide="sparkles" class="w-4 h-4 text-slate-400 shrink-0"></i>
@@ -11728,8 +11985,8 @@
                                     <i data-lucide="badge-check" class="w-5 h-5"></i>
                                 </span>
                                 <div class="min-w-0">
-                                    <p class="modal-head-title">Conferir lançamentos encontrados</p>
-                                    <p class="modal-head-sub">Marque os que são o mesmo lançamento.</p>
+                                    <p class="modal-head-title">Estes já estão no sistema?</p>
+                                    <p class="modal-head-sub">Deixe marcado o que é repetido. Nada foi gravado ainda.</p>
                                 </div>
                             </div>
                             <button type="button" class="modal-close-btn" data-dialog-cancel aria-label="Fechar">
@@ -11738,8 +11995,9 @@
                         </div>
                         <div class="modal-body">
                             <div class="space-y-2 text-[12px] font-bold text-slate-600 leading-5">
-                                <p>Encontrei ${pairs.length} lançamento(s) do extrato com data, fluxo, valor e destino iguais a lançamentos já cadastrados.</p>
-                                <p>Deixe <b>marcado</b> o que é o mesmo lançamento (uso o existente e, se estiver pendente, marco como realizado — sem duplicar). <b>Desmarque</b> o que é diferente para importar como novo.</p>
+                                <p><b>Marcado</b> = é o mesmo lançamento. Não crio outro; se o antigo estava pendente, dou baixa nele.</p>
+                                <p><b>Desmarcado</b> = é um lançamento diferente. Crio como novo.</p>
+                                <p class="text-slate-400 font-semibold">Encontrei ${pairs.length} linha(s) do extrato com data, valor e destino iguais a lançamentos que já existem.</p>
                             </div>
                             <div class="flex items-center justify-between mt-3 mb-1">
                                 <span class="text-[10px] font-black uppercase tracking-wide text-slate-400"><span data-reuse-count>${pairs.length}</span> de ${pairs.length} marcado(s)</span>
@@ -11839,8 +12097,8 @@
                                     <i data-lucide="git-compare" class="w-5 h-5"></i>
                                 </span>
                                 <div class="min-w-0">
-                                    <p class="modal-head-title">Conferir destino dos lançamentos</p>
-                                    <p class="modal-head-sub">Existe algo parecido em outro destino.</p>
+                                    <p class="modal-head-title">Em qual destino cada um entra?</p>
+                                    <p class="modal-head-sub">Achei lançamentos parecidos em outro destino. Nada foi gravado ainda.</p>
                                 </div>
                             </div>
                             <button type="button" class="modal-close-btn" data-dialog-cancel aria-label="Fechar">
@@ -11849,8 +12107,9 @@
                         </div>
                         <div class="modal-body">
                             <div class="space-y-2 text-[12px] font-bold text-slate-600 leading-5">
-                                <p>Encontrei ${conflicts.length} linha(s) do extrato com data, fluxo e valor iguais a lançamentos de <b>outro destino</b>.</p>
-                                <p>Escolha <b>Manter</b> para importar no destino atual, ou <b>Mudar para</b> o destino onde já existe o lançamento parecido (assim eu reaproveito o existente, sem duplicar).</p>
+                                <p><b>Manter</b> = o destino que está na prévia está certo. Crio como novo.</p>
+                                <p><b>Mudar para</b> = é o mesmo lançamento que já existe no outro destino. Aproveito o existente, sem duplicar.</p>
+                                <p class="text-slate-400 font-semibold">Encontrei ${conflicts.length} linha(s) com data e valor iguais a lançamentos de outro destino.</p>
                             </div>
                             <div class="space-y-2 max-h-[46vh] overflow-y-auto custom-scrollbar pr-1 mt-3">
                                 ${rowsHtml}
@@ -12997,8 +13256,9 @@
                 if (activeSales === 'treasury') renderTreasury();
                 else renderDatabase();
             } else if (currentTab === 'reconciliation') {
-                populateDropdown('recon-account-select', state.accounts);
+                populateReconAccountSelect();
                 initReconSheet();
+                updateReconStepState();
             }
             updateToggleValuesUI();
             refreshLucideIcons();
@@ -14924,7 +15184,7 @@
                                         onblur="event.stopPropagation(); handleEntryDestinationBlur('${e.id}')"
                                         class="entry-destination-input ${isPossibleTransfer && transferReviewStatus !== 'dismissed' ? 'transfer-highlight' : ''}"
                                         aria-label="Destino do lancamento">
-                                    <div id="entry-dst-panel-${e.id}" class="combobox-panel custom-scrollbar hidden" role="listbox" aria-label="Sugestoes de destino"></div>
+                                    <div id="entry-dst-panel-${e.id}" class="combobox-panel custom-scrollbar hidden" role="listbox" aria-label="Sugestões de destino"></div>
                                 </div>
                                 <div class="entry-badges">
                                     ${isPossibleTransfer ? `<span class="dup-icon transfer-indicator ${transferReviewStatus === 'confirmed' ? 'confirmed' : ''}" title="${transferIconTitle}"><i data-lucide="arrow-right-left" class="w-3 h-3"></i></span>` : ''}
@@ -18712,13 +18972,87 @@
             });
         }
 
+        // Alterna a origem dos dados no passo 1 (colar / arquivo / planilha manual).
+        const RECON_SOURCES = ['paste', 'file', 'manual'];
+        function setReconSource(source) {
+            const active = RECON_SOURCES.includes(source) ? source : 'paste';
+            RECON_SOURCES.forEach(name => {
+                const btn = document.getElementById(`recon-src-btn-${name}`);
+                const panel = document.getElementById(`recon-source-${name}`);
+                if (btn) {
+                    btn.classList.toggle('active', name === active);
+                    btn.setAttribute('aria-selected', String(name === active));
+                }
+                if (panel) panel.classList.toggle('hidden', name !== active);
+            });
+            if (active === 'manual') initReconSheet();
+            refreshLucideIcons();
+        }
+
+        // "Estes lançamentos já aconteceram?" — grava em #recon-batch-status (input oculto),
+        // que continua sendo a fonte de verdade lida por getReconBatchStatus().
+        function setReconBatchStatus(statusValue) {
+            const status = String(statusValue || '').toUpperCase() === 'PENDENTE' ? 'PENDENTE' : 'REALIZADO';
+            const field = document.getElementById('recon-batch-status');
+            if (field) field.value = status;
+            const realizadoBtn = document.getElementById('recon-batch-btn-realizado');
+            const pendenteBtn = document.getElementById('recon-batch-btn-pendente');
+            if (realizadoBtn) {
+                realizadoBtn.classList.toggle('active', status === 'REALIZADO');
+                realizadoBtn.setAttribute('aria-pressed', String(status === 'REALIZADO'));
+            }
+            if (pendenteBtn) {
+                pendenteBtn.classList.toggle('active', status === 'PENDENTE');
+                pendenteBtn.setAttribute('aria-pressed', String(status === 'PENDENTE'));
+            }
+            const help = document.getElementById('recon-batch-status-help');
+            if (help) {
+                help.innerText = status === 'PENDENTE'
+                    ? 'Só vou cadastrar como previsto. Não mexo em nada que já existe.'
+                    : 'Vou conferir com o que já está cadastrado e dar baixa nos pendentes que baterem.';
+            }
+            applyReconBatchStatus(status);
+        }
+
+        // Diferente dos outros selects, este começa vazio de propósito: escolher a conta errada
+        // manda o lote inteiro para o lugar errado, então a escolha tem que ser consciente.
+        function populateReconAccountSelect() {
+            const el = document.getElementById('recon-account-select');
+            if (!el) return;
+            const accounts = Array.isArray(state.accounts) ? state.accounts : [];
+            const previous = String(el.value || '');
+            populateDropdown('recon-account-select', accounts);
+            el.insertAdjacentHTML('afterbegin', '<option value="">Escolha a conta…</option>');
+            el.value = accounts.some(a => String(a.id || '') === previous) ? previous : '';
+        }
+
+        // Acende os passos 2 e 3 assim que existem linhas na prévia.
+        function updateReconStepState() {
+            const hasRows = Array.isArray(tempRecon) && tempRecon.length > 0;
+            ['recon-step-2', 'recon-step-3'].forEach(id => {
+                document.getElementById(id)?.classList.toggle('is-locked', !hasRows);
+            });
+            document.getElementById('recon-preview-empty')?.classList.toggle('hidden', hasRows);
+        }
+
+        // Rola até a próxima linha da prévia que ainda precisa de destino.
+        function goToNextReconIssue() {
+            const validDestinations = getValidDestinations();
+            const firstInvalid = tempRecon.findIndex(item => !hasReconValidDestination(item, validDestinations));
+            if (firstInvalid === -1) return;
+            const row = document.getElementById(`recon-row-${firstInvalid}`);
+            if (!row) return;
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById(`recon-dst-${firstInvalid}`)?.focus({ preventScroll: true });
+        }
+
         async function processPaste() {
             const area = document.getElementById('recon-paste-area');
             if(!area) return;
             const batchStatus = getReconBatchStatus();
             const validDestinations = getValidDestinations();
             if(validDestinations.length === 0) {
-                alert("Cadastre pelo menos 1 destino valido no Banco de Dados antes de analisar.");
+                showAppToast('Nenhum destino cadastrado.\nAntes de conciliar, cadastre pelo menos um destino em Dados › Banco de Dados.', { tone: 'danger' });
                 return;
             }
             const lines = normalizeReconLines(area.value);
@@ -18848,9 +19182,10 @@
             renderReconPreview();
             if(tempRecon.length > 0) {
                 area.value = '';
+                showAppToast(`Li ${tempRecon.length} linha(s).\nConfira a prévia no passo 3 antes de importar.`, { tone: 'success' });
                 window.requestAnimationFrame(scrollReconPreviewIntoView);
             } else {
-                alert("Nenhum dado detectado.");
+                showAppToast('Não reconheci nenhum lançamento.\nCada linha precisa ter uma data e um valor. Confira se o texto colado veio completo, com as colunas separadas.', { tone: 'danger' });
             }
         }
 
@@ -19028,7 +19363,7 @@
             const destinationId = findDestinationIdByLabel(typedLabel, validDestinations);
             if (!destinationId) {
                 inputEl.value = currentLabel;
-                if (options.showAlert) alert('Selecione um destino valido da lista.');
+                if (options.showAlert) showAppToast('Selecione um destino da lista.\nComece a digitar e escolha uma das opções sugeridas.', { tone: 'danger' });
                 return false;
             }
             updateReconDestination(index, destinationId);
@@ -19073,7 +19408,7 @@
             const rowEl = document.getElementById(`recon-row-${index}`);
             const badgeEl = document.getElementById(`recon-badge-${index}`);
             const noteEl = document.getElementById(`recon-badge-note-${index}`);
-            const matchMeta = getReconExistingMatchMeta(item, getReconSelectedAccountId());
+            const matchMeta = getReconExistingMatchMeta(item);
             const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
 
             if (rowEl) rowEl.classList.toggle('bg-red-50/60', invalidDestination);
@@ -19087,6 +19422,44 @@
                 badgeEl.innerText = reviewBadge.badgeText;
             }
             if (noteEl) noteEl.innerText = reviewBadge.note;
+            // Corrigir o destino de uma linha muda o resumo e pode liberar o botão Importar.
+            renderReconSummaryState(validDestinations);
+        }
+
+        // Contagem por situação usada tanto pelo resumo quanto pelo estado do botão Importar.
+        function computeReconStats(validDestinations) {
+            return tempRecon.reduce((acc, item) => {
+                const invalidDestination = !hasReconValidDestination(item, validDestinations);
+                const meta = getReconExistingMatchMeta(item);
+                if (invalidDestination) acc.invalid += 1;
+                else if (meta.pendingMatches > 0) acc.willRealize += 1;
+                else if (meta.status === 'exact' || meta.realizedMatches > 0) acc.exact += 1;
+                else if (meta.status === 'conflict') acc.conflict += 1;
+                else if (meta.status === 'similar') acc.similar += 1;
+                else if (meta.status === 'new') acc.newItems += 1;
+                return acc;
+            }, { invalid: 0, exact: 0, conflict: 0, similar: 0, newItems: 0, willRealize: 0 });
+        }
+
+        // Atualiza a barra de resumo (contagens + previsão) e o estado do botão Importar,
+        // sem redesenhar a tabela da prévia.
+        function renderReconSummaryState(validDestinations) {
+            const summary = document.getElementById('recon-summary-count');
+            if (!Array.isArray(tempRecon) || tempRecon.length === 0) return;
+            const destinations = validDestinations || getValidDestinations();
+            const reconStats = computeReconStats(destinations);
+            // A comparação com o histórico não depende da conta escolhida (ver
+            // getReconExistingMatchMeta), então as contagens aparecem sempre.
+            if (summary) {
+                const summaryParts = [`${tempRecon.length} linha(s) lida(s)`];
+                if (reconStats.newItems + reconStats.similar > 0) summaryParts.push(`${reconStats.newItems + reconStats.similar} nova(s)`);
+                if (reconStats.willRealize > 0) summaryParts.push(`${reconStats.willRealize} dão baixa em pendente`);
+                if (reconStats.exact > 0) summaryParts.push(`${reconStats.exact} já no sistema`);
+                if (reconStats.conflict > 0) summaryParts.push(`${reconStats.conflict} para conferir`);
+                if (reconStats.invalid > 0) summaryParts.push(`${reconStats.invalid} sem destino`);
+                summary.innerText = summaryParts.join(' · ');
+            }
+            updateReconImportAffordances(reconStats, getReconSelectedAccountId());
         }
 
         function getReconNoteCandidate(index) {
@@ -19315,7 +19688,10 @@
             return { matches, pending, realized };
         }
 
-        function getReconExistingMatchMeta(entry, accountIdOverride = '') {
+        // A conferência compara sempre com TODO o histórico de lançamentos — o cache é montado
+        // com accountId 'ALL' e nenhuma das chaves de match inclui a conta. Selecionar a conta
+        // define apenas onde os lançamentos serão gravados, não o escopo da comparação.
+        function getReconExistingMatchMeta(entry) {
             const strictKey = buildEntryDuplicateKey(entry);
             const movementKey = buildEntryReconMatchKey(entry, false);
             const movementWithDestinationKey = buildEntryReconMatchKey(entry, true);
@@ -19356,29 +19732,29 @@
             if (invalidDestination) {
                 return {
                     badgeClass: 'bg-red-50 text-red-700 border border-red-200',
-                    badgeText: 'Revisar destino',
-                    note: 'Escolha um destino valido antes de importar.'
+                    badgeText: 'Falta o destino',
+                    note: 'Escolha um destino ao lado para poder importar esta linha.'
                 };
             }
             if (meta.status === 'exact' && meta.pendingMatches === 0) {
                 return {
                     badgeClass: 'bg-green-50 text-green-700 border border-green-200',
-                    badgeText: 'Ja lancado',
-                    note: 'Esse lancamento ja existe no historico geral com mesmo destino e descricao.'
+                    badgeText: 'Já está no sistema',
+                    note: 'Este lançamento já existe no histórico, com o mesmo destino e a mesma descrição.'
                 };
             }
             if (meta.pendingMatches > 0) {
                 return {
                     badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-                    badgeText: 'Pendente encontrado',
-                    note: 'Ja existe pendente com mesma data, fluxo, valor e destino no historico geral. Ao importar, posso marcar o antigo como realizado e nao criar duplicado.'
+                    badgeText: 'Vai dar baixa num pendente',
+                    note: 'Já existe um pendente igual no histórico. Ao importar, marco o antigo como realizado em vez de criar outro.'
                 };
             }
             if (meta.realizedMatches > 0) {
                 return {
                     badgeClass: 'bg-green-50 text-green-700 border border-green-200',
-                    badgeText: 'Realizado encontrado',
-                    note: 'Ja existe lancamento realizado com mesma data, fluxo, valor e destino no historico geral. Ao importar, posso ignorar esta linha.'
+                    badgeText: 'Já foi lançado — vou ignorar',
+                    note: 'Já existe um lançamento realizado igual no histórico. Ao importar, esta linha é descartada.'
                 };
             }
             if (meta.status === 'conflict') {
@@ -19386,21 +19762,21 @@
                 const suffix = meta.otherDestinationLabels.length > 1 ? ` e mais ${meta.otherDestinationLabels.length - 1}` : '';
                 return {
                     badgeClass: 'bg-amber-50 text-amber-700 border border-amber-200',
-                    badgeText: 'Conferir destino',
-                    note: `Ha lancamento parecido em ${firstConflict}${suffix} no historico geral.`
+                    badgeText: 'Confira o destino',
+                    note: `Existe um lançamento parecido em ${firstConflict}${suffix} no histórico. Vou perguntar antes de importar.`
                 };
             }
             if (meta.status === 'similar') {
                 return {
                     badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-                    badgeText: 'Destino confere',
-                    note: 'Ja existe lancamento parecido com este destino no historico geral.'
+                    badgeText: 'Destino bate com o histórico',
+                    note: 'Já existe um lançamento parecido com este mesmo destino no histórico.'
                 };
             }
             return {
                 badgeClass: 'bg-slate-50 text-slate-700 border border-slate-200',
-                badgeText: 'Novo lancamento',
-                note: 'Nao encontrei registro parecido no historico geral.'
+                badgeText: 'Novo',
+                note: 'Não encontrei nada parecido no histórico. Vai ser criado como novo.'
             };
         }
 
@@ -19409,11 +19785,11 @@
             const summary = document.getElementById('recon-summary-count');
             const body = document.getElementById('recon-preview-body');
             const validDestinations = getValidDestinations();
-            const selectedAccountId = getReconSelectedAccountId();
             if(tempRecon.length > 0) {
                 if(validDestinations.length === 0) {
-                    if(summary) summary.innerText = 'Nenhum destino válido no Banco de Dados';
+                    if(summary) summary.innerText = 'Cadastre um destino em Dados › Banco de Dados para poder conciliar.';
                     if(preview) preview.classList.add('hidden');
+                    updateReconStepState();
                     return;
                 }
                 tempRecon = tempRecon.map(item => ({
@@ -19425,39 +19801,17 @@
                             getReconAllowedDestinations(item, validDestinations)
                         )
                 }));
-                const reconStats = tempRecon.reduce((acc, item) => {
-                    const invalidDestination = !hasReconValidDestination(item, validDestinations);
-                    const meta = getReconExistingMatchMeta(item, selectedAccountId);
-                    if (invalidDestination) acc.invalid += 1;
-                    else if (meta.status === 'exact') acc.exact += 1;
-                    else if (meta.status === 'conflict') acc.conflict += 1;
-                    else if (meta.status === 'similar') acc.similar += 1;
-                    else if (meta.status === 'new') acc.newItems += 1;
-                    return acc;
-                }, { invalid: 0, exact: 0, conflict: 0, similar: 0, newItems: 0 });
-                if(summary) {
-                    const summaryParts = [`${tempRecon.length} registro(s) extraído(s)`];
-                    summaryParts.push('historico geral');
-                    if (selectedAccountId) {
-                        if (reconStats.exact > 0) summaryParts.push(`${reconStats.exact} já lançado(s)`);
-                        if (reconStats.similar > 0) summaryParts.push(`${reconStats.similar} com destino coerente`);
-                        if (reconStats.conflict > 0) summaryParts.push(`${reconStats.conflict} para conferir destino`);
-                        if (reconStats.newItems > 0) summaryParts.push(`${reconStats.newItems} novo(s)`);
-                    } else {
-                        summaryParts.push('selecione a conta para comparar com o histórico');
-                    }
-                    if (reconStats.invalid > 0) summaryParts.push(`${reconStats.invalid} sem destino confirmado`);
-                    summary.innerText = summaryParts.join(' • ');
-                }
+                renderReconSummaryState(validDestinations);
                 if(preview) preview.classList.remove('hidden');
                 if(body) body.innerHTML = tempRecon.map((e,i) => {
                     const destinationSource = getReconAllowedDestinations(e, validDestinations);
                     const invalidDestination = !hasReconValidDestination(e, validDestinations);
-                    const matchMeta = getReconExistingMatchMeta(e, selectedAccountId);
+                    const matchMeta = getReconExistingMatchMeta(e);
                     const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
                     const destinationInputLabel = getDestinationLabelById(e.destinationId, destinationSource) || getDestinationLabelById(e.destinationId) || '';
                     return `<tr id="recon-row-${i}" class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
                         <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
+                        <td class="px-4 py-3 text-right text-[11px] font-black whitespace-nowrap ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
                         <td class="px-4 py-3 w-[180px]">
                             <textarea
                                 id="recon-desc-${i}"
@@ -19489,7 +19843,7 @@
                                         onblur="handleReconDestinationBlur(${i})"
                                         onkeydown="handleReconDestinationKeydown(${i}, event)"
                                     >
-                                    <div id="recon-dst-panel-${i}" class="combobox-panel custom-scrollbar hidden" role="listbox" aria-label="Sugestoes de destino"></div>
+                                    <div id="recon-dst-panel-${i}" class="combobox-panel custom-scrollbar hidden" role="listbox" aria-label="Sugestões de destino"></div>
                                 </div>
                                 <button type="button" id="recon-note-btn-${i}" class="recon-note-btn" onclick="saveReconDescriptionAsDestinationNote(${i})" title="Salvar descrição selecionada como nota do destino" aria-label="Salvar descrição como nota do destino">
                                     <i data-lucide="sticky-note" class="w-3.5 h-3.5"></i>
@@ -19504,20 +19858,66 @@
                             <p id="recon-badge-note-${i}" class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
                         </td>
                         <td class="px-4 py-3 text-center">
-                            <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
+                            <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2" title="Remover esta linha da prévia" aria-label="Remover esta linha da prévia">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </td>
-                        <td class="px-4 py-3 text-right text-[11px] font-black whitespace-nowrap ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
                     </tr>`;
                 }).join('');
                 refreshLucideIcons();
             } else {
                 if(preview) preview.classList.add('hidden');
-                if(summary) summary.innerText = 'Processando...';
+                if(summary) summary.innerText = '';
                 if(body) body.innerHTML = '';
+                // Zera previsão e botão para a prévia não reabrir com números do lote anterior.
+                updateReconImportAffordances(
+                    { invalid: 0, exact: 0, conflict: 0, similar: 0, newItems: 0, willRealize: 0 },
+                    getReconSelectedAccountId()
+                );
+            }
+            updateReconStepState();
+        }
+
+        // Diz, antes do clique, o que a importação vai fazer, e impede o clique enquanto
+        // faltar algo — em vez de deixar o erro aparecer só depois, em forma de toast.
+        function updateReconImportAffordances(reconStats, selectedAccountId) {
+            const importBtn = document.getElementById('recon-import-btn');
+            const forecastEl = document.getElementById('recon-summary-forecast');
+            const issueBtn = document.getElementById('recon-next-issue-btn');
+            const issueLabel = document.getElementById('recon-next-issue-label');
+
+            if (issueBtn) issueBtn.classList.toggle('hidden', reconStats.invalid === 0);
+            if (issueLabel) {
+                issueLabel.innerText = reconStats.invalid === 1
+                    ? 'Ir para a linha sem destino'
+                    : `Ir para a próxima das ${reconStats.invalid} sem destino`;
+            }
+
+            if (forecastEl) {
+                const willCreate = reconStats.newItems + reconStats.similar + reconStats.conflict;
+                const parts = [];
+                if (willCreate > 0) parts.push(`${willCreate} lançamento(s) serão criados`);
+                if (reconStats.willRealize > 0) parts.push(`${reconStats.willRealize} pendente(s) receberão baixa`);
+                if (reconStats.exact > 0) parts.push(`${reconStats.exact} serão ignorados por já existirem`);
+                if (reconStats.conflict > 0) parts.push(`${reconStats.conflict} serão conferidos com você antes`);
+                forecastEl.innerText = parts.length > 0 ? `Ao importar: ${parts.join(', ')}.` : '';
+            }
+
+            if (importBtn) {
+                let blockedLabel = '';
+                if (reconStats.invalid > 0) {
+                    blockedLabel = reconStats.invalid === 1
+                        ? 'Resolva 1 linha para importar'
+                        : `Resolva ${reconStats.invalid} linhas para importar`;
+                } else if (!selectedAccountId) {
+                    blockedLabel = 'Escolha a conta no passo 2';
+                }
+                importBtn.disabled = Boolean(blockedLabel);
+                importBtn.innerText = blockedLabel
+                    || (reconStats.conflict > 0 || reconStats.willRealize > 0 ? 'Revisar e importar' : 'Importar');
             }
         }
+
         function removeRecon(index) {
             tempRecon.splice(index, 1);
             renderReconPreview();
@@ -19746,21 +20146,22 @@
                 const batchStatus = getReconBatchStatus();
                 const accountExists = state.accounts.some(a => String(a.id || '') === accId);
                 if(!accountExists) {
-                    alert('Selecione uma conta válida cadastrada no Banco de Dados.');
+                    showAppToast('Escolha a conta bancária no passo 2 antes de importar.', { tone: 'danger' });
                     return;
                 }
                 if (!Array.isArray(tempRecon) || tempRecon.length === 0) {
-                    alert('Não há registros para importar.');
+                    showAppToast('Não há nada na prévia para importar.', { tone: 'danger' });
                     return;
                 }
                 const allValidDestinations = getValidDestinations();
-                const hasInvalidDestination = tempRecon.some(t => {
+                const invalidCount = tempRecon.filter(t => {
                     const allowed = getValidDestinationsByFlow(t.type);
                     const source = allowed.length > 0 ? allowed : allValidDestinations;
                     return !source.some(d => d.id === t.destinationId);
-                });
-                if(hasInvalidDestination) {
-                    alert('Existem registros com destino sem vínculo válido no Banco de Dados.');
+                }).length;
+                if(invalidCount > 0) {
+                    showAppToast(`${invalidCount} linha(s) ainda estão sem destino.\nUse "Ir para a próxima pendência" e escolha um destino em cada uma.`, { tone: 'danger' });
+                    goToNextReconIssue();
                     return;
                 }
                 const newEntries = tempRecon.map((temp) => {
@@ -19887,10 +20288,10 @@
                     });
                     pendingToRealize.push(...realizeByExistingId.values());
                     if (pendingToRealize.length > 0) {
-                        if (summaryEl) summaryEl.innerText = `Marcando ${pendingToRealize.length} existente(s) como realizado(s)...`;
+                        if (summaryEl) summaryEl.innerText = `Dando baixa em ${pendingToRealize.length} pendente(s)...`;
                         const realizeResult = await cloudSaveBatched('entries', pendingToRealize, 200);
                         if (!realizeResult?.ok) {
-                            alert(`Nao foi possivel marcar os lancamentos existentes como realizados.\n\nDetalhe: ${String(realizeResult?.error?.message || 'Erro desconhecido.')}`);
+                            showAppToast(`Não consegui dar baixa nos pendentes.\n\nDetalhe: ${String(realizeResult?.error?.message || 'Erro desconhecido.')}`, { tone: 'danger' });
                             return;
                         }
                     }
@@ -19899,36 +20300,36 @@
                 const entriesToImport = newEntries.filter(entry => !entryIdsToSkip.has(String(entry.id || '')));
                 if (entriesToImport.length === 0) {
                     if (summaryEl) {
-                        summaryEl.innerText = 'Nenhum lançamento disponível para importar.';
+                        summaryEl.innerText = 'Nada novo para gravar.';
                     }
-                    alert(`Conciliacao concluida.\n\n${duplicateAgainstExisting.length} lancamento(s) ja existiam e foram reaproveitados.${pendingToRealize.length > 0 ? `\n${pendingToRealize.length} pendente(s) marcado(s) como realizado(s).` : ''}`);
+                    showAppToast(`Conciliação concluída.\n\nNada novo foi criado: ${duplicateAgainstExisting.length} lançamento(s) já existiam.${pendingToRealize.length > 0 ? `\n${pendingToRealize.length} pendente(s) receberam baixa.` : ''}`, { tone: 'success' });
                     await refreshCloudState({ silent: false });
                     cancelRecon(); render(); switchTab('entries');
                     return;
                 }
-                if (summaryEl) summaryEl.innerText = `Importando 0 de ${entriesToImport.length} novo(s)`;
+                if (summaryEl) summaryEl.innerText = `Gravando 0 de ${entriesToImport.length}...`;
                 const saveResult = await cloudSaveBatched('entries', entriesToImport, 200, (imported, total) => {
-                    if (summaryEl) summaryEl.innerText = `Importado ${imported} de ${total}`;
+                    if (summaryEl) summaryEl.innerText = `Gravando ${imported} de ${total}...`;
                 });
                 if (!saveResult?.ok) {
                     if (summaryEl) summaryEl.innerText = `Importado ${saveResult.imported} de ${saveResult.expected}`;
                     await refreshCloudState({ silent: false });
-                    alert(`Não foi possível importar toda a conciliação.\n\nImportados: ${saveResult.imported}/${saveResult.expected}\nLote com falha: ${saveResult.failedChunk}\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`);
+                    showAppToast(`A importação parou no meio.\n\nForam gravados ${saveResult.imported} de ${saveResult.expected}. Os que faltaram continuam na prévia — tente importar de novo.\n\nDetalhe: ${String(saveResult?.error?.message || 'Erro desconhecido.')}`, { tone: 'danger' });
                     return;
                 }
                 const importedIds = Array.from(new Set(entriesToImport.map(item => String(item.id || ''))));
                 const validation = await validateImportedEntryIds(importedIds);
                 if (!validation.ok) {
-                    alert(`Conciliação salva, mas não foi possível validar a quantidade importada.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`);
+                    showAppToast(`Salvei os lançamentos, mas não consegui confirmar quantos chegaram na nuvem.\n\nConfira na aba Lançamentos.\n\nDetalhe: ${String(validation?.error?.message || 'Erro desconhecido.')}`, { tone: 'danger' });
                 } else {
                     const importedNow = Number(validation.imported || 0);
                     if (summaryEl) summaryEl.innerText = `Importado ${importedNow} de ${entriesToImport.length}`;
                     if (importedNow !== entriesToImport.length) {
-                        alert(`Atenção: foram validados ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou atualizar os dados da nuvem agora.`);
+                        showAppToast(`Atenção: chegaram ${importedNow} de ${entriesToImport.length} lançamentos na nuvem.\n\nVou recarregar os dados. Confira na aba Lançamentos o que faltou.`, { tone: 'danger' });
                     } else {
-                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\nReaproveitados existentes: ${duplicateAgainstExisting.length}.` : '';
-                        const realizedNote = pendingToRealize.length > 0 ? `\nPendentes marcados como realizados: ${pendingToRealize.length}.` : '';
-                        alert(`Importacao concluida.\n\nImportado ${importedNow} de ${entriesToImport.length}.${duplicateNote}${realizedNote}`);
+                        const duplicateNote = duplicateAgainstExisting.length > 0 ? `\n${duplicateAgainstExisting.length} já existiam e foram ignorados.` : '';
+                        const realizedNote = pendingToRealize.length > 0 ? `\n${pendingToRealize.length} pendente(s) receberam baixa.` : '';
+                        showAppToast(`Importação concluída.\n\n${importedNow} lançamento(s) criados.${duplicateNote}${realizedNote}`, { tone: 'success' });
                     }
                 }
                 await refreshCloudState({ silent: false });
@@ -19940,9 +20341,16 @@
                     importBtn.classList.remove('opacity-60', 'cursor-not-allowed');
                     importBtn.innerText = 'Importar';
                 }
+                // Recalcula rótulo e bloqueio do botão a partir do estado real da prévia
+                // (uma importação abortada mantém as linhas na tela).
+                if (Array.isArray(tempRecon) && tempRecon.length > 0) renderReconPreview();
             }
         }
-        function cancelRecon() { tempRecon = []; document.getElementById('recon-preview')?.classList.add('hidden'); }
+        function cancelRecon() {
+            tempRecon = [];
+            document.getElementById('recon-preview')?.classList.add('hidden');
+            updateReconStepState();
+        }
 
         function renderDatabase() {
             populateMovementTypeSelect('db-mov-type-filter');
@@ -23584,11 +23992,12 @@
             }
             const text = allLines.join('\n');
             if (!text.trim()) {
-                alert('O PDF não contém texto legível (pode ser uma imagem escaneada).');
+                showAppToast('Este PDF não tem texto que eu consiga ler.\nEle parece ser uma imagem escaneada. Tente baixar o extrato em Excel ou CSV.', { tone: 'danger' });
                 return;
             }
             const pasteArea = document.getElementById('recon-paste-area');
             if (pasteArea) pasteArea.value = text;
+            showAppToast(`Li ${allLines.length} linha(s) de "${file.name}".\nAgora vou procurar os lançamentos.`, { tone: 'info' });
             processPaste();
         }
 
@@ -23613,11 +24022,12 @@
                 const sheet = workbook.Sheets[sheetName];
                 const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
                 if (!rows || rows.length < 2) {
-                    alert('Planilha vazia ou sem dados suficientes.');
+                    showAppToast('Planilha vazia.\nPrecisa ter uma linha de cabeçalho e pelo menos um lançamento.', { tone: 'danger' });
                     return;
                 }
                 const headers = rows[0].map(h => String(h || '').trim());
                 _excelData = { headers, rows: rows.slice(1) };
+                showAppToast(`Li ${rows.length - 1} linha(s) de "${file.name}".\nAgora diga qual coluna é qual.`, { tone: 'info' });
                 openExcelMappingModal(headers);
             };
             reader.readAsArrayBuffer(file);
