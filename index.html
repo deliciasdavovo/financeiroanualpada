@@ -7941,37 +7941,40 @@
         .home-alert-item > i { color: #D97706; flex-shrink: 0; }
         .home-alert-item > span { flex: 1; }
         .home-alert-action { font-size: 11px; font-weight: 600; color: #1F7A5C; background: white; border: 1px solid #1F7A5C; cursor: pointer; padding: 3px 10px; border-radius: 6px; flex-shrink: 0; }
-        .home-proj-list { display: flex; flex-direction: column; gap: 12px; }
-        .home-proj-day { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
-        .home-proj-day.is-negative .home-proj-day-header { background: #F1F5F9; border-bottom-color: #E2E8F0; }
-        .home-proj-day-header { padding: 10px 16px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
-        .home-proj-day-label { font-size: 16px; font-weight: 600; color: #0F172A; display: block; }
-        .home-proj-day-weekday { font-size: 11px; font-weight: 500; color: #64748B; display: block; margin-top: 1px; text-transform: capitalize; }
-        .home-proj-day-totals { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; }
-        .home-proj-day.is-negative .home-proj-day-totals { background: #F8FAFC; }
-        .home-proj-tot { flex: 1; padding: 7px 12px; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; gap: 1px; }
-        .home-proj-tot:not(:last-child) { border-right: 1px solid #E2E8F0; }
-        .home-proj-tot-label { font-size: 10px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.4px; }
-        .home-proj-day-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; padding: 8px 14px; background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--primary-green); }
-        .home-proj-day-toggle:hover { background: #F8FAFC; }
-        .home-proj-day-toggle svg { width: 15px; height: 15px; transition: transform 0.2s var(--ease-premium); }
-        .home-proj-day-toggle.is-open svg { transform: rotate(180deg); }
-        .home-proj-items { border-top: 1px solid #F1F5F9; }
-        .home-proj-items.is-collapsed { display: none; }
-        .home-proj-item { display: flex; align-items: center; padding: 7px 14px; border-bottom: 1px solid #F1F5F9; gap: 9px; }
-        .home-proj-item:last-child { border-bottom: none; }
-        .home-proj-item-icon { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
-        .home-proj-item-icon svg { width: 15px; height: 15px; }
-        .home-proj-item-icon.in { background: var(--bg-green-soft); color: var(--primary-green); }
-        .home-proj-item-icon.out { background: var(--bg-red-soft); color: var(--soft-red); }
-        .home-proj-item-main { flex: 1; min-width: 0; }
-        .home-proj-item-dest { font-size: 12px; font-weight: 600; color: #1E293B; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .home-proj-item-desc { font-size: 10.5px; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
-        .home-proj-item-val { font-size: 13px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+        /* Quebra por dia: uma tabela so, dia como linha de grupo. Antes cada
+           dia era um cartao com tres mini-celulas proprias, o que impedia
+           comparar dois dias — as colunas nao ficavam no mesmo eixo. */
+        .day-table-wrap {
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            overflow: auto;
+            background: var(--bg-card);
+        }
+        .day-table { min-width: 620px; }
+        .day-col-name { width: 240px; }
+        .day-col-desc { color: var(--text-secondary); }
+        .day-col-val { width: 130px; }
+        .day-group-row { cursor: pointer; }
+        .day-group-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(47,79,157,0.45); }
+        .day-group-row.is-today > td { background: var(--bg-green-soft); }
+        .day-group-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .day-group-chevron { display: inline-flex; transition: transform 180ms var(--ease-premium); }
+        .day-group-row.is-open .day-group-chevron { transform: rotate(180deg); }
+        .day-group-label { font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+        .day-group-weekday { font-weight: 600; color: var(--text-muted); text-transform: capitalize; letter-spacing: 0; font-size: 10.5px; white-space: nowrap; }
+        .day-group-count {
+            flex-shrink: 0;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            background: #E2E8F0;
+            border-radius: var(--radius-pill);
+            padding: 1px 7px;
+        }
+        .day-entry-row.is-hidden { display: none; }
+        .day-entry-name { padding-left: 34px !important; color: var(--text-primary); font-weight: 600; }
         .home-proj-link { font-size: 12px; font-weight: 600; color: #1F7A5C; background: none; border: 1px solid #1F7A5C; cursor: pointer; padding: 5px 12px; border-radius: 8px; white-space: nowrap; }
         .home-proj-link:hover { background: #E8F3EF; }
-        .home-proj-day.is-today { border-color: #1F7A5C; box-shadow: 0 0 0 1px #1F7A5C inset; }
-        .home-proj-day.is-today .home-proj-day-header { background: #E8F3EF; border-bottom-color: #CBE3D9; }
         .home-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 4px 2px; }
         .home-hero-greeting { font-size: 20px; font-weight: 800; color: #0F172A; line-height: 1.2; }
         .home-hero-date { font-size: 12.5px; font-weight: 600; color: #64748B; margin-top: 3px; text-transform: capitalize; }
@@ -7996,26 +7999,48 @@
             .home-hero-greeting { font-size: 18px; }
         }
         /* Cobranças */
-        .cob-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .cob-kpi { border: 1px solid #E2E8F0; border-radius: 14px; padding: 14px 16px; background: #fff; }
-        .cob-kpi-label { display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* KPIs de cobrancas: faixa unica com divisorias, nao tres cartoes. */
+        .cob-kpis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            overflow: hidden;
+        }
+        .cob-kpi { padding: 11px 16px; }
+        .cob-kpi + .cob-kpi { border-left: 1px solid var(--tbl-line); }
+        .cob-kpi-label { display: flex; align-items: center; gap: 6px; font-size: var(--tbl-head-font); font-weight: 700; color: var(--tbl-head-color); text-transform: uppercase; letter-spacing: 0.05em; }
         .cob-kpi-label svg { width: 13px; height: 13px; }
-        .cob-kpi-value { display: block; font-size: 18px; font-weight: 800; margin-top: 5px; white-space: nowrap; }
-        .cob-kpi-sub { display: block; font-size: 11px; font-weight: 600; color: #94A3B8; margin-top: 2px; }
-        .cob-group { border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; }
-        .cob-group + .cob-group { margin-top: 12px; }
-        .cob-group-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 11px 16px; background: #F8FAFC; border: none; border-bottom: 1px solid #E2E8F0; cursor: pointer; text-align: left; }
-        .cob-group-title { font-size: 12.5px; font-weight: 800; color: #1E293B; display: flex; align-items: center; gap: 8px; }
-        .cob-group-count { font-size: 10.5px; font-weight: 700; color: #64748B; background: #E2E8F0; border-radius: 99px; padding: 1px 8px; }
-        .cob-group-total { font-size: 13px; font-weight: 800; white-space: nowrap; }
-        .cob-group-body.is-collapsed { display: none; }
-        .cob-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid #F1F5F9; }
-        .cob-row:last-child { border-bottom: none; }
-        .cob-row-main { flex: 1; min-width: 0; }
-        .cob-row-dest { font-size: 12.5px; font-weight: 700; color: #1E293B; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cob-row-meta { font-size: 10.5px; color: #64748B; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 1px; }
-        .cob-row-val { font-size: 13px; font-weight: 800; white-space: nowrap; }
-        .cob-row-actions { display: flex; gap: 5px; flex-shrink: 0; }
+        .cob-kpi-value { display: block; font-size: 18px; font-weight: 700; margin-top: 5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .cob-kpi-sub { display: block; font-size: 10.5px; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+
+        /* Cobrancas numa tabela so: o grupo (vence hoje, proximos dias...) e
+           uma linha de grupo, e as contas sao as linhas abaixo dela. */
+        .cob-table-wrap {
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            overflow: auto;
+            background: var(--bg-card);
+        }
+        .cob-table { min-width: 760px; }
+        .cob-col-date { width: 110px; white-space: nowrap; }
+        .cob-col-date.is-overdue { color: var(--soft-red); font-weight: 700; }
+        .cob-col-dest { width: 220px; font-weight: 600; }
+        .cob-col-cat { width: 150px; color: var(--text-secondary); }
+        .cob-col-desc { color: var(--text-secondary); }
+        .cob-col-val { width: 130px; font-weight: 700; }
+        .cob-col-actions { width: 84px; }
+        .cob-group-row { cursor: pointer; }
+        .cob-group-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(47,79,157,0.45); }
+        .cob-group-title { display: flex; align-items: center; gap: 8px; }
+        .cob-group-chevron { display: inline-flex; transition: transform 180ms var(--ease-premium); }
+        .cob-group-row.is-open .cob-group-chevron { transform: rotate(180deg); }
+        .cob-group-count { font-size: 10px; font-weight: 700; color: var(--text-secondary); background: #E2E8F0; border-radius: var(--radius-pill); padding: 1px 7px; }
+        .cob-group-total { font-weight: 700; white-space: nowrap; }
+        .cob-row.is-hidden { display: none; }
+        .cob-row-actions { display: flex; gap: 5px; justify-content: center; }
         .cob-act-btn { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #E2E8F0; background: #fff; color: #64748B; display: grid; place-items: center; cursor: pointer; }
         .cob-act-btn svg { width: 14px; height: 14px; }
         .cob-act-btn.ok { color: #1F7A5C; border-color: #BFDFD3; }
@@ -8023,9 +8048,9 @@
         .cob-act-btn:hover { background: #F8FAFC; }
         .cob-empty { text-align: center; padding: 26px 14px; font-size: 12px; font-weight: 600; color: #64748B; }
         @media (max-width: 640px) {
-            .cob-kpis { grid-template-columns: 1fr; gap: 8px; }
-            .cob-row { flex-wrap: wrap; }
-            .cob-row-val { margin-left: 40px; }
+            .cob-kpis { grid-template-columns: 1fr; }
+            .cob-kpi + .cob-kpi { border-left: none; border-top: 1px solid var(--tbl-line); }
+            .cob-table { --tbl-pad-x: 9px; --tbl-font: var(--tbl-font-sm); min-width: 680px; }
         }
         /* Calendário financeiro (Planejamento > Projeção) */
         .proj-cal-wrap { display: flex; flex-direction: column; gap: 20px; }
@@ -16191,21 +16216,28 @@
             </article>`;
         }
 
-        function toggleProjDayItems(btn) {
-            const items = btn.parentElement.querySelector('.home-proj-items');
-            if (!items) return;
-            const collapsed = items.classList.toggle('is-collapsed');
-            btn.classList.toggle('is-open', !collapsed);
-            btn.setAttribute('aria-expanded', String(!collapsed));
-            const label = btn.querySelector('span');
-            if (label) label.textContent = collapsed
-                ? `Ver todos os lançamentos do dia (${items.children.length})`
-                : 'Ocultar lançamentos do dia';
+        // Recolher um dia esconde as linhas daquele dia. Elas sao irmas da linha
+        // do dia na mesma tabela, e nao filhas dela, entao a marcacao data-day
+        // e o que diz quais linhas pertencem a qual dia.
+        function toggleProjDayItems(row) {
+            if (!row) return;
+            const day = row.dataset.day;
+            const table = row.closest('table');
+            if (!day || !table) return;
+            const open = row.getAttribute('aria-expanded') !== 'true';
+            row.setAttribute('aria-expanded', String(open));
+            row.classList.toggle('is-open', open);
+            table.querySelectorAll(`tr.day-entry-row[data-day="${CSS.escape(day)}"]`)
+                .forEach(item => item.classList.toggle('is-hidden', !open));
         }
 
         // Monta os cards agrupados por dia no mesmo design da tela de início.
         // Recebe lançamentos já ordenados por data e devolve o HTML das linhas de dia.
-        function buildHomeStyleDayCards(entries) {
+        // Um dia = uma linha de grupo; os lancamentos daquele dia sao as linhas
+        // abaixo dela, recolhidas por padrao. Antes cada dia era um cartao com
+        // tres mini-celulas, e as colunas de dias diferentes nao se alinhavam:
+        // dava para ler um dia, nao para varrer a semana.
+        function buildDayBreakdownRows(entries) {
             const today = getTodayIsoDate();
             const todayDate = parseIsoDateLocal(today) || new Date();
             const tomorrowIso = formatLocalDate(addLocalDays(todayDate, 1));
@@ -16223,7 +16255,6 @@
                 const dayIn  = dayIncomes.reduce((a, b)  => a + (Number(b.amount) || 0), 0);
                 const dayOut = dayExpenses.reduce((a, b) => a + (Number(b.amount) || 0), 0);
                 const dayNet = dayIn - dayOut;
-                const isNegDay = dayNet < 0;
 
                 const dateObj = parseIsoDateLocal(dateIso) || new Date();
                 const weekday = dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
@@ -16237,53 +16268,55 @@
                 const dayTitle = `${dateLabel === dateShort ? dateShort : `${dateLabel} (${dateShort})`}`;
                 const dayDetailSubtitle = `Pendentes de ${capitalizeFirst(weekday)}, ${dateShort}`;
 
-                const itemsHtml = dayEntries.map(e => {
+                const itemRows = dayEntries.map(e => {
                     const flow = normalizeFlowType(e.type);
                     const isIn = flow === FLOW_IN;
+                    const amount = Number(e.amount) || 0;
                     const destName = getDestinationById(e.destinationId)?.name || 'Sem destino';
-                    const descHtml = e.description ? `<span class="home-proj-item-desc">${escapeHtml(e.description)}</span>` : '';
-                    return `<div class="home-proj-item">
-                        <div class="home-proj-item-icon ${isIn ? 'in' : 'out'}"><i data-lucide="${isIn ? 'arrow-down-left' : 'arrow-up-right'}" class="w-4 h-4"></i></div>
-                        <div class="home-proj-item-main">
-                            <span class="home-proj-item-dest">${escapeHtml(destName)}</span>
-                            ${descHtml}
-                        </div>
-                        <span class="home-proj-item-val ${isIn ? 'flow-income-text' : 'flow-expense-text'}">${isIn ? '+' : '-'}${formatBRL(Number(e.amount) || 0)}</span>
-                    </div>`;
+                    return `<tr class="day-entry-row is-hidden" data-day="${escapeHtml(dateIso)}">
+                        <td class="day-col-name day-entry-name">${escapeHtml(destName)}</td>
+                        <td class="day-col-desc">${escapeHtml(String(e.description || '')) || '—'}</td>
+                        <td class="tbl-num day-col-val">${isIn ? `<span class="flow-income-text">${formatBRL(amount)}</span>` : ''}</td>
+                        <td class="tbl-num day-col-val">${!isIn ? `<span class="flow-expense-text">${formatBRL(amount)}</span>` : ''}</td>
+                        <td class="tbl-num day-col-val"></td>
+                    </tr>`;
                 }).join('');
 
-                return `<div class="home-proj-day${isNegDay ? ' is-negative' : ''}${dateIso === today ? ' is-today' : ''}">
-                    <div class="home-proj-day-header">
-                        <span class="home-proj-day-label">${escapeHtml(dateLabel)}</span>
-                        <span class="home-proj-day-weekday">${escapeHtml(weekdayLine)}</span>
-                    </div>
-                    <div class="home-proj-day-totals">
-                        <div class="home-proj-tot">
-                            <span class="home-proj-tot-label">Entradas</span>
-                            <span class="flow-income-text"${vdHook({ title: `Entradas · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayIncomes })}>${dayIn > 0 ? '+' : ''}${formatBRLNoCents(dayIn)}</span>
-                        </div>
-                        <div class="home-proj-tot">
-                            <span class="home-proj-tot-label">Saídas</span>
-                            <span class="flow-expense-text"${vdHook({ title: `Saídas · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayExpenses })}>${dayOut > 0 ? '-' : ''}${formatBRLNoCents(dayOut)}</span>
-                        </div>
-                        <div class="home-proj-tot">
-                            <span class="home-proj-tot-label">Resultado</span>
-                            <span class="${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}"${vdHook({ title: `Resultado · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayEntries })}>${dayNet > 0 ? '+' : ''}${formatBRLNoCents(dayNet)}</span>
-                        </div>
-                    </div>
-                    <button type="button" class="home-proj-day-toggle" onclick="toggleProjDayItems(this)" aria-expanded="false">
-                        <span>Ver todos os lançamentos do dia (${dayEntries.length})</span>
-                        <i data-lucide="chevron-down"></i>
-                    </button>
-                    <div class="home-proj-items is-collapsed">${itemsHtml}</div>
-                </div>`;
+                const dayRow = `<tr class="tbl-row-group day-group-row${dateIso === today ? ' is-today' : ''}" tabindex="0" role="button" aria-expanded="false" onclick="toggleProjDayItems(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleProjDayItems(this)}" data-day="${escapeHtml(dateIso)}">
+                    <td class="day-col-name">
+                        <span class="day-group-name">
+                            <span class="day-group-chevron">${VD_CHEVRON}</span>
+                            <span class="day-group-label">${escapeHtml(dateLabel)}</span>
+                            <span class="day-group-weekday">${escapeHtml(weekdayLine)}</span>
+                            <span class="day-group-count">${dayEntries.length}</span>
+                        </span>
+                    </td>
+                    <td class="day-col-desc"></td>
+                    <td class="tbl-num day-col-val"><span class="flow-income-text"${vdHook({ title: `Entradas · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayIncomes })}>${dayIn ? formatBRLNoCents(dayIn) : '—'}</span></td>
+                    <td class="tbl-num day-col-val"><span class="flow-expense-text"${vdHook({ title: `Saídas · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayExpenses })}>${dayOut ? formatBRLNoCents(dayOut) : '—'}</span></td>
+                    <td class="tbl-num day-col-val"><span class="${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}"${vdHook({ title: `Resultado · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayEntries })}>${formatBRLNoCents(dayNet)}</span></td>
+                </tr>`;
+
+                return dayRow + itemRows;
             }).join('');
         }
 
-        // ---------- Cobranças (contas a receber / a pagar) ----------
+        // A tabela pronta, com cabecalho. Usada no Inicio e na Projecao.
+        function buildDayBreakdownTable(entries) {
+            const rows = buildDayBreakdownRows(entries);
+            if (!rows) return '';
+            return `<div class="day-table-wrap custom-scrollbar"><table class="tbl day-table">
+                <thead><tr>
+                    <th class="day-col-name">Dia / Destino</th>
+                    <th class="day-col-desc">Descrição</th>
+                    <th class="tbl-num day-col-val">Entradas</th>
+                    <th class="tbl-num day-col-val">Saídas</th>
+                    <th class="tbl-num day-col-val">Resultado</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table></div>`;
+        }
 
-        // Agrupa os pendentes por fluxo (receber/pagar) e por prazo:
-        // vence hoje, próximos COBRANCAS_WEEK_DAYS dias, mais adiante e dias anteriores.
         function getCobrancasData() {
             const today = getTodayIsoDate();
             const todayDate = parseIsoDateLocal(today) || new Date();
@@ -16317,40 +16350,48 @@
             renderCobrancas();
         }
 
-        function toggleCobGroup(btn) {
-            const body = btn.parentElement.querySelector('.cob-group-body');
-            if (!body) return;
-            const collapsed = body.classList.toggle('is-collapsed');
-            btn.setAttribute('aria-expanded', String(!collapsed));
-            const icon = btn.querySelector('.cob-group-chevron');
-            if (icon) icon.style.transform = collapsed ? '' : 'rotate(180deg)';
+        function toggleCobGroup(row) {
+            if (!row) return;
+            const key = row.dataset.cobGroup;
+            const table = row.closest('table');
+            if (!key || !table) return;
+            const open = row.getAttribute('aria-expanded') !== 'true';
+            row.setAttribute('aria-expanded', String(open));
+            row.classList.toggle('is-open', open);
+            table.querySelectorAll(`tr.cob-row[data-cob-group="${CSS.escape(key)}"]`)
+                .forEach(item => item.classList.toggle('is-hidden', !open));
         }
 
         function buildCobrancaRow(entry, isReceber, today) {
             const destName = getDestinationById(entry.destinationId)?.name || 'Sem destino';
             const cat = state.categories.find(c => String(c.id || '') === String(entry.categoryId || ''));
             const dateIso = String(entry.date || '');
-            const metaParts = [escapeHtml(formatDateBRV2(dateIso))];
-            if (cat) metaParts.push(escapeHtml(cat.name));
-            if (entry.description) metaParts.push(escapeHtml(entry.description));
-            return `<div class="cob-row">
-                <div class="home-proj-item-icon ${isReceber ? 'in' : 'out'}"><i data-lucide="${isReceber ? 'arrow-down-left' : 'arrow-up-right'}"></i></div>
-                <div class="cob-row-main">
-                    <span class="cob-row-dest">${escapeHtml(destName)}</span>
-                    <span class="cob-row-meta">${metaParts.join(' • ')}</span>
-                </div>
-                <span class="cob-row-val ${isReceber ? 'flow-income-text' : 'flow-expense-text'}">${isReceber ? '+' : '-'}${formatBRL(Number(entry.amount) || 0)}</span>
-                <div class="cob-row-actions">
-                    <button type="button" class="cob-act-btn ok" onclick="toggleQuickStatus('${String(entry.id || '')}')" title="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}" aria-label="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}"><i data-lucide="check"></i></button>
-                    <button type="button" class="cob-act-btn" onclick="openEntryModal('${String(entry.id || '')}')" title="Editar" aria-label="Editar"><i data-lucide="pencil"></i></button>
-                </div>
-            </div>`;
+            const overdue = dateIso && today && dateIso < today;
+            return `<tr class="cob-row" data-cob-group="${escapeHtml(String(entry.__cobGroup || ''))}">
+                <td class="cob-col-date${overdue ? ' is-overdue' : ''}">${escapeHtml(formatDateBRV2(dateIso))}</td>
+                <td class="cob-col-dest">${escapeHtml(destName)}</td>
+                <td class="cob-col-cat">${escapeHtml(cat ? cat.name : '') || '—'}</td>
+                <td class="cob-col-desc">${escapeHtml(String(entry.description || '')) || '—'}</td>
+                <td class="tbl-num cob-col-val ${isReceber ? 'flow-income-text' : 'flow-expense-text'}">${isReceber ? '+' : '-'}${formatBRL(Number(entry.amount) || 0)}</td>
+                <td class="tbl-center cob-col-actions">
+                    <div class="cob-row-actions">
+                        <button type="button" class="cob-act-btn ok" onclick="event.stopPropagation();toggleQuickStatus('${String(entry.id || '')}')" title="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}" aria-label="${isReceber ? 'Marcar como recebido' : 'Marcar como pago'}"><i data-lucide="check"></i></button>
+                        <button type="button" class="cob-act-btn" onclick="event.stopPropagation();openEntryModal('${String(entry.id || '')}')" title="Editar" aria-label="Editar"><i data-lucide="pencil"></i></button>
+                    </div>
+                </td>
+            </tr>`;
         }
 
         function buildCobrancaGroup(title, entries, groupTotal, isReceber, today, options = {}) {
             if (!entries.length) return '';
             const collapsed = Boolean(options.collapsed);
-            const rows = entries.map(e => buildCobrancaRow(e, isReceber, today)).join('');
+            // As linhas sao irmas da linha de grupo na mesma tabela, nao filhas
+            // dela: a chave e o que diz quais linhas recolher junto.
+            const groupKey = normalizeEntrySearchText(title).replace(/\s+/g, '-');
+            const rows = entries
+                .map(e => buildCobrancaRow({ ...e, __cobGroup: groupKey }, isReceber, today))
+                .map(html => collapsed ? html.replace('class="cob-row"', 'class="cob-row is-hidden"') : html)
+                .join('');
             const totalClass = isReceber ? 'flow-income-text' : 'flow-expense-text';
             const groupHook = vdHook({
                 title: `${title} · ${isReceber ? 'A receber' : 'A pagar'}`,
@@ -16358,16 +16399,17 @@
                 group: 'dia',
                 entries
             });
-            return `<div class="cob-group">
-                <button type="button" class="cob-group-header" onclick="toggleCobGroup(this)" aria-expanded="${String(!collapsed)}">
-                    <span class="cob-group-title">${escapeHtml(title)}<span class="cob-group-count">${entries.length}</span></span>
-                    <span style="display:flex;align-items:center;gap:8px;">
-                        <span class="cob-group-total ${totalClass}"${groupHook}>${formatBRL(groupTotal)}</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 cob-group-chevron" style="transition: transform 0.2s;${collapsed ? '' : 'transform: rotate(180deg);'}"></i>
-                    </span>
-                </button>
-                <div class="cob-group-body${collapsed ? ' is-collapsed' : ''}">${rows}</div>
-            </div>`;
+            return `<tr class="tbl-row-group cob-group-row${collapsed ? '' : ' is-open'}" tabindex="0" role="button" aria-expanded="${String(!collapsed)}" data-cob-group="${escapeHtml(groupKey)}" onclick="toggleCobGroup(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCobGroup(this)}">
+                    <td colspan="4">
+                        <span class="cob-group-title">
+                            <span class="cob-group-chevron">${VD_CHEVRON}</span>
+                            ${escapeHtml(title)}
+                            <span class="cob-group-count">${entries.length}</span>
+                        </span>
+                    </td>
+                    <td class="tbl-num cob-group-total ${totalClass}"${groupHook}>${formatBRL(groupTotal)}</td>
+                    <td></td>
+                </tr>${rows}`;
         }
 
         function renderCobrancas() {
@@ -16420,7 +16462,17 @@
                         <button type="button" class="home-hero-btn primary" onclick="openEntryModal(null)"><i data-lucide="plus"></i>Lançamento</button>
                     </div>
                     ${side.list.length
-                        ? groupsHtml
+                        ? `<div class="cob-table-wrap custom-scrollbar"><table class="tbl cob-table">
+                            <thead><tr>
+                                <th class="cob-col-date">Vencimento</th>
+                                <th class="cob-col-dest">Destino</th>
+                                <th class="cob-col-cat">Categoria</th>
+                                <th class="cob-col-desc">Descrição</th>
+                                <th class="tbl-num cob-col-val">Valor</th>
+                                <th class="tbl-center cob-col-actions">Ação</th>
+                            </tr></thead>
+                            <tbody>${groupsHtml}</tbody>
+                        </table></div>`
                         : `<div class="cob-empty">Nenhuma conta ${isReceber ? 'a receber' : 'a pagar'} pendente. Tudo em dia! 🎉</div>`
                     }
                 </div>
@@ -16447,7 +16499,7 @@
                 })
                 .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
 
-            const dayRowsHtml = buildHomeStyleDayCards(futurePending);
+            const dayTableHtml = buildDayBreakdownTable(futurePending);
 
             const hour = new Date().getHours();
             const greeting = hour < 12 ? 'Bom dia!' : hour < 18 ? 'Boa tarde!' : 'Boa noite!';
@@ -16494,8 +16546,8 @@
                             <span class="home-summary-sub">${futurePending.length} lançamento(s) em ${HOME_UPCOMING_DAYS + 1} dias</span>
                         </div>
                     </div>` : ''}
-                    ${dayRowsHtml.length > 0
-                        ? `<div class="home-proj-list">${dayRowsHtml}</div>`
+                    ${dayTableHtml
+                        ? dayTableHtml
                         : `<div class="home-empty-state">
                             <div class="home-empty-icon"><i data-lucide="calendar-check-2"></i></div>
                             <p class="home-empty-title">Tudo em dia por aqui</p>
@@ -18728,11 +18780,11 @@
                             </tbody>
                         </table>
                     </div>`;
-                    const dayCardsHtml = buildHomeStyleDayCards(entries);
+                    const dayTableHtml = buildDayBreakdownTable(entries);
                     // No agrupamento por dia (padrão, igual à tela de início) mostramos apenas
                     // os cards por dia. Em semana/mês mantemos a tabela-resumo por período.
                     const summaryTableHtml = projectionGranularity === 'day' ? '' : tableHtml;
-                    listEl.innerHTML = summaryTableHtml + `<div class="home-proj-list">${dayCardsHtml}</div>`;
+                    listEl.innerHTML = summaryTableHtml + dayTableHtml;
                 }
             }
         }
@@ -18801,7 +18853,7 @@
             let detailHtml = '';
             if (projectionCalendarSelectedDay && byDay.has(projectionCalendarSelectedDay)) {
                 const dayEntries = byDay.get(projectionCalendarSelectedDay).items;
-                detailHtml = `<div class="proj-cal-detail"><div class="home-proj-list">${buildHomeStyleDayCards(dayEntries)}</div></div>`;
+                detailHtml = `<div class="proj-cal-detail">${buildDayBreakdownTable(dayEntries)}</div>`;
             }
 
             return `<div class="proj-cal-wrap">${monthsHtml.join('')}</div>${detailHtml}`;
