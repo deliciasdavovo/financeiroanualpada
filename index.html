@@ -4867,6 +4867,150 @@
             min-width: 0;
         }
 
+        /* =====================================================================
+           CAMADA "PLANILHA" DOS RELATÓRIOS
+           Comportamento de Excel aplicado às tabelas de relatório: cabeçalho que
+           gruda ao rolar, ordenar clicando na coluna, filtrar linhas, total
+           sempre visível e copiar para colar no Excel. Ver sheetify().
+           ===================================================================== */
+        .sheet-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 0 10px;
+        }
+        .sheet-toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .sheet-filter {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .sheet-filter input {
+            height: 32px;
+            min-width: 190px;
+            padding: 0 10px 0 28px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+        .sheet-filter i {
+            position: absolute;
+            left: 9px;
+            width: 13px;
+            height: 13px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .sheet-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 32px;
+            padding: 0 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .sheet-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+        .sheet-btn.is-done {
+            border-color: var(--positive);
+            color: var(--positive);
+        }
+        .sheet-count {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Cabeçalho grudado. Regra própria para não depender do Tailwind (CDN). */
+        table.sheet > thead > tr > th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background: #F8FAFC;
+        }
+        /* Primeira coluna grudada, para matrizes largas (12 meses + total). */
+        table.sheet-freeze-col > thead > tr > th:first-child,
+        table.sheet-freeze-col > tbody > tr > td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background: var(--bg-card);
+        }
+        table.sheet-freeze-col > thead > tr > th:first-child {
+            z-index: 4;
+            background: #F8FAFC;
+        }
+        table.sheet-freeze-col > tbody > tr > td:first-child::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--divider);
+        }
+
+        /* Cabeçalho ordenável */
+        table.sheet th.sheet-sortable {
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        table.sheet th.sheet-sortable:hover {
+            color: var(--accent);
+        }
+        table.sheet th.sheet-sortable .sheet-arrow {
+            display: inline-block;
+            margin-left: 4px;
+            opacity: 0.25;
+            font-size: 9px;
+        }
+        table.sheet th.sheet-sortable[aria-sort="ascending"] .sheet-arrow,
+        table.sheet th.sheet-sortable[aria-sort="descending"] .sheet-arrow {
+            opacity: 1;
+            color: var(--accent);
+        }
+        table.sheet tr.sheet-hidden {
+            display: none;
+        }
+        /* Linha de total gerada pela camada (tabelas que ainda não tinham uma). */
+        table.sheet tr.sheet-total-row > td {
+            position: sticky;
+            bottom: 0;
+            z-index: 2;
+            background: #F1F5F9;
+            border-top: 2px solid var(--border);
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        table.sheet-freeze-col tr.sheet-total-row > td:first-child {
+            z-index: 3;
+            background: #F1F5F9;
+        }
+        .sheet-empty-note {
+            padding: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
         /* --- Conciliação em passos --- */
         /* Regra própria em vez de depender do .hidden do Tailwind (CDN externo):
            esconder painel de origem, prévia e avisos é comportamento, não estilo. */
@@ -8425,50 +8569,6 @@
                     </div>
                 </section>
 
-                <section class="card-premium cash-projection-shell reports-hidden-legacy-projection" aria-labelledby="cash-projection-title">
-                    <div class="cash-projection-head">
-                        <div>
-                            <h4 id="cash-projection-title" class="cash-projection-title">Projeção de Caixa</h4>
-                            <p id="cash-projection-range" class="cash-projection-sub">Próximos lançamentos pendentes cadastrados.</p>
-                        </div>
-                        <div class="cash-projection-tabs" role="tablist" aria-label="Período da projeção de caixa">
-                            <button type="button" id="cash-projection-tab-7" class="cash-projection-tab active" onclick="setCashProjectionPeriod(7)">Próximos 7 dias</button>
-                            <button type="button" id="cash-projection-tab-15" class="cash-projection-tab" onclick="setCashProjectionPeriod(15)">Próximos 15 dias</button>
-                            <button type="button" id="cash-projection-tab-30" class="cash-projection-tab" onclick="setCashProjectionPeriod(30)">Próximo mês</button>
-                        </div>
-                    </div>
-                    <div class="cash-projection-grid">
-                        <article class="cash-projection-card in" role="button" tabindex="0" onclick="openCashProjectionDaily()" onkeydown="handleCashProjectionCardKeydown(event)" aria-controls="cash-projection-detail" aria-label="Abrir projeção por dia das entradas previstas">
-                            <p class="cash-projection-label flow-income-text">Entradas previstas</p>
-                            <p id="cash-projection-in" class="cash-projection-value flow-income-text">R$ 0,00</p>
-                            <p class="cash-projection-note">Recebimentos já lançados como pendentes no período selecionado.</p>
-                            <div class="cash-projection-breakdown">
-                                <span id="cash-projection-in-pending" class="cash-projection-pill">Valor pendente: R$ 0,00</span>
-                                <span id="cash-projection-in-average" class="cash-projection-pill">Nenhum lançamento</span>
-                            </div>
-                            <p class="cash-projection-hint">Clique para ver por dia</p>
-                        </article>
-                        <article class="cash-projection-card out" role="button" tabindex="0" onclick="openCashProjectionDaily()" onkeydown="handleCashProjectionCardKeydown(event)" aria-controls="cash-projection-detail" aria-label="Abrir projeção por dia das saídas previstas">
-                            <p class="cash-projection-label flow-expense-text">Saídas previstas</p>
-                            <p id="cash-projection-out" class="cash-projection-value flow-expense-text">R$ 0,00</p>
-                            <p class="cash-projection-note">Compromissos já lançados como pendentes no período selecionado.</p>
-                            <div class="cash-projection-breakdown">
-                                <span id="cash-projection-out-pending" class="cash-projection-pill">Valor pendente: R$ 0,00</span>
-                                <span id="cash-projection-out-average" class="cash-projection-pill">Nenhum lançamento</span>
-                            </div>
-                            <p class="cash-projection-hint">Clique para ver por dia</p>
-                        </article>
-                        <article id="cash-projection-net-card" class="cash-projection-card net" role="button" tabindex="0" onclick="openCashProjectionDaily()" onkeydown="handleCashProjectionCardKeydown(event)" aria-controls="cash-projection-detail" aria-label="Abrir projeção por dia do saldo projetado">
-                            <p class="cash-projection-label flow-balance-text">Saldo projetado</p>
-                            <p id="cash-projection-net" class="cash-projection-value flow-balance-text">R$ 0,00</p>
-                            <span id="cash-projection-status" class="cash-projection-status">Positivo</span>
-                            <p id="cash-projection-net-note" class="cash-projection-note">Leitura baseada somente nas pendências cadastradas.</p>
-                            <p class="cash-projection-hint">Clique para ver por dia</p>
-                        </article>
-                    </div>
-                    <div id="cash-projection-detail" class="cash-projection-detail hidden" aria-live="polite"></div>
-                </section>
-
                 <section id="analise-hierarquica-mensal"></section>
 
                 <!-- DRE - Resultado Gerencial do Mês -->
@@ -8485,9 +8585,9 @@
                         </div>
                     </div>
                     <div class="monthly-daily-scroll overflow-auto table-mobile-scroll custom-scrollbar">
-                        <table id="monthly-daily-view" class="monthly-daily-table w-full text-left">
+                        <table id="monthly-daily-view" class="monthly-daily-table w-full text-left" data-sheet="sort filter total copy">
                             <thead class="border-b sticky top-0 z-10">
-                                <tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th class="text-right">Líquido</th><th class="text-right">Acumulado</th></tr>
+                                <tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th class="text-right">Líquido</th><th class="text-right" data-sheet-agg="last">Acumulado</th></tr>
                             </thead>
                             <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
                         </table>
@@ -8515,16 +8615,6 @@
                 </div>
                 <div class="card-premium p-10 h-[450px] reports-chart-card"><div class="reports-card-head"><div><h4>Gráfico anual</h4><p>Comparação mês a mês de entradas e saídas.</p></div></div><div class="h-full"><canvas id="chartAnnual"></canvas></div></div>
                 <section id="annual-dre-comparativo" class="card-premium p-8"></section>
-                <div class="card-premium overflow-hidden reports-legacy-annual-table hidden">
-                    <div class="table-mobile-scroll custom-scrollbar">
-                        <table id="annual-main-table" class="w-full text-left">
-                            <thead class="bg-slate-50 border-b text-xs font-black uppercase text-slate-400">
-                                <tr><th class="px-12 py-6">Mês</th><th class="px-12 py-6 text-right">Entradas</th><th class="px-12 py-6 text-right">Saídas</th><th class="px-12 py-6 text-right">Saldo Líquido</th></tr>
-                            </thead>
-                            <tbody id="annual-table-body" class="divide-y divide-slate-50 bg-white"></tbody>
-                        </table>
-                    </div>
-                </div>
                 <div class="card-premium annual-explorer-card annual-supplier-compare-card">
                     <!-- Cabeçalho + controles principais -->
                     <div class="annual-explorer-head">
@@ -8537,10 +8627,6 @@
                                 <button type="button" class="annual-seg-btn" data-seg="flow" data-val="TODOS" onclick="setAnnualFlowSeg('TODOS')">Tudo</button>
                                 <button type="button" class="annual-seg-btn" data-seg="flow" data-val="ENTRADA" onclick="setAnnualFlowSeg('ENTRADA')">Entradas</button>
                                 <button type="button" class="annual-seg-btn" data-seg="flow" data-val="SAÍDA" onclick="setAnnualFlowSeg('SAÍDA')">Saídas</button>
-                            </div>
-                            <div class="annual-seg-select">
-                                <span class="annual-seg-select-label">Ano</span>
-                                <select id="annual-temporal-year" aria-label="Ano base"></select>
                             </div>
                             <div class="annual-seg" role="group" aria-label="Modo de comparação">
                                 <button type="button" class="annual-seg-btn" data-seg="mode" data-val="MESES" onclick="setAnnualModeSeg('MESES')">Meses</button>
@@ -8563,6 +8649,7 @@
                             <option value="MESES">Entre os meses do ano</option>
                             <option value="ANOS">Entre os anos</option>
                         </select>
+                        <select id="annual-temporal-year" aria-label="Ano base"></select>
                     </div>
 
                     <!-- Filtros avançados (recolhíveis) -->
@@ -9800,8 +9887,6 @@
         let projectionGranularity = 'day';
         let projectionViewMode = 'list';
         let projectionCalendarSelectedDay = '';
-        let cashProjectionPeriod = 7;
-        let cashProjectionDailyOpen = false;
         let entriesSearchTimer = null;
         let entriesPage = 1;
         const entriesPageSize = 100;
@@ -12666,7 +12751,7 @@
                         ${launchHintHtml}
                     </div>
                     <div class="annual-matrix-wrap custom-scrollbar">
-                        <table class="annual-matrix-table ${currentLevel === 'launch' ? 'annual-matrix-table-compact' : ''}">
+                        <table class="annual-matrix-table ${currentLevel === 'launch' ? 'annual-matrix-table-compact' : ''}" data-sheet="sort filter copy freeze">
                             <thead>
                                 <tr>
                                     <th>${levelLabel}</th>
@@ -12690,6 +12775,9 @@
                 </div>
             `;
             refreshLucideIcons();
+            // A matriz é reconstruída a cada drill-down e a cada filtro, por vários
+            // caminhos: reaplicar aqui cobre todos eles de uma vez.
+            applyReportSheets(host);
         }
 
         function drillAnnualHierarchy(level, value) {
@@ -15242,27 +15330,6 @@
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
 
-        function setCashProjectionPeriod(days) {
-            cashProjectionPeriod = Number(days) === 15 ? 15 : Number(days) === 30 ? 30 : 7;
-            renderCashProjection();
-        }
-
-        function openCashProjectionDaily() {
-            cashProjectionDailyOpen = true;
-            renderCashProjection();
-        }
-
-        function closeCashProjectionDaily() {
-            cashProjectionDailyOpen = false;
-            renderCashProjection();
-        }
-
-        function handleCashProjectionCardKeydown(event) {
-            if (!event || (event.key !== 'Enter' && event.key !== ' ')) return;
-            event.preventDefault();
-            openCashProjectionDaily();
-        }
-
         function getCashProjectionWindow(days) {
             const today = parseIsoDateLocal(getTodayIsoDate()) || new Date();
             const start = addLocalDays(today, 1);
@@ -15272,145 +15339,6 @@
                 endIso: formatLocalDate(end),
                 days: Math.max(1, Number(days) || 7)
             };
-        }
-
-        function buildCashProjectionDailyHtml(entries, range) {
-            const detailEntries = [...(entries || [])].sort((a, b) => {
-                const dateCmp = String(a.date || '').localeCompare(String(b.date || ''));
-                if (dateCmp) return dateCmp;
-                return (Number(b.amount) || 0) - (Number(a.amount) || 0);
-            });
-            if (!detailEntries.length) {
-                return `<div class="cash-projection-detail-head">
-                    <div>
-                        <p class="cash-projection-detail-title">Projeção por dia</p>
-                        <p class="cash-projection-detail-sub">${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')}</p>
-                    </div>
-                    <button type="button" class="cash-projection-tab active" onclick="closeCashProjectionDaily()">Fechar</button>
-                </div>
-                <div class="cash-projection-empty">Nenhum lançamento pendente neste período.</div>`;
-            }
-
-            const grouped = new Map();
-            detailEntries.forEach((entry) => {
-                const key = String(entry.date || '');
-                if (!grouped.has(key)) grouped.set(key, []);
-                grouped.get(key).push(entry);
-            });
-
-            const dayHtml = Array.from(grouped.entries()).map(([dateIso, dayEntries]) => {
-                const totalIn = dayEntries
-                    .filter(entry => normalizeFlowType(entry.type) === FLOW_IN)
-                    .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
-                const totalOut = dayEntries
-                    .filter(entry => normalizeFlowType(entry.type) === FLOW_OUT)
-                    .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
-                const net = totalIn - totalOut;
-                const rows = dayEntries.map((entry) => {
-                    const flow = normalizeFlowType(entry.type);
-                    const flowClass = flow === FLOW_IN ? 'flow-income-text' : 'flow-expense-text';
-                    const sign = flow === FLOW_IN ? '+' : '-';
-                    const destination = getDestinationById(entry.destinationId)?.name || 'Sem destino';
-                    const description = String(entry.description || '').trim();
-                    const label = description ? `${destination} · ${description}` : destination;
-                    return `<div class="cash-projection-entry">
-                        <span class="cash-projection-entry-desc">${escapeHtml(label)}</span>
-                        <span class="cash-projection-entry-value ${flowClass}">${sign} ${formatBRL(Math.abs(Number(entry.amount) || 0))}</span>
-                    </div>`;
-                }).join('');
-
-                return `<article class="cash-projection-day">
-                    <div class="cash-projection-day-head">
-                        <span>${formatDateBRV2(dateIso)} · ${dayEntries.length} pendência(s)</span>
-                        <span class="flow-income-text">Entradas ${formatBRL(totalIn)}</span>
-                        <span class="flow-expense-text">Saídas ${formatBRL(totalOut)}</span>
-                        <span class="${net < 0 ? 'flow-expense-text' : 'flow-balance-text'}">Saldo ${formatBRL(net)}</span>
-                    </div>
-                    <div class="cash-projection-day-items">${rows}</div>
-                </article>`;
-            }).join('');
-
-            return `<div class="cash-projection-detail-head">
-                <div>
-                    <p class="cash-projection-detail-title">Projeção por dia</p>
-                    <p class="cash-projection-detail-sub">Somente lançamentos marcados como pendentes.</p>
-                </div>
-                <button type="button" class="cash-projection-tab active" onclick="closeCashProjectionDaily()">Fechar</button>
-            </div>
-            <div class="cash-projection-day-list">${dayHtml}</div>`;
-        }
-
-        function renderCashProjection() {
-            const period = cashProjectionPeriod === 15 ? 15 : cashProjectionPeriod === 30 ? 30 : 7;
-            const range = getCashProjectionWindow(period);
-            const filteredEntries = applyMonthlySelectionFiltersToEntries(getAnalyticalEntries(state.entries));
-            const futureEntries = filteredEntries.filter(entry => {
-                const entryDate = String(entry.date || '');
-                return String(entry.status || '').toUpperCase() === 'PENDENTE' && entryDate >= range.startIso && entryDate <= range.endIso;
-            });
-
-            const pendingIn = futureEntries
-                .filter(entry => normalizeFlowType(entry.type) === FLOW_IN)
-                .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
-            const pendingOut = futureEntries
-                .filter(entry => normalizeFlowType(entry.type) === FLOW_OUT)
-                .reduce((acc, entry) => acc + (Number(entry.amount) || 0), 0);
-            const pendingInCount = futureEntries.filter(entry => normalizeFlowType(entry.type) === FLOW_IN).length;
-            const pendingOutCount = futureEntries.filter(entry => normalizeFlowType(entry.type) === FLOW_OUT).length;
-            const projectedIn = pendingIn;
-            const projectedOut = pendingOut;
-            const projectedNet = projectedIn - projectedOut;
-            const isAttention = projectedNet < 0;
-
-            const rangeEl = document.getElementById('cash-projection-range');
-            if (rangeEl) {
-                rangeEl.innerText = `${range.startIso.split('-').reverse().join('/')} a ${range.endIso.split('-').reverse().join('/')} • somente lançamentos pendentes cadastrados.`;
-            }
-
-            [
-                ['cash-projection-tab-7', period === 7],
-                ['cash-projection-tab-15', period === 15],
-                ['cash-projection-tab-30', period === 30]
-            ].forEach(([id, active]) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.toggle('active', !!active);
-                    el.setAttribute('aria-selected', active ? 'true' : 'false');
-                }
-            });
-
-            const setText = (id, value) => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = value;
-            };
-            setText('cash-projection-in', formatBRL(projectedIn));
-            setText('cash-projection-out', formatBRL(projectedOut));
-            setText('cash-projection-net', formatBRL(projectedNet));
-            setText('cash-projection-in-pending', `Valor pendente: ${formatBRL(pendingIn)}`);
-            setText('cash-projection-in-average', formatLaunchCount(pendingInCount));
-            setText('cash-projection-out-pending', `Valor pendente: ${formatBRL(pendingOut)}`);
-            setText('cash-projection-out-average', formatLaunchCount(pendingOutCount));
-            setText('cash-projection-status', isAttention ? 'Atenção' : 'Positivo');
-            setText(
-                'cash-projection-net-note',
-                isAttention
-                    ? 'O período aponta pressão de caixa. Vale revisar vencimentos e recebimentos pendentes.'
-                    : 'O período mantém folga projetada considerando apenas as pendências cadastradas.'
-            );
-
-            const netEl = document.getElementById('cash-projection-net');
-            if (netEl) {
-                netEl.className = `cash-projection-value ${isAttention ? 'flow-expense-text' : 'flow-balance-text'}`;
-            }
-            const statusEl = document.getElementById('cash-projection-status');
-            if (statusEl) statusEl.classList.toggle('attention', isAttention);
-            const cardEl = document.getElementById('cash-projection-net-card');
-            if (cardEl) cardEl.classList.toggle('attention', isAttention);
-            const detailEl = document.getElementById('cash-projection-detail');
-            if (detailEl) {
-                detailEl.classList.toggle('hidden', !cashProjectionDailyOpen);
-                detailEl.innerHTML = cashProjectionDailyOpen ? buildCashProjectionDailyHtml(futureEntries, range) : '';
-            }
         }
 
         function summarizeFinancialEntries(entries, realizedOnly = true) {
@@ -15764,6 +15692,362 @@
             refreshLucideIcons();
         }
 
+        // =====================================================================
+        // CAMADA "PLANILHA" DOS RELATÓRIOS
+        //
+        // As tabelas de relatório são reconstruídas por innerHTML a cada render,
+        // então em vez de guardar referências marcamos a <table> no próprio HTML
+        // com data-sheet="..." e reaplicamos tudo de uma vez depois do render.
+        //
+        //   data-sheet="sort filter total copy freeze"
+        //
+        //   sort   ordenar clicando no cabeçalho (só onde a ordem das linhas não
+        //          carrega significado — DRE, não; lista de fornecedores, sim)
+        //   filter caixa que filtra linhas pelo texto da 1ª coluna
+        //   total  linha de total fixa no rodapé, somando as colunas numéricas
+        //   copy   botão que copia a tabela em TSV, pronto para colar no Excel
+        //   freeze primeira coluna grudada (matrizes largas de 12 meses)
+        //
+        // Linhas de total já existentes na tabela nunca são ordenadas nem
+        // filtradas: são marcadas e mantidas no fim.
+        // =====================================================================
+        const SHEET_EXISTING_TOTAL_SELECTOR = '.annual-matrix-total-row, .dre-row-lucro, .dre-row-sobra, [data-sheet-total]';
+        // Linhas que abrem uma seção e carregam o subtotal dela. Ordenar através
+        // delas destruiria o agrupamento, então cada seção é ordenada por dentro.
+        const SHEET_GROUP_ROW_SELECTOR = '.annual-matrix-group-row, [data-sheet-group]';
+
+        // Converte o texto de uma célula em número. Reaproveita parseValueRobust,
+        // que já entende "R$ 1.234,56", parênteses e sinais negativos em pt-BR.
+        function sheetCellNumber(cell) {
+            if (!cell) return NaN;
+            const raw = String(cell.getAttribute('data-v') ?? cell.innerText ?? '').trim();
+            if (!raw || raw === '-' || raw === '–' || raw === '—') return NaN;
+            if (!/\d/.test(raw)) return NaN;
+            return parseValueRobust(raw);
+        }
+
+        function sheetCellText(cell) {
+            if (!cell) return '';
+            // A seta de ordenação vive dentro do <th>; ela é decoração, não conteúdo,
+            // e não pode vazar para o que vai ser copiado nem para a comparação.
+            if (cell.querySelector && cell.querySelector('.sheet-arrow')) {
+                const clone = cell.cloneNode(true);
+                clone.querySelectorAll('.sheet-arrow').forEach(node => node.remove());
+                return String(clone.textContent || '').trim();
+            }
+            return String(cell.innerText || '').trim();
+        }
+
+        // Uma coluna é numérica quando a maioria das células dela vira número.
+        function sheetColumnIsNumeric(rows, index) {
+            let numeric = 0, filled = 0;
+            rows.forEach(row => {
+                const cell = row.cells[index];
+                if (!cell) return;
+                const text = sheetCellText(cell);
+                if (!text) return;
+                filled += 1;
+                if (!isNaN(sheetCellNumber(cell))) numeric += 1;
+            });
+            return filled > 0 && numeric / filled >= 0.6;
+        }
+
+        function sheetIsStructuralRow(row) {
+            return row.matches(SHEET_EXISTING_TOTAL_SELECTOR)
+                || row.matches(SHEET_GROUP_ROW_SELECTOR)
+                || row.classList.contains('sheet-total-row');
+        }
+
+        function sheetDataRows(table) {
+            const body = table.tBodies[0];
+            if (!body) return [];
+            return Array.from(body.rows).filter(row => !sheetIsStructuralRow(row) && row.cells.length > 1);
+        }
+
+        // Quebra o corpo da tabela em seções: cada linha de grupo abre uma seção e
+        // as linhas de dados seguintes pertencem a ela. Sem grupos, há uma seção só.
+        function sheetSections(table) {
+            const body = table.tBodies[0];
+            if (!body) return [];
+            const sections = [{ head: null, rows: [] }];
+            Array.from(body.rows).forEach(row => {
+                if (row.matches(SHEET_GROUP_ROW_SELECTOR)) sections.push({ head: row, rows: [] });
+                else if (!sheetIsStructuralRow(row) && row.cells.length > 1) sections[sections.length - 1].rows.push(row);
+            });
+            return sections.filter(section => section.head || section.rows.length);
+        }
+
+        function sheetSort(table, index) {
+            const body = table.tBodies[0];
+            if (!body) return;
+            const header = table.tHead && table.tHead.rows[0];
+            if (!header) return;
+            const th = header.cells[index];
+            const current = th ? th.getAttribute('aria-sort') : 'none';
+            const next = current === 'ascending' ? 'descending' : (current === 'descending' ? 'none' : 'ascending');
+
+            Array.from(header.cells).forEach(cell => {
+                if (cell.classList.contains('sheet-sortable')) cell.setAttribute('aria-sort', 'none');
+            });
+            if (th) th.setAttribute('aria-sort', next);
+
+            const allRows = sheetDataRows(table);
+            const numeric = sheetColumnIsNumeric(allRows, index);
+            const dir = next === 'ascending' ? 1 : -1;
+            const compare = (a, b) => {
+                if (next === 'none') {
+                    return Number(a.dataset.sheetIndex || 0) - Number(b.dataset.sheetIndex || 0);
+                }
+                const ca = a.cells[index], cb = b.cells[index];
+                if (numeric) {
+                    const na = sheetCellNumber(ca), nb = sheetCellNumber(cb);
+                    return ((isNaN(na) ? 0 : na) - (isNaN(nb) ? 0 : nb)) * dir;
+                }
+                return sheetCellText(ca).localeCompare(sheetCellText(cb), 'pt-BR', { sensitivity: 'base' }) * dir;
+            };
+
+            // Reinsere seção por seção: o cabeçalho do grupo primeiro, depois as
+            // linhas dele já ordenadas. Assim "Entradas" nunca cai no meio de "Saídas".
+            sheetSections(table).forEach(section => {
+                if (section.head) body.appendChild(section.head);
+                section.rows.slice().sort(compare).forEach(row => body.appendChild(row));
+            });
+            // Totais existentes voltam para o fim, onde devem ficar.
+            Array.from(body.rows)
+                .filter(row => row.matches(SHEET_EXISTING_TOTAL_SELECTOR) || row.classList.contains('sheet-total-row'))
+                .forEach(row => body.appendChild(row));
+        }
+
+        function sheetFilter(table, term) {
+            const needle = String(term || '').trim().toLowerCase();
+            const rows = sheetDataRows(table);
+            let visible = 0;
+            rows.forEach(row => {
+                const hit = !needle || sheetCellText(row.cells[0]).toLowerCase().includes(needle);
+                row.classList.toggle('sheet-hidden', !hit);
+                if (hit) visible += 1;
+            });
+            // Um grupo sem nenhuma linha visível não deve deixar o cabeçalho sozinho.
+            sheetSections(table).forEach(section => {
+                if (!section.head) return;
+                const anyVisible = section.rows.some(row => !row.classList.contains('sheet-hidden'));
+                section.head.classList.toggle('sheet-hidden', section.rows.length > 0 && !anyVisible);
+            });
+            const countEl = table.sheetShell?.querySelector('[data-sheet-count]');
+            if (countEl) {
+                countEl.innerText = needle
+                    ? `${visible} de ${rows.length} linha(s)`
+                    : `${rows.length} linha(s)`;
+            }
+            if (table.dataset.sheet.includes('total')) sheetRefreshTotal(table);
+        }
+
+        // Total das colunas numéricas, contando só o que está visível — filtrou,
+        // o total acompanha, como numa planilha com filtro ligado.
+        function sheetRefreshTotal(table) {
+            const body = table.tBodies[0];
+            if (!body) return;
+            const header = table.tHead && table.tHead.rows[0];
+            const columns = header ? header.cells.length : 0;
+            if (!columns) return;
+            const rows = sheetDataRows(table).filter(row => !row.classList.contains('sheet-hidden'));
+
+            let totalRow = body.querySelector('tr.sheet-total-row');
+            if (!totalRow) {
+                totalRow = document.createElement('tr');
+                totalRow.className = 'sheet-total-row';
+                for (let i = 0; i < columns; i++) totalRow.appendChild(document.createElement('td'));
+                body.appendChild(totalRow);
+            }
+            const allRows = sheetDataRows(table);
+            for (let i = 0; i < columns; i++) {
+                const cell = totalRow.cells[i];
+                if (!cell) continue;
+                if (i === 0) {
+                    cell.innerText = rows.length === allRows.length ? 'TOTAL' : 'TOTAL (filtrado)';
+                    continue;
+                }
+                if (!sheetColumnIsNumeric(allRows, i)) { cell.innerText = ''; continue; }
+                // Nem toda coluna numérica se soma: um saldo acumulado é corrente,
+                // e somá-lo daria um número que não significa nada. O <th> declara
+                // como agregar — sum (padrão), last (fica o valor final) ou none.
+                const agg = String(header.cells[i].getAttribute('data-sheet-agg') || 'sum');
+                // Segue o alinhamento da própria coluna, para o total não destoar dela.
+                const sample = allRows[allRows.length - 1] && allRows[allRows.length - 1].cells[i];
+                cell.style.textAlign = sample ? (window.getComputedStyle(sample).textAlign || 'right') : 'right';
+                if (agg === 'none') { cell.innerText = ''; cell.title = ''; continue; }
+                if (agg === 'last') {
+                    const lastRow = rows[rows.length - 1];
+                    const value = lastRow ? sheetCellNumber(lastRow.cells[i]) : NaN;
+                    cell.innerText = isNaN(value) ? '' : formatBRL(value);
+                    cell.title = 'Valor da última linha, não a soma — esta coluna é um saldo corrente.';
+                    continue;
+                }
+                const sum = rows.reduce((acc, row) => {
+                    const value = sheetCellNumber(row.cells[i]);
+                    return acc + (isNaN(value) ? 0 : value);
+                }, 0);
+                cell.innerText = formatBRL(sum);
+                cell.title = '';
+            }
+            body.appendChild(totalRow);
+        }
+
+        // Copia a tabela como TSV: é o formato que o Excel entende ao colar,
+        // com cada célula caindo na sua própria coluna.
+        function sheetCopy(table, button) {
+            const lines = [];
+            const pushRow = (row) => {
+                if (row.classList.contains('sheet-hidden')) return;
+                lines.push(Array.from(row.cells).map(cell =>
+                    sheetCellText(cell).replace(/\s+/g, ' ').replace(/\t/g, ' ')
+                ).join('\t'));
+            };
+            if (table.tHead) Array.from(table.tHead.rows).forEach(pushRow);
+            if (table.tBodies[0]) Array.from(table.tBodies[0].rows).forEach(pushRow);
+            const text = lines.join('\n');
+            const done = () => {
+                if (!button) return;
+                const original = button.dataset.label || button.innerText;
+                button.dataset.label = original;
+                button.classList.add('is-done');
+                button.innerText = 'Copiado!';
+                window.setTimeout(() => {
+                    button.classList.remove('is-done');
+                    button.innerText = original;
+                    refreshLucideIcons();
+                }, 1600);
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(done).catch(() => sheetCopyFallback(text, done));
+            } else {
+                sheetCopyFallback(text, done);
+            }
+        }
+
+        function sheetCopyFallback(text, done) {
+            const area = document.createElement('textarea');
+            area.value = text;
+            area.setAttribute('readonly', '');
+            area.style.position = 'fixed';
+            area.style.top = '-1000px';
+            document.body.appendChild(area);
+            area.select();
+            try { document.execCommand('copy'); done(); }
+            catch (e) { showAppToast('Não consegui copiar. Selecione a tabela e use Ctrl + C.', { tone: 'danger' }); }
+            area.remove();
+        }
+
+        function sheetify(table) {
+            if (!table || table.dataset.sheetReady === '1') return;
+            const flags = String(table.dataset.sheet || '').split(/\s+/).filter(Boolean);
+            const has = (name) => flags.includes(name);
+
+            table.classList.add('sheet');
+            if (has('freeze')) table.classList.add('sheet-freeze-col');
+
+            // Guarda a ordem original para o terceiro clique no cabeçalho voltar a ela.
+            sheetDataRows(table).forEach((row, index) => { row.dataset.sheetIndex = String(index); });
+
+            const header = table.tHead && table.tHead.rows[0];
+            if (has('sort') && header) {
+                Array.from(header.cells).forEach((th, index) => {
+                    th.classList.add('sheet-sortable');
+                    th.setAttribute('aria-sort', 'none');
+                    th.setAttribute('role', 'button');
+                    th.setAttribute('tabindex', '0');
+                    th.title = 'Clique para ordenar por esta coluna';
+                    if (!th.querySelector('.sheet-arrow')) {
+                        const arrow = document.createElement('span');
+                        arrow.className = 'sheet-arrow';
+                        arrow.textContent = '▲▼';
+                        th.appendChild(arrow);
+                    }
+                    th.addEventListener('click', () => sheetSort(table, index));
+                    th.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); sheetSort(table, index); }
+                    });
+                });
+            }
+
+            if (has('total')) sheetRefreshTotal(table);
+
+            if (has('filter') || has('copy')) {
+                const shell = document.createElement('div');
+                shell.className = 'sheet-toolbar';
+                shell.setAttribute('data-sheet-shell', '');
+                const left = document.createElement('div');
+                left.className = 'sheet-toolbar-group';
+                const right = document.createElement('div');
+                right.className = 'sheet-toolbar-group';
+
+                if (has('filter')) {
+                    const box = document.createElement('div');
+                    box.className = 'sheet-filter';
+                    box.innerHTML = '<i data-lucide="search"></i>';
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = 'Filtrar linhas...';
+                    input.setAttribute('aria-label', 'Filtrar linhas da tabela');
+                    input.addEventListener('input', () => sheetFilter(table, input.value));
+                    box.appendChild(input);
+                    left.appendChild(box);
+                    const count = document.createElement('span');
+                    count.className = 'sheet-count';
+                    count.setAttribute('data-sheet-count', '');
+                    count.innerText = `${sheetDataRows(table).length} linha(s)`;
+                    left.appendChild(count);
+                }
+                if (has('copy')) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'sheet-btn';
+                    button.innerText = 'Copiar para o Excel';
+                    button.title = 'Copia a tabela para colar direto numa planilha';
+                    button.addEventListener('click', () => sheetCopy(table, button));
+                    right.appendChild(button);
+                }
+                shell.appendChild(left);
+                shell.appendChild(right);
+                // A barra fica acima do container que rola, não dentro dele.
+                const scroller = table.closest('.table-mobile-scroll, .annual-matrix-wrap, .monthly-daily-scroll, .dre-table-wrap');
+                const target = scroller || table;
+                target.parentNode.insertBefore(shell, target);
+                // A barra é irmã da tabela, não ancestral: guardamos a referência
+                // porque closest() não a alcançaria a partir da <table>.
+                table.sheetShell = shell;
+            }
+
+            table.dataset.sheetReady = '1';
+        }
+
+        // Tabelas montadas em markup fixo (o tbody é trocado a cada render) mantêm
+        // o mesmo elemento <table>, então precisam ser reindexadas e recalculadas.
+        function sheetRefresh(table) {
+            sheetDataRows(table).forEach((row, index) => { row.dataset.sheetIndex = String(index); });
+            const header = table.tHead && table.tHead.rows[0];
+            if (header) {
+                Array.from(header.cells).forEach(th => {
+                    if (th.classList.contains('sheet-sortable')) th.setAttribute('aria-sort', 'none');
+                });
+            }
+            const input = table.sheetShell?.querySelector('input');
+            if (input && input.value) sheetFilter(table, input.value);
+            else if (String(table.dataset.sheet || '').includes('total')) sheetRefreshTotal(table);
+            const countEl = table.sheetShell?.querySelector('[data-sheet-count]');
+            if (countEl && !(input && input.value)) countEl.innerText = `${sheetDataRows(table).length} linha(s)`;
+        }
+
+        // Reaplica a camada depois de cada render de relatório.
+        function applyReportSheets(root) {
+            const scope = root || document;
+            scope.querySelectorAll('table[data-sheet]').forEach(table => {
+                if (table.dataset.sheetReady === '1') sheetRefresh(table);
+                else sheetify(table);
+            });
+            refreshLucideIcons();
+        }
+
         function renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend) {
 
             const labels = Array.from({ length: dailyInReal.length }, (_, idx) => String(idx + 1).padStart(2, '0'));
@@ -15913,7 +16197,6 @@
 
             const balR = incR - expR;
 
-            renderCashProjection();
             renderAnaliseHierarquicaMensal(monthEntries);
             renderDRE(filter, entries);
             const monthlyTitleEl = document.getElementById('monthly-ios-title');
@@ -16014,6 +16297,7 @@
             renderMonthlyReportsExtras(filter, entries, dailyInReal, dailyOutReal, incR, expR, incP, expP, dailyInPend, dailyOutPend);
             renderHorizontalAnalysis(filter, monthEntries);
             clearMonthlyCategoryCharts();
+            applyReportSheets(document.getElementById('reports-monthly-panel'));
         }
 
         // Ordem e rótulos dos grupos de despesa operacional na DRE (usado no mês e no comparativo anual)
@@ -16205,7 +16489,7 @@
                         <p>DRE simplificada — movimentos realizados em ${monthName}. Passe o mouse no “i” de cada linha para ver o que ela significa. Coluna % = participação na receita bruta.</p>
                     </div>
                 </div>
-                <table class="dre-table">
+                <table class="dre-table" data-sheet="copy">
                     <thead><tr><th style="text-align:left;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Descrição</th><th style="text-align:right;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Valor</th><th style="text-align:right;padding:8px 16px 8px 4px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">% Receita</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
@@ -16321,7 +16605,7 @@
                 }).join('');
 
                 return `<div class="horiz-table-wrap custom-scrollbar">
-                    <table class="horiz-table">
+                    <table class="horiz-table" data-sheet="sort filter copy">
                         <thead><tr>
                             <th>Categoria</th>
                             <th>Atual</th>
@@ -16629,15 +16913,8 @@
                 data.push({m, inc, exp, aporte, vendas, outras, bal: inc-exp});
             }
             const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-            document.getElementById('annual-table-body').innerHTML = data.map((d,i) => `<tr class="table-row">
-                <td class="px-12 py-5 uppercase text-slate-600 font-bold">${monthNames[i]}</td>
-                <td class="px-12 py-5 text-right flow-income-text font-bold">
-                    <div>${formatBRL(d.inc)}</div>
-                    ${d.outras > 0 ? `<div class="annual-aporte-note">Vendas: ${formatBRL(d.vendas)} · Outras: ${formatBRL(d.outras)}</div>` : ''}
-                </td>
-                <td class="px-12 py-5 text-right flow-expense-text font-bold">${formatBRL(d.exp)}</td>
-                <td class="px-12 py-5 text-right font-black ${d.bal>=0?'flow-balance-text':'flow-expense-text'}">${formatBRL(d.bal)}</td>
-            </tr>`).join('');
+// A tabela anual legada foi removida da tela; `data` segue alimentando
+            // o gráfico, a DRE comparativa e os cards logo abaixo.
 
 
             const ctxEl = document.getElementById('chartAnnual');
@@ -16698,6 +16975,7 @@
             renderAnnualReportExtras(year, data, yearEntries);
             renderAnnualDREComparativo(year);
             renderAnnualTemporalComparison(year);
+            applyReportSheets(document.getElementById('reports-annual-panel'));
         }
 
         // DRE gerencial comparativa: uma coluna por mês do ano + coluna Total.
@@ -16809,7 +17087,7 @@
                     <p>Resultado gerencial de cada mês de ${year}, lado a lado. Role a tabela na horizontal para ver todos os meses.</p>
                 </div></div>
                 <div class="dre-comp-wrap custom-scrollbar">
-                    <table class="dre-comp-table">
+                    <table class="dre-comp-table" data-sheet="copy freeze">
                         <thead><tr><th class="dre-comp-label">Descrição</th>${headCells}<th class="dre-comp-total">Total ${year}</th></tr></thead>
                         <tbody>${body}</tbody>
                     </table>
