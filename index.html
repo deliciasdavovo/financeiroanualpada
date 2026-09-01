@@ -8213,38 +8213,40 @@
             flex-direction: column;
             gap: 14px;
         }
+        /* Faixa unica com divisorias, no lugar de quatro cartoes soltos. */
         .vd-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0;
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            overflow: hidden;
         }
-        .vd-sum-cell {
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            background: #FBFCFE;
-            padding: 12px 14px;
-        }
-        .vd-sum-cell.is-primary { background: #F1F5F9; border-color: #CBD5E1; }
+        .vd-sum-cell { padding: 10px 14px; }
+        .vd-sum-cell + .vd-sum-cell { border-left: 1px solid var(--tbl-line); }
+        .vd-sum-cell.is-primary { background: var(--tbl-head-bg); }
         .vd-sum-label {
             display: block;
-            font-size: 10px;
+            font-size: var(--tbl-head-font);
             font-weight: 700;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: var(--text-muted);
+            color: var(--tbl-head-color);
         }
         .vd-sum-value {
             display: block;
-            margin-top: 6px;
-            font-size: 18px;
-            font-weight: 800;
+            margin-top: 5px;
+            font-size: 17px;
+            font-weight: 700;
             letter-spacing: -0.01em;
+            font-variant-numeric: tabular-nums;
             color: var(--text-primary);
         }
         .vd-sum-sub {
             display: block;
-            margin-top: 3px;
-            font-size: 11px;
+            margin-top: 2px;
+            font-size: 10.5px;
             font-weight: 600;
             color: var(--text-muted);
         }
@@ -8298,108 +8300,34 @@
             background: #FFFFFF;
             color: var(--text-primary);
         }
-        .vd-results { display: flex; flex-direction: column; gap: 12px; }
-        .vd-group {
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            background: #FFFFFF;
+        /* O detalhamento e uma tabela, nao uma pilha de cartoes: o objetivo e
+           conferir de onde veio o numero, e para isso as colunas precisam
+           ficar no mesmo eixo de cima a baixo. */
+        .vd-table-wrap {
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            overflow: auto;
+            background: var(--bg-card);
         }
-        .vd-group-head {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 11px 14px;
-            background: #F8FAFC;
-            border: none;
-            cursor: pointer;
-            text-align: left;
-        }
-        .vd-group-head:hover { background: #F1F5F9; }
-        .vd-group-name {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--text-primary);
-            min-width: 0;
-        }
-        .vd-group-name span.vd-group-label {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .vd-group-count {
-            flex-shrink: 0;
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--text-secondary);
-            background: #E2E8F0;
-            border-radius: var(--radius-pill);
-            padding: 2px 7px;
-        }
-        .vd-group-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
-        .vd-group-total { font-size: 13px; font-weight: 800; }
-        .vd-group-share {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--text-muted);
-            min-width: 38px;
-            text-align: right;
-        }
-        .vd-group-bar {
-            height: 3px;
-            background: #EEF2F7;
-        }
-        .vd-group-bar span {
+        .vd-table { min-width: 720px; }
+        .vd-table > thead > tr > th { position: sticky; top: 0; z-index: 2; }
+        .vd-col-date { width: 78px; white-space: nowrap; }
+        .vd-col-class { width: 200px; color: var(--text-secondary); }
+        .vd-col-acc { width: 130px; color: var(--text-secondary); }
+        .vd-col-value { width: 130px; font-weight: 700; }
+        .vd-row { cursor: pointer; }
+        .vd-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(47,79,157,0.45); }
+        .vd-cell-title {
             display: block;
-            height: 100%;
-            background: var(--primary-blue);
-            border-radius: 0 3px 3px 0;
-        }
-        .vd-group-body.is-collapsed { display: none; }
-        .vd-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 10px 14px;
-            border: none;
-            border-top: 1px solid var(--divider);
-            background: #FFFFFF;
-            cursor: pointer;
-            text-align: left;
-        }
-        .vd-item:hover { background: #F8FAFC; }
-        .vd-item-date {
-            flex-shrink: 0;
-            width: 54px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-        .vd-item-main { flex: 1; min-width: 0; }
-        .vd-item-title {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-primary);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .vd-item-meta {
+        .vd-cell-sub {
             display: block;
-            margin-top: 2px;
+            margin-top: 1px;
             font-size: 10.5px;
             font-weight: 600;
             color: var(--text-muted);
@@ -8407,14 +8335,23 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .vd-item-right {
+        .vd-group-row { cursor: pointer; }
+        .vd-group-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(47,79,157,0.45); }
+        .vd-group-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .vd-group-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .vd-group-chevron { display: inline-flex; transition: transform 180ms var(--ease-premium); }
+        .vd-group-chevron.is-open { transform: rotate(180deg); }
+        .vd-group-count {
             flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            background: #E2E8F0;
+            border-radius: var(--radius-pill);
+            padding: 1px 7px;
         }
-        .vd-item-value { font-size: 12.5px; font-weight: 800; }
+        .vd-group-share { color: var(--text-muted); font-weight: 600; font-size: 10.5px; text-transform: none; letter-spacing: 0; white-space: nowrap; }
+        .vd-group-total { font-weight: 700; }
         .vd-tag {
             font-size: 9px;
             font-weight: 800;
@@ -8480,7 +8417,10 @@
             .vd-foot { padding: 12px 14px; }
             .vd-field select { min-width: 0; width: 100%; }
             .vd-field { flex: 1 1 46%; }
-            .vd-item-date { width: 46px; }
+            .vd-table { --tbl-pad-x: 9px; --tbl-font: var(--tbl-font-sm); min-width: 620px; }
+            .vd-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .vd-sum-cell:nth-child(3), .vd-sum-cell:nth-child(4) { border-top: 1px solid var(--tbl-line); }
+            .vd-sum-cell:nth-child(odd) { border-left: none; }
         }
     </style>
 </head>
@@ -10090,7 +10030,7 @@
                         </select>
                     </label>
                 </div>
-                <div id="vd-results" class="vd-results"></div>
+                <div id="vd-results"></div>
             </div>
             <div class="vd-foot">
                 <span class="vd-foot-note" id="vd-foot-note">Toque em um lançamento para abrir e editar.</span>
@@ -12597,25 +12537,27 @@
             return cells.join('');
         }
 
+        // Uma linha de lancamento do detalhamento. Cada dado numa coluna
+        // propria, para dar para varrer a coluna com o olho e conferir.
         function vdBuildItemHtml(entry) {
             const isIn = vdEntryFlow(entry) === FLOW_IN;
             const amount = vdEntryAmount(entry);
             const meta = getEntryDestinationMeta(entry);
             const title = meta.destination || String(entry.description || '') || 'Sem destino';
-            const metaParts = [meta.category, meta.subCategory, vdEntryAccountName(entry)].filter(Boolean);
-            if (entry.description && meta.destination) metaParts.push(String(entry.description));
+            const detail = entry.description && meta.destination ? String(entry.description) : '';
+            const classification = [meta.category, meta.subCategory].filter(Boolean).join(' › ');
             const realized = vdIsRealized(entry);
-            return `<button type="button" class="vd-item" onclick="vdOpenEntry('${escapeHtml(String(entry.id || ''))}')">
-                <span class="vd-item-date">${escapeHtml(formatDateBRV2(entry.date))}</span>
-                <span class="vd-item-main">
-                    <span class="vd-item-title">${escapeHtml(title)}</span>
-                    <span class="vd-item-meta">${escapeHtml(metaParts.join(' • ')) || '—'}</span>
-                </span>
-                <span class="vd-item-right">
-                    <span class="vd-item-value ${isIn ? 'flow-income-text' : 'flow-expense-text'}">${isIn ? '+' : '-'}${formatBRL(amount)}</span>
-                    <span class="vd-tag ${realized ? 'done' : 'pending'}">${realized ? 'Realizado' : 'Pendente'}</span>
-                </span>
-            </button>`;
+            return `<tr class="vd-row" tabindex="0" role="button" aria-label="Abrir lançamento ${escapeHtml(title)}" onclick="vdOpenEntry('${escapeHtml(String(entry.id || ''))}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();vdOpenEntry('${escapeHtml(String(entry.id || ''))}')}">
+                <td class="vd-col-date">${escapeHtml(formatDateBRV2(entry.date))}</td>
+                <td class="vd-col-dest">
+                    <span class="vd-cell-title">${escapeHtml(title)}</span>
+                    ${detail ? `<span class="vd-cell-sub">${escapeHtml(detail)}</span>` : ''}
+                </td>
+                <td class="vd-col-class">${escapeHtml(classification) || '—'}</td>
+                <td class="vd-col-acc">${escapeHtml(vdEntryAccountName(entry)) || '—'}</td>
+                <td class="tbl-center"><span class="vd-tag ${realized ? 'done' : 'pending'}">${realized ? 'Realizado' : 'Pendente'}</span></td>
+                <td class="tbl-num vd-col-value ${isIn ? 'flow-income-text' : 'flow-expense-text'}">${isIn ? '+' : '-'}${formatBRL(amount)}</td>
+            </tr>`;
         }
 
         const VD_CHEVRON = '<svg class="vd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
@@ -12637,35 +12579,54 @@
                 return;
             }
 
+            // Tudo numa tabela so. Antes cada grupo era um cartao separado, o
+            // que impedia comparar duas linhas de grupos diferentes: as colunas
+            // nao ficavam no mesmo eixo. Agora grupo e uma linha da tabela.
+            const head = `<thead><tr>
+                    <th class="vd-col-date">Data</th>
+                    <th class="vd-col-dest">Destino</th>
+                    <th class="vd-col-class">Classificação</th>
+                    <th class="vd-col-acc">Conta</th>
+                    <th class="tbl-center">Situação</th>
+                    <th class="tbl-num vd-col-value">Valor</th>
+                </tr></thead>`;
+            // Faixa neutra, nao a barra verde de resultado: aqui o total pode ser
+            // negativo, e o verde leria como lucro. A cor fica no numero.
+            const displayTotal = vdDisplayTotal(totals);
+            const footRow = `<tr class="tbl-row-subtotal vd-total-row">
+                    <td colspan="5">Total${vdView.status === 'TODOS' ? '' : vdView.status === 'REALIZADO' ? ' (realizados)' : ' (pendentes)'}</td>
+                    <td class="tbl-num ${displayTotal.negative ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(displayTotal.value)}</td>
+                </tr>`;
+
+            let bodyRows;
             if (vdView.group === 'nenhum') {
-                resultsEl.innerHTML = `<div class="vd-group"><div class="vd-group-body">${vdSortEntries(filtered).map(vdBuildItemHtml).join('')}</div></div>`;
+                bodyRows = vdSortEntries(filtered).map(vdBuildItemHtml).join('');
             } else {
                 const groups = vdBuildGroups(filtered);
-                const biggest = groups.reduce((max, group) => Math.max(max, Math.abs(group.total)), 0);
                 const baseTotal = groups.reduce((acc, group) => acc + Math.abs(group.total), 0);
-                resultsEl.innerHTML = groups.map(group => {
+                bodyRows = groups.map(group => {
                     const collapsed = vdCollapsed.has(group.label);
                     const share = baseTotal > 0 ? (Math.abs(group.total) / baseTotal) * 100 : 0;
-                    const width = biggest > 0 ? Math.max(2, Math.round((Math.abs(group.total) / biggest) * 100)) : 0;
-                    return `<div class="vd-group">
-                        <button type="button" class="vd-group-head" onclick="vdToggleGroup(${escapeHtml(JSON.stringify(group.label))})" aria-expanded="${String(!collapsed)}">
+                    const rows = collapsed ? '' : group.entries.map(vdBuildItemHtml).join('');
+                    return `<tr class="tbl-row-group vd-group-row" tabindex="0" role="button" aria-expanded="${String(!collapsed)}" onclick="vdToggleGroup(${escapeHtml(JSON.stringify(group.label))})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();vdToggleGroup(${escapeHtml(JSON.stringify(group.label))})}">
+                        <td colspan="5">
                             <span class="vd-group-name">
-                                <span style="transition:transform 180ms var(--ease-premium);${collapsed ? '' : 'transform:rotate(180deg);'}display:inline-flex">${VD_CHEVRON}</span>
+                                <span class="vd-group-chevron${collapsed ? '' : ' is-open'}">${VD_CHEVRON}</span>
                                 <span class="vd-group-label">${escapeHtml(group.label)}</span>
                                 <span class="vd-group-count">${group.entries.length}</span>
+                                <span class="vd-group-share">${share.toFixed(0)}% do total</span>
                             </span>
-                            <span class="vd-group-right">
-                                <span class="vd-group-share">${share.toFixed(0)}%</span>
-                                <span class="vd-group-total ${group.negative ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(group.total)}</span>
-                            </span>
-                        </button>
-                        <div class="vd-group-bar" aria-hidden="true"><span style="width:${width}%"></span></div>
-                        <div class="vd-group-body${collapsed ? ' is-collapsed' : ''}">${group.entries.map(vdBuildItemHtml).join('')}</div>
-                    </div>`;
+                        </td>
+                        <td class="tbl-num vd-group-total ${group.negative ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(group.total)}</td>
+                    </tr>${rows}`;
                 }).join('');
             }
 
-            if (noteEl) noteEl.innerText = 'Toque em um lançamento para abrir e editar.';
+            resultsEl.innerHTML = `<div class="vd-table-wrap custom-scrollbar"><table class="tbl tbl-zebra vd-table">${head}<tbody>${bodyRows}${footRow}</tbody></table></div>`;
+
+            if (noteEl) noteEl.innerText = vdView.group === 'nenhum'
+                ? 'Clique numa linha para abrir e editar o lançamento.'
+                : 'Clique numa linha para abrir o lançamento, ou no grupo para recolher.';
         }
 
         function openValueDetail(key) {
