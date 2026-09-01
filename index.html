@@ -7777,30 +7777,28 @@
         .goals-card-remaining { font-size:11px; color:#94A3B8; }
 
         /* ─── GOALS RANK LIST (estilo ranking) ─── */
-        .goals-rank-card { background:#fff; border-radius:16px; box-shadow:0 1px 4px 0 rgba(30,41,59,.07); padding:6px 6px; }
-        .goals-rank-list { display:flex; flex-direction:column; }
-        .goals-rank-row {
-            display:flex; align-items:center; gap:14px;
-            padding:12px 12px; border-radius:12px;
-            border-bottom:1px solid #F1F5F9;
-            cursor:pointer;
-            transition:background var(--dur-fast) var(--ease-premium);
+        .goals-rank-wrap {
+            border:1px solid var(--tbl-head-border); border-radius:var(--radius-md);
+            overflow:auto; background:var(--bg-card);
         }
-        .goals-rank-row:last-child { border-bottom:none; }
-        .goals-rank-row:hover { background:#F8FAFC; }
+        .goals-rank-table { min-width:680px; }
+        .goals-rank-col-num { width:52px; }
+        .goals-rank-col-name { min-width:200px; }
+        .goals-rank-col-val { width:130px; }
+        .goals-rank-col-bar { width:180px; }
+        .goals-rank-col-actions { width:78px; }
+        .goals-rank-row { cursor:pointer; }
+        .goals-rank-row:focus-visible { outline:none; box-shadow:inset 0 0 0 2px rgba(47,79,157,0.45); }
         .goals-rank-num {
-            flex-shrink:0; width:26px; height:26px; border-radius:8px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:12px; font-weight:700; line-height:1;
+            width:24px; height:24px; border-radius:7px;
+            display:inline-flex; align-items:center; justify-content:center;
+            font-size:11px; font-weight:700; line-height:1;
         }
-        .goals-rank-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:7px; }
-        .goals-rank-top { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
-        .goals-rank-name { font-size:13px; font-weight:600; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .goals-rank-name { font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .goals-rank-name-wrap { display:flex; align-items:center; gap:7px; min-width:0; }
         .goals-rank-type-badge { flex-shrink:0; font-size:9px; font-weight:600; border-radius:99px; padding:1px 6px; text-transform:uppercase; letter-spacing:.03em; }
-        .goals-rank-vals { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; text-align:right; }
-        .goals-rank-actual { font-size:14px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
-        .goals-rank-target { font-size:11px; font-weight:600; color:#94A3B8; line-height:1; font-variant-numeric:tabular-nums; }
+        .goals-rank-actual { font-weight:700; font-variant-numeric:tabular-nums; }
+        .goals-rank-target { font-weight:600; color:var(--text-muted); font-variant-numeric:tabular-nums; }
         .goals-rank-bar-track { height:8px; border-radius:99px; background:#F1F5F9; overflow:hidden; }
         .goals-rank-bar-fill { height:100%; border-radius:99px; transition:width 700ms var(--ease-premium); }
         .goals-rank-actions { flex-shrink:0; display:flex; gap:2px; opacity:.35; transition:opacity var(--dur-fast) var(--ease-premium); }
@@ -7810,7 +7808,7 @@
         .goals-rank-edit-btn:hover { background:#EEF2FF; color:#4F46E5; }
         @media (max-width:640px) {
             .goals-rank-actions { opacity:1; }
-            .goals-rank-row { gap:10px; padding:12px 8px; }
+            .goals-rank-table { --tbl-pad-x:9px; --tbl-font:var(--tbl-font-sm); min-width:620px; }
             .goals-rank-name { max-width:120px; }
         }
 
@@ -24010,31 +24008,44 @@
                 const flowType      = goal.type;
                 const safeName = name.replace(/'/g, "\\'");
 
-                return `<div class="goals-rank-row" onclick="goalsOpenDetail('${goalId}')">
-                    <div class="goals-rank-num" style="background:${sc.color}15;color:${sc.color}">${idx + 1}</div>
-                    <div class="goals-rank-body">
-                        <div class="goals-rank-top">
-                            <div class="goals-rank-name-wrap">
-                                <span class="goals-rank-name">${name}</span>
-                                <span class="goals-rank-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
-                            </div>
-                            <div class="goals-rank-vals">
-                                <span class="goals-rank-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
-                                <span class="goals-rank-target">${formatBRL(prog.target)}</span>
-                            </div>
-                        </div>
+                // Ranking de metas: posicao, nome, realizado, alvo e progresso ja
+                // eram colunas — so estavam empilhadas dentro de uma linha-cartao,
+                // o que impedia comparar o alvo de duas metas de relance.
+                return `<tr class="goals-rank-row" tabindex="0" role="button" onclick="goalsOpenDetail('${goalId}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goalsOpenDetail('${goalId}')}">
+                    <td class="tbl-center goals-rank-col-num"><span class="goals-rank-num" style="background:${sc.color}15;color:${sc.color}">${idx + 1}</span></td>
+                    <td class="goals-rank-col-name">
+                        <span class="goals-rank-name-wrap">
+                            <span class="goals-rank-name">${name}</span>
+                            <span class="goals-rank-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
+                        </span>
+                    </td>
+                    <td class="tbl-num goals-rank-col-val"><span class="goals-rank-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span></td>
+                    <td class="tbl-num goals-rank-col-val"><span class="goals-rank-target">${formatBRL(prog.target)}</span></td>
+                    <td class="goals-rank-col-bar">
                         <div class="goals-rank-bar-track">
                             <div class="goals-rank-bar-fill" style="width:${barPct}%;background:${sc.color}"></div>
                         </div>
-                    </div>
-                    <div class="goals-rank-actions" onclick="event.stopPropagation()">
-                        <button class="goals-rank-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${safeName}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
-                        <button class="goals-rank-btn goals-rank-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                </div>`;
+                    </td>
+                    <td class="tbl-center goals-rank-col-actions" onclick="event.stopPropagation()">
+                        <div class="goals-rank-actions">
+                            <button class="goals-rank-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${safeName}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
+                            <button class="goals-rank-btn goals-rank-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
             }).join('');
 
-            el.innerHTML = `${navHtml}<div class="goals-rank-card"><div class="goals-rank-list">${rows}</div></div>`;
+            el.innerHTML = `${navHtml}<div class="goals-rank-wrap custom-scrollbar"><table class="tbl tbl-zebra goals-rank-table">
+                <thead><tr>
+                    <th class="tbl-center goals-rank-col-num">#</th>
+                    <th class="goals-rank-col-name">Meta</th>
+                    <th class="tbl-num goals-rank-col-val">Realizado</th>
+                    <th class="tbl-num goals-rank-col-val">Alvo</th>
+                    <th class="goals-rank-col-bar">Progresso</th>
+                    <th class="tbl-center goals-rank-col-actions">Ação</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table></div>`;
             refreshLucideIcons();
         }
 
