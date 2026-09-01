@@ -8174,6 +8174,314 @@
         .font-black { font-weight: 700 !important; }
         .font-extrabold { font-weight: 600 !important; }
         .font-bold { font-weight: 600 !important; }
+
+        /* ═════════════════════════════════════════════════════════════════
+           DETALHAMENTO DE VALOR (clique em qualquer número)
+           Os valores que sabem de onde vieram recebem data-vd. O gancho é
+           discreto de propósito: tracejado + realce leve no hover, para não
+           competir com o número em si.
+           ═════════════════════════════════════════════════════════════════ */
+        [data-vd] {
+            cursor: pointer;
+            border-radius: 6px;
+            text-underline-offset: 3px;
+            transition: background var(--dur-fast) var(--ease-premium);
+        }
+        [data-vd]:hover,
+        [data-vd]:focus-visible {
+            background: rgba(100, 116, 139, 0.13);
+            text-decoration: underline dotted currentColor;
+        }
+        [data-vd]:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+        .vd-shell {
+            max-width: 900px;
+            width: 100%;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .vd-shell:focus { outline: none; }
+        .vd-body {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 18px 24px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .vd-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .vd-sum-cell {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            background: #FBFCFE;
+            padding: 12px 14px;
+        }
+        .vd-sum-cell.is-primary { background: #F1F5F9; border-color: #CBD5E1; }
+        .vd-sum-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .vd-sum-value {
+            display: block;
+            margin-top: 6px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+        .vd-sum-sub {
+            display: block;
+            margin-top: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .vd-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .vd-search-wrap {
+            position: relative;
+            flex: 1 1 220px;
+            min-width: 180px;
+        }
+        .vd-search-wrap i,
+        .vd-search-wrap svg {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .vd-search-wrap input {
+            width: 100%;
+            height: 38px;
+            padding: 0 12px 0 32px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 600;
+            background: #FFFFFF;
+            color: var(--text-primary);
+        }
+        .vd-search-wrap input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(47, 79, 157, 0.12);
+        }
+        .vd-field { display: flex; flex-direction: column; gap: 4px; }
+        .vd-field select {
+            height: 38px;
+            min-width: 132px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 700;
+            background: #FFFFFF;
+            color: var(--text-primary);
+        }
+        .vd-results { display: flex; flex-direction: column; gap: 12px; }
+        .vd-group {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: #FFFFFF;
+        }
+        .vd-group-head {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 11px 14px;
+            background: #F8FAFC;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+        }
+        .vd-group-head:hover { background: #F1F5F9; }
+        .vd-group-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-primary);
+            min-width: 0;
+        }
+        .vd-group-name span.vd-group-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .vd-group-count {
+            flex-shrink: 0;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            background: #E2E8F0;
+            border-radius: var(--radius-pill);
+            padding: 2px 7px;
+        }
+        .vd-group-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .vd-group-total { font-size: 13px; font-weight: 800; }
+        .vd-group-share {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            min-width: 38px;
+            text-align: right;
+        }
+        .vd-group-bar {
+            height: 3px;
+            background: #EEF2F7;
+        }
+        .vd-group-bar span {
+            display: block;
+            height: 100%;
+            background: var(--primary-blue);
+            border-radius: 0 3px 3px 0;
+        }
+        .vd-group-body.is-collapsed { display: none; }
+        .vd-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 10px 14px;
+            border: none;
+            border-top: 1px solid var(--divider);
+            background: #FFFFFF;
+            cursor: pointer;
+            text-align: left;
+        }
+        .vd-item:hover { background: #F8FAFC; }
+        .vd-item-date {
+            flex-shrink: 0;
+            width: 54px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .vd-item-main { flex: 1; min-width: 0; }
+        .vd-item-title {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .vd-item-meta {
+            display: block;
+            margin-top: 2px;
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .vd-item-right {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 3px;
+        }
+        .vd-item-value { font-size: 12.5px; font-weight: 800; }
+        .vd-tag {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border-radius: var(--radius-pill);
+            padding: 2px 7px;
+        }
+        .vd-tag.done { background: var(--bg-green-soft); color: var(--primary-green); }
+        .vd-tag.pending { background: #FEF3C7; color: #92400E; }
+        .vd-empty {
+            padding: 32px 16px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+        }
+        .vd-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 14px 24px;
+            border-top: 1px solid var(--divider);
+            background: #F8FAFC;
+        }
+        .vd-foot-note {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .vd-foot-actions { display: flex; gap: 8px; }
+        .vd-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 36px;
+            padding: 0 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: #FFFFFF;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .vd-btn:hover { background: #F1F5F9; }
+        .vd-btn i, .vd-btn svg { width: 14px; height: 14px; }
+        .vd-btn.primary {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            color: #FFFFFF;
+        }
+        .vd-btn.primary:hover { background: #1E293B; }
+        @media (max-width: 640px) {
+            .vd-shell { max-height: 94vh; border-radius: 20px; }
+            .vd-body { padding: 14px 14px 6px; }
+            .vd-foot { padding: 12px 14px; }
+            .vd-field select { min-width: 0; width: 100%; }
+            .vd-field { flex: 1 1 46%; }
+            .vd-item-date { width: 46px; }
+        }
     </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -9728,6 +10036,67 @@
                 <div class="flex gap-3 pt-1">
                     <button type="button" onclick="saveGoal()" class="modal-btn-neutral flex-1">Salvar meta</button>
                     <button type="button" id="goal-del-btn" class="modal-btn-danger hidden" onclick="deleteGoalFromModal()">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALHAMENTO DE VALOR -->
+    <div id="value-detail-modal" class="hidden modal-overlay fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-6" onclick="if(event.target===this) closeValueDetail()">
+        <div class="modal-shell vd-shell" id="vd-shell" role="dialog" aria-modal="true" aria-labelledby="vd-title" tabindex="-1">
+            <div class="modal-head">
+                <div>
+                    <h3 class="modal-head-title" id="vd-title">Detalhamento</h3>
+                    <p class="modal-head-sub" id="vd-subtitle"></p>
+                </div>
+                <button onclick="closeValueDetail()" class="modal-close-btn" type="button" aria-label="Fechar detalhamento">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="vd-body">
+                <div id="vd-summary" class="vd-summary"></div>
+                <div class="vd-toolbar">
+                    <div class="vd-search-wrap">
+                        <i data-lucide="search"></i>
+                        <input type="search" id="vd-search" placeholder="Buscar destino, descrição, conta..." aria-label="Buscar dentro do detalhamento" oninput="vdSetQuery(this.value)">
+                    </div>
+                    <label class="vd-field">
+                        <span class="label-mini">Agrupar por</span>
+                        <select id="vd-group" onchange="vdSetGroup(this.value)" aria-label="Agrupar detalhamento por">
+                            <option value="destino">Destino</option>
+                            <option value="categoria">Categoria</option>
+                            <option value="subcategoria">Subcategoria</option>
+                            <option value="conta">Conta / Banco</option>
+                            <option value="dia">Dia</option>
+                            <option value="mes">Mês</option>
+                            <option value="fluxo">Entrada / Saída</option>
+                            <option value="nenhum">Sem agrupamento</option>
+                        </select>
+                    </label>
+                    <label class="vd-field">
+                        <span class="label-mini">Situação</span>
+                        <select id="vd-status" onchange="vdSetStatus(this.value)" aria-label="Filtrar por situação">
+                            <option value="TODOS">Todos</option>
+                            <option value="REALIZADO">Realizados</option>
+                            <option value="PENDENTE">Pendentes</option>
+                        </select>
+                    </label>
+                    <label class="vd-field">
+                        <span class="label-mini">Ordenar</span>
+                        <select id="vd-sort" onchange="vdSetSort(this.value)" aria-label="Ordenar lançamentos">
+                            <option value="value">Maior valor</option>
+                            <option value="date-desc">Data (mais recente)</option>
+                            <option value="date-asc">Data (mais antiga)</option>
+                        </select>
+                    </label>
+                </div>
+                <div id="vd-results" class="vd-results"></div>
+            </div>
+            <div class="vd-foot">
+                <span class="vd-foot-note" id="vd-foot-note">Toque em um lançamento para abrir e editar.</span>
+                <div class="vd-foot-actions">
+                    <button type="button" class="vd-btn" onclick="copyValueDetail(this)"><i data-lucide="copy"></i>Copiar</button>
+                    <button type="button" class="vd-btn primary" onclick="closeValueDetail()">Fechar</button>
                 </div>
             </div>
         </div>
@@ -11957,6 +12326,479 @@
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+        // =====================================================================
+        // DETALHAMENTO DE VALOR
+        //
+        // Todo número grande da tela (KPI, linha da DRE, total de um dia, total
+        // de um grupo de cobranças...) é a soma de um punhado de lançamentos.
+        // Aqui esses lançamentos ficam pendurados no próprio número: quem
+        // desenha o valor chama vdHook({ title, subtitle, entries }) e cola o
+        // atributo devolvido na tag; o clique abre o modal de detalhamento com
+        // o resumo, os agrupamentos e a lista completa — e dali dá para abrir
+        // qualquer lançamento para editar.
+        //
+        //   `<span class="kpi"${vdHook({ title: 'Entradas', entries: list })}>`
+        //
+        // Para os valores que já existem no HTML (os KPIs fixos do relatório
+        // mensal, por exemplo) use vdBind(elemento, { ... }) depois do render.
+        // =====================================================================
+        const vdRegistry = new Map();
+        const VD_REGISTRY_LIMIT = 4000;
+        let vdSeq = 0;
+        let vdActive = null;
+        let vdView = { group: 'destino', status: 'TODOS', sort: 'value', query: '' };
+        let vdCollapsed = new Set();
+        let vdLastFocused = null;
+
+        // Cada render recria os ganchos, então os antigos viram lixo. Em vez de
+        // limpar tudo (o modal aberto ainda pode apontar para um deles) o mapa
+        // descarta os mais velhos quando cresce demais.
+        function vdPruneRegistry() {
+            if (vdRegistry.size <= VD_REGISTRY_LIMIT) return;
+            const drop = vdRegistry.size - Math.floor(VD_REGISTRY_LIMIT / 2);
+            let removed = 0;
+            for (const key of Array.from(vdRegistry.keys())) {
+                if (removed++ >= drop) break;
+                vdRegistry.delete(key);
+            }
+        }
+
+        function vdRegister(payload = {}) {
+            const list = (Array.isArray(payload.entries) ? payload.entries : []).filter(Boolean);
+            const key = `vd${++vdSeq}`;
+            vdRegistry.set(key, {
+                title: String(payload.title || 'Detalhamento'),
+                subtitle: String(payload.subtitle || ''),
+                group: String(payload.group || 'destino'),
+                entries: list.slice()
+            });
+            vdPruneRegistry();
+            return key;
+        }
+
+        // Devolve o pedaço de atributos que transforma a tag em gancho clicável.
+        // Sem lançamentos não há o que detalhar, então o valor fica inerte.
+        function vdHook(payload = {}) {
+            const list = (Array.isArray(payload.entries) ? payload.entries : []).filter(Boolean);
+            if (!list.length) return '';
+            const key = vdRegister({ ...payload, entries: list });
+            return ` data-vd="${key}" role="button" tabindex="0" title="Ver detalhamento"`
+                + ` aria-label="Ver detalhamento: ${escapeHtml(String(payload.title || 'valor'))}"`;
+        }
+
+        // Mesma ideia para elementos que já estão no HTML.
+        function vdBind(target, payload = {}) {
+            const node = typeof target === 'string' ? document.getElementById(target) : target;
+            if (!node) return;
+            const list = (Array.isArray(payload.entries) ? payload.entries : []).filter(Boolean);
+            if (!list.length) {
+                ['data-vd', 'role', 'tabindex', 'title', 'aria-label'].forEach(attr => node.removeAttribute(attr));
+                return;
+            }
+            const key = vdRegister({ ...payload, entries: list });
+            node.setAttribute('data-vd', key);
+            node.setAttribute('role', 'button');
+            node.setAttribute('tabindex', '0');
+            node.setAttribute('title', 'Ver detalhamento');
+            node.setAttribute('aria-label', `Ver detalhamento: ${String(payload.title || 'valor')}`);
+        }
+
+        // O gancho guarda os lançamentos do momento do render. Na abertura eles
+        // são reconciliados com o state para refletir edições feitas depois.
+        function vdRefreshEntries(list) {
+            const current = new Map(getAnalyticalEntries(state.entries).map(e => [String((e || {}).id || ''), e]));
+            return (Array.isArray(list) ? list : []).map(item => current.get(String((item || {}).id || '')) || item);
+        }
+
+        function vdEntryFlow(entry) {
+            return normalizeFlowType((entry || {}).type) === FLOW_IN ? FLOW_IN : FLOW_OUT;
+        }
+
+        function vdEntryAmount(entry) {
+            return Math.abs(Number((entry || {}).amount) || 0);
+        }
+
+        function vdIsRealized(entry) {
+            return String((entry || {}).status || '').toUpperCase() === 'REALIZADO';
+        }
+
+        function vdEntryAccountName(entry) {
+            return getAccountNameById((entry || {}).accountId ?? (entry || {}).account_id);
+        }
+
+        function vdSummarize(list) {
+            return (Array.isArray(list) ? list : []).reduce((acc, entry) => {
+                const amount = vdEntryAmount(entry);
+                const isIn = vdEntryFlow(entry) === FLOW_IN;
+                const realized = vdIsRealized(entry);
+                if (isIn) { acc.inc += amount; acc.incCount += 1; } else { acc.exp += amount; acc.expCount += 1; }
+                if (realized) { acc.realized += isIn ? amount : -amount; acc.realizedCount += 1; }
+                else { acc.pending += isIn ? amount : -amount; acc.pendingCount += 1; }
+                acc.count += 1;
+                return acc;
+            }, { inc: 0, exp: 0, incCount: 0, expCount: 0, realized: 0, pending: 0, realizedCount: 0, pendingCount: 0, count: 0 });
+        }
+
+        // Total "natural" do conjunto, do jeito que a tela mostra: só entradas
+        // (ou só saídas) viram a própria soma, com a cor do fluxo; misturando os
+        // dois, o que interessa é o líquido.
+        function vdDisplayTotal(totals) {
+            if (totals.expCount && !totals.incCount) return { value: totals.exp, negative: true };
+            if (totals.incCount && !totals.expCount) return { value: totals.inc, negative: false };
+            const net = totals.inc - totals.exp;
+            return { value: net, negative: net < 0 };
+        }
+
+        function vdSearchHaystack(entry) {
+            return `${getEntrySearchHaystack(entry)} ${normalizeEntrySearchText(getEntryHierarchyNames(entry).join(' '))} ${normalizeEntrySearchText(vdEntryAccountName(entry))}`;
+        }
+
+        function vdFilteredEntries() {
+            const list = Array.isArray(vdActive && vdActive.entries) ? vdActive.entries : [];
+            const status = vdView.status;
+            const query = normalizeEntrySearchText(vdView.query);
+            return list.filter(entry => {
+                if (status !== 'TODOS' && String((entry || {}).status || '').toUpperCase() !== status) return false;
+                if (!query) return true;
+                return vdSearchHaystack(entry).includes(query);
+            });
+        }
+
+        // Rótulo + chave de ordenação do grupo a que o lançamento pertence.
+        function vdGroupOf(entry) {
+            const meta = getEntryDestinationMeta(entry);
+            const dateIso = String((entry || {}).date || '');
+            switch (vdView.group) {
+                case 'categoria':
+                    return { label: meta.category || 'Sem categoria' };
+                case 'subcategoria':
+                    return { label: meta.subCategory || 'Sem subcategoria' };
+                case 'conta':
+                    return { label: vdEntryAccountName(entry) };
+                case 'dia':
+                    return { label: capitalizeFirst(vdLongDateLabel(dateIso)), order: dateIso };
+                case 'mes': {
+                    const prefix = dateIso.slice(0, 7);
+                    return { label: capitalizeFirst(vdMonthLabel(prefix)), order: prefix };
+                }
+                case 'fluxo':
+                    return { label: vdEntryFlow(entry) === FLOW_IN ? 'Entradas' : 'Saídas' };
+                case 'nenhum':
+                    return { label: '' };
+                default:
+                    return { label: meta.destination || 'Sem destino' };
+            }
+        }
+
+        function vdLongDateLabel(dateIso) {
+            const date = parseIsoDateLocal(dateIso);
+            if (!date) return dateIso || 'Sem data';
+            return date.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' });
+        }
+
+        function vdMonthLabel(prefix) {
+            const [year, month] = String(prefix || '').split('-');
+            if (!year || !month) return prefix || 'Sem data';
+            return new Date(Number(year), Number(month) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        }
+
+        function vdSortEntries(list) {
+            const sorted = list.slice();
+            if (vdView.sort === 'date-asc') {
+                sorted.sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+            } else if (vdView.sort === 'date-desc') {
+                sorted.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+            } else {
+                sorted.sort((a, b) => vdEntryAmount(b) - vdEntryAmount(a));
+            }
+            return sorted;
+        }
+
+        function vdBuildGroups(list) {
+            const groups = new Map();
+            list.forEach(entry => {
+                const info = vdGroupOf(entry);
+                const label = String(info.label || '');
+                if (!groups.has(label)) groups.set(label, { label, order: info.order || '', entries: [] });
+                groups.get(label).entries.push(entry);
+            });
+            const result = Array.from(groups.values()).map(group => {
+                const totals = vdSummarize(group.entries);
+                const display = vdDisplayTotal(totals);
+                return { ...group, totals, total: display.value, negative: display.negative, entries: vdSortEntries(group.entries) };
+            });
+            const chronological = vdView.group === 'dia' || vdView.group === 'mes';
+            result.sort((a, b) => {
+                if (chronological) return vdView.sort === 'date-asc'
+                    ? String(a.order).localeCompare(String(b.order))
+                    : String(b.order).localeCompare(String(a.order));
+                return Math.abs(b.total) - Math.abs(a.total);
+            });
+            return result;
+        }
+
+        function vdSetQuery(value) {
+            vdView.query = String(value || '');
+            renderValueDetail();
+        }
+
+        function vdSetGroup(value) {
+            vdView.group = String(value || 'destino');
+            vdCollapsed = new Set();
+            renderValueDetail();
+        }
+
+        function vdSetStatus(value) {
+            vdView.status = String(value || 'TODOS');
+            renderValueDetail();
+        }
+
+        function vdSetSort(value) {
+            vdView.sort = String(value || 'value');
+            renderValueDetail();
+        }
+
+        function vdToggleGroup(label) {
+            const key = String(label || '');
+            if (vdCollapsed.has(key)) vdCollapsed.delete(key);
+            else vdCollapsed.add(key);
+            renderValueDetail();
+        }
+
+        function vdBuildSummaryHtml(list, totals, baseCount) {
+            const display = vdDisplayTotal(totals);
+            const cells = [];
+            const countNote = baseCount > totals.count
+                ? `${formatLaunchCount(totals.count)} de ${baseCount}`
+                : formatLaunchCount(totals.count);
+            cells.push(`<div class="vd-sum-cell is-primary">
+                <span class="vd-sum-label">Total</span>
+                <span class="vd-sum-value ${display.negative ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(display.value)}</span>
+                <span class="vd-sum-sub">${escapeHtml(countNote)}</span>
+            </div>`);
+            if (totals.incCount) cells.push(`<div class="vd-sum-cell">
+                <span class="vd-sum-label">Entradas</span>
+                <span class="vd-sum-value flow-income-text">${formatBRL(totals.inc)}</span>
+                <span class="vd-sum-sub">${escapeHtml(formatLaunchCount(totals.incCount))}</span>
+            </div>`);
+            if (totals.expCount) cells.push(`<div class="vd-sum-cell">
+                <span class="vd-sum-label">Saídas</span>
+                <span class="vd-sum-value flow-expense-text">${formatBRL(totals.exp)}</span>
+                <span class="vd-sum-sub">${escapeHtml(formatLaunchCount(totals.expCount))}</span>
+            </div>`);
+            if (totals.pendingCount) {
+                const pending = vdDisplayTotal(vdSummarize(list.filter(entry => !vdIsRealized(entry))));
+                cells.push(`<div class="vd-sum-cell">
+                    <span class="vd-sum-label">Ainda pendente</span>
+                    <span class="vd-sum-value ${pending.negative ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(pending.value)}</span>
+                    <span class="vd-sum-sub">${escapeHtml(formatLaunchCount(totals.pendingCount))} sem baixa</span>
+                </div>`);
+            }
+            return cells.join('');
+        }
+
+        function vdBuildItemHtml(entry) {
+            const isIn = vdEntryFlow(entry) === FLOW_IN;
+            const amount = vdEntryAmount(entry);
+            const meta = getEntryDestinationMeta(entry);
+            const title = meta.destination || String(entry.description || '') || 'Sem destino';
+            const metaParts = [meta.category, meta.subCategory, vdEntryAccountName(entry)].filter(Boolean);
+            if (entry.description && meta.destination) metaParts.push(String(entry.description));
+            const realized = vdIsRealized(entry);
+            return `<button type="button" class="vd-item" onclick="vdOpenEntry('${escapeHtml(String(entry.id || ''))}')">
+                <span class="vd-item-date">${escapeHtml(formatDateBRV2(entry.date))}</span>
+                <span class="vd-item-main">
+                    <span class="vd-item-title">${escapeHtml(title)}</span>
+                    <span class="vd-item-meta">${escapeHtml(metaParts.join(' • ')) || '—'}</span>
+                </span>
+                <span class="vd-item-right">
+                    <span class="vd-item-value ${isIn ? 'flow-income-text' : 'flow-expense-text'}">${isIn ? '+' : '-'}${formatBRL(amount)}</span>
+                    <span class="vd-tag ${realized ? 'done' : 'pending'}">${realized ? 'Realizado' : 'Pendente'}</span>
+                </span>
+            </button>`;
+        }
+
+        const VD_CHEVRON = '<svg class="vd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+        function renderValueDetail() {
+            if (!vdActive) return;
+            const summaryEl = document.getElementById('vd-summary');
+            const resultsEl = document.getElementById('vd-results');
+            const noteEl = document.getElementById('vd-foot-note');
+            if (!summaryEl || !resultsEl) return;
+
+            const filtered = vdFilteredEntries();
+            const totals = vdSummarize(filtered);
+            summaryEl.innerHTML = vdBuildSummaryHtml(filtered, totals, vdActive.entries.length);
+
+            if (!filtered.length) {
+                resultsEl.innerHTML = `<div class="vd-empty">Nenhum lançamento encontrado com os filtros atuais.</div>`;
+                if (noteEl) noteEl.innerText = 'Ajuste a busca ou a situação para ver os lançamentos.';
+                return;
+            }
+
+            if (vdView.group === 'nenhum') {
+                resultsEl.innerHTML = `<div class="vd-group"><div class="vd-group-body">${vdSortEntries(filtered).map(vdBuildItemHtml).join('')}</div></div>`;
+            } else {
+                const groups = vdBuildGroups(filtered);
+                const biggest = groups.reduce((max, group) => Math.max(max, Math.abs(group.total)), 0);
+                const baseTotal = groups.reduce((acc, group) => acc + Math.abs(group.total), 0);
+                resultsEl.innerHTML = groups.map(group => {
+                    const collapsed = vdCollapsed.has(group.label);
+                    const share = baseTotal > 0 ? (Math.abs(group.total) / baseTotal) * 100 : 0;
+                    const width = biggest > 0 ? Math.max(2, Math.round((Math.abs(group.total) / biggest) * 100)) : 0;
+                    return `<div class="vd-group">
+                        <button type="button" class="vd-group-head" onclick="vdToggleGroup(${escapeHtml(JSON.stringify(group.label))})" aria-expanded="${String(!collapsed)}">
+                            <span class="vd-group-name">
+                                <span style="transition:transform 180ms var(--ease-premium);${collapsed ? '' : 'transform:rotate(180deg);'}display:inline-flex">${VD_CHEVRON}</span>
+                                <span class="vd-group-label">${escapeHtml(group.label)}</span>
+                                <span class="vd-group-count">${group.entries.length}</span>
+                            </span>
+                            <span class="vd-group-right">
+                                <span class="vd-group-share">${share.toFixed(0)}%</span>
+                                <span class="vd-group-total ${group.negative ? 'flow-expense-text' : 'flow-income-text'}">${formatBRL(group.total)}</span>
+                            </span>
+                        </button>
+                        <div class="vd-group-bar" aria-hidden="true"><span style="width:${width}%"></span></div>
+                        <div class="vd-group-body${collapsed ? ' is-collapsed' : ''}">${group.entries.map(vdBuildItemHtml).join('')}</div>
+                    </div>`;
+                }).join('');
+            }
+
+            if (noteEl) noteEl.innerText = 'Toque em um lançamento para abrir e editar.';
+        }
+
+        function openValueDetail(key) {
+            const record = vdRegistry.get(String(key || ''));
+            if (!record) return;
+            vdLastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+            vdActive = {
+                title: record.title,
+                subtitle: record.subtitle,
+                entries: vdRefreshEntries(record.entries)
+            };
+            vdView = { group: record.group || 'destino', status: 'TODOS', sort: 'value', query: '' };
+            vdCollapsed = new Set();
+
+            const modal = document.getElementById('value-detail-modal');
+            if (!modal) return;
+            const titleEl = document.getElementById('vd-title');
+            const subEl = document.getElementById('vd-subtitle');
+            if (titleEl) titleEl.innerText = vdActive.title;
+            if (subEl) {
+                subEl.innerText = vdActive.subtitle;
+                subEl.style.display = vdActive.subtitle ? '' : 'none';
+            }
+            const searchEl = document.getElementById('vd-search');
+            if (searchEl) searchEl.value = '';
+            const groupEl = document.getElementById('vd-group');
+            if (groupEl) groupEl.value = vdView.group;
+            const statusEl = document.getElementById('vd-status');
+            if (statusEl) statusEl.value = vdView.status;
+            const sortEl = document.getElementById('vd-sort');
+            if (sortEl) sortEl.value = vdView.sort;
+
+            modal.classList.remove('hidden');
+            renderValueDetail();
+            refreshLucideIcons();
+            window.setTimeout(() => document.getElementById('vd-shell')?.focus(), 0);
+        }
+
+        function isValueDetailOpen() {
+            const modal = document.getElementById('value-detail-modal');
+            return Boolean(modal) && !modal.classList.contains('hidden');
+        }
+
+        function closeValueDetail(options = {}) {
+            const modal = document.getElementById('value-detail-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            vdActive = null;
+            if (!options.keepFocus && vdLastFocused && typeof vdLastFocused.focus === 'function') {
+                vdLastFocused.focus();
+            }
+            vdLastFocused = null;
+        }
+
+        function vdOpenEntry(entryId) {
+            const id = String(entryId || '');
+            if (!id) return;
+            if (!state.entries.some(entry => String(entry.id || '') === id)) {
+                showAppToast('Este lançamento não está mais disponível.');
+                return;
+            }
+            closeValueDetail({ keepFocus: true });
+            openEntryModal(id);
+        }
+
+        // Cópia em TSV, pronta para colar no Excel. Usa o número cru para não
+        // levar junto a máscara do "esconder valores".
+        function copyValueDetail(button) {
+            if (!vdActive) return;
+            const rows = [['Data', 'Destino', 'Categoria', 'Subcategoria', 'Conta', 'Descrição', 'Situação', 'Valor']];
+            vdSortEntries(vdFilteredEntries()).forEach(entry => {
+                const meta = getEntryDestinationMeta(entry);
+                const signed = (vdEntryFlow(entry) === FLOW_IN ? 1 : -1) * vdEntryAmount(entry);
+                rows.push([
+                    String(entry.date || ''),
+                    meta.destination || '',
+                    meta.category || '',
+                    meta.subCategory || '',
+                    vdEntryAccountName(entry),
+                    String(entry.description || ''),
+                    vdIsRealized(entry) ? 'Realizado' : 'Pendente',
+                    signed.toFixed(2).replace('.', ',')
+                ].map(cell => String(cell).replace(/[\t\r\n]+/g, ' ')));
+            });
+            const text = rows.map(row => row.join('\t')).join('\n');
+            const done = (ok) => {
+                if (button) {
+                    const original = button.innerHTML;
+                    button.innerHTML = ok ? 'Copiado!' : 'Falhou';
+                    window.setTimeout(() => { button.innerHTML = original; refreshLucideIcons(); }, 1600);
+                }
+                if (!ok) showAppToast('Não foi possível copiar o detalhamento.');
+            };
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                navigator.clipboard.writeText(text).then(() => done(true)).catch(() => done(false));
+                return;
+            }
+            try {
+                const area = document.createElement('textarea');
+                area.value = text;
+                area.setAttribute('readonly', '');
+                area.style.position = 'fixed';
+                area.style.opacity = '0';
+                document.body.appendChild(area);
+                area.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(area);
+                done(ok);
+            } catch (error) {
+                done(false);
+            }
+        }
+
+        // Um único ouvinte cobre todos os ganchos, inclusive os que ainda nem
+        // foram desenhados.
+        // Na fase de captura: assim o clique no número não dispara também o
+        // onclick do card/linha que o contém (abrir grupo, ordenar coluna...).
+        document.addEventListener('click', (event) => {
+            const hook = event.target instanceof Element ? event.target.closest('[data-vd]') : null;
+            if (!hook) return;
+            event.preventDefault();
+            event.stopPropagation();
+            openValueDetail(hook.getAttribute('data-vd'));
+        }, true);
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+            const target = event.target instanceof Element ? event.target : null;
+            if (!target || !target.hasAttribute('data-vd')) return;
+            event.preventDefault();
+            event.stopPropagation();
+            openValueDetail(target.getAttribute('data-vd'));
+        }, true);
+
         function showAppConfirmDialog({
             title = 'Confirmar ação',
             message = '',
@@ -15021,6 +15863,10 @@
                 totalNetEl.innerText = formatBRL(totalNet);
                 totalNetEl.className = `entries-filter-report-value ${totalNet >= 0 ? 'flow-balance-text' : 'flow-expense-text'}`;
             }
+            const filterSubtitle = 'Lançamentos do filtro atual';
+            vdBind(totalInEl, { title: 'Entradas do filtro', subtitle: filterSubtitle, entries: filtered.filter(e => e.type === 'ENTRADA') });
+            vdBind(totalOutEl, { title: 'Saídas do filtro', subtitle: filterSubtitle, entries: filtered.filter(e => e.type === 'SAÍDA') });
+            vdBind(totalNetEl, { title: 'Saldo do filtro', subtitle: filterSubtitle, group: 'fluxo', entries: filtered });
             if (countEl) countEl.innerText = `${formatLaunchCount(filtered.length)} no filtro`;
         }
 
@@ -15411,8 +16257,10 @@
             });
 
             return Array.from(dayMap.entries()).map(([dateIso, dayEntries]) => {
-                const dayIn  = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a, b)  => a + (Number(b.amount) || 0), 0);
-                const dayOut = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a, b) => a + (Number(b.amount) || 0), 0);
+                const dayIncomes = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN);
+                const dayExpenses = dayEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT);
+                const dayIn  = dayIncomes.reduce((a, b)  => a + (Number(b.amount) || 0), 0);
+                const dayOut = dayExpenses.reduce((a, b) => a + (Number(b.amount) || 0), 0);
                 const dayNet = dayIn - dayOut;
                 const isNegDay = dayNet < 0;
 
@@ -15425,6 +16273,8 @@
                 const weekdayLine = (dateIso === today || dateIso === tomorrowIso)
                     ? `${weekday} · ${dateShort}`
                     : weekday;
+                const dayTitle = `${dateLabel === dateShort ? dateShort : `${dateLabel} (${dateShort})`}`;
+                const dayDetailSubtitle = `Pendentes de ${capitalizeFirst(weekday)}, ${dateShort}`;
 
                 const itemsHtml = dayEntries.map(e => {
                     const flow = normalizeFlowType(e.type);
@@ -15449,15 +16299,15 @@
                     <div class="home-proj-day-totals">
                         <div class="home-proj-tot">
                             <span class="home-proj-tot-label">Entradas</span>
-                            <span class="flow-income-text">${dayIn > 0 ? '+' : ''}${formatBRLNoCents(dayIn)}</span>
+                            <span class="flow-income-text"${vdHook({ title: `Entradas · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayIncomes })}>${dayIn > 0 ? '+' : ''}${formatBRLNoCents(dayIn)}</span>
                         </div>
                         <div class="home-proj-tot">
                             <span class="home-proj-tot-label">Saídas</span>
-                            <span class="flow-expense-text">${dayOut > 0 ? '-' : ''}${formatBRLNoCents(dayOut)}</span>
+                            <span class="flow-expense-text"${vdHook({ title: `Saídas · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayExpenses })}>${dayOut > 0 ? '-' : ''}${formatBRLNoCents(dayOut)}</span>
                         </div>
                         <div class="home-proj-tot">
                             <span class="home-proj-tot-label">Resultado</span>
-                            <span class="${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}">${dayNet > 0 ? '+' : ''}${formatBRLNoCents(dayNet)}</span>
+                            <span class="${dayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}"${vdHook({ title: `Resultado · ${dayTitle}`, subtitle: dayDetailSubtitle, entries: dayEntries })}>${dayNet > 0 ? '+' : ''}${formatBRLNoCents(dayNet)}</span>
                         </div>
                     </div>
                     <button type="button" class="home-proj-day-toggle" onclick="toggleProjDayItems(this)" aria-expanded="false">
@@ -15541,11 +16391,17 @@
             const collapsed = Boolean(options.collapsed);
             const rows = entries.map(e => buildCobrancaRow(e, isReceber, today)).join('');
             const totalClass = isReceber ? 'flow-income-text' : 'flow-expense-text';
+            const groupHook = vdHook({
+                title: `${title} · ${isReceber ? 'A receber' : 'A pagar'}`,
+                subtitle: 'Lançamentos pendentes deste grupo de cobranças',
+                group: 'dia',
+                entries
+            });
             return `<div class="cob-group">
                 <button type="button" class="cob-group-header" onclick="toggleCobGroup(this)" aria-expanded="${String(!collapsed)}">
                     <span class="cob-group-title">${escapeHtml(title)}<span class="cob-group-count">${entries.length}</span></span>
                     <span style="display:flex;align-items:center;gap:8px;">
-                        <span class="cob-group-total ${totalClass}">${formatBRL(groupTotal)}</span>
+                        <span class="cob-group-total ${totalClass}"${groupHook}>${formatBRL(groupTotal)}</span>
                         <i data-lucide="chevron-down" class="w-4 h-4 cob-group-chevron" style="transition: transform 0.2s;${collapsed ? '' : 'transform: rotate(180deg);'}"></i>
                     </span>
                 </button>
@@ -15574,17 +16430,17 @@
                 <div class="cob-kpis">
                     <div class="cob-kpi">
                         <span class="cob-kpi-label"><i data-lucide="arrow-down-left"></i>Total a receber</span>
-                        <span class="cob-kpi-value flow-income-text">${formatBRL(data.receber.total)}</span>
+                        <span class="cob-kpi-value flow-income-text"${vdHook({ title: 'Total a receber', subtitle: 'Todas as entradas ainda pendentes', entries: data.receber.list })}>${formatBRL(data.receber.total)}</span>
                         <span class="cob-kpi-sub">${data.receber.list.length} lançamento(s) pendente(s)</span>
                     </div>
                     <div class="cob-kpi">
                         <span class="cob-kpi-label"><i data-lucide="arrow-up-right"></i>Total a pagar</span>
-                        <span class="cob-kpi-value flow-expense-text">${formatBRL(data.pagar.total)}</span>
+                        <span class="cob-kpi-value flow-expense-text"${vdHook({ title: 'Total a pagar', subtitle: 'Todas as saídas ainda pendentes', entries: data.pagar.list })}>${formatBRL(data.pagar.total)}</span>
                         <span class="cob-kpi-sub">${data.pagar.list.length} lançamento(s) pendente(s)</span>
                     </div>
                     <div class="cob-kpi">
                         <span class="cob-kpi-label"><i data-lucide="calendar-check-2"></i>Hoje</span>
-                        <span class="cob-kpi-value ${todayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}">${todayNet > 0 ? '+' : ''}${formatBRL(todayNet)}</span>
+                        <span class="cob-kpi-value ${todayNet < 0 ? 'flow-expense-text' : 'flow-income-text'}"${vdHook({ title: 'Cobranças de hoje', subtitle: `Vencendo em ${formatDateBRV2(data.today)}`, group: 'fluxo', entries: [...data.receber.groups.today, ...data.pagar.groups.today] })}>${todayNet > 0 ? '+' : ''}${formatBRL(todayNet)}</span>
                         <span class="cob-kpi-sub">${todayCount > 0 ? `${todayCount} lançamento(s) para hoje` : 'Nada para hoje 🎉'}</span>
                     </div>
                 </div>
@@ -15638,6 +16494,9 @@
 
             const periodSummary = summarizeFinancialEntries(futurePending, false);
             const periodLabel = `${escapeHtml(formatDateBRV2(today))} a ${escapeHtml(futureEnd.split('-').reverse().join('/'))}`;
+            const periodIncomes = futurePending.filter(e => normalizeFlowType(e.type) === FLOW_IN);
+            const periodExpenses = futurePending.filter(e => normalizeFlowType(e.type) === FLOW_OUT);
+            const periodDetailSubtitle = `Pendentes de ${formatDateBRV2(today)} a ${futureEnd.split('-').reverse().join('/')}`;
 
             host.innerHTML = `
                 <div class="home-hero">
@@ -15662,15 +16521,15 @@
                     <div class="home-summary-strip">
                         <div class="home-summary-cell">
                             <span class="home-summary-label">A receber no período</span>
-                            <span class="home-summary-value flow-income-text">+${formatBRLNoCents(periodSummary.inc)}</span>
+                            <span class="home-summary-value flow-income-text"${vdHook({ title: 'A receber no período', subtitle: periodDetailSubtitle, entries: periodIncomes })}>+${formatBRLNoCents(periodSummary.inc)}</span>
                         </div>
                         <div class="home-summary-cell">
                             <span class="home-summary-label">A pagar no período</span>
-                            <span class="home-summary-value flow-expense-text">-${formatBRLNoCents(periodSummary.exp)}</span>
+                            <span class="home-summary-value flow-expense-text"${vdHook({ title: 'A pagar no período', subtitle: periodDetailSubtitle, entries: periodExpenses })}>-${formatBRLNoCents(periodSummary.exp)}</span>
                         </div>
                         <div class="home-summary-cell">
                             <span class="home-summary-label">Resultado do período</span>
-                            <span class="home-summary-value ${periodSummary.net < 0 ? 'flow-expense-text' : 'flow-income-text'}">${periodSummary.net > 0 ? '+' : ''}${formatBRLNoCents(periodSummary.net)}</span>
+                            <span class="home-summary-value ${periodSummary.net < 0 ? 'flow-expense-text' : 'flow-income-text'}"${vdHook({ title: 'Resultado do período', subtitle: periodDetailSubtitle, entries: futurePending })}>${periodSummary.net > 0 ? '+' : ''}${formatBRLNoCents(periodSummary.net)}</span>
                             <span class="home-summary-sub">${futurePending.length} lançamento(s) em ${HOME_UPCOMING_DAYS + 1} dias</span>
                         </div>
                     </div>` : ''}
@@ -16173,12 +17032,23 @@
             let expR = 0;
             let expP = 0;
 
+            // Os mesmos baldes das somas, mas guardando os lançamentos: é o que
+            // alimenta o detalhamento ao clicar em cada número da tela.
+            const monthlyBuckets = { incR: [], incP: [], expR: [], expP: [] };
+            const dailyBuckets = Array.from({ length: daysInMonth }, () => ({ incR: [], incP: [], expR: [], expP: [] }));
+
             entries.forEach((entry) => {
                 const amount = Number(entry.amount) || 0;
                 const day = Number(String(entry.date || '').slice(8, 10));
                 const dayIndex = day >= 1 && day <= daysInMonth ? day - 1 : -1;
                 const isIncome = normalizeFlowType(entry.type) === FLOW_IN;
                 const isRealized = entry.status === 'REALIZADO';
+                const bucket = isIncome
+                    ? (isRealized ? 'incR' : 'incP')
+                    : (isRealized ? 'expR' : 'expP');
+
+                monthlyBuckets[bucket].push(entry);
+                if (dayIndex >= 0) dailyBuckets[dayIndex][bucket].push(entry);
 
                 if (isIncome && isRealized) {
                     incR += amount;
@@ -16212,6 +17082,9 @@
                 ? new Date(Number(yearLabel), Number(monthLabel) - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
                 : 'período selecionado';
             const activePeriodLabel = capitalizeFirst(monthName);
+            vdBind('sum-inc-real', { title: 'Entradas realizadas', subtitle: activePeriodLabel, entries: monthlyBuckets.incR });
+            vdBind('sum-exp-real', { title: 'Saídas realizadas', subtitle: activePeriodLabel, entries: monthlyBuckets.expR });
+            vdBind('month-bal-r', { title: 'Saldo realizado', subtitle: activePeriodLabel, group: 'fluxo', entries: [...monthlyBuckets.incR, ...monthlyBuckets.expR] });
             if (monthlyTitleEl) monthlyTitleEl.innerText = activePeriodLabel;
             if (monthlyStatusEl) monthlyStatusEl.innerText = `${formatLaunchCount(entries.length)} no período ativo.`;
             if (periodCaptionEl) periodCaptionEl.innerText = `Período ativo: ${activePeriodLabel}.`;
@@ -16246,23 +17119,25 @@
                 const pInc = dailyShowPending ? (dailyInPend[d - 1] || 0) : 0;
                 const pExp = dailyShowPending ? (dailyOutPend[d - 1] || 0) : 0;
                 const hasPendDay = pInc > 0 || pExp > 0;
+                const dayLabel = `${String(d).padStart(2, '0')}/${String(filter).slice(5, 7)}`;
+                const dayBucket = dailyBuckets[d - 1] || { incR: [], incP: [], expR: [], expP: [] };
                 if (hasRealizedDailyData) {
                     html += `<tr class="monthly-day-row ${isEmptyDay ? 'is-empty' : ''}">
                         <td class="monthly-day-cell">${String(d).padStart(2, '0')}</td>
                         <td class="monthly-flow-cell">
                             <div class="monthly-flow-value flow-income-text">
-                                <span>${formatBRL(dInc)}</span>
+                                <span${vdHook({ title: `Entradas de ${dayLabel}`, subtitle: 'Realizados no dia', entries: dayBucket.incR })}>${formatBRL(dInc)}</span>
                                 <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${incWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--primary-green); width: ${incWidth}%;"></span></span>
                             </div>
                         </td>
                         <td class="monthly-flow-cell">
                             <div class="monthly-flow-value flow-expense-text">
-                                <span>${formatBRL(dExp)}</span>
+                                <span${vdHook({ title: `Saídas de ${dayLabel}`, subtitle: 'Realizados no dia', entries: dayBucket.expR })}>${formatBRL(dExp)}</span>
                                 <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${expWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--soft-red); width: ${expWidth}%;"></span></span>
                             </div>
                         </td>
                         <td class="tbl-num">
-                            <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}">${formatBRL(dBal)}</span>
+                            <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}"${vdHook({ title: `Saldo de ${dayLabel}`, subtitle: 'Realizados no dia', group: 'fluxo', entries: [...dayBucket.incR, ...dayBucket.expR] })}>${formatBRL(dBal)}</span>
                         </td>
                         <td class="tbl-num monthly-cumulative">${formatBRL(cumulative)}</td>
                     </tr>`;
@@ -16275,18 +17150,18 @@
                         <td class="monthly-day-cell">${hasRealizedDailyData ? '<span class="daily-pend-tag">P</span>' : String(d).padStart(2, '0')}</td>
                         <td class="monthly-flow-cell">
                             <div class="monthly-flow-value flow-income-text">
-                                <span>${formatBRL(pInc)}</span>
+                                <span${vdHook({ title: `Entradas pendentes de ${dayLabel}`, subtitle: 'Ainda sem baixa', entries: dayBucket.incP })}>${formatBRL(pInc)}</span>
                                 <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${pIncWidth === 0 ? 'is-zero' : ''}" style="--bar-color: #86EFAC; width: ${pIncWidth}%;"></span></span>
                             </div>
                         </td>
                         <td class="monthly-flow-cell">
                             <div class="monthly-flow-value flow-expense-text">
-                                <span>${formatBRL(pExp)}</span>
+                                <span${vdHook({ title: `Saídas pendentes de ${dayLabel}`, subtitle: 'Ainda sem baixa', entries: dayBucket.expP })}>${formatBRL(pExp)}</span>
                                 <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${pExpWidth === 0 ? 'is-zero' : ''}" style="--bar-color: #FCA5A5; width: ${pExpWidth}%;"></span></span>
                             </div>
                         </td>
                         <td class="tbl-num">
-                            <span class="day-net-pill ${pBal < 0 ? 'day-net-negative' : 'day-net-positive'}" style="opacity:0.7">${formatBRL(pBal)}</span>
+                            <span class="day-net-pill ${pBal < 0 ? 'day-net-negative' : 'day-net-positive'}" style="opacity:0.7"${vdHook({ title: `Saldo pendente de ${dayLabel}`, subtitle: 'Ainda sem baixa', group: 'fluxo', entries: [...dayBucket.incP, ...dayBucket.expP] })}>${formatBRL(pBal)}</span>
                         </td>
                         <td class="tbl-num monthly-cumulative" style="color:#94A3B8">—</td>
                     </tr>`;
@@ -16313,41 +17188,63 @@
             const realized = (Array.isArray(entries) ? entries : []).filter(e => e.status === 'REALIZADO');
             const opEntries  = realized.filter(isOperacional);
             const finEntries = realized.filter(isFinanceiro);
+            const sumOf = (list) => list.reduce((a, b) => a + (Number(b.amount) || 0), 0);
 
-            const receitaBruta = opEntries.filter(isSalesRevenueEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const aporteReceita = realized.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e)).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            // Cada linha guarda também os lançamentos que a formaram: é o que o
+            // detalhamento mostra quando se clica no valor da linha.
+            const sets = {};
+            sets.receitaBruta = opEntries.filter(isSalesRevenueEntry);
+            sets.aporte = realized.filter(e => normalizeFlowType(e.type) === FLOW_IN && isCapitalContributionEntry(e));
+            sets.deducoes = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes');
+            sets.cmv = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'cmv');
+            sets.receitaLiquida = [...sets.receitaBruta, ...sets.deducoes];
+            sets.margemBruta = [...sets.receitaLiquida, ...sets.cmv];
 
-            const deducoes = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'deducoes').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const receitaBruta = sumOf(sets.receitaBruta);
+            const aporteReceita = sumOf(sets.aporte);
+            const deducoes = sumOf(sets.deducoes);
             const receitaLiquida = receitaBruta - deducoes;
-
-            const cmv = opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && classifyDreGroup(e) === 'cmv').reduce((a,b)=>a+(Number(b.amount)||0),0);
+            const cmv = sumOf(sets.cmv);
             const margemBruta = receitaLiquida - cmv;
 
             const expGroups = {};
+            const expGroupSets = {};
             opEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT && !isPartnerWithdrawalEntry(e) && classifyDreGroup(e) !== 'deducoes' && classifyDreGroup(e) !== 'cmv').forEach(e => {
                 const gk = classifyDreGroup(e);
-                if (!expGroups[gk]) expGroups[gk] = 0;
+                if (!expGroups[gk]) { expGroups[gk] = 0; expGroupSets[gk] = []; }
                 expGroups[gk] += Number(e.amount) || 0;
+                expGroupSets[gk].push(e);
             });
+            sets.expGroups = expGroupSets;
+            sets.opExp = Object.values(expGroupSets).flat();
 
-            const finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT).reduce((a,b)=>a+(Number(b.amount)||0),0);
-            const finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            sets.finExp = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_OUT);
+            sets.finInc = finEntries.filter(e => normalizeFlowType(e.type) === FLOW_IN);
+            const finExp = sumOf(sets.finExp);
+            const finInc = sumOf(sets.finInc);
 
             // Outras receitas não operacionais (aluguéis) — somam ao lucro, fora das vendas.
-            const outrasReceitas = realized.filter(isRentalIncomeEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            sets.outrasReceitas = realized.filter(isRentalIncomeEntry);
+            const outrasReceitas = sumOf(sets.outrasReceitas);
             // Retiradas / distribuição aos sócios — abaixo do lucro gerencial (não é despesa do negócio).
-            const retiradaSocios = realized.filter(isPartnerWithdrawalEntry).reduce((a,b)=>a+(Number(b.amount)||0),0);
+            sets.retiradaSocios = realized.filter(isPartnerWithdrawalEntry);
+            const retiradaSocios = sumOf(sets.retiradaSocios);
 
             const totalOpExp = Object.values(expGroups).reduce((a,b)=>a+b, 0);
             const resultadoOp = margemBruta - totalOpExp;
             const lucroGerencial = resultadoOp - finExp + finInc + outrasReceitas;
             const sobraAposRetiradas = lucroGerencial - retiradaSocios;
 
+            sets.resultadoOp = [...sets.margemBruta, ...sets.opExp];
+            sets.lucroGerencial = [...sets.resultadoOp, ...sets.finExp, ...sets.finInc, ...sets.outrasReceitas];
+            sets.sobraAposRetiradas = [...sets.lucroGerencial, ...sets.retiradaSocios];
+
             return {
                 realizedCount: realized.length,
                 receitaBruta, aporteReceita, deducoes, receitaLiquida,
                 cmv, margemBruta, expGroups, finExp, finInc, outrasReceitas,
-                totalOpExp, resultadoOp, lucroGerencial, retiradaSocios, sobraAposRetiradas
+                totalOpExp, resultadoOp, lucroGerencial, retiradaSocios, sobraAposRetiradas,
+                sets
             };
         }
 
@@ -16432,57 +17329,65 @@
                 return `<td class="dre-pct-col${cls ? ' ' + cls : ''}" title="% da receita bruta">${fmtPct(value)}</td>`;
             };
 
-            const row = (label, value, cls='dre-row-line', indent=false, deduct=false, groupKey='', tip='') => {
+            // Gancho de detalhamento da linha: clicar no valor abre os
+            // lançamentos que formaram aquele número.
+            const dreHook = (label, lineEntries) => vdHook({
+                title: label,
+                subtitle: `DRE · ${capitalizeFirst(monthName)}`,
+                entries: lineEntries
+            });
+
+            const row = (label, value, cls='dre-row-line', indent=false, deduct=false, groupKey='', tip='', lineEntries=[]) => {
                 const valCls = value === 0 ? 'dre-neutral' : (deduct ? 'dre-negative' : (value > 0 ? 'dre-positive' : 'dre-negative'));
                 const prefix = deduct && value !== 0 ? '(-) ' : '';
-                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}${TIP(tip)}</td><td class="dre-value-col ${valCls}">${formatBRL(value)}</td>${pctCell(value, groupKey)}</tr>`;
+                return `<tr class="${cls}"><td class="dre-label${indent?' dre-deduct':''}">${prefix}${label}${TIP(tip)}</td><td class="dre-value-col ${valCls}"${dreHook(label, lineEntries)}>${formatBRL(value)}</td>${pctCell(value, groupKey)}</tr>`;
             };
-            const subtotalRow = (label, value, tip='') => {
+            const subtotalRow = (label, value, tip='', lineEntries=[]) => {
                 const valCls = value >= 0 ? 'dre-positive' : 'dre-negative';
                 const p = fmtPct(value);
-                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:700">${label}${TIP(tip)}</td><td class="dre-value-col ${valCls}" style="font-weight:700">${formatBRL(value)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${p}</td></tr>`;
+                return `<tr class="dre-row-subtotal"><td class="dre-label" style="font-weight:700">${label}${TIP(tip)}</td><td class="dre-value-col ${valCls}" style="font-weight:700"${dreHook(label, lineEntries)}>${formatBRL(value)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${p}</td></tr>`;
             };
             const groupHeader = (label) => `<tr><td colspan="3" class="dre-group-label">${label}</td></tr>`;
 
             let rows = '';
             rows += groupHeader('Receita');
-            rows += row('Receita bruta de vendas', receitaBruta, 'dre-row-line', false, false, '', 'receita');
-            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true, '', 'deducoes');
-            rows += subtotalRow('Receita líquida', receitaLiquida, 'receitaLiq');
+            rows += row('Receita bruta de vendas', receitaBruta, 'dre-row-line', false, false, '', 'receita', dre.sets.receitaBruta);
+            if (deducoes > 0) rows += row('Deduções da receita', deducoes, 'dre-row-line', false, true, '', 'deducoes', dre.sets.deducoes);
+            rows += subtotalRow('Receita líquida', receitaLiquida, 'receitaLiq', dre.sets.receitaLiquida);
             if (aporteReceita > 0) {
-                rows += `<tr class="dre-row-line"><td class="dre-label" style="color:#94A3B8">Aporte de capital <span style="font-weight:600">(não é venda)</span>${TIP('aporte')}</td><td class="dre-value-col dre-neutral" style="color:#94A3B8">${formatBRL(aporteReceita)}</td><td class="dre-pct-col"></td></tr>`;
+                rows += `<tr class="dre-row-line"><td class="dre-label" style="color:#94A3B8">Aporte de capital <span style="font-weight:600">(não é venda)</span>${TIP('aporte')}</td><td class="dre-value-col dre-neutral" style="color:#94A3B8"${dreHook('Aporte de capital', dre.sets.aporte)}>${formatBRL(aporteReceita)}</td><td class="dre-pct-col"></td></tr>`;
             }
 
             rows += groupHeader('Custos');
-            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true, 'cmv', 'cmv');
-            rows += subtotalRow('Margem bruta', margemBruta, 'margem');
+            rows += row('CMV / Custos de produção', cmv, 'dre-row-line', false, true, 'cmv', 'cmv', dre.sets.cmv);
+            rows += subtotalRow('Margem bruta', margemBruta, 'margem', dre.sets.margemBruta);
 
             rows += groupHeader('Despesas operacionais');
             DRE_EXP_GROUP_ORDER.forEach(gk => {
                 const val = expGroups[gk] || 0;
-                if (val > 0) rows += row(DRE_EXP_GROUP_LABELS[gk] || gk, val, 'dre-row-line', false, true, gk, gk);
+                if (val > 0) rows += row(DRE_EXP_GROUP_LABELS[gk] || gk, val, 'dre-row-line', false, true, gk, gk, (dre.sets.expGroups || {})[gk] || []);
             });
             const resOpPct = fmtPct(resultadoOp);
-            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional${TIP('resultadoOp')}</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:700">${formatBRL(resultadoOp)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${resOpPct}</td></tr>`;
+            rows += `<tr class="dre-row-result"><td class="dre-label">Resultado operacional${TIP('resultadoOp')}</td><td class="dre-value-col ${resultadoOp>=0?'dre-positive':'dre-negative'}" style="font-weight:700"${dreHook('Resultado operacional', dre.sets.resultadoOp)}>${formatBRL(resultadoOp)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${resOpPct}</td></tr>`;
 
             if (finExp > 0 || finInc > 0) {
                 rows += groupHeader('Financeiro');
-                if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true, '', 'finExp');
-                if (finInc > 0) rows += row('Receitas financeiras', finInc, 'dre-row-line', false, false, '', 'finInc');
+                if (finExp > 0) rows += row('Juros e despesas financeiras', finExp, 'dre-row-line', false, true, '', 'finExp', dre.sets.finExp);
+                if (finInc > 0) rows += row('Receitas financeiras', finInc, 'dre-row-line', false, false, '', 'finInc', dre.sets.finInc);
             }
 
             if (outrasReceitas > 0) {
                 rows += groupHeader('Outras receitas (não operacionais)');
-                rows += row('Receitas de aluguel', outrasReceitas, 'dre-row-line', false, false, '', 'outrasRec');
+                rows += row('Receitas de aluguel', outrasReceitas, 'dre-row-line', false, false, '', 'outrasRec', dre.sets.outrasReceitas);
             }
 
             const lucroGerPct = fmtPct(lucroGerencial);
-            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial${TIP('lucro', true)}</td><td class="dre-value-col" style="color:#fff;font-weight:700">${formatBRL(lucroGerencial)}</td><td class="dre-pct-col" style="color:rgba(255,255,255,0.75);font-weight:600">${lucroGerPct}</td></tr>`;
+            rows += `<tr class="dre-row-lucro"><td class="dre-label" style="color:#fff">Lucro gerencial${TIP('lucro', true)}</td><td class="dre-value-col" style="color:#fff;font-weight:700"${dreHook('Lucro gerencial', dre.sets.lucroGerencial)}>${formatBRL(lucroGerencial)}</td><td class="dre-pct-col" style="color:rgba(255,255,255,0.75);font-weight:600">${lucroGerPct}</td></tr>`;
 
             if (retiradaSocios > 0) {
                 rows += groupHeader('Sócios');
-                rows += `<tr class="dre-row-line"><td class="dre-label dre-deduct">(-) Retirada dos sócios${TIP('retirada', true)}</td><td class="dre-value-col dre-negative">${formatBRL(retiradaSocios)}</td><td class="dre-pct-col"></td></tr>`;
-                rows += `<tr class="dre-row-sobra"><td class="dre-label" style="font-weight:700">Sobra após retiradas${TIP('sobra', true)}</td><td class="dre-value-col ${sobraAposRetiradas>=0?'dre-positive':'dre-negative'}" style="font-weight:700">${formatBRL(sobraAposRetiradas)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${fmtPct(sobraAposRetiradas)}</td></tr>`;
+                rows += `<tr class="dre-row-line"><td class="dre-label dre-deduct">(-) Retirada dos sócios${TIP('retirada', true)}</td><td class="dre-value-col dre-negative"${dreHook('Retirada dos sócios', dre.sets.retiradaSocios)}>${formatBRL(retiradaSocios)}</td><td class="dre-pct-col"></td></tr>`;
+                rows += `<tr class="dre-row-sobra"><td class="dre-label" style="font-weight:700">Sobra após retiradas${TIP('sobra', true)}</td><td class="dre-value-col ${sobraAposRetiradas>=0?'dre-positive':'dre-negative'}" style="font-weight:700"${dreHook('Sobra após retiradas', dre.sets.sobraAposRetiradas)}>${formatBRL(sobraAposRetiradas)}</td><td class="dre-pct-col" style="font-weight:600;color:#475569">${fmtPct(sobraAposRetiradas)}</td></tr>`;
             }
 
             section.innerHTML = `
@@ -16857,6 +17762,13 @@
                 const el = document.getElementById(id);
                 if (el) el.innerText = value;
             };
+            const realizedYear = (Array.isArray(yearEntries) ? yearEntries : []).filter(e => e.status === 'REALIZADO');
+            const realizedYearIn = realizedYear.filter(e => normalizeFlowType(e.type) === FLOW_IN);
+            const realizedYearOut = realizedYear.filter(e => normalizeFlowType(e.type) === FLOW_OUT);
+            vdBind('reports-annual-in', { title: `Entradas de ${year}`, subtitle: 'Realizados no ano', group: 'mes', entries: realizedYearIn });
+            vdBind('reports-annual-out', { title: `Saídas de ${year}`, subtitle: 'Realizados no ano', group: 'mes', entries: realizedYearOut });
+            vdBind('reports-annual-net', { title: `Saldo de ${year}`, subtitle: 'Realizados no ano', group: 'mes', entries: realizedYear });
+            vdBind('reports-annual-avg', { title: `Média mensal de ${year}`, subtitle: `Saldo realizado dividido por ${activeMonths} mês(es) com movimento`, group: 'mes', entries: realizedYear });
             setText('reports-annual-in', formatBRLNoCents(totalInc));
             setText('reports-annual-in-split', totalOutras > 0
                 ? `Vendas ${formatBRLNoCents(totalVendas)} · Outras ${formatBRLNoCents(totalOutras)}`
@@ -17026,6 +17938,27 @@
                     return acc;
                 }, {})
             };
+            // Os lançamentos de cada linha, mês a mês e no acumulado do ano —
+            // é o que abre ao clicar em qualquer célula da tabela.
+            const concatSets = (pick) => months.reduce((acc, d) => acc.concat(pick(d.sets) || []), []);
+            total.sets = {
+                receitaBruta: concatSets(x => x.receitaBruta),
+                deducoes: concatSets(x => x.deducoes),
+                receitaLiquida: concatSets(x => x.receitaLiquida),
+                cmv: concatSets(x => x.cmv),
+                margemBruta: concatSets(x => x.margemBruta),
+                finExp: concatSets(x => x.finExp),
+                finInc: concatSets(x => x.finInc),
+                outrasReceitas: concatSets(x => x.outrasReceitas),
+                resultadoOp: concatSets(x => x.resultadoOp),
+                lucroGerencial: concatSets(x => x.lucroGerencial),
+                retiradaSocios: concatSets(x => x.retiradaSocios),
+                sobraAposRetiradas: concatSets(x => x.sobraAposRetiradas),
+                expGroups: DRE_EXP_GROUP_ORDER.reduce((acc, gk) => {
+                    acc[gk] = concatSets(x => (x.expGroups || {})[gk]);
+                    return acc;
+                }, {})
+            };
 
             const fmt = (v, opts = {}) => {
                 if (!v) return `<span class="dre-comp-zero">–</span>`;
@@ -17034,52 +17967,61 @@
                 return `<span class="${cls}">${prefix}${formatBRLNoCents(v)}</span>`;
             };
 
-            // Monta uma linha: label + 12 meses + total
+            // Monta uma linha: label + 12 meses + total. `getSet` diz quais
+            // lançamentos formam a célula, para o detalhamento no clique.
             const line = (label, getVal, opts = {}) => {
                 const rowCls = opts.rowCls || 'dre-comp-row-line';
                 const labelCls = opts.indent ? 'dre-comp-label dre-comp-deduct' : 'dre-comp-label';
+                const getSet = typeof opts.getSet === 'function' ? opts.getSet : null;
+                const cellHook = (value, sets, period) => (!value || !getSet)
+                    ? ''
+                    : vdHook({ title: `${label} · ${period}`, subtitle: 'DRE comparativa por mês', entries: getSet(sets) });
                 let cells = '';
-                for (let m = 0; m < 12; m++) cells += `<td>${fmt(getVal(months[m]), opts)}</td>`;
-                cells += `<td class="dre-comp-total">${fmt(getVal(total), opts)}</td>`;
+                for (let m = 0; m < 12; m++) {
+                    const value = getVal(months[m]);
+                    cells += `<td${cellHook(value, months[m].sets, `${monthNames[m]}/${year}`)}>${fmt(value, opts)}</td>`;
+                }
+                const totalValue = getVal(total);
+                cells += `<td class="dre-comp-total"${cellHook(totalValue, total.sets, `Total ${year}`)}>${fmt(totalValue, opts)}</td>`;
                 return `<tr class="${rowCls}"><td class="${labelCls}">${label}</td>${cells}</tr>`;
             };
             const groupRow = (label) => `<tr class="dre-comp-group"><td class="dre-comp-label">${label}</td><td colspan="13"></td></tr>`;
 
             let body = '';
             body += groupRow('Receita');
-            body += line('Receita bruta de vendas', d => d.receitaBruta);
-            if (total.deducoes > 0) body += line('Deduções da receita', d => d.deducoes, { indent: true, deduct: true });
-            body += line('Receita líquida', d => d.receitaLiquida, { rowCls: 'dre-comp-row-subtotal' });
+            body += line('Receita bruta de vendas', d => d.receitaBruta, { getSet: x => x.receitaBruta });
+            if (total.deducoes > 0) body += line('Deduções da receita', d => d.deducoes, { indent: true, deduct: true, getSet: x => x.deducoes });
+            body += line('Receita líquida', d => d.receitaLiquida, { rowCls: 'dre-comp-row-subtotal', getSet: x => x.receitaLiquida });
 
             body += groupRow('Custos');
-            body += line('CMV / Custos de produção', d => d.cmv, { indent: true, deduct: true });
-            body += line('Margem bruta', d => d.margemBruta, { rowCls: 'dre-comp-row-subtotal' });
+            body += line('CMV / Custos de produção', d => d.cmv, { indent: true, deduct: true, getSet: x => x.cmv });
+            body += line('Margem bruta', d => d.margemBruta, { rowCls: 'dre-comp-row-subtotal', getSet: x => x.margemBruta });
 
             body += groupRow('Despesas operacionais');
             DRE_EXP_GROUP_ORDER.forEach(gk => {
                 if ((total.expGroups[gk] || 0) > 0) {
-                    body += line(DRE_EXP_GROUP_LABELS[gk] || gk, d => d.expGroups[gk] || 0, { indent: true, deduct: true });
+                    body += line(DRE_EXP_GROUP_LABELS[gk] || gk, d => d.expGroups[gk] || 0, { indent: true, deduct: true, getSet: x => (x.expGroups || {})[gk] || [] });
                 }
             });
-            body += line('Resultado operacional', d => d.resultadoOp, { rowCls: 'dre-comp-row-result' });
+            body += line('Resultado operacional', d => d.resultadoOp, { rowCls: 'dre-comp-row-result', getSet: x => x.resultadoOp });
 
             if (total.finExp > 0 || total.finInc > 0) {
                 body += groupRow('Financeiro');
-                if (total.finExp > 0) body += line('Juros e despesas financeiras', d => d.finExp, { indent: true, deduct: true });
-                if (total.finInc > 0) body += line('Receitas financeiras', d => d.finInc);
+                if (total.finExp > 0) body += line('Juros e despesas financeiras', d => d.finExp, { indent: true, deduct: true, getSet: x => x.finExp });
+                if (total.finInc > 0) body += line('Receitas financeiras', d => d.finInc, { getSet: x => x.finInc });
             }
 
             if (total.outrasReceitas > 0) {
                 body += groupRow('Outras receitas (não operacionais)');
-                body += line('Receitas de aluguel', d => d.outrasReceitas || 0, { indent: true });
+                body += line('Receitas de aluguel', d => d.outrasReceitas || 0, { indent: true, getSet: x => x.outrasReceitas });
             }
 
-            body += line('Lucro gerencial', d => d.lucroGerencial, { rowCls: 'dre-comp-row-lucro' });
+            body += line('Lucro gerencial', d => d.lucroGerencial, { rowCls: 'dre-comp-row-lucro', getSet: x => x.lucroGerencial });
 
             if (total.retiradaSocios > 0) {
                 body += groupRow('Sócios');
-                body += line('Retirada dos sócios', d => d.retiradaSocios || 0, { indent: true, deduct: true });
-                body += line('Sobra após retiradas', d => d.sobraAposRetiradas || 0, { rowCls: 'dre-comp-row-subtotal' });
+                body += line('Retirada dos sócios', d => d.retiradaSocios || 0, { indent: true, deduct: true, getSet: x => x.retiradaSocios });
+                body += line('Sobra após retiradas', d => d.sobraAposRetiradas || 0, { rowCls: 'dre-comp-row-subtotal', getSet: x => x.sobraAposRetiradas });
             }
 
             const headCells = monthNames.map(n => `<th>${n}</th>`).join('');
@@ -22424,6 +23366,7 @@
                 }
             }
             if (event.key !== 'Escape') return;
+            if (isValueDetailOpen()) { closeValueDetail(); return; }
             if (!document.getElementById('entry-modal')?.classList.contains('hidden')) closeModal('entry-modal');
             if (!document.getElementById('db-modal')?.classList.contains('hidden')) closeModal('db-modal');
         });
