@@ -691,18 +691,78 @@
             font-weight: 600;
             color: #64748B;
         }
-        .monthly-kpi-grid {
+        /* =====================================================================
+           FAIXA DE NUMEROS (stat strip)
+
+           O padrao para um punhado de totais no topo de uma tela. Antes cada
+           tela tinha a sua grade de cartoes — 184px de altura, canto de 20px,
+           sombra propria — e tres telas lado a lado nunca batiam. Agora e uma
+           faixa unica com divisorias, lendo os mesmos tokens das tabelas: o
+           rotulo tem a tipografia de um cabecalho de coluna, e o numero e
+           tabular como o de uma celula.
+           ===================================================================== */
+        .stat-strip,
+        .monthly-kpi-grid,
+        .reports-summary-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 16px;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(0, 1fr);
+            gap: 0;
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            overflow: hidden;
         }
-        .monthly-kpi-card {
-            min-height: 184px;
-            padding: 18px !important;
-            border-radius: 20px !important;
+        /* As celulas herdam .card-premium/.kpi-card da marcacao antiga, que
+           trazem moldura e canto proprios. Dentro da faixa a moldura e uma so:
+           a da faixa. Por isso o seletor precisa de peso maior que o deles. */
+        /* As celulas herdam .card-premium/.kpi-card da marcacao antiga, que
+           trazem moldura e canto proprios. Dentro da faixa a moldura e uma so:
+           a da faixa. Zeramos so os tres lados que nao sao divisoria, para nao
+           precisar reativar a borda esquerda depois — se zerassemos "border"
+           inteiro, a divisoria teria de brigar com a propria regra. */
+        .stat-strip > *,
+        .monthly-kpi-grid > *,
+        .reports-summary-grid > * {
+            min-width: 0;
+            padding: 12px 16px !important;
+            border-top: none !important;
+            border-right: none !important;
+            border-bottom: none !important;
+            border-left: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background: none !important;
+            min-height: 0 !important;
         }
+        /* A classe repetida nao e enfeite: "> * + *" vale so uma classe de
+           especificidade, e empatava com .card-premium — que vem depois no
+           arquivo e por isso repintava a divisoria com a cor de cartao. */
+        .stat-strip.stat-strip > * + *,
+        .monthly-kpi-grid.monthly-kpi-grid > * + *,
+        .reports-summary-grid.reports-summary-grid > * + *,
+        .entries-filter-report.entries-filter-report > * + *,
+        .cob-kpis.cob-kpis > * + * {
+            border-left: 1px solid var(--tbl-line) !important;
+        }
+        /* A faixa nao e um cartao: sem brilho, sem realce no hover. */
+        .monthly-kpi-grid .kpi-card::before,
+        .monthly-kpi-grid .kpi-card::after { display: none; }
+        .monthly-kpi-grid .kpi-card:hover { border-color: transparent; }
         .monthly-kpi-card .kpi-card-header {
-            margin-bottom: 16px;
+            margin-bottom: 8px;
+        }
+        /* Icone de 38px nao cabe numa faixa: vira um marcador discreto. */
+        .monthly-kpi-grid .kpi-icon,
+        .reports-summary-grid .reports-summary-card > span {
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
+        }
+        .monthly-kpi-grid .kpi-icon svg,
+        .reports-summary-grid .reports-summary-card > span svg {
+            width: 13px;
+            height: 13px;
         }
         .monthly-kpi-title {
             font-size: 13px;
@@ -717,11 +777,18 @@
         }
         .monthly-kpi-primary {
             display: block;
-            margin-top: 8px;
-            font-size: var(--num-lg) !important;
-            line-height: 1.08;
-            font-weight: 600 !important;
+            margin-top: 5px;
+            font-size: 20px !important;
+            line-height: 1.1;
+            font-weight: 700 !important;
             letter-spacing: -0.02em;
+        }
+        .monthly-kpi-title {
+            font-size: var(--tbl-head-font) !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--tbl-head-color) !important;
         }
         .monthly-kpi-label {
             font-size: 11px;
@@ -2619,11 +2686,19 @@
         .treasury-history-card,
         .sales-report-shell,
         .sales-analytics-shell,
-        .entries-filter-report-card,
         .db-panel,
         .modal-shell {
             border-color: #DFE7F1 !important;
             box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045) !important;
+        }
+        /* Uma celula dentro de uma faixa nunca e um cartao: a moldura e a
+           sombra sao da faixa, nao de cada numero. */
+        .stat-strip > *,
+        .monthly-kpi-grid > *,
+        .reports-summary-grid > *,
+        .entries-filter-report > *,
+        .cob-kpis > * {
+            box-shadow: none !important;
         }
         .card-premium:hover,
         .sales-kpi:hover,
@@ -5695,9 +5770,9 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 0;
             margin-top: 2px;
-            border: 1px solid var(--divider);
+            border: 1px solid var(--tbl-head-border);
             border-radius: var(--radius-md);
-            background: #FFFFFF;
+            background: var(--bg-card);
             overflow: hidden;
         }
         .entries-filter-report-card {
@@ -5707,20 +5782,20 @@
             padding: 12px 16px;
         }
         .entries-filter-report-card + .entries-filter-report-card {
-            border-left: 1px solid var(--divider);
+            border-left: 1px solid var(--tbl-line) !important;
         }
         .entries-filter-report-label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.07em;
+            font-size: var(--tbl-head-font);
+            font-weight: 700;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: var(--text-muted);
+            color: var(--tbl-head-color);
         }
         .entries-filter-report-value {
-            margin-top: 6px;
-            font-size: var(--num-md);
-            line-height: 1;
-            font-weight: 600;
+            margin-top: 5px;
+            font-size: 20px;
+            line-height: 1.1;
+            font-weight: 700;
             letter-spacing: -0.02em;
         }
         .entries-filter-report-note {
@@ -6055,14 +6130,22 @@
                 line-height: 1.15;
                 white-space: nowrap;
             }
-            .monthly-kpi-grid, .reports-summary-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 10px !important;
+            /* A faixa quebra em duas colunas; as divisorias acompanham. */
+            .stat-strip, .monthly-kpi-grid, .reports-summary-grid {
+                grid-auto-flow: row;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
-            .monthly-kpi-grid > *, .reports-summary-grid > *,
-            .entries-filter-report > *, .home-kpi-grid > * {
+            .stat-strip > *, .monthly-kpi-grid > *, .reports-summary-grid > * {
                 min-width: 0;
+                padding: 10px 12px;
             }
+            .stat-strip > *:nth-child(odd),
+            .monthly-kpi-grid > *:nth-child(odd),
+            .reports-summary-grid > *:nth-child(odd) { border-left: none; }
+            .stat-strip > *:nth-child(n+3),
+            .monthly-kpi-grid > *:nth-child(n+3),
+            .reports-summary-grid > *:nth-child(n+3) { border-top: 1px solid var(--tbl-line); }
+            .entries-filter-report > *, .home-kpi-grid > * { min-width: 0; }
             .entries-filter-report {
                 grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
             }
@@ -6556,16 +6639,8 @@
             min-height: 0;
             font-size: 11px;
         }
-        #monthly .monthly-kpi-grid {
-            gap: 12px;
-        }
-        #monthly .monthly-kpi-card {
-            min-height: 148px;
-            padding: 16px !important;
-            border-radius: 18px !important;
-        }
         #monthly .monthly-kpi-card .kpi-card-header {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         #monthly .monthly-kpi-title {
             font-size: 13px;
@@ -7178,18 +7253,7 @@
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 14px;
         }
-        .reports-summary-card {
-            min-height: 0;
-            padding: 16px 18px;
-            border: 1px solid var(--divider);
-            border-radius: var(--radius-md);
-            background: #FFFFFF;
-            box-shadow: var(--shadow-card);
-        }
-        .reports-summary-card span {
-            width: 30px;
-            height: 30px;
-            border-radius: 9px;
+        .reports-summary-card > span {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -7197,19 +7261,19 @@
             color: #475569;
         }
         .reports-summary-card p {
-            margin-top: 12px;
-            font-size: 10.5px;
-            font-weight: 600;
-            letter-spacing: 0.07em;
+            margin-top: 8px;
+            font-size: var(--tbl-head-font);
+            font-weight: 700;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: var(--text-muted);
+            color: var(--tbl-head-color);
         }
         .reports-summary-card strong {
             display: block;
-            margin-top: 6px;
-            font-size: var(--num-lg);
-            line-height: 1.08;
-            font-weight: 600;
+            margin-top: 5px;
+            font-size: 20px;
+            line-height: 1.1;
+            font-weight: 700;
             letter-spacing: -0.02em;
             font-variant-numeric: tabular-nums;
             color: var(--num-color);
@@ -7393,9 +7457,6 @@
                 flex-direction: column;
             }
             .reports-tab .monthly-kpi-grid,
-            .reports-summary-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
             .pill-segment,
             .pill-segment.compact {
                 width: 100%;
@@ -7417,17 +7478,6 @@
             }
             .reports-title {
                 font-size: 24px;
-            }
-            .reports-summary-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            .reports-tab .monthly-kpi-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .reports-tab .monthly-kpi-card {
-                min-height: 0;
-                padding: 14px !important;
             }
             .reports-tab .monthly-kpi-primary {
                 font-size: 21px !important;
