@@ -3778,9 +3778,9 @@
             background: #FFFFFF;
         }
         .db-account-list {
-            border: 1px solid #E5ECF4;
-            border-radius: 14px;
-            background: #FFFFFF;
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
             overflow: hidden;
         }
         .db-account-row {
@@ -3788,11 +3788,14 @@
             grid-template-columns: 1fr auto;
             gap: 12px;
             align-items: center;
-            padding: 12px 14px;
-            border-bottom: 1px solid #EEF2F7;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--tbl-line);
         }
         .db-account-row:last-child {
             border-bottom: 0;
+        }
+        .db-account-row:hover {
+            background: var(--tbl-hover);
         }
         .db-explorer {
             display: grid;
@@ -3835,26 +3838,35 @@
             max-height: 520px;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 0;
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            overflow-y: auto;
         }
+        /* Lista de escolha (categoria, subcategoria, destino). Cada item era
+           um cartaozinho com moldura propria e 8px de folga entre eles; agora
+           sao linhas de uma lista, separadas por divisoria, como numa tabela. */
         .db-item-row {
-            border: 1px solid #E9EEF5;
-            border-radius: 10px;
-            padding: 10px 10px;
+            border: none;
+            border-radius: 0;
+            padding: 9px 12px;
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 8px;
             align-items: center;
-            background: #FFFFFF;
+            background: var(--bg-card);
             cursor: pointer;
         }
+        .db-item-row + .db-item-row {
+            border-top: 1px solid var(--tbl-line);
+        }
         .db-item-row:hover {
-            border-color: #CBD5E1;
-            background: #FAFCFF;
+            background: var(--tbl-hover);
         }
         .db-item-row.active {
-            border-color: #BFCEF0;
             background: #EFF5FF;
+            box-shadow: inset 3px 0 0 var(--primary-blue);
         }
         .db-item-name {
             font-size: 12px;
@@ -3867,7 +3879,7 @@
         .db-item-meta {
             margin-top: 2px;
             font-size: 10px;
-            color: #64748B;
+            color: var(--text-muted);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.04em;
@@ -4204,39 +4216,46 @@
         .sales-chart-frame {
             height: 310px;
         }
+        /* A mesma faixa de numeros, so que na vertical: e uma coluna de totais
+           ao lado do grafico. Um cartao por numero era moldura demais. */
         .sales-insight-rail {
             display: grid;
             align-content: start;
-            gap: 12px;
-            padding: 22px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #FAFCFF 100%);
+            gap: 0;
+            padding: 0;
+            background: var(--bg-card);
         }
         .sales-insight-card {
-            border: 1px solid #E5ECF4;
-            border-radius: 16px;
-            padding: 14px;
-            background: #FFFFFF;
+            border: none;
+            border-radius: 0;
+            padding: 12px 16px;
+            background: none;
+        }
+        .sales-insight-card + .sales-insight-card {
+            border-top: 1px solid var(--tbl-line);
         }
         .sales-insight-label {
-            font-size: 9px;
+            font-size: var(--tbl-head-font);
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            color: #94A3B8;
+            color: var(--tbl-head-color);
         }
         .sales-insight-value {
-            margin-top: 8px;
+            margin-top: 5px;
             font-size: 20px;
             line-height: 1.1;
             font-weight: 700;
-            color: #0F172A;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-primary);
         }
         .sales-insight-note {
-            margin-top: 6px;
-            font-size: 10px;
+            margin-top: 4px;
+            font-size: 10.5px;
             line-height: 1.4;
             font-weight: 600;
-            color: #64748B;
+            color: var(--text-muted);
         }
         .sales-table-wrap {
             padding: 0 24px 24px;
@@ -4288,7 +4307,6 @@
             .sales-report-kpis,
             .sales-analytics-head,
             .sales-chart-panel,
-            .sales-insight-rail,
             .sales-table-wrap {
                 padding-left: 16px;
                 padding-right: 16px;
@@ -4734,35 +4752,23 @@
         }
         .vender-entries-list {
             padding: 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
         }
-        .vender-entry-card {
-            border: 1px solid #E5ECF4;
-            border-radius: 14px;
-            padding: 14px 16px;
-            background: #FAFCFF;
-            transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+        .vender-table-wrap {
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            overflow: auto;
+            background: var(--bg-card);
         }
-        .vender-entry-card:hover {
-            border-color: #CBD5E1;
-            box-shadow: 0 4px 12px rgba(15,23,42,0.06);
-            background: #FFFFFF;
-        }
-        .vender-entry-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .vender-entry-date-col {
-            flex: 0 0 auto;
-            min-width: 68px;
-        }
-        .vender-entry-date {
-            font-size: 12px;
-            font-weight: 600;
-            color: #0F172A;
+        .vender-table { min-width: 720px; }
+        .vender-col-date { width: 100px; white-space: nowrap; }
+        .vender-col-unit { width: 120px; }
+        .vender-col-val { width: 120px; font-weight: 600; }
+        .vender-col-actions { width: 84px; }
+        .vender-notes-row > td {
+            color: var(--text-muted);
+            font-size: 11px;
+            line-height: 1.4;
+            padding-top: 0 !important;
         }
         .vender-unit-badge {
             display: inline-block;
@@ -4776,53 +4782,7 @@
         }
         .vender-unit-badge.matriz { background: var(--bg-green-soft); color: var(--primary-green); }
         .vender-unit-badge.vila { background: var(--bg-blue-soft); color: var(--primary-blue); }
-        .vender-entry-amounts {
-            flex: 1;
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .vender-entry-amount {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-        }
-        .vender-amount-label {
-            font-size: 9px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #94A3B8;
-        }
-        .vender-amount-val { font-size: 12px; font-weight: 600; }
-        .vender-amount-val.green { color: var(--primary-green); }
-        .vender-amount-val.blue { color: var(--primary-blue); }
-        .vender-amount-val.red { color: var(--soft-red); }
-        .vender-entry-result-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            text-align: right;
-        }
-        .vender-result-label {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #94A3B8;
-        }
-        .vender-result-val { font-size: 16px; font-weight: 700; }
-        .vender-result-val.positive { color: #0F172A; }
-        .vender-result-val.negative { color: var(--soft-red); }
         .vender-entry-actions { display: flex; gap: 6px; flex: 0 0 auto; }
-        .vender-entry-notes-row {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid #EEF2F7;
-            font-size: 11px;
-            color: #64748B;
-            line-height: 1.4;
-        }
         .vender-empty-state {
             text-align: center;
             padding: 32px 16px;
@@ -4837,7 +4797,6 @@
         @media (max-width: 600px) {
             .vender-total-banner { flex-direction: column; align-items: flex-start; }
             .vender-total-pills { justify-content: flex-start; }
-            .vender-entry-top { flex-wrap: wrap; }
         }
 
         .recon-destination-cell {
@@ -7297,42 +7256,54 @@
         .reports-summary-card.in span { color: var(--positive); background: var(--bg-green-soft); }
         .reports-summary-card.out span { color: var(--negative); background: var(--bg-red-soft); }
         .reports-summary-card.net span { color: var(--info); background: var(--bg-blue-soft); }
+        /* Insight e texto, nao dado tabular: continua em blocos. O que sai e o
+           visual de cartao — gradiente, canto de 18px e uma moldura por item.
+           Vira uma lista lisa dentro de uma moldura so, como as faixas. */
         .reports-insight-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-            gap: 12px;
-            padding: 18px 20px 20px;
+            gap: 0;
+            margin: 0 20px 20px;
+            border: 1px solid var(--tbl-head-border);
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            overflow: hidden;
         }
         .reports-insight-item {
-            border: 1px solid #E5ECF4;
-            border-radius: 18px;
-            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFF 100%);
-            padding: 16px;
+            border: none;
+            border-radius: 0;
+            background: none;
+            padding: 14px 16px;
+        }
+        .reports-insight-item + .reports-insight-item {
+            border-left: 1px solid var(--tbl-line);
         }
         .reports-insight-item .insight-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 11px;
+            width: 24px;
+            height: 24px;
+            border-radius: 7px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             background: #EAF0FF;
             color: #244A94;
         }
+        .reports-insight-item .insight-icon svg,
+        .reports-insight-item .insight-icon i { width: 13px; height: 13px; }
         .reports-insight-item strong {
             display: block;
-            margin-top: 10px;
-            font-size: 15px;
-            line-height: 1.25;
+            margin-top: 8px;
+            font-size: 13.5px;
+            line-height: 1.3;
             font-weight: 700;
-            color: #0F172A;
+            color: var(--text-primary);
         }
         .reports-insight-item p {
-            margin-top: 6px;
-            font-size: 12px;
+            margin-top: 5px;
+            font-size: 11.5px;
             line-height: 1.45;
-            font-weight: 650;
-            color: #64748B;
+            font-weight: 600;
+            color: var(--text-secondary);
         }
         .projection-control-card {
             padding: 16px !important;
@@ -7376,41 +7347,6 @@
             display: grid;
             gap: 10px;
             padding: 18px 20px 20px;
-        }
-        .projection-list-item {
-            display: grid;
-            grid-template-columns: 100px minmax(0, 1fr) auto;
-            gap: 12px;
-            align-items: center;
-            padding: 13px 14px;
-            border: 1px solid #E8EEF6;
-            border-radius: 16px;
-            background: #FFFFFF;
-        }
-        .projection-list-date {
-            font-size: 12px;
-            font-weight: 850;
-            color: #64748B;
-        }
-        .projection-list-name {
-            min-width: 0;
-            font-size: 13px;
-            font-weight: 850;
-            color: #0F172A;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .projection-list-meta {
-            margin-top: 3px;
-            font-size: 11px;
-            font-weight: 650;
-            color: #94A3B8;
-        }
-        .projection-list-value {
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
         }
         .projection-table-wrap {
             padding: 0;
@@ -7490,9 +7426,16 @@
                 height: 270px;
                 padding: 14px;
             }
-            .reports-insight-grid,
             .projection-list {
                 padding: 14px;
+            }
+            /* Em coluna unica a divisoria passa a ser horizontal. */
+            .reports-insight-grid {
+                margin: 0 14px 14px;
+            }
+            .reports-insight-item + .reports-insight-item {
+                border-left: none;
+                border-top: 1px solid var(--tbl-line);
             }
             /* No celular a projecao NAO vira cartao: segue tabela e rola na
                horizontal, igual a lancamentos e a matriz anual. Um padrao so
@@ -7504,13 +7447,6 @@
                 min-width: 560px;
                 --tbl-pad-x: 10px;
                 --tbl-font: var(--tbl-font-sm);
-            }
-            .projection-list-item {
-                grid-template-columns: 1fr;
-                align-items: start;
-            }
-            .projection-list-value {
-                justify-self: start;
             }
         }
 
@@ -7841,30 +7777,28 @@
         .goals-card-remaining { font-size:11px; color:#94A3B8; }
 
         /* ─── GOALS RANK LIST (estilo ranking) ─── */
-        .goals-rank-card { background:#fff; border-radius:16px; box-shadow:0 1px 4px 0 rgba(30,41,59,.07); padding:6px 6px; }
-        .goals-rank-list { display:flex; flex-direction:column; }
-        .goals-rank-row {
-            display:flex; align-items:center; gap:14px;
-            padding:12px 12px; border-radius:12px;
-            border-bottom:1px solid #F1F5F9;
-            cursor:pointer;
-            transition:background var(--dur-fast) var(--ease-premium);
+        .goals-rank-wrap {
+            border:1px solid var(--tbl-head-border); border-radius:var(--radius-md);
+            overflow:auto; background:var(--bg-card);
         }
-        .goals-rank-row:last-child { border-bottom:none; }
-        .goals-rank-row:hover { background:#F8FAFC; }
+        .goals-rank-table { min-width:680px; }
+        .goals-rank-col-num { width:52px; }
+        .goals-rank-col-name { min-width:200px; }
+        .goals-rank-col-val { width:130px; }
+        .goals-rank-col-bar { width:180px; }
+        .goals-rank-col-actions { width:78px; }
+        .goals-rank-row { cursor:pointer; }
+        .goals-rank-row:focus-visible { outline:none; box-shadow:inset 0 0 0 2px rgba(47,79,157,0.45); }
         .goals-rank-num {
-            flex-shrink:0; width:26px; height:26px; border-radius:8px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:12px; font-weight:700; line-height:1;
+            width:24px; height:24px; border-radius:7px;
+            display:inline-flex; align-items:center; justify-content:center;
+            font-size:11px; font-weight:700; line-height:1;
         }
-        .goals-rank-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:7px; }
-        .goals-rank-top { display:flex; align-items:baseline; justify-content:space-between; gap:12px; }
-        .goals-rank-name { font-size:13px; font-weight:600; color:#1E293B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .goals-rank-name { font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .goals-rank-name-wrap { display:flex; align-items:center; gap:7px; min-width:0; }
         .goals-rank-type-badge { flex-shrink:0; font-size:9px; font-weight:600; border-radius:99px; padding:1px 6px; text-transform:uppercase; letter-spacing:.03em; }
-        .goals-rank-vals { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; text-align:right; }
-        .goals-rank-actual { font-size:14px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
-        .goals-rank-target { font-size:11px; font-weight:600; color:#94A3B8; line-height:1; font-variant-numeric:tabular-nums; }
+        .goals-rank-actual { font-weight:700; font-variant-numeric:tabular-nums; }
+        .goals-rank-target { font-weight:600; color:var(--text-muted); font-variant-numeric:tabular-nums; }
         .goals-rank-bar-track { height:8px; border-radius:99px; background:#F1F5F9; overflow:hidden; }
         .goals-rank-bar-fill { height:100%; border-radius:99px; transition:width 700ms var(--ease-premium); }
         .goals-rank-actions { flex-shrink:0; display:flex; gap:2px; opacity:.35; transition:opacity var(--dur-fast) var(--ease-premium); }
@@ -7874,7 +7808,7 @@
         .goals-rank-edit-btn:hover { background:#EEF2FF; color:#4F46E5; }
         @media (max-width:640px) {
             .goals-rank-actions { opacity:1; }
-            .goals-rank-row { gap:10px; padding:12px 8px; }
+            .goals-rank-table { --tbl-pad-x:9px; --tbl-font:var(--tbl-font-sm); min-width:620px; }
             .goals-rank-name { max-width:120px; }
         }
 
@@ -14832,35 +14766,25 @@
             if (!filtered.length) {
                 historyBody.innerHTML = '<div class="vender-empty-state">Nenhum fechamento para os filtros aplicados.</div>';
             } else {
-                historyBody.innerHTML = filtered.map(item => {
+                // Um fechamento por linha. Os valores ja eram tabulares (dinheiro,
+                // cartao, saidas, resultado); em cartao cada um tinha o seu eixo
+                // e nao dava para comparar dois dias.
+                const rows = filtered.map(item => {
                     const totals = getMovementTotals(item);
                     const isNeg = totals.dailyResult < 0;
                     const unitClass = item.unit === 'VILA_NOVA' ? 'vila' : 'matriz';
                     const unitLabel = item.unit === 'VILA_NOVA' ? 'Vila Nova' : 'Matriz';
-                    return `<div class="vender-entry-card">
-                        <div class="vender-entry-top">
-                            <div class="vender-entry-date-col">
-                                <div class="vender-entry-date">${escapeHtml(formatDateBRV2(item.date))}</div>
-                                <span class="vender-unit-badge ${unitClass}">${unitLabel}</span>
-                            </div>
-                            <div class="vender-entry-amounts">
-                                <div class="vender-entry-amount">
-                                    <span class="vender-amount-label">Dinheiro</span>
-                                    <span class="vender-amount-val green">${formatBRL(totals.cashIn)}</span>
-                                </div>
-                                <div class="vender-entry-amount">
-                                    <span class="vender-amount-label">Cartão</span>
-                                    <span class="vender-amount-val blue">${formatBRL(totals.cardIn)}</span>
-                                </div>
-                                <div class="vender-entry-amount">
-                                    <span class="vender-amount-label">Saídas</span>
-                                    <span class="vender-amount-val red">${formatBRL(totals.paymentsOut)}</span>
-                                </div>
-                            </div>
-                            <div class="vender-entry-result-col">
-                                <span class="vender-result-label">Fechamento</span>
-                                <span class="vender-result-val ${isNeg ? 'negative' : 'positive'}">${formatBRL(totals.dailyResult)}</span>
-                            </div>
+                    const notesRow = item.notes
+                        ? `<tr class="vender-notes-row"><td></td><td colspan="6">${escapeHtml(item.notes)}</td></tr>`
+                        : '';
+                    return `<tr>
+                        <td class="vender-col-date">${escapeHtml(formatDateBRV2(item.date))}</td>
+                        <td class="vender-col-unit"><span class="vender-unit-badge ${unitClass}">${unitLabel}</span></td>
+                        <td class="tbl-num vender-col-val flow-income-text">${formatBRL(totals.cashIn)}</td>
+                        <td class="tbl-num vender-col-val flow-balance-text">${formatBRL(totals.cardIn)}</td>
+                        <td class="tbl-num vender-col-val flow-expense-text">${formatBRL(totals.paymentsOut)}</td>
+                        <td class="tbl-num vender-col-val ${isNeg ? 'flow-expense-text' : 'flow-balance-text'}">${formatBRL(totals.dailyResult)}</td>
+                        <td class="tbl-center vender-col-actions">
                             <div class="vender-entry-actions">
                                 <button type="button" onclick="startTreasuryMovementEdit('${String(item.id || '')}')" class="treasury-action-btn" title="Editar" aria-label="Editar">
                                     <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
@@ -14869,10 +14793,22 @@
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                        </div>
-                        ${item.notes ? `<div class="vender-entry-notes-row">${escapeHtml(item.notes)}</div>` : ''}
-                    </div>`;
+                        </td>
+                    </tr>${notesRow}`;
                 }).join('');
+                historyBody.innerHTML = `<div class="vender-table-wrap custom-scrollbar"><table class="tbl tbl-zebra vender-table" data-sheet="sort copy">
+                    <thead><tr>
+                        <th class="vender-col-date">Data</th>
+                        <th class="vender-col-unit">Unidade</th>
+                        <th class="tbl-num vender-col-val">Dinheiro</th>
+                        <th class="tbl-num vender-col-val">Cartão</th>
+                        <th class="tbl-num vender-col-val">Saídas</th>
+                        <th class="tbl-num vender-col-val">Fechamento</th>
+                        <th class="tbl-center vender-col-actions">Ação</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table></div>`;
+                applyReportSheets(historyBody);
             }
             refreshLucideIcons();
         }
@@ -24072,31 +24008,44 @@
                 const flowType      = goal.type;
                 const safeName = name.replace(/'/g, "\\'");
 
-                return `<div class="goals-rank-row" onclick="goalsOpenDetail('${goalId}')">
-                    <div class="goals-rank-num" style="background:${sc.color}15;color:${sc.color}">${idx + 1}</div>
-                    <div class="goals-rank-body">
-                        <div class="goals-rank-top">
-                            <div class="goals-rank-name-wrap">
-                                <span class="goals-rank-name">${name}</span>
-                                <span class="goals-rank-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
-                            </div>
-                            <div class="goals-rank-vals">
-                                <span class="goals-rank-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span>
-                                <span class="goals-rank-target">${formatBRL(prog.target)}</span>
-                            </div>
-                        </div>
+                // Ranking de metas: posicao, nome, realizado, alvo e progresso ja
+                // eram colunas — so estavam empilhadas dentro de uma linha-cartao,
+                // o que impedia comparar o alvo de duas metas de relance.
+                return `<tr class="goals-rank-row" tabindex="0" role="button" onclick="goalsOpenDetail('${goalId}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goalsOpenDetail('${goalId}')}">
+                    <td class="tbl-center goals-rank-col-num"><span class="goals-rank-num" style="background:${sc.color}15;color:${sc.color}">${idx + 1}</span></td>
+                    <td class="goals-rank-col-name">
+                        <span class="goals-rank-name-wrap">
+                            <span class="goals-rank-name">${name}</span>
+                            <span class="goals-rank-type-badge" style="background:${typeColor}15;color:${typeColor}">${typeLabel}</span>
+                        </span>
+                    </td>
+                    <td class="tbl-num goals-rank-col-val"><span class="goals-rank-actual" style="color:${sc.color}">${formatBRL(prog.actual)}</span></td>
+                    <td class="tbl-num goals-rank-col-val"><span class="goals-rank-target">${formatBRL(prog.target)}</span></td>
+                    <td class="goals-rank-col-bar">
                         <div class="goals-rank-bar-track">
                             <div class="goals-rank-bar-fill" style="width:${barPct}%;background:${sc.color}"></div>
                         </div>
-                    </div>
-                    <div class="goals-rank-actions" onclick="event.stopPropagation()">
-                        <button class="goals-rank-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${safeName}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
-                        <button class="goals-rank-btn goals-rank-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                </div>`;
+                    </td>
+                    <td class="tbl-center goals-rank-col-actions" onclick="event.stopPropagation()">
+                        <div class="goals-rank-actions">
+                            <button class="goals-rank-btn" onclick="goalsOpenDailyDirect('${hierarchyType}','${hierarchyId}','${flowType}','${safeName}','${goalId}')" title="Ver dia a dia"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i></button>
+                            <button class="goals-rank-btn goals-rank-edit-btn" onclick="openGoalModal('${goalId}')" title="Editar meta"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
             }).join('');
 
-            el.innerHTML = `${navHtml}<div class="goals-rank-card"><div class="goals-rank-list">${rows}</div></div>`;
+            el.innerHTML = `${navHtml}<div class="goals-rank-wrap custom-scrollbar"><table class="tbl tbl-zebra goals-rank-table">
+                <thead><tr>
+                    <th class="tbl-center goals-rank-col-num">#</th>
+                    <th class="goals-rank-col-name">Meta</th>
+                    <th class="tbl-num goals-rank-col-val">Realizado</th>
+                    <th class="tbl-num goals-rank-col-val">Alvo</th>
+                    <th class="goals-rank-col-bar">Progresso</th>
+                    <th class="tbl-center goals-rank-col-actions">Ação</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table></div>`;
             refreshLucideIcons();
         }
 
