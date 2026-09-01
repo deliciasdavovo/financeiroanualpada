@@ -81,6 +81,166 @@
             --chart-green: #149463;
             --chart-red: #B23A3A;
             --chart-blue: #2F4F9D;
+
+            /* --- SISTEMA DE TABELAS ---------------------------------------
+               Uma unica fonte de verdade para TODAS as tabelas do app.
+               Antes cada tela tinha altura, fonte, borda e cabecalho
+               proprios; agora todas leem estes tokens. Para mudar a
+               densidade do app inteiro, mexa so aqui. -------------------- */
+            --tbl-font: 12.5px;              /* corpo da celula */
+            --tbl-font-sm: 11.5px;           /* celulas secundarias/compactas */
+            --tbl-row-h: 34px;               /* altura da linha (densidade Excel) */
+            --tbl-pad-y: 7px;
+            --tbl-pad-x: 12px;
+            --tbl-head-h: 32px;
+            --tbl-head-font: 10.5px;
+            --tbl-head-bg: #F1F5F9;          /* cabecalho grudado */
+            --tbl-head-color: #475569;
+            --tbl-head-border: #D8E0EA;
+            --tbl-line: #E6EBF2;             /* linha horizontal entre registros */
+            --tbl-col-line: #EDF1F6;         /* linha vertical (grade tipo planilha) */
+            --tbl-hover: #EEF4FF;
+            --tbl-zebra: #FAFBFD;
+            --tbl-sticky-bg: #FFFFFF;        /* fundo da 1a coluna congelada */
+            --tbl-group-bg: #F6F8FB;         /* linha que abre um grupo */
+            --tbl-subtotal-bg: #EDF1F7;      /* subtotal dentro do grupo */
+            --tbl-total-bg: #1F7A5C;         /* total geral: barra verde */
+            --tbl-total-color: #FFFFFF;
+        }
+
+        /* =====================================================================
+           TABELAS — BASE COMUM (padrao unico do app)
+
+           Toda tabela do app carrega a classe .tbl e herda daqui: mesma altura
+           de linha, mesma fonte, mesmo cabecalho, mesmas bordas e numeros
+           tabulares (os digitos alinham em coluna, como numa planilha).
+
+           Modificadores, combinaveis:
+             .tbl-grid    grade completa, com linhas verticais entre colunas
+             .tbl-zebra   linhas alternadas
+             .tbl-compact linha mais baixa, para matrizes de 12 meses
+
+           Papel da linha (vale em qualquer tabela):
+             .tbl-row-group     abre um grupo
+             .tbl-row-subtotal  fecha um grupo
+             .tbl-row-total     total geral (barra verde)
+
+           As telas so declaram o que e realmente proprio delas — largura de
+           coluna, coluna congelada, cor semantica. Nunca fonte ou altura.
+           ===================================================================== */
+        .tbl {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            font-size: var(--tbl-font);
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum" 1;
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+        .tbl > thead > tr > th {
+            height: var(--tbl-head-h);
+            padding: 0 var(--tbl-pad-x);
+            background: var(--tbl-head-bg);
+            color: var(--tbl-head-color);
+            font-size: var(--tbl-head-font);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--tbl-head-border);
+        }
+        .tbl > tbody > tr > td {
+            height: var(--tbl-row-h);
+            padding: var(--tbl-pad-y) var(--tbl-pad-x);
+        }
+        /* A linha que separa os registros fica no <tr>, nao na celula: algumas
+           celulas do app sao flex (rotulo com icone e etiqueta ao lado) e uma
+           celula flex nao estica ate a altura da linha, entao a borda dela
+           sairia curta e desalinhada. No <tr> ela atravessa a linha inteira.
+           Depende de border-collapse: collapse, que .tbl ja define. */
+        .tbl > tbody > tr {
+            border-bottom: 1px solid var(--tbl-line);
+        }
+        /* Alinhamento e ancoragem sao apenas o padrao: com :where() a regra
+           nao tem peso, entao qualquer classe da propria tela ainda manda
+           (uma coluna de mes centralizada, uma celula com varias linhas
+           ancorada no topo). O que nao se negocia — altura, espacamento,
+           borda, tipografia — fica nas regras acima, com peso. */
+        :where(.tbl) > thead > tr > th { text-align: left; vertical-align: middle; }
+        :where(.tbl) > tbody > tr > td { text-align: left; vertical-align: middle; }
+        .tbl > tbody > tr:last-child {
+            border-bottom: none;
+        }
+        .tbl > tbody > tr:hover > td {
+            background: var(--tbl-hover);
+        }
+
+        /* Numeros a direita, sempre. Vale para a celula e para o cabecalho
+           dela, para que titulo e valor fiquem no mesmo eixo. */
+        .tbl > thead > tr > th.tbl-num,
+        .tbl > tbody > tr > td.tbl-num {
+            text-align: right;
+            white-space: nowrap;
+        }
+        .tbl > thead > tr > th.tbl-center,
+        .tbl > tbody > tr > td.tbl-center {
+            text-align: center;
+        }
+
+        /* Grade completa: linha vertical entre colunas, como no Excel. */
+        .tbl-grid > thead > tr > th:not(:last-child),
+        .tbl-grid > tbody > tr > td:not(:last-child) {
+            border-right: 1px solid var(--tbl-col-line);
+        }
+        .tbl-zebra > tbody > tr:nth-child(even) > td {
+            background: var(--tbl-zebra);
+        }
+        .tbl-zebra > tbody > tr:nth-child(even):hover > td {
+            background: var(--tbl-hover);
+        }
+        .tbl-compact {
+            --tbl-row-h: 30px;
+            --tbl-pad-y: 5px;
+            --tbl-pad-x: 10px;
+            --tbl-font: var(--tbl-font-sm);
+        }
+
+        /* --- Papel da linha ------------------------------------------------ */
+        .tbl > tbody > tr.tbl-row-group > td {
+            background: var(--tbl-group-bg);
+            font-weight: 700;
+            font-size: var(--tbl-font-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--tbl-line);
+        }
+        .tbl > tbody > tr.tbl-row-subtotal > td {
+            background: var(--tbl-subtotal-bg);
+            font-weight: 700;
+            border-top: 1px solid var(--tbl-head-border);
+        }
+        .tbl > tbody > tr.tbl-row-total {
+            border-bottom: none;
+        }
+        .tbl > tbody > tr.tbl-row-total > td {
+            background: var(--tbl-total-bg);
+            color: var(--tbl-total-color);
+            font-weight: 700;
+        }
+        /* Linhas estruturais nao acendem no hover: elas nao sao um registro
+           que se possa abrir, e o realce sugeriria que sao. */
+        .tbl > tbody > tr.tbl-row-group:hover > td { background: var(--tbl-group-bg); }
+        .tbl > tbody > tr.tbl-row-subtotal:hover > td { background: var(--tbl-subtotal-bg); }
+        .tbl > tbody > tr.tbl-row-total:hover > td { background: var(--tbl-total-bg); }
+        /* Dentro da barra verde nenhum valor volta a ser verde ou azul: o
+           contraste ja vem do fundo, e a cor herdada quebraria a leitura. */
+        .tbl > tbody > tr.tbl-row-total > td *,
+        .tbl > tbody > tr.tbl-row-total > td .flow-income-text,
+        .tbl > tbody > tr.tbl-row-total > td .flow-expense-text,
+        .tbl > tbody > tr.tbl-row-total > td .flow-balance-text {
+            color: var(--tbl-total-color) !important;
         }
 
         /* Valores financeiros: número escuro e tabular por padrão; cor fica nos
@@ -1004,13 +1164,13 @@
         .table-row {
             cursor: pointer;
             transition: background-color var(--dur-fast) var(--ease-premium), opacity var(--dur-fast) var(--ease-premium);
-            border-bottom: 1px solid var(--divider);
+            border-bottom: 1px solid var(--tbl-line);
         }
-        .table-row:hover { background-color: #F8FAFF; }
-        tbody .table-row:nth-child(odd) { background-color: #FFFFFF; }
-        tbody .table-row:nth-child(even) { background-color: #FAFAFA; }
+        .table-row:hover { background-color: var(--tbl-hover); }
+        tbody .table-row:nth-child(odd) { background-color: var(--bg-card); }
+        tbody .table-row:nth-child(even) { background-color: var(--tbl-zebra); }
         tbody .table-row:nth-child(odd):hover,
-        tbody .table-row:nth-child(even):hover { background-color: #F8FAFF; }
+        tbody .table-row:nth-child(even):hover { background-color: var(--tbl-hover); }
         tbody .table-row.entry-row-transfer {
             background-color: #EAF2FF;
         }
@@ -1124,33 +1284,14 @@
             min-height: 0;
             background: #FFFFFF;
         }
-        .monthly-daily-table thead { background: #F8FAFC; }
-        .monthly-daily-table th {
-            padding: 12px 16px;
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #64748B;
-            white-space: nowrap;
-        }
-        .monthly-day-row {
-            font-size: 11px;
-            font-weight: 600;
-            color: #334155;
-        }
-        .monthly-day-row:hover { background: #F8FAFC; }
-        .monthly-day-row.is-empty {
-            color: #94A3B8;
+        /* Altura, fonte, cabecalho e bordas vem de .tbl. */
+        .monthly-daily-table > tbody > tr.monthly-day-row.is-empty > td {
+            color: var(--text-muted);
             background: #FCFCFD;
         }
-        .monthly-day-row td {
-            padding: 11px 16px;
-            vertical-align: middle;
-        }
         .monthly-day-cell {
-            width: 58px;
-            color: #64748B;
+            width: 54px;
+            color: var(--text-secondary);
             font-weight: 700;
         }
         .monthly-flow-cell { min-width: 190px; }
@@ -2526,7 +2667,7 @@
             transition: background-color var(--dur-fast) var(--ease-premium), transform var(--dur-fast) var(--ease-premium);
         }
         .table-row:hover {
-            background: #F8FAFC !important;
+            background: var(--tbl-hover) !important;
         }
         .badge,
         .quick-status-btn,
@@ -2874,95 +3015,55 @@
             background: #FFFFFF;
             overflow: auto;
         }
+        /* Layout proprio da matriz. Altura, fonte, cabecalho e bordas vem
+           de .tbl / .tbl-grid — aqui so ficam largura e coluna congelada. */
         .annual-matrix-table {
-            width: 100%;
             min-width: 1960px;
-            border-collapse: collapse;
-            border-spacing: 0;
             table-layout: fixed;
         }
         .annual-matrix-table-compact {
             min-width: 720px;
         }
-        .annual-matrix-table th,
-        .annual-matrix-table td {
-            height: 46px;
-            padding: 10px 16px;
-            border-bottom: 1px solid #EEF2F6;
-            font-size: 13px;
-            font-weight: 400;
-            white-space: nowrap;
+        .annual-matrix-table > thead > tr > th,
+        .annual-matrix-table > tbody > tr > td {
             text-align: right;
-            vertical-align: middle;
-            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
         }
-        .annual-matrix-table th:not(:first-child),
-        .annual-matrix-table td:not(:first-child) {
-            width: 122px;
+        .annual-matrix-table > thead > tr > th:not(:first-child),
+        .annual-matrix-table > tbody > tr > td:not(:first-child) {
+            width: 116px;
         }
-        .annual-matrix-table th:last-child,
-        .annual-matrix-table td:last-child {
-            width: 150px;
-            border-left: 1px solid #EEF2F6;
+        .annual-matrix-table > thead > tr > th:last-child,
+        .annual-matrix-table > tbody > tr > td:last-child {
+            width: 142px;
         }
-        .annual-matrix-table th {
-            position: sticky;
-            top: 0;
-            z-index: 1;
-            height: 44px;
-            background: #F8FAFC;
-            color: #64748B;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            border-bottom: 1px solid #E2E8F0;
-        }
-        .annual-matrix-table th:first-child,
-        .annual-matrix-table td:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 2;
-            width: 340px;
-            min-width: 340px;
-            max-width: 340px;
+        .annual-matrix-table > thead > tr > th:first-child,
+        .annual-matrix-table > tbody > tr > td:first-child {
+            width: 320px;
+            min-width: 320px;
+            max-width: 320px;
             text-align: left;
-            background: #FFFFFF;
-            border-right: 1px solid #EAEEF3;
         }
-        .annual-matrix-table th:first-child {
-            z-index: 3;
-            background: #F8FAFC;
+        /* Coluna Total levemente destacada, como a coluna de fechamento. */
+        .annual-matrix-table > tbody > tr > td:last-child {
+            background: #F7FAFD;
+            font-weight: 600;
         }
-        /* coluna Total levemente destacada */
-        .annual-matrix-table td:last-child {
-            background: #FBFCFE;
+        .annual-matrix-table > thead > tr > th:last-child {
+            background: #E6ECF3;
         }
-        .annual-matrix-table th:last-child {
-            background: #EEF2F7;
-            border-left: 1px solid #E2E8F0;
-        }
-        /* hover discreto nas linhas de dados */
-        .annual-matrix-table tbody tr:not(.annual-matrix-group-row):not(.annual-matrix-total-row):hover td {
-            background: #F5F9FD;
-        }
-        .annual-matrix-table tbody tr:not(.annual-matrix-group-row):not(.annual-matrix-total-row):hover td:last-child {
-            background: #F1F6FC;
-        }
-        /* Linha de total: barra verde de resultado, igual ao DRE (dre-comp-row-lucro) */
+        /* Linha de total: barra verde de resultado, igual ao DRE. */
         .annual-matrix-total-row td {
-            background: #0F7A5C !important;
-            color: #FFFFFF !important;
-            border-top: 2px solid #0F7A5C;
+            background: var(--tbl-total-bg) !important;
+            color: var(--tbl-total-color) !important;
+            border-top: none;
             border-bottom: none;
         }
-        .annual-matrix-total-row td:first-child {
-            background: #0F7A5C !important;
-            border-right-color: #0C6B50;
+        .annual-matrix-table > tbody > tr.annual-matrix-total-row > td:first-child {
+            background: var(--tbl-total-bg) !important;
         }
         .annual-matrix-total-row td:last-child {
-            background: #0C6B50 !important;
-            border-left-color: #0C6B50;
+            background: #17624A !important;
         }
         /* valores da barra de total legíveis sobre o verde (padrão dre-comp-lucro) */
         .annual-matrix-total-row td.flow-income-text,
@@ -2978,18 +3079,11 @@
             color: rgba(255, 255, 255, 0.55) !important;
         }
         /* cabeçalho de grupo (Entradas / Saídas): faixa neutra estilo DRE + rótulo colorido */
-        .annual-matrix-group-row td {
-            background: #FAFBFC !important;
-            height: 40px;
-            padding-top: 11px;
-            padding-bottom: 7px;
-            border-top: 1px solid #F1F5F9;
-            border-bottom: 1px solid #EEF2F6;
-            color: #64748B;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+        /* Papel visual da linha de grupo vem de .tbl-row-group; aqui so a
+           primeira coluna, que fica congelada e precisa repetir o fundo. */
+        .annual-matrix-table > tbody > tr.annual-matrix-group-row > td:first-child,
+        .annual-matrix-table > tbody > tr.annual-matrix-group-row > td:last-child {
+            background: var(--tbl-group-bg);
         }
         .annual-matrix-group-label {
             display: inline-flex;
@@ -3417,35 +3511,6 @@
         }
         .annual-supplier-compare-card {
             overflow: hidden;
-        }
-        .annual-compare-table {
-            border-collapse: separate;
-            border-spacing: 0 8px;
-        }
-        .annual-compare-table thead {
-            background: transparent !important;
-        }
-        .annual-compare-table th {
-            padding-top: 0 !important;
-            padding-bottom: 6px !important;
-            white-space: nowrap;
-        }
-        .annual-compare-table tbody tr {
-            cursor: default;
-        }
-        .annual-compare-table tbody td {
-            background: #FFFFFF;
-            border-top: 1px solid #E8EEF6;
-            border-bottom: 1px solid #E8EEF6;
-            vertical-align: middle;
-        }
-        .annual-compare-table tbody td:first-child {
-            border-left: 1px solid #E8EEF6;
-            border-radius: 14px 0 0 14px;
-        }
-        .annual-compare-table tbody td:last-child {
-            border-right: 1px solid #E8EEF6;
-            border-radius: 0 14px 14px 0;
         }
         .annual-compare-period {
             font-size: 12px;
@@ -4881,6 +4946,13 @@
             gap: 10px;
             padding: 0 0 10px;
         }
+        /* Quando a barra cai direto dentro de um cartao (a tabela ocupa o
+           cartao inteiro), ela precisa da margem do cartao e de uma linha
+           que a separe do cabecalho da tabela. */
+        .card-premium > .sheet-toolbar {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--tbl-line);
+        }
         .sheet-toolbar-group {
             display: flex;
             align-items: center;
@@ -4943,7 +5015,7 @@
             position: sticky;
             top: 0;
             z-index: 3;
-            background: #F8FAFC;
+            background: var(--tbl-head-bg);
         }
         /* Primeira coluna grudada, para matrizes largas (12 meses + total). */
         table.sheet-freeze-col > thead > tr > th:first-child,
@@ -4951,11 +5023,35 @@
             position: sticky;
             left: 0;
             z-index: 2;
-            background: var(--bg-card);
+        }
+        /* O fundo da coluna congelada e so um piso — precisa ser opaco para o
+           conteudo nao vazar por baixo, mas nao pode vencer a cor da propria
+           linha. Com :where() a regra perde peso e a barra verde do lucro, o
+           subtotal e o grupo continuam pintando ate a primeira coluna. */
+        table.sheet-freeze-col > thead > tr > :where(th:first-child),
+        table.sheet-freeze-col > tbody > tr > :where(td:first-child) {
+            background: var(--tbl-sticky-bg);
         }
         table.sheet-freeze-col > thead > tr > th:first-child {
             z-index: 4;
-            background: #F8FAFC;
+            background: var(--tbl-head-bg);
+        }
+        /* A coluna congelada precisa repetir o fundo da propria linha; senao o
+           conteudo que passa por baixo dela aparece atraves do transparente. */
+        table.sheet-freeze-col.tbl-zebra > tbody > tr:nth-child(even) > td:first-child {
+            background: var(--tbl-zebra);
+        }
+        table.sheet-freeze-col > tbody > tr:hover > td:first-child {
+            background: var(--tbl-hover);
+        }
+        table.sheet-freeze-col > tbody > tr.tbl-row-group > td:first-child {
+            background: var(--tbl-group-bg);
+        }
+        table.sheet-freeze-col > tbody > tr.tbl-row-subtotal > td:first-child {
+            background: var(--tbl-subtotal-bg);
+        }
+        table.sheet-freeze-col > tbody > tr.tbl-row-total > td:first-child {
+            background: var(--tbl-total-bg);
         }
         table.sheet-freeze-col > tbody > tr > td:first-child::after {
             content: '';
@@ -4995,14 +5091,14 @@
             position: sticky;
             bottom: 0;
             z-index: 2;
-            background: #F1F5F9;
-            border-top: 2px solid var(--border);
+            background: var(--tbl-subtotal-bg);
+            border-top: 2px solid var(--tbl-head-border);
             font-weight: 800;
             color: var(--text-primary);
         }
         table.sheet-freeze-col tr.sheet-total-row > td:first-child {
             z-index: 3;
-            background: #F1F5F9;
+            background: var(--tbl-subtotal-bg);
         }
         .sheet-empty-note {
             padding: 14px;
@@ -5669,10 +5765,11 @@
             opacity: 0.45;
             cursor: not-allowed;
         }
-        #entries-table th,
-        #entries-table td {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
+        /* Cada celula de lancamento tem duas linhas (valor + etiqueta), entao
+           o conteudo ancora no topo em vez do meio. Fonte, altura e espacamento
+           vertical continuam vindo de .tbl. */
+        #entries-table > thead > tr > th,
+        #entries-table > tbody > tr > td {
             vertical-align: top;
         }
         #entries-table col.col-check { width: 52px; }
@@ -5680,24 +5777,23 @@
         #entries-table col.col-account { width: 180px; }
         #entries-table col.col-value { width: 132px; }
         #entries-table col.col-actions { width: 188px; }
-        #entries-table th:nth-child(1),
-        #entries-table td:nth-child(1) {
-            padding-left: 6px !important;
-            padding-right: 6px !important;
+        /* Colunas estreitas (marcador e data) respiram menos na horizontal —
+           unica excecao ao espacamento padrao, e so na horizontal. */
+        #entries-table > thead > tr > th:nth-child(1),
+        #entries-table > tbody > tr > td:nth-child(1) {
+            padding-left: 6px;
+            padding-right: 6px;
             text-align: center;
         }
-        #entries-table th:nth-child(2),
-        #entries-table td:nth-child(2) {
-            padding-left: 6px !important;
-            padding-right: 8px !important;
+        #entries-table > thead > tr > th:nth-child(2),
+        #entries-table > tbody > tr > td:nth-child(2) {
+            padding-left: 6px;
+            padding-right: 8px;
         }
-        #entries-table th:nth-child(3),
-        #entries-table td:nth-child(3) {
-            padding-left: 8px !important;
-            padding-right: 8px !important;
-        }
-        #entries-table tbody td {
-            font-size: 12px;
+        #entries-table > thead > tr > th:nth-child(3),
+        #entries-table > tbody > tr > td:nth-child(3) {
+            padding-left: 8px;
+            padding-right: 8px;
         }
         .entries-check {
             appearance: none;
@@ -5994,14 +6090,14 @@
             .tab-content.space-y-12 > * + * {
                 margin-top: 16px !important;
             }
-            .table-mobile-scroll th,
-            .table-mobile-scroll td {
-                padding-top: 10px !important;
-                padding-bottom: 10px !important;
-                font-size: 11px !important;
-            }
-            .table-mobile-scroll thead th {
-                font-size: 9px !important;
+            /* No celular a densidade muda pelos tokens, nao celula a celula:
+               a tabela inteira reage e continua padronizada. */
+            .table-mobile-scroll .tbl {
+                --tbl-font: 11.5px;
+                --tbl-head-font: 9.5px;
+                --tbl-pad-x: 9px;
+                --tbl-pad-y: 6px;
+                --tbl-row-h: 32px;
             }
             #entries-table {
                 min-width: 720px;
@@ -6011,10 +6107,11 @@
             #entries-table col.col-date { width: 92px; }
             #entries-table col.col-value { width: 120px; }
             #entries-table col.col-actions { width: 150px; }
-            #entries-table th,
-            #entries-table td {
-                padding-left: 8px !important;
-                padding-right: 8px !important;
+            #entries-table { --tbl-pad-x: 8px; }
+            #entries-table > thead > tr > th:nth-child(-n+3),
+            #entries-table > tbody > tr > td:nth-child(-n+3) {
+                padding-left: 8px;
+                padding-right: 8px;
             }
             .entry-destination-desc {
                 word-break: normal;
@@ -6627,19 +6724,7 @@
         #monthly #monthly-daily-view {
             min-width: 720px;
         }
-        #monthly .monthly-daily-table th {
-            padding: 10px 14px;
-            font-size: 11px !important;
-            font-weight: 600;
-        }
-        #monthly .monthly-day-row {
-            font-size: 12px;
-            font-weight: 600;
-        }
-        #monthly .monthly-day-row td {
-            padding: 10px 14px;
-        }
-        #monthly .monthly-day-row.is-empty {
+        #monthly .monthly-daily-table > tbody > tr.monthly-day-row.is-empty > td {
             color: #A0A9B8;
             background: #FBFCFE;
         }
@@ -7263,63 +7348,43 @@
             padding: 0;
             overflow-x: auto;
         }
+        /* Antes cada periodo era uma "pilula" flutuante com canto arredondado;
+           agora e uma grade continua, igual as demais tabelas. */
         .projection-table {
-            width: 100%;
             min-width: 680px;
-            border-collapse: separate;
-            border-spacing: 0 8px;
         }
-        .projection-table th {
-            padding: 0 12px 6px;
-            font-size: 11px !important;
-            font-weight: 700 !important;
-            color: #64748B !important;
+        .projection-table > thead > tr > th,
+        .projection-table > tbody > tr > td {
             text-align: right;
             white-space: nowrap;
         }
-        .projection-table th:first-child {
+        .projection-table > thead > tr > th:first-child,
+        .projection-table > tbody > tr > td:first-child {
             text-align: left;
-        }
-        .projection-table td {
-            padding: 14px 12px;
-            border-top: 1px solid #E8EEF6;
-            border-bottom: 1px solid #E8EEF6;
-            background: #FFFFFF;
-            font-size: 13px;
-            font-weight: 850;
-            text-align: right;
-            white-space: nowrap;
-        }
-        .projection-table td:first-child {
-            border-left: 1px solid #E8EEF6;
-            border-radius: 14px 0 0 14px;
-            text-align: left;
-        }
-        .projection-table td:last-child {
-            border-right: 1px solid #E8EEF6;
-            border-radius: 0 14px 14px 0;
         }
         .projection-table-date {
-            font-size: 13px;
-            font-weight: 700;
-            color: #0F172A;
+            font-size: var(--tbl-font);
+            font-weight: 600;
+            color: var(--text-primary);
         }
         .projection-table-sub {
-            margin-top: 3px;
-            font-size: 11px;
+            margin-top: 2px;
+            font-size: 10.5px;
             font-weight: 600;
-            color: #94A3B8;
+            color: var(--text-muted);
         }
         .projection-table-value {
-            font-size: 15px;
+            font-size: var(--tbl-font);
+            font-weight: 600;
+        }
+        .projection-table > tbody > tr.projection-table-total > td {
+            background: var(--tbl-subtotal-bg);
+            border-top: 1px solid var(--tbl-head-border);
+            border-bottom: none;
             font-weight: 700;
         }
-        .projection-table-total td {
-            background: #F8FAFF;
-            border-color: #DDE6F0;
-        }
         .projection-table-total .projection-table-date {
-            color: #244A94;
+            color: var(--text-primary);
         }
         @media (max-width: 1100px) {
             .reports-shell-head,
@@ -7375,70 +7440,16 @@
             .projection-list {
                 padding: 14px;
             }
+            /* No celular a projecao NAO vira cartao: segue tabela e rola na
+               horizontal, igual a lancamentos e a matriz anual. Um padrao so
+               para tabela larga em tela estreita. */
             .projection-table-wrap {
-                overflow-x: visible;
+                overflow-x: auto;
             }
             .projection-table {
-                min-width: 0;
-                display: block;
-                border-spacing: 0;
-            }
-            .projection-table thead {
-                display: none;
-            }
-            .projection-table tbody {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-            .projection-table tr {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                background: #FFFFFF;
-                border: 1px solid #E8EEF6;
-                border-radius: 14px;
-                padding: 12px 14px;
-                gap: 0;
-            }
-            .projection-table tr.projection-table-total {
-                background: #F8FAFF !important;
-                border-color: #DDE6F0 !important;
-            }
-            .projection-table td {
-                display: block;
-                padding: 0;
-                border: none !important;
-                background: transparent !important;
-                border-radius: 0 !important;
-                white-space: normal;
-                text-align: left;
-            }
-            .projection-table td:first-child {
-                grid-column: 1 / -1;
-                padding-bottom: 10px;
-                margin-bottom: 6px;
-                border-left: none !important;
-                border-bottom: 1px solid #F1F5F9 !important;
-            }
-            .projection-table td:last-child {
-                border-right: none !important;
-            }
-            .projection-table td:nth-child(2)::before,
-            .projection-table td:nth-child(3)::before,
-            .projection-table td:nth-child(4)::before {
-                display: block;
-                font-size: 9px;
-                font-weight: 600;
-                color: #94A3B8;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                margin-bottom: 3px;
-            }
-            .projection-table td:nth-child(2)::before { content: "Entradas"; }
-            .projection-table td:nth-child(3)::before { content: "Saídas"; }
-            .projection-table td:nth-child(4)::before { content: "Resultado"; }
-            .projection-table-value {
-                font-size: 12px !important;
+                min-width: 560px;
+                --tbl-pad-x: 10px;
+                --tbl-font: var(--tbl-font-sm);
             }
             .projection-list-item {
                 grid-template-columns: 1fr;
@@ -7615,55 +7626,39 @@
         .goals-year-label { font-size: 14px; font-weight: 600; color: var(--text-primary); min-width: 48px; text-align: center; }
         .goals-window-label { min-width: 140px; font-size: 13px; }
         .goals-matrix-scroll { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); }
-        .goals-matrix-table {
-            width: 100%; border-collapse: collapse; background: var(--bg-card);
-            font-size: 12px;
-        }
-        .goals-matrix-table thead tr { background: #F8FAFC; border-bottom: 1px solid var(--border); }
-        .goals-matrix-table th {
-            padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600;
-            color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em;
-            white-space: nowrap;
-        }
+        /* Densidade, fonte e cabecalho vem de .tbl; aqui so as larguras. */
         .goals-matrix-name-th { min-width: 160px; }
         .goals-matrix-amount-th { min-width: 100px; text-align: right; }
-        .goals-matrix-month-th { min-width: 110px; text-align: center; padding: 10px 6px; }
-        .goals-matrix-sub-th { padding: 6px 8px; text-align: right; font-size: 10px; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: .03em; min-width: 80px; border-top: 1px solid #F1F5F9; }
+        .goals-matrix-month-th { min-width: 110px; text-align: center; padding-left: 6px; padding-right: 6px; }
+        .goals-matrix-table > thead > tr > th.goals-matrix-sub-th { height: 26px; text-align: right; font-size: 9.5px; color: var(--text-muted); min-width: 80px; border-top: 1px solid var(--tbl-col-line); }
         .goals-matrix-chevron-th { width: 32px; }
-        .goals-matrix-row {
-            border-bottom: 1px solid #F1F5F9; cursor: pointer;
-            transition: background var(--dur-fast) var(--ease-premium);
-        }
-        .goals-matrix-row:last-child { border-bottom: none; }
-        .goals-matrix-row:hover { background: #F8FAFC; }
-        .goals-matrix-name-cell { padding: 12px 12px; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-        .goals-matrix-name-label { font-weight: 600; color: var(--text-primary); font-size: 13px; }
+        .goals-matrix-row { cursor: pointer; }
+        .goals-matrix-name-cell { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .goals-matrix-name-label { font-weight: 600; color: var(--text-primary); }
         .goals-matrix-type-badge {
             font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 6px;
             white-space: nowrap; flex-shrink: 0;
         }
-        .goals-matrix-amount-cell { padding: 12px; text-align: right; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
-        .goals-matrix-cell { padding: 10px 6px; text-align: center; }
+        .goals-matrix-amount-cell { text-align: right; font-weight: 600; color: var(--text-secondary); white-space: nowrap; }
+        .goals-matrix-cell { padding-left: 6px; padding-right: 6px; text-align: center; }
         .goals-month-current-col { background: #EEF2FF !important; }
-        .goals-matrix-chevron-cell { padding: 10px 10px; text-align: center; }
+        .goals-matrix-chevron-cell { text-align: center; }
         .goals-cell-dash { color: #CBD5E1; font-weight: 600; }
-        .goals-cell-value { font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .goals-cell-value { font-weight: 600; white-space: nowrap; }
         .goals-cell-meta-col { text-align: center; }
         .goals-matrix-row-linked:hover { background: #F0F4FF; }
 
         /* ─── GOALS TREE ─── */
-        .goals-tree-row { border-bottom: 1px solid #F1F5F9; transition: background var(--dur-fast) var(--ease-premium); }
-        .goals-tree-row:last-child { border-bottom: none; }
-        .goals-tree-cat { background: #FAFBFC; cursor: pointer; }
+        .goals-tree-cat { background: var(--tbl-group-bg); cursor: pointer; }
         .goals-tree-cat:hover { background: #F0F4FF; }
         .goals-tree-sub { background: #fff; cursor: pointer; }
         .goals-tree-sub:hover { background: #F8FAFC; }
         .goals-tree-dest { background: #FDFEFF; }
         .goals-tree-dest:hover { background: #F8FAFC; }
-        .goals-tree-name-cell { display: flex; align-items: center; gap: 6px; white-space: nowrap; padding: 10px 12px; }
-        .goals-tree-cat-cell { font-weight: 600; font-size: 13px; color: var(--text-primary); border-left: 3px solid #CBD5E1; }
-        .goals-tree-sub-cell { font-size: 12px; padding-left: 28px !important; border-left: 3px solid #E2E8F0; }
-        .goals-tree-dest-cell { font-size: 12px; padding-left: 48px !important; color: var(--text-secondary); border-left: 3px solid #F1F5F9; }
+        .goals-tree-name-cell { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .goals-tree-cat-cell { font-weight: 600; color: var(--text-primary); border-left: 3px solid #CBD5E1; }
+        .goals-tree-sub-cell { padding-left: 28px !important; border-left: 3px solid #E2E8F0; }
+        .goals-tree-dest-cell { padding-left: 48px !important; color: var(--text-secondary); border-left: 3px solid #F1F5F9; }
         .goals-tree-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
         .goals-tree-toggle { display: flex; align-items: center; color: #94A3B8; flex-shrink: 0; }
         .goals-cell-zero { color: #CBD5E1; font-size: 12px; }
@@ -7685,8 +7680,8 @@
         .goals-daily-month-chip-cur { border-color:#6366F1; }
 
         /* ─── GOALS DAILY TABLE MULTI-MÊS ─── */
-        .goals-daily-month-th { padding:8px 12px; text-align:center; font-size:12px; font-weight:600; color:#475569; white-space:nowrap; background:#F8FAFC; border-bottom:2px solid #E2E8F0; min-width:110px; }
-        .goals-daily-cell { padding:7px 12px; font-size:12px; text-align:left; vertical-align:top; border-bottom:1px solid #F1F5F9; min-width:110px; transition:background var(--dur-fast) var(--ease-premium); }
+        .goals-daily-month-th { text-align:center; min-width:110px; }
+        .goals-daily-cell { vertical-align:top; min-width:110px; transition:background var(--dur-fast) var(--ease-premium); }
         .goals-daily-cell:hover { background:#F0F4FF; }
         .goals-daily-cell-na { color:#CBD5E1; text-align:center; }
         .goals-daily-cell-expand { margin-top:4px; border-top:1px dashed #E2E8F0; padding-top:4px; }
@@ -7839,20 +7834,17 @@
 
         /* ─── GOALS DAILY VIEW ─── */
         .goals-daily-table { min-width: 520px; }
-        .goals-daily-row { border-bottom: 1px solid #F1F5F9; transition: background var(--dur-fast) var(--ease-premium); }
-        .goals-daily-row:last-child { border-bottom: none; }
-        .goals-daily-row:hover { background: #F8FAFC; }
         .goals-daily-row-today { background: #EEF2FF !important; }
         .goals-daily-row-today:hover { background: #E0E9FF !important; }
-        .goals-daily-row-future { background: #FAFBFC; opacity: 0.75; }
-        .goals-daily-row-future:hover { background: #F1F5F9; opacity: 1; }
-        .goals-daily-date-cell { padding: 9px 12px; white-space: nowrap; font-size: 13px; color: var(--text-primary); min-width: 110px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-        .goals-daily-weekday { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .goals-daily-row-future { background: var(--tbl-zebra); opacity: 0.75; }
+        .goals-daily-row-future:hover { opacity: 1; }
+        .goals-daily-date-cell { white-space: nowrap; color: var(--text-primary); min-width: 110px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .goals-daily-weekday { font-size: 10.5px; color: var(--text-muted); font-weight: 600; }
         .goals-daily-expand-icon { color: #94A3B8; font-size: 11px; width: 14px; display: inline-block; }
-        .goals-daily-amount-cell { padding: 9px 12px; font-size: 12px; white-space: nowrap; min-width: 110px; }
-        .goals-daily-cum-cell { padding: 9px 12px; font-size: 12px; text-align: right; white-space: nowrap; color: var(--text-secondary); font-weight: 600; min-width: 100px; }
-        .goals-daily-cumgoal-cell { padding: 9px 12px; font-size: 12px; text-align: right; white-space: nowrap; color: var(--text-muted); min-width: 100px; }
-        .goals-daily-bar-cell { padding: 9px 12px; min-width: 120px; max-width: 180px; width: 100%; }
+        .goals-daily-amount-cell { white-space: nowrap; min-width: 110px; }
+        .goals-daily-cum-cell { text-align: right; white-space: nowrap; color: var(--text-secondary); font-weight: 600; min-width: 100px; }
+        .goals-daily-cumgoal-cell { text-align: right; white-space: nowrap; color: var(--text-muted); min-width: 100px; }
+        .goals-daily-bar-cell { min-width: 120px; max-width: 180px; width: 100%; }
         .goals-daily-bar-track { height: 8px; border-radius: 99px; background: #F1F5F9; overflow: hidden; border: 1px solid #E2E8F0; }
         .goals-daily-bar-fill { height: 100%; border-radius: 99px; transition: width 400ms var(--ease-premium); }
         .goals-pending-tag { font-size: 11px; font-weight: 600; color: #64748B; background: #F1F5F9; border-radius: 6px; padding: 1px 5px; white-space: nowrap; }
@@ -7875,17 +7867,20 @@
         .dre-header  { padding: 20px 24px 16px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .dre-header h4 { font-size: 14px; font-weight: 700; color: #0F172A; margin: 0; }
         .dre-header p  { font-size: 12px; color: #64748B; margin: 0; }
-        .dre-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .dre-table td { padding: 9px 24px; vertical-align: middle; }
-        .dre-row-line td { color: #0F172A; }
-        .dre-row-line:hover td { background: #F8FAFC; }
-        .dre-row-subtotal td { background: #F1F5F9; font-weight: 600; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; }
-        .dre-row-total td { background: #0F172A; color: #fff; font-weight: 700; font-size: 14px; border-radius: 0; }
-        .dre-row-result td { background: #EFF6FF; font-weight: 700; border-top: 2px solid #BFDBFE; }
-        .dre-row-lucro td { background: #0F7A5C; color: #fff; font-weight: 700; font-size: 14px; }
+        /* O DRE le a densidade e a tipografia de .tbl. Aqui ficam so os
+           papeis de linha proprios da demonstracao. As linhas do DRE nao
+           tem borda entre si: o que separa sao os subtotais. */
+        .dre-table { --tbl-pad-x: 22px; }
+        .dre-table > tbody > tr { border-bottom: none; }
+        .dre-row-line td { color: var(--text-primary); }
+        .dre-table > tbody > tr.dre-row-line:hover > td { background: var(--tbl-hover); }
+        .dre-row-subtotal td { background: var(--tbl-subtotal-bg); font-weight: 700; border-top: 1px solid var(--tbl-head-border) !important; border-bottom: 1px solid var(--tbl-head-border) !important; }
+        .dre-row-total td { background: #0F172A; color: #fff; font-weight: 700; }
+        .dre-row-result td { background: #EFF6FF; font-weight: 700; border-top: 2px solid #BFDBFE !important; }
+        .dre-row-lucro td { background: var(--tbl-total-bg); color: var(--tbl-total-color); font-weight: 700; }
         .dre-label { color: inherit; }
-        .dre-deduct { color: #64748B; padding-left: 40px !important; font-size: 12px; }
-        .dre-group-label { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #64748B; padding: 12px 24px 4px !important; background: #FAFBFC; border-top: 1px solid #F1F5F9; }
+        .dre-deduct { color: var(--text-secondary); padding-left: 40px !important; font-size: var(--tbl-font-sm); }
+        .dre-group-label { font-weight: 700; font-size: var(--tbl-font-sm); text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); padding: 12px 22px 4px !important; background: var(--tbl-group-bg); border-top: 1px solid var(--tbl-line) !important; }
         .dre-value-col { text-align: right; white-space: nowrap; min-width: 110px; }
         .dre-positive { color: #0F7A5C; font-weight: 600; }
         .dre-negative { color: #B23A3A; font-weight: 600; }
@@ -8077,28 +8072,27 @@
 
         /* ===== DRE COMPARATIVO POR MÊS (RELATÓRIO ANUAL) ===== */
         .dre-comp-wrap { overflow-x: auto; border: 1px solid #E2E8F0; border-radius: 16px; background: #fff; }
-        .dre-comp-table { border-collapse: collapse; font-size: 12px; width: 100%; min-width: 900px; }
-        .dre-comp-table th, .dre-comp-table td { padding: 8px 12px; white-space: nowrap; text-align: right; }
-        .dre-comp-table thead th { position: sticky; top: 0; background: #F8FAFC; color: #64748B; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; border-bottom: 1px solid #E2E8F0; z-index: 2; }
-        .dre-comp-table th.dre-comp-label, .dre-comp-table td.dre-comp-label { text-align: left; position: sticky; left: 0; background: #fff; z-index: 1; min-width: 200px; color: #0F172A; font-weight: 600; }
-        .dre-comp-table thead th.dre-comp-label { background: #F8FAFC; z-index: 3; }
-        .dre-comp-table th.dre-comp-total, .dre-comp-table td.dre-comp-total { position: sticky; right: 0; background: #F1F5F9; z-index: 1; font-weight: 700; box-shadow: -1px 0 0 #E2E8F0; }
-        .dre-comp-table thead th.dre-comp-total { background: #EEF2F7; z-index: 3; }
-        .dre-comp-row-line td { color: #1E293B; }
-        .dre-comp-row-line:hover td { background: #F8FAFC; }
-        .dre-comp-row-line:hover td.dre-comp-label { background: #F8FAFC; }
-        .dre-comp-row-subtotal td { background: #F1F5F9; font-weight: 700; border-top: 1px solid #E2E8F0; }
-        .dre-comp-row-subtotal td.dre-comp-label { background: #F1F5F9; }
-        .dre-comp-row-result td { background: #EFF6FF; font-weight: 700; border-top: 2px solid #BFDBFE; }
-        .dre-comp-row-result td.dre-comp-label { background: #EFF6FF; }
-        .dre-comp-row-lucro td { background: #0F7A5C; color: #fff !important; font-weight: 800; }
-        .dre-comp-row-lucro td.dre-comp-label { background: #0F7A5C; color: #fff !important; }
-        .dre-comp-row-lucro td.dre-comp-total { background: #0C6B50; }
-        .dre-comp-row-lucro td span { color: #fff !important; }
+        /* Matriz do DRE mes a mes: densidade e cabecalho vem de .tbl; aqui
+           ficam a coluna de rotulo congelada, a coluna Total e os papeis. */
+        .dre-comp-table { min-width: 900px; }
+        .dre-comp-table > thead > tr > th,
+        .dre-comp-table > tbody > tr > td { white-space: nowrap; text-align: right; }
+        .dre-comp-table th.dre-comp-label, .dre-comp-table td.dre-comp-label { text-align: left; position: sticky; left: 0; background: var(--tbl-sticky-bg); z-index: 1; min-width: 200px; color: var(--text-primary); font-weight: 600; }
+        .dre-comp-table thead th.dre-comp-label { background: var(--tbl-head-bg); z-index: 3; }
+        .dre-comp-table th.dre-comp-total, .dre-comp-table td.dre-comp-total { position: sticky; right: 0; background: #F7FAFD; z-index: 1; font-weight: 700; box-shadow: -1px 0 0 var(--tbl-head-border); }
+        .dre-comp-table thead th.dre-comp-total { background: #E6ECF3; z-index: 3; }
+        .dre-comp-row-line td { color: var(--text-primary); }
+        .dre-comp-table > tbody > tr.dre-comp-row-line:hover > td,
+        .dre-comp-table > tbody > tr.dre-comp-row-line:hover > td.dre-comp-label { background: var(--tbl-hover); }
+        .dre-comp-row-subtotal td, .dre-comp-row-subtotal td.dre-comp-label { background: var(--tbl-subtotal-bg); font-weight: 700; border-top: 1px solid var(--tbl-head-border); }
+        .dre-comp-row-result td, .dre-comp-row-result td.dre-comp-label { background: #EFF6FF; font-weight: 700; border-top: 2px solid #BFDBFE; }
+        .dre-comp-row-lucro td { background: var(--tbl-total-bg); color: var(--tbl-total-color) !important; font-weight: 700; }
+        .dre-comp-row-lucro td.dre-comp-label { background: var(--tbl-total-bg); color: var(--tbl-total-color) !important; }
+        .dre-comp-row-lucro td.dre-comp-total { background: #17624A; }
+        .dre-comp-row-lucro td span { color: var(--tbl-total-color) !important; }
         .dre-comp-row-lucro td span.dre-comp-neg { color: #FECACA !important; }
         .dre-comp-row-lucro td span.dre-comp-zero { color: rgba(255,255,255,0.55) !important; }
-        .dre-comp-group td { background: #FAFBFC; color: #64748B; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; text-align: left; }
-        .dre-comp-group td.dre-comp-label { background: #FAFBFC; }
+        .dre-comp-table > tbody > tr.dre-comp-group > td, .dre-comp-group td.dre-comp-label { background: var(--tbl-group-bg); color: var(--text-secondary); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; text-align: left; }
         .dre-comp-pos { color: #0F7A5C; }
         .dre-comp-neg { color: #B23A3A; }
         .dre-comp-zero { color: #CBD5E1; }
@@ -8110,13 +8104,11 @@
         .horiz-tab-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid var(--divider); background: white; cursor: pointer; color: #64748B; transition: all 0.15s; }
         .horiz-tab-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: white; }
         .horiz-table-wrap { overflow-x: auto; }
-        .horiz-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
-        .horiz-table th { text-align: right; font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
-        .horiz-table th:first-child { text-align: left; }
-        .horiz-table td { padding: 9px 12px; border-bottom: 1px solid #F1F5F9; color: #1E293B; text-align: right; vertical-align: middle; }
-        .horiz-table td:first-child { text-align: left; font-weight: 600; }
-        .horiz-table tr:last-child td { border-bottom: none; }
-        .horiz-table tr:hover td { background: #FAFBFC; }
+        .horiz-table { min-width: 480px; }
+        .horiz-table > thead > tr > th,
+        .horiz-table > tbody > tr > td { text-align: right; }
+        .horiz-table > thead > tr > th:first-child,
+        .horiz-table > tbody > tr > td:first-child { text-align: left; font-weight: 600; }
         .horiz-delta-good { color: #15803D; font-weight: 600; }
         .horiz-delta-bad  { color: #B23A3A; font-weight: 600; }
         .horiz-delta-flat { color: #94A3B8; }
@@ -8764,7 +8756,7 @@
                 <div class="card-premium overflow-hidden">
                     <div id="entries-mobile-list" class="entries-mobile-list"></div>
                     <div class="table-mobile-scroll custom-scrollbar">
-                        <table id="entries-table" class="w-full text-left">
+                        <table id="entries-table" class="tbl w-full text-left" data-sheet="copy">
                             <caption class="sr-only">Tabela de lançamentos financeiros com filtros, seleção em lote e ações por linha.</caption>
                             <colgroup>
                             <col class="col-check">
@@ -8774,19 +8766,19 @@
                                 <col class="col-value">
                                 <col class="col-actions">
                             </colgroup>
-                            <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
+                            <thead>
                                 <tr>
-                                    <th class="px-4 py-4 text-center">
+                                    <th class="tbl-center">
                                         <input id="entries-select-all" type="checkbox" class="entries-check" onclick="event.stopPropagation(); toggleSelectAllVisible(this.checked)" aria-label="Selecionar todos os lançamentos visíveis">
                                     </th>
-                                    <th id="entries-sort-date" onclick="setSort('date')" onkeydown="handleSortHeaderKeydown('date', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por data" class="px-6 py-4 text-center cursor-pointer hover:text-[#E09132]">Data</th>
-                                    <th class="px-6 py-4">Destino / Detalhes</th>
-                                    <th class="px-6 py-4">Conta / Banco</th>
-                                    <th id="entries-sort-amount" onclick="setSort('amount')" onkeydown="handleSortHeaderKeydown('amount', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por valor" class="px-6 py-4 w-[140px] text-center cursor-pointer hover:text-[#E09132]">Valor</th>
-                                    <th class="px-6 py-4 w-[210px] text-center">Status / Ação</th>
+                                    <th id="entries-sort-date" onclick="setSort('date')" onkeydown="handleSortHeaderKeydown('date', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por data" class="tbl-center cursor-pointer hover:text-[#E09132]">Data</th>
+                                    <th>Destino / Detalhes</th>
+                                    <th>Conta / Banco</th>
+                                    <th id="entries-sort-amount" onclick="setSort('amount')" onkeydown="handleSortHeaderKeydown('amount', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por valor" class="tbl-num w-[140px] cursor-pointer hover:text-[#E09132]">Valor</th>
+                                    <th class="tbl-center w-[210px]">Status / Ação</th>
                                 </tr>
                             </thead>
-                            <tbody id="entries-table-body" class="divide-y divide-slate-50"></tbody>
+                            <tbody id="entries-table-body"></tbody>
                         </table>
                     </div>
                     <div id="entries-pagination" class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 py-3 border-t border-slate-100 text-[11px]">
@@ -8893,11 +8885,11 @@
                         </div>
                     </div>
                     <div class="monthly-daily-scroll overflow-auto table-mobile-scroll custom-scrollbar">
-                        <table id="monthly-daily-view" class="monthly-daily-table w-full text-left" data-sheet="sort filter total copy">
+                        <table id="monthly-daily-view" class="tbl tbl-zebra monthly-daily-table w-full text-left" data-sheet="sort filter total copy">
                             <thead class="border-b sticky top-0 z-10">
-                                <tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th class="text-right">Líquido</th><th class="text-right" data-sheet-agg="last">Acumulado</th></tr>
+                                <tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th class="tbl-num">Líquido</th><th class="tbl-num" data-sheet-agg="last">Acumulado</th></tr>
                             </thead>
-                            <tbody id="monthly-daily-table" class="divide-y divide-slate-50"></tbody>
+                            <tbody id="monthly-daily-table"></tbody>
                         </table>
                     </div>
                 </div>
@@ -9403,18 +9395,18 @@
                     </div>
                     <div class="sales-table-wrap">
                         <div class="table-mobile-scroll custom-scrollbar border border-slate-100 rounded-2xl">
-                            <table id="treasury-sales-summary-table" class="w-full text-left">
-                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase text-slate-400">
+                            <table id="treasury-sales-summary-table" class="tbl tbl-zebra w-full text-left" data-sheet="sort filter copy">
+                                <thead>
                                     <tr>
-                                        <th class="px-4 py-3">Unidade</th>
-                                        <th class="px-4 py-3 text-right">Dinheiro</th>
-                                        <th class="px-4 py-3 text-right">Cartão</th>
-                                        <th class="px-4 py-3 text-right">Vendas</th>
-                                        <th class="px-4 py-3 text-right">Saídas</th>
-                                        <th class="px-4 py-3 text-right">Fechamento</th>
+                                        <th>Unidade</th>
+                                        <th class="tbl-num">Dinheiro</th>
+                                        <th class="tbl-num">Cartão</th>
+                                        <th class="tbl-num">Vendas</th>
+                                        <th class="tbl-num">Saídas</th>
+                                        <th class="tbl-num">Fechamento</th>
                                     </tr>
                                 </thead>
-                                <tbody id="treasury-sales-summary-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                <tbody id="treasury-sales-summary-body" class="bg-white"></tbody>
                             </table>
                         </div>
                     </div>
@@ -9508,18 +9500,18 @@
                     <div id="recon-source-manual" class="recon-source-panel hidden" role="tabpanel" aria-labelledby="recon-src-btn-manual">
                         <p class="field-help mb-3">Preencha linha a linha e clique em <b>Adicionar à prévia</b> quando terminar.</p>
                         <div class="table-mobile-scroll custom-scrollbar">
-                            <table class="w-full text-left" id="recon-sheet-table">
-                                <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
+                            <table class="tbl w-full text-left" id="recon-sheet-table">
+                                <thead>
                                     <tr>
-                                        <th class="px-3 py-3 w-[130px]">Data</th>
-                                        <th class="px-3 py-3">Destino</th>
-                                        <th class="px-3 py-3 w-[130px] text-right">Valor</th>
-                                        <th class="px-3 py-3 w-[72px] text-center">+/−</th>
-                                        <th class="px-3 py-3 w-[220px]">Descrição</th>
-                                        <th class="px-3 py-3 w-[52px] text-center">Ação</th>
+                                        <th class="w-[130px]">Data</th>
+                                        <th>Destino</th>
+                                        <th class="tbl-num w-[130px]">Valor</th>
+                                        <th class="tbl-center w-[72px]">+/−</th>
+                                        <th class="w-[220px]">Descrição</th>
+                                        <th class="tbl-center w-[52px]">Ação</th>
                                     </tr>
                                 </thead>
-                                <tbody id="recon-sheet-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                <tbody id="recon-sheet-body" class="bg-white"></tbody>
                             </table>
                         </div>
                         <div class="flex flex-wrap gap-3 items-center justify-between mt-3">
@@ -9601,18 +9593,18 @@
                                 </div>
                             </div>
                             <div class="table-mobile-scroll custom-scrollbar">
-                                <table id="recon-preview-table" class="w-full text-left">
-                                    <thead class="bg-slate-50 border-b text-[9px] font-black uppercase">
+                                <table id="recon-preview-table" class="tbl w-full text-left">
+                                    <thead>
                                         <tr>
-                                            <th class="px-4 py-3 w-[90px]">Data</th>
-                                            <th class="px-4 py-3 w-[130px] text-right">Valor</th>
-                                            <th class="px-4 py-3 w-[180px]">Descrição</th>
-                                            <th class="px-4 py-3 w-[320px]">Destino</th>
-                                            <th class="px-4 py-3 w-[170px]">Conferência</th>
-                                            <th class="px-4 py-3 w-[70px] text-center">Ação</th>
+                                            <th class="w-[90px]">Data</th>
+                                            <th class="tbl-num w-[130px]">Valor</th>
+                                            <th class="w-[180px]">Descrição</th>
+                                            <th class="w-[320px]">Destino</th>
+                                            <th class="w-[170px]">Conferência</th>
+                                            <th class="tbl-center w-[70px]">Ação</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="recon-preview-body" class="divide-y divide-slate-50 bg-white"></tbody>
+                                    <tbody id="recon-preview-body" class="bg-white"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -11291,8 +11283,8 @@
                 body{font-family:'Manrope',Arial,sans-serif;color:#0f172a;padding:24px;}
                 h1{margin:0 0 4px;font-size:20px;}
                 p{margin:0 0 14px;color:#475569;font-size:12px;}
-                table{width:100%;border-collapse:collapse;font-size:12px;}
-                th,td{border:1px solid #e2e8f0;padding:8px 10px;text-align:left;vertical-align:top;}
+                table{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums;}
+                th,td{border:1px solid #e2e8f0;padding:7px 8px;text-align:left;vertical-align:top;}
                 th{background:#f8fafc;font-weight:600;text-transform:uppercase;font-size:10px;color:#475569;}
                 .r{text-align:right;}
                 .c{text-align:center;}
@@ -11451,7 +11443,7 @@
                 body{font-family:'Manrope',Arial,sans-serif;color:#0f172a;padding:0;margin:0;background:#fff;}
                 h1{margin:0 0 4px;font-size:20px;}
                 p{margin:0 0 14px;color:#475569;font-size:12px;}
-                table{width:100%;border-collapse:collapse;font-size:11px;}
+                table{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums;}
                 th,td{border:1px solid #e2e8f0;padding:7px 8px;text-align:left;vertical-align:top;}
                 th{background:#f8fafc;font-weight:600;text-transform:uppercase;font-size:10px;color:#475569;}
                 .r{text-align:right;}
@@ -13472,7 +13464,7 @@
                     const cellClass = value < 0 ? 'flow-expense-text' : value > 0 ? 'flow-income-text' : 'annual-matrix-zero';
                     return `<td class="${cellClass}">${value ? `<span class="annual-matrix-money">${formatBRL(value)}</span>` : '-'}</td>`;
                 }).join('');
-                return `<tr class="annual-matrix-group-row ${flow === 'entrada' ? 'is-in' : 'is-out'}">
+                return `<tr class="annual-matrix-group-row tbl-row-group ${flow === 'entrada' ? 'is-in' : 'is-out'}">
                     <td><span class="annual-matrix-group-label ${className}">${label}</span></td>
                     ${monthTotalCells}
                     <td class="annual-matrix-total ${valueClass}"><span class="annual-matrix-money">${formatBRL(total)}</span></td>
@@ -13593,7 +13585,7 @@
                         ${launchHintHtml}
                     </div>
                     <div class="annual-matrix-wrap custom-scrollbar">
-                        <table class="annual-matrix-table ${currentLevel === 'launch' ? 'annual-matrix-table-compact' : ''}" data-sheet="sort filter copy freeze">
+                        <table class="tbl tbl-grid tbl-zebra annual-matrix-table ${currentLevel === 'launch' ? 'annual-matrix-table-compact' : ''}" data-sheet="sort filter copy freeze">
                             <thead>
                                 <tr>
                                     <th>${levelLabel}</th>
@@ -14536,22 +14528,23 @@
                 body.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400 text-xs font-bold uppercase">Sem vendas no período selecionado</td></tr>';
             } else {
                 body.innerHTML = `${summary.map(item => `<tr class="table-row">
-                        <td class="px-4 py-3 text-xs font-black text-slate-800">${escapeHtml(item.unit.replace('_', ' '))}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-700">${formatBRL(item.cashIn)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-700">${formatBRL(item.cardIn)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-black flow-income-text">${formatBRL(item.totalIn)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-700">${formatBRL(item.paymentsOut)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-black ${item.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(item.dailyResult)}</td>
+                        <td>${escapeHtml(item.unit.replace('_', ' '))}</td>
+                        <td class="tbl-num">${formatBRL(item.cashIn)}</td>
+                        <td class="tbl-num">${formatBRL(item.cardIn)}</td>
+                        <td class="tbl-num flow-income-text">${formatBRL(item.totalIn)}</td>
+                        <td class="tbl-num">${formatBRL(item.paymentsOut)}</td>
+                        <td class="tbl-num ${item.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(item.dailyResult)}</td>
                     </tr>`).join('')}
-                    <tr class="bg-slate-50">
-                        <td class="px-4 py-3 text-xs font-black text-slate-900">Consolidado</td>
-                        <td class="px-4 py-3 text-right text-xs font-black text-slate-700">${formatBRL(consolidated.cashIn)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-black text-slate-700">${formatBRL(consolidated.cardIn)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-black flow-income-text">${formatBRL(consolidated.totalIn)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-black text-slate-700">${formatBRL(consolidated.paymentsOut)}</td>
-                        <td class="px-4 py-3 text-right text-xs font-black ${consolidated.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(consolidated.dailyResult)}</td>
+                    <tr class="tbl-row-subtotal" data-sheet-total>
+                        <td>Consolidado</td>
+                        <td class="tbl-num">${formatBRL(consolidated.cashIn)}</td>
+                        <td class="tbl-num">${formatBRL(consolidated.cardIn)}</td>
+                        <td class="tbl-num flow-income-text">${formatBRL(consolidated.totalIn)}</td>
+                        <td class="tbl-num">${formatBRL(consolidated.paymentsOut)}</td>
+                        <td class="tbl-num ${consolidated.dailyResult >= 0 ? 'flow-balance-text' : 'flow-expense-text'}">${formatBRL(consolidated.dailyResult)}</td>
                     </tr>`;
             }
+            applyReportSheets(document.getElementById('vendas'));
 
             if (treasurySalesChart) treasurySalesChart.destroy();
             treasurySalesChart = new Chart(chartEl.getContext('2d'), {
@@ -16089,15 +16082,15 @@
                         : 'Possivel transferencia';
 
                 return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
-                    <td class="px-4 py-4 text-center">
+                    <td class="tbl-center">
                         <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lancamento de ${escapeHtml(formatDateBRV2(e.date))}">
                     </td>
-                    <td class="px-6 py-4">
+                    <td>
                         <div class="entry-cell-main center">
                             <span class="entry-date-main">${formatDateBRV2(e.date)}</span>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td>
                         <div class="entry-destination-panel" onmouseenter="applyEntryDestinationFillTo(${i})" onmousemove="applyEntryDestinationFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
                                 <div class="combobox-shell">
@@ -16131,7 +16124,7 @@
                             <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td>
                         <div class="entry-destination-panel" onmouseenter="applyEntryAccountFillTo(${i})" onmousemove="applyEntryAccountFillTo(${i})">
                             <div class="recon-destination-cell entry-cell-main">
                                 <select id="entry-acc-${e.id}" onclick="event.stopPropagation()" onchange="event.stopPropagation(); updateEntryAccountInline('${e.id}', this.value)" class="entry-destination-select opacity-70" aria-label="Conta do lancamento">
@@ -16143,13 +16136,13 @@
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="entry-cell-main center">
+                    <td class="tbl-num">
+                        <div class="entry-cell-main right">
                             <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
                         </div>
                         <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span></span>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="tbl-center">
                         <div class="entry-cell-main center">
                             <div class="entry-actions-wrap">
                                 <button type="button" onclick="event.stopPropagation(); openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lancamento">
@@ -16172,6 +16165,10 @@
             }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
 
             applyCompactEntryAccountLabels(body);
+            // A tabela de lancamentos entra na camada planilha so com "copiar":
+            // ordenar e filtrar ja tem controle proprio aqui (com paginacao),
+            // e duplicar isso brigaria com o filtro da tela.
+            applyReportSheets(document.getElementById('entries'));
             refreshLucideIcons();
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
@@ -16566,6 +16563,8 @@
         //   total  linha de total fixa no rodapé, somando as colunas numéricas
         //   copy   botão que copia a tabela em TSV, pronto para colar no Excel
         //   freeze primeira coluna grudada (matrizes largas de 12 meses)
+        //   grid   grade com linha vertical entre colunas (atalho de .tbl-grid)
+        //   zebra  linhas alternadas (atalho de .tbl-zebra)
         //
         // Linhas de total já existentes na tabela nunca são ordenadas nem
         // filtradas: são marcadas e mantidas no fim.
@@ -16802,8 +16801,12 @@
             const flags = String(table.dataset.sheet || '').split(/\s+/).filter(Boolean);
             const has = (name) => flags.includes(name);
 
-            table.classList.add('sheet');
+            // Toda tabela que entra na camada planilha e, antes disso, uma
+            // tabela padrao do app: se a marcacao esqueceu .tbl, cai aqui.
+            table.classList.add('sheet', 'tbl');
             if (has('freeze')) table.classList.add('sheet-freeze-col');
+            if (has('grid')) table.classList.add('tbl-grid');
+            if (has('zebra')) table.classList.add('tbl-zebra');
 
             // Guarda a ordem original para o terceiro clique no cabeçalho voltar a ela.
             sheetDataRows(table).forEach((row, index) => { row.dataset.sheetIndex = String(index); });
@@ -16869,7 +16872,7 @@
                 shell.appendChild(left);
                 shell.appendChild(right);
                 // A barra fica acima do container que rola, não dentro dele.
-                const scroller = table.closest('.table-mobile-scroll, .annual-matrix-wrap, .monthly-daily-scroll, .dre-table-wrap');
+                const scroller = table.closest('.table-mobile-scroll, .annual-matrix-wrap, .monthly-daily-scroll, .dre-table-wrap, .projection-table-wrap, .horiz-table-wrap');
                 const target = scroller || table;
                 target.parentNode.insertBefore(shell, target);
                 // A barra é irmã da tabela, não ancestral: guardamos a referência
@@ -17133,10 +17136,10 @@
                                 <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${expWidth === 0 ? 'is-zero' : ''}" style="--bar-color: var(--soft-red); width: ${expWidth}%;"></span></span>
                             </div>
                         </td>
-                        <td class="text-right">
+                        <td class="tbl-num">
                             <span class="day-net-pill ${dBal < 0 ? 'day-net-negative' : 'day-net-positive'}"${vdHook({ title: `Saldo de ${dayLabel}`, subtitle: 'Realizados no dia', group: 'fluxo', entries: [...dayBucket.incR, ...dayBucket.expR] })}>${formatBRL(dBal)}</span>
                         </td>
-                        <td class="text-right monthly-cumulative">${formatBRL(cumulative)}</td>
+                        <td class="tbl-num monthly-cumulative">${formatBRL(cumulative)}</td>
                     </tr>`;
                 }
                 if (dailyShowPending && hasPendDay) {
@@ -17157,10 +17160,10 @@
                                 <span class="monthly-flow-mini-track" aria-hidden="true"><span class="monthly-flow-mini-fill ${pExpWidth === 0 ? 'is-zero' : ''}" style="--bar-color: #FCA5A5; width: ${pExpWidth}%;"></span></span>
                             </div>
                         </td>
-                        <td class="text-right">
+                        <td class="tbl-num">
                             <span class="day-net-pill ${pBal < 0 ? 'day-net-negative' : 'day-net-positive'}" style="opacity:0.7"${vdHook({ title: `Saldo pendente de ${dayLabel}`, subtitle: 'Ainda sem baixa', group: 'fluxo', entries: [...dayBucket.incP, ...dayBucket.expP] })}>${formatBRL(pBal)}</span>
                         </td>
-                        <td class="text-right monthly-cumulative" style="color:#94A3B8">—</td>
+                        <td class="tbl-num monthly-cumulative" style="color:#94A3B8">—</td>
                     </tr>`;
                 }
             }
@@ -17394,7 +17397,7 @@
                         <p>DRE simplificada — movimentos realizados em ${monthName}. Passe o mouse no “i” de cada linha para ver o que ela significa. Coluna % = participação na receita bruta.</p>
                     </div>
                 </div>
-                <table class="dre-table" data-sheet="copy">
+                <table class="tbl dre-table" data-sheet="copy">
                     <thead><tr><th style="text-align:left;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Descrição</th><th style="text-align:right;padding:8px 24px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">Valor</th><th style="text-align:right;padding:8px 16px 8px 4px;font-size:11px;color:#94A3B8;font-weight:600;text-transform:uppercase;letter-spacing:.04em;background:#FAFBFC;border-bottom:1px solid #E2E8F0">% Receita</th></tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
@@ -17510,7 +17513,7 @@
                 }).join('');
 
                 return `<div class="horiz-table-wrap custom-scrollbar">
-                    <table class="horiz-table" data-sheet="sort filter copy">
+                    <table class="tbl tbl-zebra horiz-table" data-sheet="sort filter copy">
                         <thead><tr>
                             <th>Categoria</th>
                             <th>Atual</th>
@@ -18029,7 +18032,7 @@
                     <p>Resultado gerencial de cada mês de ${year}, lado a lado. Role a tabela na horizontal para ver todos os meses.</p>
                 </div></div>
                 <div class="dre-comp-wrap custom-scrollbar">
-                    <table class="dre-comp-table" data-sheet="copy freeze">
+                    <table class="tbl tbl-grid dre-comp-table" data-sheet="copy freeze">
                         <thead><tr><th class="dre-comp-label">Descrição</th>${headCells}<th class="dre-comp-total">Total ${year}</th></tr></thead>
                         <tbody>${body}</tbody>
                     </table>
@@ -18739,7 +18742,7 @@
                         </tr>`;
                     }).join('');
                     const tableHtml = `<div class="projection-table-wrap custom-scrollbar">
-                        <table class="projection-table" aria-label="Resumo da projeção por período">
+                        <table class="tbl tbl-zebra projection-table" aria-label="Resumo da projeção por período" data-sheet="copy">
                             <thead>
                                 <tr>
                                     <th>Período</th>
@@ -18751,7 +18754,7 @@
                             </thead>
                             <tbody>
                                 ${rows}
-                                <tr class="projection-table-total">
+                                <tr class="projection-table-total" data-sheet-total>
                                     <td>
                                         <div class="projection-table-date">Total agendado</div>
                                         <div class="projection-table-sub">${days} dias de pendências futuras</div>
@@ -18904,7 +18907,7 @@
                     </tr>`;
                 }).join('');
                 listEl.innerHTML = `<div class="projection-table-wrap custom-scrollbar">
-                    <table class="projection-table" aria-label="Tabela da projeção histórica">
+                    <table class="tbl tbl-zebra projection-table" aria-label="Tabela da projeção histórica" data-sheet="copy">
                         <thead>
                             <tr>
                                 <th>Período</th>
@@ -18915,7 +18918,7 @@
                         </thead>
                         <tbody>
                             ${rows}
-                            <tr class="projection-table-total">
+                            <tr class="projection-table-total" data-sheet-total>
                                 <td>
                                     <div class="projection-table-date">Total projetado</div>
                                     <div class="projection-table-sub">${periodDays} dias com base em ${months} ${months === 1 ? 'mês' : 'meses'}</div>
@@ -18934,6 +18937,9 @@
             updateProjectionControls();
             if (projectionMode === 'history') renderHistoryProjection();
             else renderPendingProjection();
+            // As tabelas da projeção são remontadas por innerHTML aqui, então a
+            // camada planilha precisa ser reaplicada depois de cada render.
+            applyReportSheets(document.getElementById('plan-projection-section'));
             refreshLucideIcons();
         }
 
@@ -21030,9 +21036,9 @@
                     const reviewBadge = getReconReviewBadge(matchMeta, invalidDestination);
                     const destinationInputLabel = getDestinationLabelById(e.destinationId, destinationSource) || getDestinationLabelById(e.destinationId) || '';
                     return `<tr id="recon-row-${i}" class="table-row ${invalidDestination ? 'bg-red-50/60' : ''}">
-                        <td class="px-4 py-3 text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
-                        <td class="px-4 py-3 text-right text-[11px] font-black whitespace-nowrap ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
-                        <td class="px-4 py-3 w-[180px]">
+                        <td class="text-[10px] font-bold text-slate-400 whitespace-nowrap">${formatDateBRV2(e.date)}</td>
+                        <td class="tbl-num text-[11px] font-black whitespace-nowrap ${e.type==='ENTRADA'?'flow-income-text':'flow-expense-text'}">${formatBRL(e.amount)}</td>
+                        <td class="w-[180px]">
                             <textarea
                                 id="recon-desc-${i}"
                                 class="recon-desc-input custom-scrollbar"
@@ -21043,7 +21049,7 @@
                                 rows="2"
                             >${escapeHtml(e.description)}</textarea>
                         </td>
-                        <td class="px-4 py-3 w-[320px]">
+                        <td class="w-[320px]">
                             <div class="recon-destination-cell" onmouseenter="applyReconFillTo(${i})">
                                 <div class="combobox-shell recon-destination-picker">
                                     <input
@@ -21073,11 +21079,11 @@
                                 </button>
                             </div>
                         </td>
-                        <td class="px-4 py-3">
+                        <td>
                             <div id="recon-badge-${i}" class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${reviewBadge.badgeClass}">${reviewBadge.badgeText}</div>
                             <p id="recon-badge-note-${i}" class="mt-2 text-[11px] font-semibold leading-4 text-slate-500">${escapeHtml(reviewBadge.note)}</p>
                         </td>
-                        <td class="px-4 py-3 text-center">
+                        <td class="tbl-center">
                             <button onclick="removeRecon(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2" title="Remover esta linha da prévia" aria-label="Remover esta linha da prévia">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
@@ -21175,7 +21181,7 @@
                     `<option value="${escapeHtml(String(d.id || ''))}" ${String(d.id) === String(row.destinationId) ? 'selected' : ''}>${escapeHtml(getDestinationDisplayLabel(d))}</option>`
                 ).join('');
                 return `<tr class="table-row" id="recon-sheet-row-${i}">
-                    <td class="px-3 py-2 w-[148px]">
+                    <td class="w-[148px]">
                         <div class="flex items-center gap-1.5">
                             <input type="date" id="recon-sh-date-${i}" class="recon-sheet-input font-mono flex-1 min-w-0"
                                 value="${escapeHtml(row.date)}"
@@ -21184,29 +21190,29 @@
                             <button type="button" class="recon-sheet-fill-handle" onmousedown="startReconSheetFill(${i}, event)" title="Arraste para baixo para copiar e incrementar datas">⠿</button>
                         </div>
                     </td>
-                    <td class="px-3 py-2">
+                    <td>
                         <select id="recon-sh-dst-${i}" class="recon-sheet-input"
                             onchange="updateReconSheetCell(${i}, 'destinationId', this.value)"
                             onkeydown="handleReconSheetKeydown(${i}, 'destinationId', event)">${destOptions}</select>
                     </td>
-                    <td class="px-3 py-2 w-[130px]">
+                    <td class="w-[130px]">
                         <input type="text" id="recon-sh-val-${i}" class="recon-sheet-input text-right font-mono ${isEntrada ? 'text-green-700' : 'text-red-700'}" placeholder="0,00"
                             value="${escapeHtml(row.valor)}"
                             oninput="updateReconSheetCell(${i}, 'valor', this.value)"
                             onkeydown="handleReconSheetKeydown(${i}, 'valor', event)">
                     </td>
-                    <td class="px-3 py-2 w-[72px] text-center">
+                    <td class="w-[72px] tbl-center">
                         <button type="button" onclick="toggleReconSheetType(${i})" class="recon-sheet-type-btn ${isEntrada ? 'recon-sheet-type-entrada' : 'recon-sheet-type-saida'}" title="${isEntrada ? 'Entrada — clique para Saída' : 'Saída — clique para Entrada'}">
                             ${isEntrada ? '+' : '−'}
                         </button>
                     </td>
-                    <td class="px-3 py-2 w-[220px]">
+                    <td class="w-[220px]">
                         <input type="text" id="recon-sh-desc-${i}" class="recon-sheet-input" placeholder="Descrição"
                             value="${escapeHtml(row.descricao)}"
                             oninput="updateReconSheetCell(${i}, 'descricao', this.value)"
                             onkeydown="handleReconSheetKeydown(${i}, 'descricao', event)">
                     </td>
-                    <td class="px-3 py-2 w-[52px] text-center">
+                    <td class="w-[52px] tbl-center">
                         <button onclick="removeReconSheetRow(${i})" class="text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all p-2">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
@@ -24202,7 +24208,7 @@
                         <button type="button" onclick="goalsSlideWindow(-1)" class="goals-year-btn" title="Próximos meses" ${canGoForward ? '' : 'disabled'}><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
                     <div class="goals-matrix-scroll">
-                        <table class="goals-matrix-table">
+                        <table class="tbl goals-matrix-table">
                             <thead>
                                 <tr>
                                     <th class="goals-matrix-name-th" rowspan="2">Item</th>
@@ -24343,7 +24349,7 @@
                         </div>
                     </div>
                     <div class="goals-matrix-scroll">
-                        <table class="goals-matrix-table">
+                        <table class="tbl goals-matrix-table">
                             <thead>
                                 <tr>
                                     <th class="goals-matrix-name-th">Mês</th>
@@ -24624,7 +24630,7 @@
                         <button type="button" class="goals-year-btn" onclick="goalsDailySlideWindow(-1)" title="Próximos meses" ${canGoFwd ? '' : 'disabled'}><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
                     </div>
                     <div class="goals-matrix-scroll">
-                        <table class="goals-matrix-table goals-daily-table">
+                        <table class="tbl goals-matrix-table goals-daily-table">
                             <thead>
                                 <tr>
                                     <th class="goals-daily-date-cell goals-detail-thead">Dia</th>
@@ -25273,11 +25279,12 @@
             const previewEl = document.getElementById('excel-mapping-preview');
             if (previewEl && _excelData) {
                 const sample = _excelData.rows.slice(0, 4);
-                const ths = headers.map(h => `<th style="padding:2px 8px;text-align:left;font-size:10px;font-weight:600;background:#f1f5f9;white-space:nowrap">${escapeHtml(h || '—')}</th>`).join('');
+                // Mesma tabela padrao do app, so mais compacta: e uma previa.
+                const ths = headers.map(h => `<th style="white-space:nowrap">${escapeHtml(h || '—')}</th>`).join('');
                 const trs = sample.map(row =>
-                    `<tr>${headers.map((_, i) => `<td style="padding:2px 8px;font-size:10px;border-top:1px solid #e2e8f0;white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${escapeHtml(String(row[i] ?? ''))}</td>`).join('')}</tr>`
+                    `<tr>${headers.map((_, i) => `<td style="white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis">${escapeHtml(String(row[i] ?? ''))}</td>`).join('')}</tr>`
                 ).join('');
-                previewEl.innerHTML = `<p style="font-size:11px;color:#64748b;margin-bottom:6px">${_excelData.rows.length} linha(s) — primeiras linhas da planilha:</p><div style="overflow:auto;border:1px solid #e2e8f0;border-radius:8px"><table style="border-collapse:collapse;width:100%"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
+                previewEl.innerHTML = `<p style="font-size:11px;color:#64748b;margin-bottom:6px">${_excelData.rows.length} linha(s) — primeiras linhas da planilha:</p><div style="overflow:auto;border:1px solid var(--tbl-line);border-radius:8px"><table class="tbl tbl-compact tbl-grid tbl-zebra"><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table></div>`;
             }
             modal.classList.remove('hidden');
             refreshLucideIcons();
