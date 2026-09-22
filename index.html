@@ -11452,12 +11452,15 @@
             return filtered.sort((a,b) => (b.date || '').localeCompare(a.date || '') || (Number(b.amount)||0) - (Number(a.amount)||0));
         }
         function buildPrintableShellV2(title, subtitle, tableHtml) {
+            const isAnnualPdf = String(title || '').toLowerCase().includes('relatório anual');
+            const pageRule = isAnnualPdf ? 'A4 landscape;margin:10mm;' : 'A4 portrait;margin:14mm;';
+            const bodyClass = isAnnualPdf ? 'annual-print' : '';
             return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <style>
-                @page{size:A4 portrait;margin:14mm;}
+                @page{size:${pageRule}}
                 *{box-sizing:border-box;}
                 body{font-family:'Manrope',Arial,sans-serif;color:#0f172a;padding:0;margin:0;background:#fff;}
                 h1{margin:0 0 4px;font-size:20px;}
@@ -11494,11 +11497,38 @@
                 .level-3{padding-left:36px;}
                 .flow-in{color:#1f7a5c;}
                 .flow-out{color:#b23a3a;}
+                .annual-semester-block{margin-bottom:14px;break-inside:avoid;page-break-inside:avoid;}
+                .annual-semester-title{font-size:12px;font-weight:800;color:#334155;margin:0 0 6px;}
+                .annual-semester-block:last-child{margin-bottom:0;}
+
+                /* Relatório anual: leitura confortável em tela e impressão */
+                body.annual-print h1{font-size:25px;letter-spacing:-.02em;}
+                body.annual-print .report{gap:18px;}
+                body.annual-print .report-head{padding-bottom:13px;}
+                body.annual-print .report-subtitle{font-size:13px;}
+                body.annual-print .report-pill{font-size:11px;padding:5px 10px;}
+                body.annual-print .print-section-title{font-size:14px;margin-bottom:10px;letter-spacing:.035em;}
+                body.annual-print .print-kpi{gap:12px;}
+                body.annual-print .print-kpi-card{padding:13px 14px;border-radius:12px;}
+                body.annual-print .print-kpi-label{font-size:11px;line-height:1.25;}
+                body.annual-print .print-kpi-value{font-size:17px;line-height:1.2;}
+                body.annual-print .print-card{padding:14px;}
+                body.annual-print table{font-size:12px;}
+                body.annual-print th{font-size:10.5px;padding:8px 9px;}
+                body.annual-print td{padding:8px 9px;line-height:1.35;}
+                body.annual-print .flow-section-title{font-size:13px;}
+                body.annual-print .flow-section-meta{font-size:12px;}
+                body.annual-print .annual-semester-title{font-size:13px;}
+
                 @media print {
                     body{padding:0;}
                     .print-section{break-inside:avoid-page;page-break-inside:avoid;}
+                    body.annual-print .print-section{break-inside:auto;page-break-inside:auto;}
+                    body.annual-print .print-kpi,
+                    body.annual-print .print-card,
+                    body.annual-print .annual-semester-block{break-inside:avoid-page;page-break-inside:avoid;}
                 }
-            </style></head><body>
+            </style></head><body class="${bodyClass}">
             <div class="report">
                 <div class="report-head">
                     <h1>${escapeHtml(title)}</h1>
@@ -11870,44 +11900,81 @@
                 ref.total += signedValue;
                 ref.count += 1;
             });
+
             const rows = Array.from(grouped.values()).sort((a, b) => {
                 if (a.flow !== b.flow) return a.flow === FLOW_IN ? -1 : 1;
                 return a.category.localeCompare(b.category, 'pt-BR', { sensitivity: 'base' });
             });
+
             const renderMoneyCell = (value) => {
                 const className = value < 0 ? 'flow-out' : value > 0 ? 'flow-in' : 'muted';
                 if (!value) return '<td class="r muted">-</td>';
                 const prefix = value > 0 ? '+ ' : '- ';
                 return `<td class="r ${className}">${prefix}${formatBRL(Math.abs(value))}</td>`;
             };
-            const renderGroupHeader = (flow) => {
-                const flowRows = rows.filter(row => row.flow === flow);
-                if (!flowRows.length) return '';
-                const meta = getFlowMetaV2(flow);
-                const monthTotals = monthNames.map((_, index) => flowRows.reduce((acc, row) => acc + (Number(row.months[index]) || 0), 0));
-                const total = flowRows.reduce((acc, row) => acc + (Number(row.total) || 0), 0);
-                const count = flowRows.reduce((acc, row) => acc + (Number(row.count) || 0), 0);
-                return `<tr>
-                    <td><strong class="${meta.className}">${meta.label}s</strong><span class="muted"> ${count} lanç.</span></td>
-                    ${monthTotals.map(renderMoneyCell).join('')}
-                    ${renderMoneyCell(total)}
-                </tr>`;
+
+            const renderPeriod = (startIndex, endIndex, label) => {
+                const monthIndexes = [];
+                for (let index = startIndex; index <= endIndex; index += 1) monthIndexes.push(index);
+
+                const renderGroupHeader = (flow) => {
+                    const flowRows = rows.filter(row => row.flow === flow);
+                    if (!flowRows.length) return '';
+                    const meta = getFlowMetaV2(flow);
+                    const monthTotals = monthIndexes.map(index =>
+                        flowRows.reduce((acc, row) => acc + (Number(row.months[index]) || 0), 0)
+                    );
+                    const periodTotal = monthTotals.reduce((acc, value) => acc + value, 0);
+                    const count = flowRows.reduce((acc, row) => acc + (Number(row.count) || 0), 0);
+                    return `<tr>
+                        <td><strong class="${meta.className}">${meta.label}s</strong><span class="muted"> ${count} lanç.</span></td>
+                        ${monthTotals.map(renderMoneyCell).join('')}
+                        ${renderMoneyCell(periodTotal)}
+                    </tr>`;
+                };
+
+                const renderRow = (row) => {
+                    const periodValues = monthIndexes.map(index => Number(row.months[index]) || 0);
+                    const periodTotal = periodValues.reduce((acc, value) => acc + value, 0);
+                    return `<tr>
+                        <td>${escapeHtml(row.category)}<span class="muted"> ${row.count} lanç.</span></td>
+                        ${periodValues.map(renderMoneyCell).join('')}
+                        ${renderMoneyCell(periodTotal)}
+                    </tr>`;
+                };
+
+                const monthlyTotals = monthIndexes.map(index =>
+                    rows.reduce((acc, row) => acc + (Number(row.months[index]) || 0), 0)
+                );
+                const grandTotal = monthlyTotals.reduce((acc, value) => acc + value, 0);
+
+                const rowsHtml = [
+                    renderGroupHeader(FLOW_IN),
+                    rows.filter(row => row.flow === FLOW_IN).map(renderRow).join(''),
+                    renderGroupHeader(FLOW_OUT),
+                    rows.filter(row => row.flow === FLOW_OUT).map(renderRow).join(''),
+                    `<tr><td><strong>Total do período</strong></td>${monthlyTotals.map(renderMoneyCell).join('')}${renderMoneyCell(grandTotal)}</tr>`
+                ].join('');
+
+                return `<div class="annual-semester-block">
+                    <p class="annual-semester-title">${escapeHtml(label)}</p>
+                    <div class="print-card"><table>
+                        <thead><tr>
+                            <th>Categoria</th>
+                            ${monthIndexes.map(index => `<th class="r">${monthNames[index]}</th>`).join('')}
+                            <th class="r">Total</th>
+                        </tr></thead>
+                        <tbody>${rowsHtml || '<tr><td colspan="8" class="c muted">Sem dados no período.</td></tr>'}</tbody>
+                    </table></div>
+                </div>`;
             };
-            const renderRow = (row) => `<tr>
-                <td>${escapeHtml(row.category)}<span class="muted"> ${row.count} lanç.</span></td>
-                ${row.months.map(renderMoneyCell).join('')}
-                ${renderMoneyCell(row.total)}
-            </tr>`;
-            const monthlyTotals = monthNames.map((_, index) => rows.reduce((acc, row) => acc + (Number(row.months[index]) || 0), 0));
-            const grandTotal = rows.reduce((acc, row) => acc + (Number(row.total) || 0), 0);
-            const rowsHtml = [
-                renderGroupHeader(FLOW_IN),
-                rows.filter(row => row.flow === FLOW_IN).map(renderRow).join(''),
-                renderGroupHeader(FLOW_OUT),
-                rows.filter(row => row.flow === FLOW_OUT).map(renderRow).join(''),
-                `<tr><td><strong>Total</strong></td>${monthlyTotals.map(renderMoneyCell).join('')}${renderMoneyCell(grandTotal)}</tr>`
+
+            if (!rows.length) return buildEmptyPrintCard('Sem dados no ano.');
+
+            return [
+                renderPeriod(0, 5, '1º semestre · Janeiro a Junho'),
+                renderPeriod(6, 11, '2º semestre · Julho a Dezembro')
             ].join('');
-            return `<div class="print-card"><table><thead><tr><th>Categoria</th>${monthNames.map(name => `<th class="r">${name}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>${rowsHtml || '<tr><td colspan="14" class="c muted">Sem dados no ano.</td></tr>'}</tbody></table></div>`;
         }
         function buildAnnualNonOperationalSummaryExport(entries) {
             const grouped = new Map();
