@@ -11519,6 +11519,14 @@
                 body.annual-print .flow-section-title{font-size:13px;}
                 body.annual-print .flow-section-meta{font-size:12px;}
                 body.annual-print .annual-semester-title{font-size:13px;}
+                body.annual-print td.r{white-space:nowrap;min-width:96px;}
+                body.annual-print .print-kpi-value{white-space:nowrap;}
+                body.annual-print tbody tr:nth-child(even) td{background:#fbfcfe;}
+                body.annual-print .annual-semester-block tbody tr:last-child td{font-weight:700;background:#f1f5f9;}
+                body.annual-print .print-section{padding-top:2px;}
+                body.annual-print .print-section + .print-section{border-top:1px solid #eef2f7;padding-top:14px;}
+                body.annual-print .annual-semester-block .print-card{padding:10px 12px;}
+                body.annual-print .annual-semester-block td:first-child{font-weight:600;min-width:170px;}
 
                 @media print {
                     body{padding:0;}
@@ -12432,7 +12440,7 @@
                     buildExportPillsV2([
                         ['Ano', String(year)],
                         ['Formato', includeComplete ? 'Completo' : 'Resumido'],
-                        ['Leitura', 'Operação separada de aportes']
+                        ['Leitura', 'Operação separada + todas as categorias']
                     ]),
                     buildExportSectionV2('Operação do negócio', buildExportKpiCardsV2([
                         { label: 'Entradas operacionais', value: formatBRL(operationalIn), className: 'flow-in' },
@@ -12451,11 +12459,11 @@
                     ].join('<div style="height:10px"></div>')),
                     buildExportSectionV2('Evolução mensal — operação x caixa', `<div class="print-card"><table><thead><tr>
                         <th>Mês</th>
-                        <th class="r flow-in">Entradas operacionais</th>
-                        <th class="r flow-out">Saídas operacionais</th>
-                        <th class="r">Resultado operacional</th>
+                        <th class="r flow-in">Entradas oper.</th>
+                        <th class="r flow-out">Saídas oper.</th>
+                        <th class="r">Resultado oper.</th>
                         <th class="r">Aportes</th>
-                        <th class="r">Saldo do caixa</th>
+                        <th class="r">Saldo caixa</th>
                     </tr></thead><tbody>
                         ${data.map(row => `<tr>
                             <td>${row.month}</td>
@@ -12474,9 +12482,9 @@
                             <td class="r ${totalCashResult >= 0 ? 'flow-in' : 'flow-out'}"><strong>${totalCashResult >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(totalCashResult))}</strong></td>
                         </tr>
                     </tbody></table></div>`),
-                    buildExportSectionV2('Categorias da operação', operationalEntries.length
-                        ? buildAnnualCategoryMatrixExport(operationalEntries)
-                        : buildEmptyPrintCard('Sem lançamentos operacionais realizados neste ano.')),
+                    buildExportSectionV2('Todas as categorias do ano', realizedYearEntries.length
+                        ? buildAnnualCategoryMatrixExport(realizedYearEntries)
+                        : buildEmptyPrintCard('Sem lançamentos realizados neste ano.')),
                     buildExportSectionV2('Fechamento do caixa', buildExportKpiCardsV2([
                         { label: 'Total que entrou no caixa', value: formatBRL(totalCashIn), className: 'flow-in' },
                         { label: 'Total que saiu do caixa', value: formatBRL(totalCashOut), className: 'flow-out' },
