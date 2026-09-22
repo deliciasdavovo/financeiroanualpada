@@ -11909,6 +11909,63 @@
             ].join('');
             return `<div class="print-card"><table><thead><tr><th>Categoria</th>${monthNames.map(name => `<th class="r">${name}</th>`).join('')}<th class="r">Total</th></tr></thead><tbody>${rowsHtml || '<tr><td colspan="14" class="c muted">Sem dados no ano.</td></tr>'}</tbody></table></div>`;
         }
+        function buildAnnualNonOperationalSummaryExport(entries) {
+            const grouped = new Map();
+            (entries || []).forEach((entry) => {
+                const flow = normalizeFlowType((entry || {}).type);
+                if (flow !== FLOW_IN && flow !== FLOW_OUT) return;
+
+                let key = '';
+                let label = '';
+                if (isCapitalContributionEntry(entry)) {
+                    key = 'APORTE_CAPITAL';
+                    label = 'Aporte de capital';
+                } else if (isRentalIncomeEntry(entry)) {
+                    key = 'OUTRAS_RECEITAS';
+                    label = 'Outras receitas';
+                } else {
+                    const movementType = getMovimentoType(entry) || 'OUTROS';
+                    key = movementType;
+                    label = getMovimentoLabel(movementType) || movementType;
+                }
+
+                if (!grouped.has(key)) {
+                    grouped.set(key, { label, entrada: 0, saida: 0, count: 0 });
+                }
+                const ref = grouped.get(key);
+                const amount = Number((entry || {}).amount) || 0;
+                if (flow === FLOW_IN) ref.entrada += amount;
+                else ref.saida += amount;
+                ref.count += 1;
+            });
+
+            const rows = Array.from(grouped.values())
+                .sort((a, b) => {
+                    if (a.label === 'Aporte de capital') return -1;
+                    if (b.label === 'Aporte de capital') return 1;
+                    return String(a.label || '').localeCompare(String(b.label || ''), 'pt-BR', { sensitivity: 'base' });
+                });
+
+            if (!rows.length) {
+                return buildEmptyPrintCard('Nenhum aporte ou movimento fora da operação neste ano.');
+            }
+
+            const body = rows.map((row) => {
+                const net = row.entrada - row.saida;
+                return `<tr>
+                    <td><strong>${escapeHtml(row.label)}</strong><span class="muted"> ${row.count} lanç.</span></td>
+                    <td class="r flow-in">${row.entrada ? '+ ' + formatBRL(row.entrada) : '-'}</td>
+                    <td class="r flow-out">${row.saida ? '- ' + formatBRL(row.saida) : '-'}</td>
+                    <td class="r ${net >= 0 ? 'flow-in' : 'flow-out'}">${net >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(net))}</td>
+                </tr>`;
+            }).join('');
+
+            return `<div class="print-card"><table>
+                <thead><tr><th>Grupo</th><th class="r flow-in">Entradas</th><th class="r flow-out">Saídas</th><th class="r">Impacto</th></tr></thead>
+                <tbody>${body}</tbody>
+            </table></div>`;
+        }
+
         async function shouldIncludeCompleteExport(reportName) {
             return showAppConfirmDialog({
                 title: reportName,
@@ -12249,32 +12306,116 @@
                 const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
                 const analyticalEntries = getAnalyticalEntries(state.entries);
                 const yearEntries = analyticalEntries.filter(e => e.date && e.date.startsWith(`${year}-`));
-                const data = monthNames.map((_, idx) => {
-                    const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
-                    const mEntries = yearEntries.filter(e => e.date && e.date.startsWith(prefix) && e.status === 'REALIZADO');
-                    const inc = mEntries.filter(e => normalizeFlowType(e.type) === 'ENTRADA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                    const exp = mEntries.filter(e => normalizeFlowType(e.type) === 'SAÍDA').reduce((a, b) => a + (Number(b.amount) || 0), 0);
-                    return { month: monthNames[idx], inc, exp, bal: inc - exp };
-                });
                 const realizedYearEntries = yearEntries.filter(e => e.status === 'REALIZADO');
-                const totalInc = data.reduce((acc, row) => acc + row.inc, 0);
-                const totalExp = data.reduce((acc, row) => acc + row.exp, 0);
+
+                // No PDF anual, a leitura gerencial vem primeiro: operação do negócio
+                // separada de aportes e demais movimentos financeiros/não operacionais.
+                const isAnnualOperationalEntry = (entry) =>
+                    isOperacional(entry) &&
+                    !isCapitalContributionEntry(entry) &&
+                    !isRentalIncomeEntry(entry);
+
+                const operationalEntries = realizedYearEntries.filter(isAnnualOperationalEntry);
+                const nonOperationalEntries = realizedYearEntries.filter(entry => !isAnnualOperationalEntry(entry));
+                const contributionEntries = realizedYearEntries.filter(entry =>
+                    normalizeFlowType((entry || {}).type) === FLOW_IN && isCapitalContributionEntry(entry)
+                );
+
+                const sumFlow = (entries, flow) => (entries || [])
+                    .filter(entry => normalizeFlowType((entry || {}).type) === flow)
+                    .reduce((acc, entry) => acc + (Number((entry || {}).amount) || 0), 0);
+
+                const operationalIn = sumFlow(operationalEntries, FLOW_IN);
+                const operationalOut = sumFlow(operationalEntries, FLOW_OUT);
+                const operationalResult = operationalIn - operationalOut;
+
+                const contributionTotal = contributionEntries.reduce((acc, entry) => acc + (Number((entry || {}).amount) || 0), 0);
+                const nonOperationalIn = sumFlow(nonOperationalEntries, FLOW_IN);
+                const nonOperationalOut = sumFlow(nonOperationalEntries, FLOW_OUT);
+                const otherNonOperationalIn = Math.max(0, nonOperationalIn - contributionTotal);
+                const nonOperationalResult = nonOperationalIn - nonOperationalOut;
+
+                const totalCashIn = sumFlow(realizedYearEntries, FLOW_IN);
+                const totalCashOut = sumFlow(realizedYearEntries, FLOW_OUT);
+                const totalCashResult = totalCashIn - totalCashOut;
+
+                const data = monthNames.map((month, idx) => {
+                    const prefix = `${year}-${String(idx + 1).padStart(2, '0')}`;
+                    const monthEntries = realizedYearEntries.filter(e => e.date && e.date.startsWith(prefix));
+                    const monthOperational = monthEntries.filter(isAnnualOperationalEntry);
+                    const opIn = sumFlow(monthOperational, FLOW_IN);
+                    const opOut = sumFlow(monthOperational, FLOW_OUT);
+                    const aporte = monthEntries
+                        .filter(entry => normalizeFlowType((entry || {}).type) === FLOW_IN && isCapitalContributionEntry(entry))
+                        .reduce((acc, entry) => acc + (Number((entry || {}).amount) || 0), 0);
+                    const cashIn = sumFlow(monthEntries, FLOW_IN);
+                    const cashOut = sumFlow(monthEntries, FLOW_OUT);
+                    return {
+                        month,
+                        opIn,
+                        opOut,
+                        opResult: opIn - opOut,
+                        aporte,
+                        cashResult: cashIn - cashOut
+                    };
+                });
+
                 title = `Relatório Anual (${year})`;
                 tableHtml = [
                     buildExportPillsV2([
                         ['Ano', String(year)],
-                        ['Formato', includeComplete ? 'Completo' : 'Resumido']
+                        ['Formato', includeComplete ? 'Completo' : 'Resumido'],
+                        ['Leitura', 'Operação separada de aportes']
                     ]),
-                    buildExportSectionV2('Resumo', buildExportKpiCardsV2([
-                        { label: 'Entradas', value: formatBRL(totalInc), className: 'flow-in' },
-                        { label: 'Saídas', value: formatBRL(totalExp), className: 'flow-out' },
-                        { label: 'Saldo', value: formatBRL(totalInc - totalExp), className: totalInc - totalExp >= 0 ? 'flow-in' : 'flow-out' },
-                        { label: 'Lançamentos', value: String(yearEntries.length) }
+                    buildExportSectionV2('Operação do negócio', buildExportKpiCardsV2([
+                        { label: 'Entradas operacionais', value: formatBRL(operationalIn), className: 'flow-in' },
+                        { label: 'Saídas operacionais', value: formatBRL(operationalOut), className: 'flow-out' },
+                        { label: 'Resultado operacional', value: formatBRL(operationalResult), className: operationalResult >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Lançamentos operacionais', value: String(operationalEntries.length) }
                     ])),
-                    buildExportSectionV2('Evolução Mensal', `<div class="print-card"><table><thead><tr><th>Mês</th><th class="r flow-in">Entradas (+)</th><th class="r flow-out">Saídas (-)</th><th class="r">Saldo</th></tr></thead><tbody>
-                        ${data.map(r => `<tr><td>${r.month}</td><td class="r flow-in">+ ${formatBRL(r.inc)}</td><td class="r flow-out">- ${formatBRL(r.exp)}</td><td class="r ${r.bal >= 0 ? 'flow-in' : 'flow-out'}">${r.bal >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(r.bal))}</td></tr>`).join('')}
+                    buildExportSectionV2('Aportes e movimentos fora da operação', [
+                        buildExportKpiCardsV2([
+                            { label: 'Aportes de capital', value: formatBRL(contributionTotal), className: contributionTotal ? 'flow-in' : '' },
+                            { label: 'Outras entradas', value: formatBRL(otherNonOperationalIn), className: otherNonOperationalIn ? 'flow-in' : '' },
+                            { label: 'Saídas não operacionais', value: formatBRL(nonOperationalOut), className: nonOperationalOut ? 'flow-out' : '' },
+                            { label: 'Impacto fora da operação', value: formatBRL(nonOperationalResult), className: nonOperationalResult >= 0 ? 'flow-in' : 'flow-out' }
+                        ]),
+                        buildAnnualNonOperationalSummaryExport(nonOperationalEntries)
+                    ].join('<div style="height:10px"></div>')),
+                    buildExportSectionV2('Evolução mensal — operação x caixa', `<div class="print-card"><table><thead><tr>
+                        <th>Mês</th>
+                        <th class="r flow-in">Entradas operacionais</th>
+                        <th class="r flow-out">Saídas operacionais</th>
+                        <th class="r">Resultado operacional</th>
+                        <th class="r">Aportes</th>
+                        <th class="r">Saldo do caixa</th>
+                    </tr></thead><tbody>
+                        ${data.map(row => `<tr>
+                            <td>${row.month}</td>
+                            <td class="r flow-in">${row.opIn ? '+ ' + formatBRL(row.opIn) : '-'}</td>
+                            <td class="r flow-out">${row.opOut ? '- ' + formatBRL(row.opOut) : '-'}</td>
+                            <td class="r ${row.opResult >= 0 ? 'flow-in' : 'flow-out'}">${row.opResult >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(row.opResult))}</td>
+                            <td class="r ${row.aporte ? 'flow-in' : 'muted'}">${row.aporte ? '+ ' + formatBRL(row.aporte) : '-'}</td>
+                            <td class="r ${row.cashResult >= 0 ? 'flow-in' : 'flow-out'}">${row.cashResult >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(row.cashResult))}</td>
+                        </tr>`).join('')}
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="r flow-in"><strong>+ ${formatBRL(operationalIn)}</strong></td>
+                            <td class="r flow-out"><strong>- ${formatBRL(operationalOut)}</strong></td>
+                            <td class="r ${operationalResult >= 0 ? 'flow-in' : 'flow-out'}"><strong>${operationalResult >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(operationalResult))}</strong></td>
+                            <td class="r flow-in"><strong>${contributionTotal ? '+ ' + formatBRL(contributionTotal) : '-'}</strong></td>
+                            <td class="r ${totalCashResult >= 0 ? 'flow-in' : 'flow-out'}"><strong>${totalCashResult >= 0 ? '+ ' : '- '}${formatBRL(Math.abs(totalCashResult))}</strong></td>
+                        </tr>
                     </tbody></table></div>`),
-                    buildExportSectionV2('Detalhamento por Mês e Categoria', realizedYearEntries.length ? buildAnnualCategoryMatrixExport(realizedYearEntries) : buildEmptyPrintCard('Sem lançamentos realizados neste ano.')),
+                    buildExportSectionV2('Categorias da operação', operationalEntries.length
+                        ? buildAnnualCategoryMatrixExport(operationalEntries)
+                        : buildEmptyPrintCard('Sem lançamentos operacionais realizados neste ano.')),
+                    buildExportSectionV2('Fechamento do caixa', buildExportKpiCardsV2([
+                        { label: 'Total que entrou no caixa', value: formatBRL(totalCashIn), className: 'flow-in' },
+                        { label: 'Total que saiu do caixa', value: formatBRL(totalCashOut), className: 'flow-out' },
+                        { label: 'Variação líquida do caixa', value: formatBRL(totalCashResult), className: totalCashResult >= 0 ? 'flow-in' : 'flow-out' },
+                        { label: 'Lançamentos realizados', value: String(realizedYearEntries.length) }
+                    ])),
                     includeComplete ? buildExportSectionV2('Relatório Completo - Lançamentos', yearEntries.length ? buildFlowGroupedLaunchTables(yearEntries) : buildEmptyPrintCard('Sem lançamentos detalhados neste ano.')) : ''
                 ].join('');
             } else {
