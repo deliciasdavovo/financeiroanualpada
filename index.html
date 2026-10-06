@@ -8691,6 +8691,56 @@
  .header-entries-search .entries-search-box{position:absolute;right:8px;top:60px;z-index:50;width:min(340px,calc(100vw - 30px));background:#fff;padding:5px;border:1px solid #d9e6dc;border-radius:10px;box-shadow:0 6px 16px #1f7a5c20}
  .header-entries-search .entries-search-icon{height:34px;min-width:34px}
 }
+
+/* Segunda sidebar: sempre ao lado da navegação, do topo ao fim da tela. */
+@media(min-width:901px){
+ #entries.tab-content.active>.entries-analysis{
+  position:fixed!important;
+  top:0!important;
+  bottom:0!important;
+  right:0!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  width:clamp(320px,25vw,390px)!important;
+  border:0!important;
+  border-left:1px solid var(--divider,#d7e5da)!important;
+  border-radius:0!important;
+  z-index:35!important;
+  box-shadow:-5px 0 20px rgba(20,70,40,.055)!important;
+ }
+ main:has(#entries.active) #main-scroll{padding-right:calc(clamp(320px,25vw,390px) + 20px)!important}
+ #entries.tab-content.active>.entries-analysis .daily-scroll{flex:1 1 auto;min-height:0;overflow:auto}
+ #entries.tab-content.active>.entries-analysis h3{min-height:64px;display:flex;align-items:center;padding:18px!important}
+}
+#entries .entries-analysis-modes{border-bottom:1px solid #dae5dc;padding:12px 14px}
+#entries .entries-analysis .daily-totals{grid-template-columns:1fr 1fr;gap:8px;padding:12px!important;background:#f6faf5}
+#entries .entries-analysis .daily-totals>div{background:#fff;border:1px solid #dfe9e1;border-radius:9px;padding:11px;min-width:0}
+#entries .entries-analysis .daily-totals small{display:block;color:#677d6c;font-size:10px;font-weight:700}
+#entries .entries-analysis .daily-totals b{font-variant-numeric:tabular-nums;font-size:14px;white-space:normal;overflow-wrap:anywhere;color:#253d2f}
+#entries .entries-analysis .daily-totals .entries-total-planned{border-left:3px solid #7c9583;background:#f0f5ef}
+#entries .entries-analysis .daily-totals .entries-total-realized{border-left:3px solid var(--primary-green,#1f7a5c);background:#e6f3e8}
+#entries .entries-analysis .daily-totals .entries-total-realized b{color:var(--primary-green,#1f7a5c)}
+#entries .entries-analysis .daily-totals .entries-total-pending{border-left:3px solid #d9aa62}
+#entries .entries-analysis-section-label{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;font-weight:800;font-size:11px;background:#eef4ed;color:#476550}
+#entries .entries-analysis-section-label span{font-size:9px;font-weight:500;color:#829286}
+#entries .entries-analysis-group{padding:0!important;border-bottom:1px solid #dde8df;background:white}
+#entries .entries-analysis-row{display:flex!important;align-items:center;justify-content:space-between;gap:9px;text-align:left!important;border:0!important;padding:13px 14px 8px!important;background:#fff!important}
+#entries .entries-analysis-row .entries-analysis-row-title{font-size:12px;font-weight:800;color:#293f30}
+#entries .entries-analysis-row .entries-analysis-row-title small{font-size:10px;margin-top:4px}
+#entries .entries-analysis-progress{text-align:right;white-space:nowrap}
+#entries .entries-analysis-progress b{display:block;font-size:11px;font-weight:800;color:#1f7a5c}
+#entries .entries-analysis-progress small{display:block;font-size:9px;color:#839386}
+#entries .entries-analysis-comparison{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 12px 10px}
+#entries .entries-compare-block{min-width:0;background:#f1f5f0;border:1px solid #e0e9df;border-radius:9px;padding:10px 9px}
+#entries .entries-compare-block.is-real{background:#e7f4e9;border-color:#cce4d1}
+#entries .entries-compare-heading{display:block;font-size:10px;font-weight:800;color:#687f6f}
+#entries .entries-compare-block.is-real .entries-compare-heading{color:#1f7a5c}
+#entries .entries-compare-block strong{display:block;font-size:13px;font-variant-numeric:tabular-nums;line-height:1.6;color:#304537;white-space:normal;overflow-wrap:anywhere}
+#entries .entries-compare-block.is-real strong{color:var(--primary-green,#1f7a5c)}
+#entries .entries-compare-block small{font-size:9px;color:#728779;display:block;line-height:1.5}
+#entries .entries-analysis-pending{padding:0 13px 12px;font-size:10px;color:#7b8266}
+#entries .entries-analysis-details{margin:0 9px 10px;border-radius:8px}
+@media(max-width:900px){#entries .entries-analysis .daily-totals b{font-size:13px}}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -8999,7 +9049,7 @@
 </nav>
 <div id="daily-totals" class="daily-totals"></div>
 <div id="entries-analysis-content" class="daily-scroll"></div>
-<p>Previsto = total cadastrado (realizado + pendente). Realizado = lançamentos confirmados. Diferença = saldo ainda pendente, não variação de preço.</p>
+<p>Previsto inclui os lançamentos cadastrados. Realizado considera apenas os confirmados. Pendente mostra o que falta realizar.</p>
 </aside>
             </div>
 
@@ -16603,9 +16653,18 @@ function entriesAnalysisDetails(list){
  }).join('')+'</div>';
 }
 function entriesAnalysisGroupedRow(key,title,list,secondary){
- const t=entriesAnalysisTotals(list);
- const active=expandedEntriesAnalysisKey===key;
- return '<div class="entries-analysis-group"><button type="button" class="entries-analysis-row'+(active?' is-open':'')+'" onclick="toggleEntriesAnalysisRow('+JSON.stringify(key).replace(/"/g,'&quot;')+')"><span class="entries-analysis-row-title">'+(active?'▾ ':'▸ ')+escapeHtml(title)+'<small>'+escapeHtml(secondary||String(t.count)+' lançamento(s)')+'</small></span><span>'+formatBRL(t.planned)+'</span><span>'+formatBRL(t.real)+'</span><span>'+formatBRL(t.remaining)+'</span></button>'+(active?entriesAnalysisDetails(list):'')+'</div>';
+ const t=entriesAnalysisTotals(list),active=expandedEntriesAnalysisKey===key;
+ const remainingIn=t.plannedIn-t.realIn,remainingOut=t.plannedOut-t.realOut;
+ const safeKey=JSON.stringify(key).replace(/"/g,'&quot;');
+ return '<div class="entries-analysis-group">'+
+ '<button type="button" class="entries-analysis-row'+(active?' is-open':'')+'" aria-expanded="'+active+'" onclick="toggleEntriesAnalysisRow('+safeKey+')">'+
+ '<span class="entries-analysis-row-title">'+(active?'▾ ':'▸ ')+escapeHtml(title)+'<small>'+escapeHtml(secondary||String(t.count)+' lançamento(s)')+'</small></span>'+
+ '<span class="entries-analysis-progress"><b>'+formatBRL(t.realOut+t.realIn)+'</b><small>de '+formatBRL(t.plannedIn+t.plannedOut)+'</small></span></button>'+
+ '<div class="entries-analysis-comparison">'+
+ '<div class="entries-compare-block"><span class="entries-compare-heading">Previsto</span><strong>'+formatBRL(t.planned)+'</strong><small>Entradas '+formatBRL(t.plannedIn)+' · Saídas '+formatBRL(t.plannedOut)+'</small></div>'+
+ '<div class="entries-compare-block is-real"><span class="entries-compare-heading">Realizado</span><strong>'+formatBRL(t.real)+'</strong><small>Entradas '+formatBRL(t.realIn)+' · Saídas '+formatBRL(t.realOut)+'</small></div>'+
+ '</div><div class="entries-analysis-pending"><span>Pendente: entradas '+formatBRL(remainingIn)+' · saídas '+formatBRL(remainingOut)+'</span></div>'+
+ (active?entriesAnalysisDetails(list):'')+'</div>';
 }
 function renderEntriesMonthlyWorkspace(){
  const month=getEntriesCurrentMonthIso(),year=Number(month.slice(0,4)),mn=Number(month.slice(5));
@@ -16631,7 +16690,7 @@ function renderEntriesMonthlyWorkspace(){
   btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));
  });
  const totals=document.getElementById('daily-totals');
- if(totals)totals.innerHTML='<div>Saldo previsto<b>'+formatBRL(summary.planned)+'</b></div><div>Saldo realizado<b>'+formatBRL(summary.real)+'</b></div><div>Saldo pendente<b>'+formatBRL(summary.remaining)+'</b></div><div>Lançamentos pendentes<b>'+summary.pending+'</b></div>';
+ if(totals)totals.innerHTML='<div class="entries-total-planned"><small>Saldo previsto</small><b>'+formatBRL(summary.planned)+'</b></div><div class="entries-total-realized"><small>Saldo realizado</small><b>'+formatBRL(summary.real)+'</b></div><div class="entries-total-pending"><small>Saldo pendente</small><b>'+formatBRL(summary.remaining)+'</b></div><div><small>Registros pendentes</small><b>'+summary.pending+'</b></div>';
  const target=document.getElementById('entries-analysis-content');
  if(!target)return;
  let groups=[];
@@ -16652,7 +16711,7 @@ function renderEntriesMonthlyWorkspace(){
    {key:'month-out',title:'Saídas',entries:monthEntries.filter(e=>normalizeFlowType(e.type)==='SAÍDA')}
   ];
  }
- const heading='<div class="entries-analysis-columns"><span>'+(entriesAnalysisMode==='day'?'Dia':entriesAnalysisMode==='category'?'Categoria':'Fluxo')+'</span><span>Previsto</span><span>Realizado</span><span>Diferença</span></div>';
+ const heading='<div class="entries-analysis-section-label">'+(entriesAnalysisMode==='day'?'Dias do mês':entriesAnalysisMode==='category'?'Por categoria':'Resumo do mês')+' <span>Toque para detalhar</span></div>';
  target.innerHTML=heading+groups.map(g=>entriesAnalysisGroupedRow(g.key,g.title,g.entries,g.subtitle)).join('')+(groups.length?'':'<div class="entries-analysis-none">Nenhum lançamento neste mês.</div>');
 }
         function renderEntries() {
