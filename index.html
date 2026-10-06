@@ -8563,6 +8563,30 @@
 #entries .entry-value-main{display:inline-block;padding:4px;min-width:62px}
 #entries .entry-destination-desc{display:inline-block;padding:3px;min-width:85px}
 @media(max-width:767px){#entries .entries-amount-fill{display:none}}
+
+/* Painel analítico: mesmas cores, fonte e linguagem visual do financeiro */
+#entries .entries-analysis{border-left:1px solid #dce7dc}
+#entries .entries-analysis-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:10px 9px 7px;background:#fff}
+#entries .entries-analysis-modes button{font-size:10px;font-weight:700;border:1px solid #dce7dc;border-radius:7px;padding:9px 3px;color:#496c57;background:#f8faf6}
+#entries .entries-analysis-modes button.active{background:#1f7a5c;border-color:#1f7a5c;color:#fff}
+#entries .entries-analysis .daily-scroll{max-height:630px;overflow:auto}
+#entries .entries-analysis-columns,#entries .entries-analysis-row{display:grid;grid-template-columns:minmax(90px,1.3fr) repeat(3,minmax(68px,1fr));gap:5px;align-items:center}
+#entries .entries-analysis-columns{position:sticky;top:0;z-index:3;background:#edf3ea;border-top:1px solid #dce6dc;border-bottom:1px solid #dce6dc;font-size:10px;font-weight:800;color:#54705c;padding:11px 9px}
+#entries .entries-analysis-columns span:not(:first-child){text-align:right}
+#entries .entries-analysis-row{width:100%;border:0;border-bottom:1px solid #e8efe7;background:white;text-align:right;padding:11px 9px;font-size:10px;font-weight:700;color:#385541;cursor:pointer}
+#entries .entries-analysis-group:nth-child(odd)>.entries-analysis-row{background:#fbfcf9}
+#entries .entries-analysis-row:hover,#entries .entries-analysis-row.is-open{background:#eef7ed}
+#entries .entries-analysis-row-title{text-align:left;min-width:0;overflow-wrap:anywhere;font-size:11px}
+#entries .entries-analysis-row-title small{display:block;color:#86968a;font-size:9px;font-weight:500;margin-top:2px}
+#entries .entries-analysis-details{padding:5px 10px 8px 13px;background:#f7faf5;border-bottom:1px solid #dae8dd}
+#entries .entries-analysis-entry{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #e1eae0;padding:8px 1px;font-size:10px;color:#3b5747}
+#entries .entries-analysis-entry:last-child{border-bottom:0}
+#entries .entries-analysis-entry strong{display:block;font-weight:700;overflow-wrap:anywhere}
+#entries .entries-analysis-entry small{display:block;font-size:9px;color:#758a7b;margin-top:3px}
+#entries .entries-analysis-entry-value{white-space:nowrap;text-align:right;font-weight:800}
+#entries .entries-analysis-entry-value button{color:#1f7a5c;padding:3px 5px;border:1px solid #d5e4d7;border-radius:5px}
+#entries .entries-analysis-none{text-align:center;font-size:11px;color:#829083;padding:17px}
+@media(max-width:1350px){#entries .entries-analysis-columns,#entries .entries-analysis-row{grid-template-columns:minmax(85px,1.3fr) repeat(3,minmax(59px,1fr));font-size:9px}}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -8875,10 +8899,16 @@
                         </div>
                     </div>
                 </div>
-<aside class="entries-daily"><h3>Previsão por dia · <span id="daily-period"></span></h3>
+<aside class="entries-daily entries-analysis">
+<h3>Análise financeira · <span id="daily-period"></span></h3>
+<nav class="entries-analysis-modes" aria-label="Visão da previsão">
+<button type="button" data-analysis-mode="day" onclick="setEntriesAnalysisMode('day')">Por dia</button>
+<button type="button" data-analysis-mode="category" onclick="setEntriesAnalysisMode('category')">Categorias</button>
+<button type="button" data-analysis-mode="month" onclick="setEntriesAnalysisMode('month')">Resumo mensal</button>
+</nav>
 <div id="daily-totals" class="daily-totals"></div>
-<div class="daily-scroll"><table><thead><tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th>Saldo</th></tr></thead><tbody id="daily-rows"></tbody></table></div>
-<p>Inclui valores realizados e pendentes. Clique em um dia para filtrar a planilha.</p>
+<div id="entries-analysis-content" class="daily-scroll"></div>
+<p>Previsto = total cadastrado (realizado + pendente). Realizado = lançamentos confirmados. Diferença = saldo ainda pendente, não variação de preço.</p>
 </aside></div>
             </div>
 
@@ -16416,6 +16446,48 @@ function entriesSelectDay(day){
  document.getElementById('filter-date-end').value=d;
  entriesPage=1;renderEntries();
 }
+
+let entriesAnalysisMode='day';
+let expandedEntriesAnalysisKey='';
+function setEntriesAnalysisMode(mode){
+ if(!['day','category','month'].includes(mode))return;
+ entriesAnalysisMode=mode;
+ expandedEntriesAnalysisKey='';
+ renderEntriesMonthlyWorkspace();
+}
+function toggleEntriesAnalysisRow(key){
+ expandedEntriesAnalysisKey=expandedEntriesAnalysisKey===key?'':key;
+ renderEntriesMonthlyWorkspace();
+}
+function entriesAnalysisTotals(list){
+ const t={plannedIn:0,plannedOut:0,realIn:0,realOut:0,pending:0,count:0};
+ (list||[]).forEach(e=>{
+  const v=Number(e.amount)||0;
+  const income=normalizeFlowType(e.type)==='ENTRADA';
+  if(income)t.plannedIn+=v;else t.plannedOut+=v;
+  if(e.status==='REALIZADO'){if(income)t.realIn+=v;else t.realOut+=v;}
+  else t.pending++;
+  t.count++;
+ });
+ t.planned=t.plannedIn-t.plannedOut;
+ t.real=t.realIn-t.realOut;
+ t.remaining=t.planned-t.real;
+ return t;
+}
+function entriesAnalysisDetails(list){
+ if(!list.length)return '<div class="entries-analysis-none">Nenhum lançamento neste grupo.</div>';
+ return '<div class="entries-analysis-details">'+[...list].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(e=>{
+  const meta=getExportHierarchyNames(e);
+  const name=String(e.description||'').trim()||meta.destination;
+  const type=normalizeFlowType(e.type)==='ENTRADA'?'+':'−';
+  return '<div class="entries-analysis-entry"><span><strong>'+escapeHtml(name)+'</strong><small>'+escapeHtml(meta.category)+' · '+escapeHtml(meta.destination)+' · '+escapeHtml(e.status==='REALIZADO'?'Realizado':'Pendente')+'</small></span><span class="entries-analysis-entry-value">'+type+formatBRL(Number(e.amount)||0)+' <button type="button" title="Editar lançamento" onclick="openEntryModal('+JSON.stringify(String(e.id)).replace(/"/g,'&quot;')+')">✎</button></span></div>';
+ }).join('')+'</div>';
+}
+function entriesAnalysisGroupedRow(key,title,list,secondary){
+ const t=entriesAnalysisTotals(list);
+ const active=expandedEntriesAnalysisKey===key;
+ return '<div class="entries-analysis-group"><button type="button" class="entries-analysis-row'+(active?' is-open':'')+'" onclick="toggleEntriesAnalysisRow('+JSON.stringify(key).replace(/"/g,'&quot;')+')"><span class="entries-analysis-row-title">'+(active?'▾ ':'▸ ')+escapeHtml(title)+'<small>'+escapeHtml(secondary||String(t.count)+' lançamento(s)')+'</small></span><span>'+formatBRL(t.planned)+'</span><span>'+formatBRL(t.real)+'</span><span>'+formatBRL(t.remaining)+'</span></button>'+(active?entriesAnalysisDetails(list):'')+'</div>';
+}
 function renderEntriesMonthlyWorkspace(){
  const month=getEntriesCurrentMonthIso(),year=Number(month.slice(0,4)),mn=Number(month.slice(5));
  const y=document.getElementById('entries-workspace-year');
@@ -16423,26 +16495,40 @@ function renderEntriesMonthlyWorkspace(){
  const tabs=document.getElementById('entries-workspace-tabs');
  if(tabs)tabs.innerHTML=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'].map((name,i)=>{
   const key=year+'-'+String(i+1).padStart(2,'0');
-  return '<button role="tab" aria-selected="'+(key===month)+'" class="'+(key===month?'active':'')+'" onclick="setEntriesMonthFilter(&quot;'+key+'&quot;)">'+name+'</button>';
+  return '<button type="button" role="tab" aria-selected="'+(key===month)+'" class="'+(key===month?'active':'')+'" onclick="setEntriesMonthFilter(&quot;'+key+'&quot;)">'+name+'</button>';
  }).join('');
- const days=new Date(year,mn,0).getDate();
- const values=Array.from({length:days},()=>({inc:0,out:0,pending:0}));
- (state.entries||[]).forEach(e=>{
-  if(String(e.date||'').slice(0,7)!==month)return;
-  const day=Number(String(e.date).slice(8,10));
-  if(day<1||day>days)return;
-  const v=Number(e.amount)||0;
-  if(normalizeFlowType(e.type)==='ENTRADA')values[day-1].inc+=v;
-  if(normalizeFlowType(e.type)==='SAÍDA')values[day-1].out+=v;
-  if(e.status==='PENDENTE')values[day-1].pending++;
- });
+ const monthEntries=(state.entries||[]).filter(e=>String(e.date||'').slice(0,7)===month);
+ const summary=entriesAnalysisTotals(monthEntries);
  const period=document.getElementById('daily-period');
  if(period)period.textContent=new Date(year,mn-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
- const inc=values.reduce((n,d)=>n+d.inc,0),out=values.reduce((n,d)=>n+d.out,0),pending=values.reduce((n,d)=>n+d.pending,0);
+ document.querySelectorAll('.entries-analysis-modes button').forEach(btn=>{
+  const selected=btn.dataset.analysisMode===entriesAnalysisMode;
+  btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));
+ });
  const totals=document.getElementById('daily-totals');
- if(totals)totals.innerHTML='<div>Entradas previstas<b>'+formatBRL(inc)+'</b></div><div>Saídas previstas<b>'+formatBRL(out)+'</b></div><div>Saldo previsto<b>'+formatBRL(inc-out)+'</b></div><div>Pendentes<b>'+pending+'</b></div>';
- const rows=document.getElementById('daily-rows');
- if(rows)rows.innerHTML=values.map((d,i)=>'<tr onclick="entriesSelectDay('+(i+1)+')"><td><strong>'+String(i+1).padStart(2,'0')+'</strong>'+(d.pending?' • '+d.pending+' pend.':'')+'</td><td>'+(d.inc?formatBRL(d.inc):'—')+'</td><td>'+(d.out?formatBRL(d.out):'—')+'</td><td>'+formatBRL(d.inc-d.out)+'</td></tr>').join('');
+ if(totals)totals.innerHTML='<div>Saldo previsto<b>'+formatBRL(summary.planned)+'</b></div><div>Saldo realizado<b>'+formatBRL(summary.real)+'</b></div><div>Saldo pendente<b>'+formatBRL(summary.remaining)+'</b></div><div>Lançamentos pendentes<b>'+summary.pending+'</b></div>';
+ const target=document.getElementById('entries-analysis-content');
+ if(!target)return;
+ let groups=[];
+ if(entriesAnalysisMode==='day'){
+  const days=new Date(year,mn,0).getDate();
+  groups=Array.from({length:days},(_,i)=>({key:'day-'+String(i+1),title:String(i+1).padStart(2,'0'),entries:monthEntries.filter(e=>Number(String(e.date||'').slice(8,10))===i+1),subtitle:'Clique para ver os lançamentos'}));
+ }else if(entriesAnalysisMode==='category'){
+  const map=new Map();
+  monthEntries.forEach(e=>{
+   const name=getExportHierarchyNames(e).category;
+   if(!map.has(name))map.set(name,[]);
+   map.get(name).push(e);
+  });
+  groups=[...map].sort((a,b)=>a[0].localeCompare(b[0],'pt-BR')).map(([name,entries])=>({key:'category-'+name,title:name,entries}));
+ }else{
+  groups=[
+   {key:'month-in',title:'Entradas',entries:monthEntries.filter(e=>normalizeFlowType(e.type)==='ENTRADA')},
+   {key:'month-out',title:'Saídas',entries:monthEntries.filter(e=>normalizeFlowType(e.type)==='SAÍDA')}
+  ];
+ }
+ const heading='<div class="entries-analysis-columns"><span>'+(entriesAnalysisMode==='day'?'Dia':entriesAnalysisMode==='category'?'Categoria':'Fluxo')+'</span><span>Previsto</span><span>Realizado</span><span>Diferença</span></div>';
+ target.innerHTML=heading+groups.map(g=>entriesAnalysisGroupedRow(g.key,g.title,g.entries,g.subtitle)).join('')+(groups.length?'':'<div class="entries-analysis-none">Nenhum lançamento neste mês.</div>');
 }
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
