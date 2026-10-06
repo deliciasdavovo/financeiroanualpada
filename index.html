@@ -8525,6 +8525,37 @@
 #entries .entries-date-block{display:none}
 @media(max-width:1180px){.entries-panels{grid-template-columns:1fr}.entries-daily .daily-scroll{max-height:360px}}
 @media(max-width:700px){.entries-month-tabs{display:flex;overflow-x:auto}.entries-month-tabs button{flex:0 0 56px}}
+
+/* Visual integrado: guias mensais + tabela no estilo de planilha */
+#entries .entries-panels{grid-template-columns:minmax(0,1.7fr) minmax(275px,.8fr);column-gap:0;row-gap:0;border:1px solid #dae4d8;border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 10px 28px rgba(30,65,43,.055)}
+#entries .entries-panels>.entries-month-nav{grid-column:1/-1;margin:0;padding:16px 18px 0;border:0;border-radius:0;border-bottom:1px solid #dae4d8;background:linear-gradient(115deg,#e8f3e9,#f2f4e9);min-width:0}
+#entries .entries-month-head{margin-bottom:13px;font-size:13px;letter-spacing:.015em}
+#entries .entries-month-tabs{display:flex;gap:5px;overflow-x:auto;align-items:flex-end;scrollbar-width:thin}
+#entries .entries-month-tabs button{flex:1 0 auto;min-width:53px;border:1px solid #d7e5d8;border-bottom:0;border-radius:12px 12px 0 0;padding:12px 8px 13px;background:rgba(255,255,255,.48);color:#61766a;position:relative;top:1px;white-space:nowrap;transition:background .15s}
+#entries .entries-month-tabs button.active{background:#fff;color:#1b704f;box-shadow:none;border-color:#bcd5c2;font-weight:900;z-index:2}
+#entries .entries-sheet-card{border:0;border-radius:0;box-shadow:none;overflow:hidden}
+#entries .entries-sheet-card .table-mobile-scroll{overflow:auto;max-height:660px}
+#entries .entries-sheet-card #entries-table{border-collapse:separate;border-spacing:0;font-size:11px}
+#entries .entries-sheet-card #entries-table thead th{position:sticky;top:0;z-index:5;background:#edf3ea;border-bottom:2px solid #cbd9ca;font-size:10px;letter-spacing:.025em;padding:11px 9px}
+#entries .entries-sheet-card #entries-table tbody tr:nth-child(even){background:#fbfcf9}
+#entries .entries-sheet-card #entries-table tbody tr:hover{background:#eef7ed}
+#entries .entries-sheet-card #entries-table td{border-bottom:1px solid #e5ece5;padding:7px 8px;vertical-align:middle}
+#entries .entries-sheet-card .entry-value-main{cursor:text}
+#entries .entries-sheet-card .entry-date-main{cursor:pointer}
+#entries .entries-sheet-card .entry-destination-desc{cursor:text}
+#entries .entries-sheet-card .entry-value-main:hover,#entries .entries-sheet-card .entry-date-main:hover,#entries .entries-sheet-card .entry-destination-desc:hover{outline:1px solid #93bea4;border-radius:4px;background:#f2f9f2}
+#entries .entries-inline-editor{width:100%;min-width:95px;background:#fff;border:2px solid #1f7a5c;border-radius:5px;padding:6px 5px;font-size:12px;outline:none;color:#263d30;box-shadow:0 0 0 2px #b7dac342}
+#entries .entries-daily{border:0;border-left:1px solid #dce7dc;border-radius:0;background:#fff}
+#entries .entries-daily h3{background:#edf3ea;border-bottom:2px solid #cbd9ca;padding:15px;font-size:12px}
+#entries .entries-daily th{color:#536c5b}
+#entries .entries-daily tbody tr:nth-child(even){background:#fbfcf9}
+#entries .entries-daily tbody tr:hover{background:#e7f4e8}
+#entries .entries-daily td{border-right:1px solid #eef1eb}
+#entries .entries-daily .daily-totals{border-bottom:1px solid #e5ece5}
+#entries .entries-daily .daily-totals div{background:#f4f8f2;border:1px solid #e5ece5}
+#entries .entries-toolbar{border-radius:15px;padding:15px;gap:10px;margin-bottom:0}
+@media(max-width:1180px){#entries .entries-panels{grid-template-columns:1fr}#entries .entries-daily{border-left:0;border-top:1px solid #dce7dc}}
+@media(max-width:767px){#entries .entries-month-tabs button{min-width:57px;flex:0 0 auto}#entries .entries-panels>.entries-month-nav{padding:12px 10px 0}#entries .entries-sheet-card .table-mobile-scroll{max-height:none}}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -8699,10 +8730,7 @@
 
             <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
-<section class="entries-month-nav">
-<div class="entries-month-head"><span>Controle mensal</span><span><button onclick="entriesYearMove(-1)">‹</button> <span id="entries-workspace-year"></span> <button onclick="entriesYearMove(1)">›</button></span></div>
-<div id="entries-workspace-tabs" class="entries-month-tabs" role="tablist" aria-label="Meses"></div>
-</section>
+
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top">
                         <div>
@@ -8800,7 +8828,10 @@
                     </div>
                 </div>
 
-                <div class="entries-panels"><div class="card-premium overflow-hidden">
+                <div class="entries-panels"><section class="entries-month-nav">
+<div class="entries-month-head"><span>Controle mensal</span><span><button onclick="entriesYearMove(-1)">‹</button> <span id="entries-workspace-year"></span> <button onclick="entriesYearMove(1)">›</button></span></div>
+<div id="entries-workspace-tabs" class="entries-month-tabs" role="tablist" aria-label="Meses"></div>
+</section><div class="card-premium overflow-hidden entries-sheet-card">
                     <div id="entries-mobile-list" class="entries-mobile-list"></div>
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="entries-table" class="tbl w-full text-left" data-sheet="copy">
@@ -16233,6 +16264,69 @@
         }
 
 
+
+let activeEntriesInlineEditor=null;
+function editEntryCell(id,field,node,event){
+ if(event)event.stopPropagation();
+ const entry=state.entries.find(item=>String(item.id)===String(id));
+ if(!entry||!node||!['date','description','amount'].includes(field))return;
+ if(activeEntriesInlineEditor&&activeEntriesInlineEditor.node===node)return;
+ if(activeEntriesInlineEditor)activeEntriesInlineEditor.cancel();
+ const original=node.innerHTML;
+ const input=document.createElement('input');
+ input.className='entries-inline-editor';
+ input.type=field==='date'?'date':'text';
+ input.value=field==='amount'?Number(entry.amount||0).toFixed(2).replace('.',','):String(entry[field]||'');
+ input.setAttribute('aria-label','Editar '+(field==='date'?'data':field==='amount'?'valor':'descrição'));
+ node.replaceChildren(input);
+ let finished=false;
+ const cancel=()=>{if(finished)return;finished=true;node.innerHTML=original;if(activeEntriesInlineEditor?.node===node)activeEntriesInlineEditor=null;};
+ activeEntriesInlineEditor={node,cancel};
+ const save=async()=>{
+  if(finished)return;
+  let next=input.value.trim();
+  if(field==='amount'){
+   next=parseAmountBRL(next);
+   if(!Number.isFinite(next)||next<0){input.setCustomValidity('Informe um valor válido.');input.reportValidity();return;}
+  }
+  if(field==='date'&&!/^\d{4}-\d{2}-\d{2}$/.test(next)){input.setCustomValidity('Selecione uma data válida.');input.reportValidity();return;}
+  if(String(next)===String(entry[field])||(field==='amount'&&Number(next)===Number(entry.amount))){cancel();return;}
+  input.disabled=true;
+  const previous=entry[field];
+  entry[field]=next;
+  try{
+   const outcome=await cloudSave('entries',entry);
+   if(!outcome?.ok)throw new Error(String(outcome?.error?.message||'Erro ao salvar'));
+   finished=true;activeEntriesInlineEditor=null;
+   renderEntries();
+   if(typeof showAppToast==='function')showAppToast('Lançamento atualizado.',{tone:'success',title:'Salvo'});
+  }catch(error){
+   entry[field]=previous;input.disabled=false;
+   if(typeof showAppToast==='function')showAppToast('Não foi possível salvar: '+error.message,{tone:'error',title:'Falha ao salvar'});
+   else alert('Não foi possível salvar: '+error.message);
+   input.focus();
+  }
+ };
+ input.addEventListener('click',e=>e.stopPropagation());
+ input.addEventListener('keydown',e=>{
+  e.stopPropagation();
+  if(e.key==='Escape'){e.preventDefault();cancel();}
+  if(e.key==='Enter'||e.key==='Tab'){
+   e.preventDefault();
+   const tab=e.key==='Tab';const reverse=e.shiftKey;
+   save().then(()=>{
+    if(!tab||!finished)return;
+    const selector=field==='date'?'.entry-destination-desc':field==='description'?'.entry-value-main':'.entry-date-main';
+    const row=Array.from(document.querySelectorAll('#entries-table-body tr')).find(tr=>tr.querySelector('input.entries-check[aria-label]')?.getAttribute('onchange')?.includes(String(id)));
+    let target=row?.querySelector(selector);
+    if(reverse)target=row?.querySelector(field==='amount'?'.entry-destination-desc':field==='description'?'.entry-date-main':'.entry-value-main');
+    if(target)target.focus();
+   });
+  }
+ });
+ input.addEventListener('blur',()=>{if(!finished)void save();});
+ input.focus();if(field!=='date')input.select();
+}
 function entriesYearMove(delta){
  const m=getEntriesCurrentMonthIso();
  setEntriesMonthFilter((Number(m.slice(0,4))+delta)+'-'+m.slice(5));
@@ -16416,7 +16510,7 @@ function renderEntriesMonthlyWorkspace(){
                     </td>
                     <td>
                         <div class="entry-cell-main center">
-                            <span class="entry-date-main">${formatDateBRV2(e.date)}</span>
+                            <span class="entry-date-main" tabindex="0" title="Clique para editar a data" onclick="editEntryCell('${e.id}','date',this,event)" onkeydown="if(event.key==='Enter')editEntryCell('${e.id}','date',this,event)">${formatDateBRV2(e.date)}</span>
                         </div>
                     </td>
                     <td>
@@ -16450,7 +16544,7 @@ function renderEntriesMonthlyWorkspace(){
                                     <i data-lucide="grip-vertical" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
-                            <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" title="${escapeHtml(entryDescriptionLabel)}">${escapeHtml(entryDescriptionLabel)}</p>
+                            <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" tabindex="0" title="Clique para editar a descrição" onclick="editEntryCell('${e.id}','description',this,event)" onkeydown="if(event.key==='Enter')editEntryCell('${e.id}','description',this,event)">${escapeHtml(entryDescriptionLabel)}</p>
                         </div>
                     </td>
                     <td>
@@ -16467,7 +16561,7 @@ function renderEntriesMonthlyWorkspace(){
                     </td>
                     <td class="tbl-num">
                         <div class="entry-cell-main right">
-                            <span class="entry-value-main ${valueClass}">${formatBRL(e.amount)}</span>
+                            <span class="entry-value-main ${valueClass}" tabindex="0" title="Clique para editar o valor" onclick="editEntryCell('${e.id}','amount',this,event)" onkeydown="if(event.key==='Enter')editEntryCell('${e.id}','amount',this,event)">${formatBRL(e.amount)}</span>
                         </div>
                         <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span></span>
                     </td>
