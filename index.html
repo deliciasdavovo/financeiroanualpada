@@ -16277,7 +16277,7 @@
 function calculateEntrySheetAmount(raw){
  let source=String(raw||'').trim();
  if(!source) return NaN;
- if(!/^[=+*/(\-]/.test(source))return parseAmountBRL(source);
+ if(!/^[=+*\/(-]/.test(source))return parseAmountBRL(source);
  if(source.charAt(0)==='=')source=source.slice(1);
  source=source.replace(/\bSOMA\s*\(([^()]*)\)/gi,(_,parts)=>{
   const numbers=parts.split(/[;,]/).map(v=>calculateEntrySheetAmount(v.trim()));
