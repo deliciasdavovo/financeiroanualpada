@@ -8607,6 +8607,33 @@
  #entries .entries-analysis{display:flex!important;flex-direction:column;position:relative!important;max-height:none;border-left:0;border-top:2px solid #d9e9dc}
  #entries .entries-analysis .daily-scroll{max-height:440px;overflow-y:auto}
 }
+
+/* Aba de Lançamentos: busca compacta e lateral fixa no verde da marca */
+#entries .entries-toolbar{padding:9px 14px!important;background:transparent!important;border:0!important;box-shadow:none!important;margin:0!important;gap:4px!important}
+#entries .entries-toolbar-top{border:0!important;padding:0!important;margin:0!important;min-height:42px;align-items:center;justify-content:space-between!important}
+#entries .entries-search-cluster,#entries .entries-compact-actions{display:flex;align-items:center;gap:9px;min-width:0}
+#entries .entries-search-icon{width:38px;height:38px;border:1px solid #d8e6db;background:#fff;border-radius:10px;display:grid;place-items:center;color:#1f7a5c;flex-shrink:0}
+#entries .entries-search-icon:hover{background:#edf6ed}
+#entries .entries-search-box{min-width:0;width:min(340px,40vw)}
+#entries .entries-search-box.hidden{display:none!important}
+#entries .entries-search-box input{width:100%;height:38px;border:1px solid #d8e6db;background:#fff;border-radius:10px;padding:0 12px;font-size:12px;color:#234936;outline:none}
+#entries .entries-search-box input:focus{border-color:#1f7a5c;box-shadow:0 0 0 2px #b7dac34a}
+#entries .entries-compact-new{height:38px;background:#1f7a5c;border-radius:9px;color:#fff;font-size:12px;font-weight:800;padding:0 17px;white-space:nowrap}
+#entries .entries-compact-new:hover{filter:brightness(1.08)}
+#entries .entries-advanced-actions{display:flex;flex-wrap:wrap;gap:7px}
+#entries .entries-toolbar.collapsed .entries-compact-new{display:block!important}
+#entries .entries-toolbar.collapsed .entries-search-icon{display:grid!important}
+#entries .entries-toolbar.collapsed .entries-toolbar-top{justify-content:space-between!important}
+#entries #entries-filter-report{display:none!important}
+#entries #entries-filters-area{padding:15px 4px 8px;border-top:1px solid #e2ece2;margin-top:9px}
+#entries .entries-panels{grid-template-columns:minmax(0,1fr) clamp(315px,31%,435px)!important}
+#entries .entries-analysis{background:#f6faf5}
+#entries .entries-analysis h3{background:#1f7a5c!important;color:white!important;padding:15px 13px!important}
+#entries .entries-analysis .entries-side-tab-label{border-left-color:#c6e5c9!important;color:white!important}
+#entries .entries-analysis #daily-period{color:#dcf0de!important}
+#entries .entries-analysis-modes{background:#f6faf5}
+@media(max-width:900px){#entries .entries-panels{grid-template-columns:minmax(0,1fr)!important}}
+@media(max-width:600px){#entries .entries-compact-actions{gap:5px}#entries .entries-compact-actions .entries-quick-btn{padding:0 8px;font-size:10px}#entries .entries-search-box{width:min(190px,40vw)}#entries .entries-compact-new{padding:0 10px}}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -8783,22 +8810,25 @@
             <div id="entries" class="tab-content space-y-6">
 
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
-                    <div class="entries-toolbar-top">
-                        <div>
-                            <p class="entries-toolbar-title">Lançamentos</p>
+                    <div class="entries-toolbar-top entries-compact-toolbar">
+                        <div class="entries-search-cluster">
+                            <button type="button" id="entries-search-toggle" class="entries-search-icon" onclick="toggleEntriesSearch()" aria-label="Pesquisar lançamentos" title="Buscar" aria-controls="entries-search-box" aria-expanded="false"><i data-lucide="search" class="w-4 h-4"></i></button>
+                            <div id="entries-search-box" class="entries-search-box hidden">
+                                <label for="filter-desc" class="sr-only">Pesquisar descrição ou destino</label>
+                                <input type="search" id="filter-desc" placeholder="Buscar lançamento ou destino..." autocomplete="off" oninput="queueRenderEntries()">
+                            </div>
                         </div>
-                        <div class="entries-quick-actions" role="group" aria-label="Ações rápidas">
-                            <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area"><i id="entries-toggle-icon" data-lucide="chevron-up" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Recolher</span></button>
-                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()" aria-label="Filtrar lançamentos para o mês atual"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>Mês Atual</button>
-                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()" aria-label="Alternar filtro de lançamentos duplicados"><i data-lucide="copy" class="w-3.5 h-3.5"></i>Duplicados</button>
-                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()" aria-label="Limpar todos os filtros de lançamentos"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>Limpar</button>
-                            <button type="button" id="entries-delete-filter-btn" class="entries-quick-btn danger" onclick="deleteFilteredEntries()" aria-label="Excluir todos os lançamentos do filtro atual" disabled><i data-lucide="trash-2" class="w-3.5 h-3.5"></i>Excluir filtro</button>
+                        <div class="entries-compact-actions">
+                            <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area" aria-expanded="false"><i id="entries-toggle-icon" data-lucide="chevron-down" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Busca avançada</span></button>
+                            <button type="button" class="entries-compact-new" onclick="openEntryModal()" aria-label="Novo lançamento">+ Novo</button>
                         </div>
                     </div>
-                    <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Filtros de lançamentos">
-                        <div class="entries-filter-item entries-filter-search">
-                            <label for="filter-desc" class="label-mini">Descrição / Destino</label>
-                            <input type="text" id="filter-desc" placeholder="Busque por descrição ou destino..." oninput="queueRenderEntries()">
+                    <div id="entries-filters-area" class="entries-filters-grid" role="group" aria-label="Busca avançada de lançamentos">
+                        <div class="entries-advanced-actions" style="grid-column: 1 / -1">
+                            <button type="button" class="entries-quick-btn" onclick="setEntriesCurrentMonthFilter()">Mês atual</button>
+                            <button type="button" id="entries-quick-dup" class="entries-quick-btn" onclick="toggleEntriesDuplicateQuick()">Duplicados</button>
+                            <button type="button" class="entries-quick-btn" onclick="resetEntriesFilters()">Limpar filtros</button>
+                            <button type="button" id="entries-delete-filter-btn" class="entries-quick-btn danger" onclick="deleteFilteredEntries()" disabled>Excluir filtro</button>
                         </div>
                         <div class="entries-filter-item">
                             <label for="filter-value-exact" class="label-mini">Valor (R$)</label>
@@ -8839,28 +8869,9 @@
                             <div class="entries-filter-item"><label for="filter-duplicates" class="label-mini">Ocorrência</label><select id="filter-duplicates" onchange="renderEntries()"><option value="">Todos</option><option value="ONLY">Somente duplicados</option><option value="TRANSFER">Possível transferência</option></select></div>
                             <div class="entries-filter-item"><label for="filter-mov-type" class="label-mini">Tipo de movimento</label><select id="filter-mov-type" onchange="renderEntries()"><option value="">Todos</option><option value="OPERACIONAL">Operacional</option><option value="FINANCEIRO">Financeiro</option><option value="SOCIOS">Sócios</option><option value="INVESTIMENTO">Investimento</option><option value="TRANSFERENCIA">Transferência</option></select></div>
                         </div>
-                        <button onclick="openEntryModal()" class="btn-new-entry" style="grid-column: 1 / -1;" aria-label="Adicionar novo lançamento">
-                            + Novo
-                        </button>
                     </div>
                     <div id="entries-dup-summary" class="entries-dup-summary-line text-[11px] font-bold text-slate-500 hidden" role="status" aria-live="polite"></div>
-                    <div id="entries-filter-report" class="entries-filter-report" role="status" aria-live="polite">
-                        <div class="entries-filter-report-card">
-                            <p class="entries-filter-report-label">Total Entradas</p>
-                            <p id="entries-filter-total-in" class="entries-filter-report-value flow-income-text">R$ 0,00</p>
-                            <p class="entries-filter-report-note">Resumo do filtro atual</p>
-                        </div>
-                        <div class="entries-filter-report-card">
-                            <p class="entries-filter-report-label">Total Saídas</p>
-                            <p id="entries-filter-total-out" class="entries-filter-report-value flow-expense-text">R$ 0,00</p>
-                            <p class="entries-filter-report-note">Somatório das saídas visíveis</p>
-                        </div>
-                        <div class="entries-filter-report-card">
-                            <p class="entries-filter-report-label">Saldo</p>
-                            <p id="entries-filter-total-net" class="entries-filter-report-value flow-balance-text">R$ 0,00</p>
-                            <p id="entries-filter-report-count" class="entries-filter-report-note">Nenhum lançamento no filtro</p>
-                        </div>
-                    </div>
+                    <div id="entries-filter-report" hidden aria-hidden="true"><span id="entries-filter-total-in"></span><span id="entries-filter-total-out"></span><span id="entries-filter-total-net"></span><span id="entries-filter-report-count"></span></div>
                     <div id="entries-selection-panel" class="hidden w-full border-t border-slate-100 pt-3 mt-1 flex flex-wrap items-center justify-between gap-3">
                         <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
                             <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Entradas: <span id="entries-sum-in">R$ 0,00</span></span>
@@ -10668,13 +10679,22 @@
             const filtersEl = document.getElementById('entries-filters-area');
             if (!toolbar || !labelEl || !iconEl || !btnEl || !filtersEl) return;
             toolbar.classList.toggle('collapsed', entriesToolbarCollapsed);
-            labelEl.innerText = entriesToolbarCollapsed ? 'Expandir' : 'Recolher';
+            labelEl.innerText = entriesToolbarCollapsed ? 'Busca avançada' : 'Recolher filtros';
             iconEl.setAttribute('data-lucide', entriesToolbarCollapsed ? 'chevron-down' : 'chevron-up');
             btnEl.setAttribute('aria-expanded', entriesToolbarCollapsed ? 'false' : 'true');
             filtersEl.setAttribute('aria-hidden', entriesToolbarCollapsed ? 'true' : 'false');
             refreshLucideIcons();
         }
 
+        function toggleEntriesSearch() {
+            const box=document.getElementById('entries-search-box');
+            const btn=document.getElementById('entries-search-toggle');
+            if(!box||!btn)return;
+            const open=box.classList.contains('hidden');
+            box.classList.toggle('hidden',!open);
+            btn.setAttribute('aria-expanded',String(open));
+            if(open)document.getElementById('filter-desc')?.focus();
+        }
         function toggleEntriesToolbarCollapse() {
             entriesToolbarCollapsed = !entriesToolbarCollapsed;
             applyEntriesToolbarState();
