@@ -8501,7 +8501,31 @@
             .vd-sum-cell:nth-child(3), .vd-sum-cell:nth-child(4) { border-top: 1px solid var(--tbl-line); }
             .vd-sum-cell:nth-child(odd) { border-left: none; }
         }
-    </style>
+    
+#entries .entries-month-nav{background:#f3f7f0;border:1px solid #dfe8dd;border-radius:18px;padding:15px;margin-bottom:16px}
+.entries-month-head{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:12px;color:#274333}
+.entries-month-head button{padding:5px 10px;border-radius:8px;background:white;border:1px solid #d9e6da}
+.entries-month-tabs{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px}
+.entries-month-tabs button{border-radius:9px;background:white;padding:10px 2px;font-size:11px;color:#576f5e;font-weight:700}
+.entries-month-tabs button.active{background:#1f7a5c;color:#fff}
+.entries-panels{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.85fr);gap:14px;align-items:start}
+.entries-panels>div,.entries-panels>aside{min-width:0}
+.entries-daily{background:white;border:1px solid #dfe8dd;border-radius:16px;overflow:hidden}
+.entries-daily h3{font-weight:800;padding:14px;background:#f6f8f3;color:#2c4435}
+.entries-daily .daily-totals{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px}
+.entries-daily .daily-totals div{background:#f5f8f3;border-radius:8px;padding:9px;font-size:11px}
+.entries-daily .daily-totals b{display:block;margin-top:3px}
+.entries-daily table{width:100%;border-collapse:collapse;font-size:11px}
+.entries-daily td,.entries-daily th{padding:9px 6px;text-align:right;border-bottom:1px solid #edf0eb}
+.entries-daily td:first-child,.entries-daily th:first-child{text-align:left;padding-left:12px}
+.entries-daily th{position:sticky;top:0;background:#f6f8f3}
+.entries-daily tbody tr{cursor:pointer}.entries-daily tbody tr:hover{background:#edf6ef}
+.entries-daily .daily-scroll{max-height:640px;overflow:auto}
+.entries-daily p{font-size:10px;padding:10px;color:#6d7e71}
+#entries .entries-date-block{display:none}
+@media(max-width:1180px){.entries-panels{grid-template-columns:1fr}.entries-daily .daily-scroll{max-height:360px}}
+@media(max-width:700px){.entries-month-tabs{display:flex;overflow-x:auto}.entries-month-tabs button{flex:0 0 56px}}
+</style>
 </head>
 <body class="flex h-screen overflow-hidden">
 
@@ -8675,6 +8699,10 @@
 
             <!-- LANÇAMENTOS -->
             <div id="entries" class="tab-content space-y-6">
+<section class="entries-month-nav">
+<div class="entries-month-head"><span>Controle mensal</span><span><button onclick="entriesYearMove(-1)">‹</button> <span id="entries-workspace-year"></span> <button onclick="entriesYearMove(1)">›</button></span></div>
+<div id="entries-workspace-tabs" class="entries-month-tabs" role="tablist" aria-label="Meses"></div>
+</section>
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top">
                         <div>
@@ -8772,7 +8800,7 @@
                     </div>
                 </div>
 
-                <div class="card-premium overflow-hidden">
+                <div class="entries-panels"><div class="card-premium overflow-hidden">
                     <div id="entries-mobile-list" class="entries-mobile-list"></div>
                     <div class="table-mobile-scroll custom-scrollbar">
                         <table id="entries-table" class="tbl w-full text-left" data-sheet="copy">
@@ -8809,6 +8837,11 @@
                         </div>
                     </div>
                 </div>
+<aside class="entries-daily"><h3>Previsão por dia · <span id="daily-period"></span></h3>
+<div id="daily-totals" class="daily-totals"></div>
+<div class="daily-scroll"><table><thead><tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th>Saldo</th></tr></thead><tbody id="daily-rows"></tbody></table></div>
+<p>Inclui valores realizados e pendentes. Clique em um dia para filtrar a planilha.</p>
+</aside></div>
             </div>
 
             <!-- RELATÓRIO MENSAL -->
@@ -16199,6 +16232,45 @@
             }).join('');
         }
 
+
+function entriesYearMove(delta){
+ const m=getEntriesCurrentMonthIso();
+ setEntriesMonthFilter((Number(m.slice(0,4))+delta)+'-'+m.slice(5));
+}
+function entriesSelectDay(day){
+ const d=getEntriesCurrentMonthIso()+'-'+String(day).padStart(2,'0');
+ document.getElementById('filter-date-start').value=d;
+ document.getElementById('filter-date-end').value=d;
+ entriesPage=1;renderEntries();
+}
+function renderEntriesMonthlyWorkspace(){
+ const month=getEntriesCurrentMonthIso(),year=Number(month.slice(0,4)),mn=Number(month.slice(5));
+ const y=document.getElementById('entries-workspace-year');
+ if(y)y.textContent=year;
+ const tabs=document.getElementById('entries-workspace-tabs');
+ if(tabs)tabs.innerHTML=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'].map((name,i)=>{
+  const key=year+'-'+String(i+1).padStart(2,'0');
+  return '<button role="tab" aria-selected="'+(key===month)+'" class="'+(key===month?'active':'')+'" onclick="setEntriesMonthFilter(&quot;'+key+'&quot;)">'+name+'</button>';
+ }).join('');
+ const days=new Date(year,mn,0).getDate();
+ const values=Array.from({length:days},()=>({inc:0,out:0,pending:0}));
+ (state.entries||[]).forEach(e=>{
+  if(String(e.date||'').slice(0,7)!==month)return;
+  const day=Number(String(e.date).slice(8,10));
+  if(day<1||day>days)return;
+  const v=Number(e.amount)||0;
+  if(normalizeFlowType(e.type)==='ENTRADA')values[day-1].inc+=v;
+  if(normalizeFlowType(e.type)==='SAÍDA')values[day-1].out+=v;
+  if(e.status==='PENDENTE')values[day-1].pending++;
+ });
+ const period=document.getElementById('daily-period');
+ if(period)period.textContent=new Date(year,mn-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+ const inc=values.reduce((n,d)=>n+d.inc,0),out=values.reduce((n,d)=>n+d.out,0),pending=values.reduce((n,d)=>n+d.pending,0);
+ const totals=document.getElementById('daily-totals');
+ if(totals)totals.innerHTML='<div>Entradas previstas<b>'+formatBRL(inc)+'</b></div><div>Saídas previstas<b>'+formatBRL(out)+'</b></div><div>Saldo previsto<b>'+formatBRL(inc-out)+'</b></div><div>Pendentes<b>'+pending+'</b></div>';
+ const rows=document.getElementById('daily-rows');
+ if(rows)rows.innerHTML=values.map((d,i)=>'<tr onclick="entriesSelectDay('+(i+1)+')"><td><strong>'+String(i+1).padStart(2,'0')+'</strong>'+(d.pending?' • '+d.pending+' pend.':'')+'</td><td>'+(d.inc?formatBRL(d.inc):'—')+'</td><td>'+(d.out?formatBRL(d.out):'—')+'</td><td>'+formatBRL(d.inc-d.out)+'</td></tr>').join('');
+}
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
             if (!body) return;
@@ -16208,6 +16280,7 @@
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             syncEntriesMonthControl(dateStart, dateEnd);
+            renderEntriesMonthlyWorkspace();
             const typeFilter = document.getElementById('filter-type')?.value || '';
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
