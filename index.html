@@ -8587,6 +8587,26 @@
 #entries .entries-analysis-entry-value button{color:#1f7a5c;padding:3px 5px;border:1px solid #d5e4d7;border-radius:5px}
 #entries .entries-analysis-none{text-align:center;font-size:11px;color:#829083;padding:17px}
 @media(max-width:1350px){#entries .entries-analysis-columns,#entries .entries-analysis-row{grid-template-columns:minmax(85px,1.3fr) repeat(3,minmax(59px,1fr));font-size:9px}}
+
+/* Previsão permanente: painel lateral tipo aba da mesma planilha. */
+@media(min-width:901px){
+ #entries .entries-panels{grid-template-columns:minmax(0,1fr) clamp(310px,29%,400px)!important;align-items:start;overflow:visible}
+ #entries .entries-panels>.entries-month-nav{grid-column:1 / -1}
+ #entries .entries-sheet-card{min-width:0;border-radius:0 0 0 18px}
+ #entries .entries-sheet-card .table-mobile-scroll{overflow-x:auto;max-width:100%}
+ #entries .entries-analysis{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 32px);display:flex;flex-direction:column;overflow:hidden;border-radius:0 0 18px 0!important;box-shadow:inset 4px 0 0 #e2ede1}
+ #entries .entries-analysis .daily-scroll{overflow:auto;min-height:0;max-height:none;flex:1}
+ #entries .entries-analysis .daily-totals{flex-shrink:0}
+ #entries .entries-analysis h3{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+ #entries .entries-analysis-modes{flex-shrink:0}
+}
+#entries .entries-side-tab-label{font-size:12px;font-weight:800;color:#1f7a5c;border-left:3px solid #1f7a5c;padding-left:9px}
+#entries .entries-analysis #daily-period{font-size:10px;color:#789180;font-weight:600}
+@media(max-width:900px){
+ #entries .entries-panels{grid-template-columns:minmax(0,1fr)!important;overflow:hidden}
+ #entries .entries-analysis{display:flex!important;flex-direction:column;position:relative!important;max-height:none;border-left:0;border-top:2px solid #d9e9dc}
+ #entries .entries-analysis .daily-scroll{max-height:440px;overflow-y:auto}
+}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -8899,8 +8919,8 @@
                         </div>
                     </div>
                 </div>
-<aside class="entries-daily entries-analysis">
-<h3>Análise financeira · <span id="daily-period"></span></h3>
+<aside class="entries-daily entries-analysis" aria-label="Previsão financeira sempre visível">
+<h3><span class="entries-side-tab-label">Previsão financeira</span><span id="daily-period"></span></h3>
 <nav class="entries-analysis-modes" aria-label="Visão da previsão">
 <button type="button" data-analysis-mode="day" onclick="setEntriesAnalysisMode('day')">Por dia</button>
 <button type="button" data-analysis-mode="category" onclick="setEntriesAnalysisMode('category')">Categorias</button>
