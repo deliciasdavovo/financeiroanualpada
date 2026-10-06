@@ -8556,6 +8556,13 @@
 #entries .entries-toolbar{border-radius:15px;padding:15px;gap:10px;margin-bottom:0}
 @media(max-width:1180px){#entries .entries-panels{grid-template-columns:1fr}#entries .entries-daily{border-left:0;border-top:1px solid #dce7dc}}
 @media(max-width:767px){#entries .entries-month-tabs button{min-width:57px;flex:0 0 auto}#entries .entries-panels>.entries-month-nav{padding:12px 10px 0}#entries .entries-sheet-card .table-mobile-scroll{max-height:none}}
+
+/* Os controles novos usam exclusivamente a paleta existente */
+#entries .entries-amount-fill{margin-left:6px;border:1px solid #cadbcd;border-radius:4px;font-size:11px;font-weight:900;cursor:ns-resize;letter-spacing:-2px;color:#1f7a5c;background:#f4f8f2;padding:0 5px}
+#entries .entries-fill-preview{background:#e5f3e8!important;outline:2px solid #1f7a5c!important;border-radius:4px}
+#entries .entry-value-main{display:inline-block;padding:4px;min-width:62px}
+#entries .entry-destination-desc{display:inline-block;padding:3px;min-width:85px}
+@media(max-width:767px){#entries .entries-amount-fill{display:none}}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -16265,6 +16272,76 @@
 
 
 
+
+/* Cálculo de valores sem eval: operações matemáticas e SOMA. */
+function calculateEntrySheetAmount(raw){
+ let source=String(raw||'').trim();
+ if(!source) return NaN;
+ if(!/^[=+*/(\-]/.test(source))return parseAmountBRL(source);
+ if(source.charAt(0)==='=')source=source.slice(1);
+ source=source.replace(/\bSOMA\s*\(([^()]*)\)/gi,(_,parts)=>{
+  const numbers=parts.split(/[;,]/).map(v=>calculateEntrySheetAmount(v.trim()));
+  if(!numbers.length||numbers.some(n=>!Number.isFinite(n)))throw Error('SOMA inválida');
+  return '('+numbers.join('+')+')';
+ });
+ const lex=source.replace(/\s+/g,'').match(/\d+(?:[.,]\d+)?|[()+*/-]/g);
+ if(!lex||lex.join('')!==source.replace(/\s+/g,''))throw Error('Fórmula inválida');
+ let at=0;
+ const factor=()=>{
+  const token=lex[at++];
+  if(token==='+')return factor();
+  if(token==='-')return -factor();
+  if(token==='('){const n=expr();if(lex[at++]!==')')throw Error('Parênteses não fechados');return n;}
+  if(!token||!/^\d/.test(token))throw Error('Número esperado');
+  return Number(token.replace(',','.'));
+ };
+ const term=()=>{let n=factor();while(lex[at]==='*'||lex[at]==='/'){const op=lex[at++],v=factor();if(op==='/'&&v===0)throw Error('Divisão por zero');n=op==='*'?n*v:n/v;}return n;};
+ const expr=()=>{let n=term();while(lex[at]==='+'||lex[at]==='-'){const op=lex[at++],v=term();n=op==='+'?n+v:n-v;}return n;};
+ const value=expr();
+ if(at!==lex.length||!Number.isFinite(value))throw Error('Fórmula inválida');
+ return Math.round((value+Number.EPSILON)*100)/100;
+}
+let entriesAmountDrag=null;
+function startEntriesAmountDrag(index,event){
+ if(event.button!==0)return;
+ const entries=window.currentFilteredEntries||[],source=entries[index];
+ if(!source)return;
+ event.preventDefault();event.stopPropagation();
+ entriesAmountDrag={index,end:index,value:Number(source.amount)||0,entries,original:new Map()};
+ document.body.style.userSelect='none';
+}
+function hoverEntriesAmountDrag(index){
+ if(!entriesAmountDrag)return;
+ const drag=entriesAmountDrag;
+ drag.end=index;
+ document.querySelectorAll('#entries-table-body .entries-fill-preview').forEach(el=>el.classList.remove('entries-fill-preview'));
+ for(let i=Math.min(drag.index,index);i<=Math.max(drag.index,index);i++){
+  document.querySelectorAll('#entries-table-body tr')[i]?.querySelector('.entry-value-main')?.classList.add('entries-fill-preview');
+ }
+}
+async function stopEntriesAmountDrag(){
+ const drag=entriesAmountDrag;if(!drag)return;
+ entriesAmountDrag=null;document.body.style.userSelect='';
+ document.querySelectorAll('#entries-table-body .entries-fill-preview').forEach(el=>el.classList.remove('entries-fill-preview'));
+ const changed=[];
+ for(let i=Math.min(drag.index,drag.end);i<=Math.max(drag.index,drag.end);i++){
+  if(i===drag.index)continue;
+  const row=drag.entries[i];
+  if(row&&Number(row.amount)!==drag.value){drag.original.set(String(row.id),Number(row.amount));row.amount=drag.value;changed.push(row);}
+ }
+ if(!changed.length)return;
+ if(!confirm('Copiar '+formatBRL(drag.value)+' para '+changed.length+' lançamento(s)?')){changed.forEach(e=>{e.amount=drag.original.get(String(e.id));});renderEntries();return;}
+ try{
+  const res=await cloudSaveBatched('entries',changed,100);
+  if(!res?.ok)throw Error(String(res?.error?.message||'Falha ao salvar'));
+  showAppToast('Valores copiados para '+changed.length+' lançamento(s).',{tone:'success',title:'Planilha atualizada'});
+ }catch(err){
+  changed.forEach(e=>{e.amount=drag.original.get(String(e.id));});
+  alert('Não foi possível salvar o arraste: '+err.message);
+  await refreshCloudState({silent:false});
+ }finally{renderEntries();}
+}
+
 let activeEntriesInlineEditor=null;
 function editEntryCell(id,field,node,event){
  if(event)event.stopPropagation();
@@ -16278,6 +16355,8 @@ function editEntryCell(id,field,node,event){
  input.type=field==='date'?'date':'text';
  input.value=field==='amount'?Number(entry.amount||0).toFixed(2).replace('.',','):String(entry[field]||'');
  input.setAttribute('aria-label','Editar '+(field==='date'?'data':field==='amount'?'valor':'descrição'));
+ if(field==='amount')input.placeholder='Ex: =120+30*2';
+ input.addEventListener('input',()=>input.setCustomValidity(''));
  node.replaceChildren(input);
  let finished=false;
  const cancel=()=>{if(finished)return;finished=true;node.innerHTML=original;if(activeEntriesInlineEditor?.node===node)activeEntriesInlineEditor=null;};
@@ -16286,8 +16365,8 @@ function editEntryCell(id,field,node,event){
   if(finished)return;
   let next=input.value.trim();
   if(field==='amount'){
-   next=parseAmountBRL(next);
-   if(!Number.isFinite(next)||next<0){input.setCustomValidity('Informe um valor válido.');input.reportValidity();return;}
+   try{next=calculateEntrySheetAmount(next);}catch(err){input.setCustomValidity(err.message);input.reportValidity();return;}
+   if(!Number.isFinite(next)||next<0){input.setCustomValidity('Informe um valor válido e não negativo.');input.reportValidity();return;}
   }
   if(field==='date'&&!/^\d{4}-\d{2}-\d{2}$/.test(next)){input.setCustomValidity('Selecione uma data válida.');input.reportValidity();return;}
   if(String(next)===String(entry[field])||(field==='amount'&&Number(next)===Number(entry.amount))){cancel();return;}
@@ -16504,7 +16583,7 @@ function renderEntriesMonthlyWorkspace(){
                         ? 'Transferencia descartada'
                         : 'Possivel transferencia';
 
-                return `<tr class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
+                return `<tr onmouseenter="hoverEntriesAmountDrag(${i})" class="table-row ${transferRowClass} ${!isRealizado ? 'opacity-50' : ''}" aria-label="Lancamento de ${escapeHtml(formatDateBRV2(e.date))} no valor de ${escapeHtml(formatBRL(e.amount))}">
                     <td class="tbl-center">
                         <input type="checkbox" class="entries-check" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEntrySelection('${e.id}', this.checked)" aria-label="Selecionar lancamento de ${escapeHtml(formatDateBRV2(e.date))}">
                     </td>
@@ -16563,7 +16642,7 @@ function renderEntriesMonthlyWorkspace(){
                         <div class="entry-cell-main right">
                             <span class="entry-value-main ${valueClass}" tabindex="0" title="Clique para editar o valor" onclick="editEntryCell('${e.id}','amount',this,event)" onkeydown="if(event.key==='Enter')editEntryCell('${e.id}','amount',this,event)">${formatBRL(e.amount)}</span>
                         </div>
-                        <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span></span>
+                        <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span><button type="button" class="entries-amount-fill" aria-label="Arraste para copiar valor" title="Arraste para copiar este valor para outras linhas" onmousedown="startEntriesAmountDrag(${i},event)" onclick="event.stopPropagation()">⋮⋮</button></span>
                     </td>
                     <td class="tbl-center">
                         <div class="entry-cell-main center">
@@ -23795,8 +23874,8 @@ function renderEntriesMonthlyWorkspace(){
 
         const mf = document.getElementById('monthly-filter');
         if(mf) mf.value = getCurrentMonthIso();
-        window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
-        window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); });
+        window.addEventListener('mouseup', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); stopEntriesAmountDrag(); });
+        window.addEventListener('blur', () => { stopReconFill(); stopEntryDestinationFill(); stopEntryAccountFill(); stopEntriesAmountDrag(); });
         document.addEventListener('keydown', (event) => {
             if (isLoginOpen()) {
                 if (/^\d$/.test(event.key)) {
