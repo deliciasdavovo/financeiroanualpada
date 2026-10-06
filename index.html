@@ -8741,6 +8741,43 @@
 #entries .entries-analysis-pending{padding:0 13px 12px;font-size:10px;color:#7b8266}
 #entries .entries-analysis-details{margin:0 9px 10px;border-radius:8px}
 @media(max-width:900px){#entries .entries-analysis .daily-totals b{font-size:13px}}
+
+/* Planilha contínua, sem cards; espaço real reservado à segunda sidebar */
+@media (min-width:901px){
+ body:has(#entries.active)>main{margin-right:clamp(320px,25vw,390px)!important;min-width:0!important}
+ body:has(#entries.active)>main>header{padding-left:clamp(12px,2vw,26px)!important;padding-right:clamp(12px,2vw,26px)!important;min-width:0}
+ body:has(#entries.active) #main-scroll{padding:12px 14px 24px!important;min-width:0!important}
+ #entries.tab-content.active>.entries-analysis{right:0!important}
+}
+#entries.tab-content.active{background:#fff!important;border-radius:0!important;gap:0!important}
+#entries.tab-content.active>.entries-toolbar{background:#fff!important;border:0!important;border-bottom:1px solid #d9e3db!important;border-radius:0!important;padding:7px 10px!important;box-shadow:none!important;margin:0!important}
+#entries .entries-panels{border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;background:#fff!important}
+#entries .entries-panels>.entries-month-nav{border-radius:0!important;border:0!important;border-bottom:1px solid #bfcfc3!important;background:#edf3ea!important;padding:9px 10px 0!important}
+#entries .entries-month-head{margin-bottom:7px!important}
+#entries .entries-month-head button,#entries .entries-month-tabs button{border-radius:0!important;box-shadow:none!important}
+#entries .entries-month-tabs{gap:0!important}
+#entries .entries-month-tabs button{border:1px solid #cddbd0!important;border-bottom:0!important;margin-right:-1px;padding:9px 7px!important;top:0!important;background:#f6f8f4!important}
+#entries .entries-month-tabs button.active{background:white!important;border-color:#90b29d!important;color:#1f7a5c!important;box-shadow:inset 0 3px #1f7a5c!important}
+#entries .entries-panels>.entries-sheet-card,#entries .entries-sheet-card{border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;overflow:hidden!important}
+#entries .entries-sheet-card .table-mobile-scroll{border-radius:0!important;overflow:auto!important}
+#entries .entries-sheet-card #entries-table{border:1px solid #d6e0d8!important;border-collapse:separate!important;border-spacing:0!important;width:100%}
+#entries .entries-sheet-card #entries-table th{border-right:1px solid #ccd9cf!important;border-bottom:1px solid #bbcfc0!important;background:#eaf2e9!important;border-radius:0!important;padding:8px 6px!important}
+#entries .entries-sheet-card #entries-table td{border-right:1px solid #e0e8e0!important;border-bottom:1px solid #e0e8e0!important;border-radius:0!important;padding:5px 6px!important}
+#entries .entries-sheet-card #entries-table tr:nth-child(even){background:#f8faf7!important}
+#entries .entries-sheet-card #entries-table tr:hover{background:#ecf6ed!important}
+#entries .entries-sheet-card #entries-table .badge,#entries .entries-sheet-card #entries-table .mov-type-badge,#entries .entries-sheet-card #entries-table .quick-status-btn{border-radius:3px!important}
+#entries .entries-sheet-card #entries-pagination{border-radius:0!important;background:#f7faf6!important}
+#entries .entries-sheet-card .sheet-toolbar{border-radius:0!important;box-shadow:none!important}
+#entries .entries-compact-new,#entries .entries-quick-btn,#entries .entries-search-icon,#entries .entries-search-box input{border-radius:3px!important}
+#entries .entries-analysis{border-radius:0!important}
+#entries .entries-analysis h3{border-radius:0!important}
+#entries .entries-analysis-modes button{border-radius:0!important}
+#entries .entries-analysis .daily-totals{gap:0!important;padding:0!important;border-bottom:1px solid #d5e2d7!important}
+#entries .entries-analysis .daily-totals>div{border-radius:0!important;border-top:0!important;border-left:0!important;border-right:1px solid #dae5db!important;border-bottom:1px solid #dae5db!important;padding:10px!important}
+#entries .entries-analysis .entries-compare-block{border-radius:0!important}
+#entries .entries-analysis .entries-analysis-details{border-radius:0!important}
+#entries .entries-analysis .entries-analysis-entry-value button{border-radius:0!important}
+@media(max-width:900px){#entries .entries-panels{border:1px solid #d9e3db!important}}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
