@@ -16447,6 +16447,21 @@ function entriesSelectDay(day){
  entriesPage=1;renderEntries();
 }
 
+
+let entriesWorkspaceScheduled=false;
+function scheduleEntriesMonthlyWorkspace(){
+ if(entriesWorkspaceScheduled)return;
+ entriesWorkspaceScheduled=true;
+ requestAnimationFrame(()=>{
+  entriesWorkspaceScheduled=false;
+  try{renderEntriesMonthlyWorkspace();}
+  catch(error){
+   console.error('Erro no painel analítico de lançamentos:',error);
+   const box=document.getElementById('entries-analysis-content');
+   if(box)box.innerHTML='<p class="entries-analysis-none">A análise não pôde ser carregada. A planilha continua disponível.</p>';
+  }
+ });
+}
 let entriesAnalysisMode='day';
 let expandedEntriesAnalysisKey='';
 function setEntriesAnalysisMode(mode){
@@ -16498,6 +16513,12 @@ function renderEntriesMonthlyWorkspace(){
   return '<button type="button" role="tab" aria-selected="'+(key===month)+'" class="'+(key===month?'active':'')+'" onclick="setEntriesMonthFilter(&quot;'+key+'&quot;)">'+name+'</button>';
  }).join('');
  const monthEntries=(state.entries||[]).filter(e=>String(e.date||'').slice(0,7)===month);
+ const indexedDays=new Map();
+ monthEntries.forEach(entry=>{
+  const key=Number(String(entry.date||'').slice(8,10));
+  if(!indexedDays.has(key))indexedDays.set(key,[]);
+  indexedDays.get(key).push(entry);
+ });
  const summary=entriesAnalysisTotals(monthEntries);
  const period=document.getElementById('daily-period');
  if(period)period.textContent=new Date(year,mn-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
@@ -16512,7 +16533,7 @@ function renderEntriesMonthlyWorkspace(){
  let groups=[];
  if(entriesAnalysisMode==='day'){
   const days=new Date(year,mn,0).getDate();
-  groups=Array.from({length:days},(_,i)=>({key:'day-'+String(i+1),title:String(i+1).padStart(2,'0'),entries:monthEntries.filter(e=>Number(String(e.date||'').slice(8,10))===i+1),subtitle:'Clique para ver os lançamentos'}));
+  groups=Array.from({length:days},(_,i)=>({key:'day-'+String(i+1),title:String(i+1).padStart(2,'0'),entries:indexedDays.get(i+1)||[],subtitle:'Clique para ver os lançamentos'}));
  }else if(entriesAnalysisMode==='category'){
   const map=new Map();
   monthEntries.forEach(e=>{
@@ -16539,7 +16560,7 @@ function renderEntriesMonthlyWorkspace(){
             const dateStart = document.getElementById('filter-date-start')?.value || '';
             const dateEnd = document.getElementById('filter-date-end')?.value || '';
             syncEntriesMonthControl(dateStart, dateEnd);
-            renderEntriesMonthlyWorkspace();
+            scheduleEntriesMonthlyWorkspace();
             const typeFilter = document.getElementById('filter-type')?.value || '';
             const statusFilter = document.getElementById('filter-status')?.value || '';
             const accountFilter = document.getElementById('filter-account')?.value || '';
