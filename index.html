@@ -8653,6 +8653,44 @@
  #entries>.entries-analysis{order:2;position:relative!important;display:flex!important;flex-direction:column;min-height:260px;max-height:none!important;margin-top:0;border:1px solid #dae4d8;border-radius:0 0 16px 16px!important}
  #entries>.entries-analysis .daily-scroll{overflow:auto;max-height:440px}
 }
+
+/* Área de trabalho: pesquisa no cabeçalho e previsão lateral de altura integral.
+   Mantém as cores e as fontes já usadas no financeiro. */
+.header-entries-search{display:none;align-items:center;max-width:min(420px,38vw);min-width:0;flex:0 1 auto}
+.header-entries-search.is-active{display:flex}
+.header-entries-search .entries-search-cluster{display:flex;align-items:center;gap:8px;width:100%;min-width:0}
+.header-entries-search .entries-search-icon{display:grid;place-items:center;min-width:36px;height:36px;border:1px solid #d9e6dc;border-radius:9px;background:#fff;color:#1f7a5c}
+.header-entries-search .entries-search-box{width:min(320px,30vw);min-width:0}
+.header-entries-search .entries-search-box.hidden{display:none!important}
+.header-entries-search .entries-search-box input{height:36px;width:100%;border:1px solid #d9e6dc;border-radius:9px;background:#fff;padding:0 11px;font-size:12px;outline:none}
+.header-entries-search .entries-search-box input:focus{border-color:#1f7a5c;box-shadow:0 0 0 2px #1f7a5c20}
+@media(min-width:901px){
+ #entries.tab-content.active{display:flex!important;flex-direction:column;gap:0!important;min-width:0;background:transparent;border:0;box-shadow:none;overflow:visible}
+ #entries.tab-content.active>.entries-toolbar{display:flex!important;flex-direction:column;min-width:0;padding:8px 0!important;border:0!important;border-radius:0!important}
+ #entries.tab-content.active>.entries-panels{display:block!important;width:100%;min-width:0;border:1px solid #dae4d8!important;border-radius:16px!important;overflow:hidden!important;box-shadow:none!important}
+ #entries .entries-panels>.entries-month-nav{width:100%;border-radius:16px 16px 0 0}
+ #entries .entries-panels>.entries-sheet-card{width:100%;min-width:0}
+ main:has(#entries.active) #main-scroll{padding-right:calc(375px + 24px)!important}
+ #entries.tab-content.active>.entries-analysis{position:fixed!important;right:0!important;top:64px!important;bottom:0!important;width:375px!important;height:auto!important;min-height:0!important;max-height:none!important;z-index:29;display:flex!important;flex-direction:column;overflow:hidden!important;border-radius:0!important;border-top:0!important;border-bottom:0!important;border-right:0!important;border-left:1px solid #c8dfcf!important;box-shadow:-6px 0 20px rgba(31,90,60,.07)!important;background:#f6faf5}
+ #entries>.entries-analysis .daily-scroll{flex:1 1 auto!important;min-height:0;max-height:none!important;overflow-y:auto}
+ #entries>.entries-analysis .daily-totals{flex-shrink:0}
+}
+@media(min-width:901px) and (max-width:1199px){
+ #entries.tab-content.active>.entries-analysis{width:320px!important}
+ main:has(#entries.active) #main-scroll{padding-right:344px!important;padding-left:16px!important}
+ .header-entries-search .entries-search-box{width:190px}
+}
+@media(max-width:900px){
+ .header-entries-search{max-width:45vw}
+ #entries.tab-content.active{display:flex!important;flex-direction:column;gap:0!important}
+ #entries.tab-content.active>.entries-analysis{position:relative!important;inset:auto!important;width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;z-index:auto}
+ #entries.tab-content.active>.entries-panels{display:block!important}
+}
+@media(max-width:600px){
+ .header-entries-search{max-width:none}
+ .header-entries-search .entries-search-box{position:absolute;right:8px;top:60px;z-index:50;width:min(340px,calc(100vw - 30px));background:#fff;padding:5px;border:1px solid #d9e6dc;border-radius:10px;box-shadow:0 6px 16px #1f7a5c20}
+ .header-entries-search .entries-search-icon{height:34px;min-width:34px}
+}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
@@ -8770,6 +8808,15 @@
         <header class="h-16 bg-white border-b px-6 lg:px-10 flex items-center shrink-0">
             <div class="flex items-center gap-3 w-full min-w-0">
                 <h2 id="tab-title" class="text-2xl font-black text-slate-900 tracking-tight truncate mr-auto">Início</h2>
+                <div id="header-entries-search" class="header-entries-search" role="search" aria-label="Buscar na planilha de lançamentos">
+                        <div class="entries-search-cluster">
+                            <button type="button" id="entries-search-toggle" class="entries-search-icon" onclick="toggleEntriesSearch()" aria-label="Pesquisar lançamentos" title="Buscar" aria-controls="entries-search-box" aria-expanded="false"><i data-lucide="search" class="w-4 h-4"></i></button>
+                            <div id="entries-search-box" class="entries-search-box hidden">
+                                <label for="filter-desc" class="sr-only">Pesquisar descrição ou destino</label>
+                                <input type="search" id="filter-desc" placeholder="Buscar lançamento ou destino..." autocomplete="off" oninput="queueRenderEntries()">
+                            </div>
+                        </div>
+                </div>
                 <div id="sync-status" class="sync-indicator" role="status">
                     <div class="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
                     <span>Offline</span>
@@ -8830,13 +8877,6 @@
 
                 <div class="card-premium p-6 flex flex-wrap gap-4 items-end entries-toolbar" role="region" aria-label="Filtros e ações de lançamentos">
                     <div class="entries-toolbar-top entries-compact-toolbar">
-                        <div class="entries-search-cluster">
-                            <button type="button" id="entries-search-toggle" class="entries-search-icon" onclick="toggleEntriesSearch()" aria-label="Pesquisar lançamentos" title="Buscar" aria-controls="entries-search-box" aria-expanded="false"><i data-lucide="search" class="w-4 h-4"></i></button>
-                            <div id="entries-search-box" class="entries-search-box hidden">
-                                <label for="filter-desc" class="sr-only">Pesquisar descrição ou destino</label>
-                                <input type="search" id="filter-desc" placeholder="Buscar lançamento ou destino..." autocomplete="off" oninput="queueRenderEntries()">
-                            </div>
-                        </div>
                         <div class="entries-compact-actions">
                             <button type="button" id="entries-toggle-btn" class="entries-quick-btn toggle" onclick="toggleEntriesToolbarCollapse()" aria-controls="entries-filters-area" aria-expanded="false"><i id="entries-toggle-icon" data-lucide="chevron-down" class="w-3.5 h-3.5"></i><span id="entries-toggle-label">Busca avançada</span></button>
                             <button type="button" class="entries-compact-new" onclick="openEntryModal()" aria-label="Novo lançamento">+ Novo</button>
@@ -14524,6 +14564,8 @@
             }
             if(typeof closeMobileMore === 'function') closeMobileMore();
             currentTab = tabId;
+            const headerSearch = document.getElementById('header-entries-search');
+            if (headerSearch) headerSearch.classList.toggle('is-active', tabId === 'entries');
             const titleEl = document.getElementById('tab-title');
             const titleMap = {
                 home: 'Início',
