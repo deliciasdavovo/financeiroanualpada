@@ -10390,7 +10390,7 @@
         let projectionCalendarSelectedDay = '';
         let entriesSearchTimer = null;
         let entriesPage = 1;
-        const entriesPageSize = 100;
+        const entriesPageSize = 35;
         // A tabela de lançamentos tem dois layouts (tabela no desktop e cartões no mobile)
         // controlados por CSS neste breakpoint. Renderizar apenas o layout visível evita
         // construir centenas de linhas/ícones invisíveis a cada atualização.
@@ -15489,9 +15489,11 @@
             );
         }
 
+        let entriesStableIndexCache = null;
         function getStableEntryIndex(entryId) {
             const safeId = String(entryId || '');
             if (!safeId) return Number.MAX_SAFE_INTEGER;
+            if (entriesStableIndexCache && entriesStableIndexCache.has(safeId)) return entriesStableIndexCache.get(safeId);
             const index = (state.entries || []).findIndex((entry) => String((entry || {}).id || '') === safeId);
             return index >= 0 ? index : Number.MAX_SAFE_INTEGER;
         }
@@ -16577,8 +16579,16 @@ function renderEntriesMonthlyWorkspace(){
             closeEntryDestinationCombobox();
             const descSearch = normalizeEntrySearchText(document.getElementById('filter-desc')?.value || '');
             const valueSearch = parseEntryValueFilter(document.getElementById('filter-value-exact')?.value || '');
-            const dateStart = document.getElementById('filter-date-start')?.value || '';
-            const dateEnd = document.getElementById('filter-date-end')?.value || '';
+            // A página é mensal: no primeiro acesso, evitar carregar todo o histórico.
+            const startInput = document.getElementById('filter-date-start');
+            const endInput = document.getElementById('filter-date-end');
+            if (!startInput?.value && !endInput?.value) {
+                const current = getCurrentMonthIso().split('-').map(Number);
+                if (startInput) startInput.value = formatLocalDate(new Date(current[0], current[1]-1, 1));
+                if (endInput) endInput.value = formatLocalDate(new Date(current[0], current[1], 0));
+            }
+            const dateStart = startInput?.value || '';
+            const dateEnd = endInput?.value || '';
             syncEntriesMonthControl(dateStart, dateEnd);
             scheduleEntriesMonthlyWorkspace();
             const typeFilter = document.getElementById('filter-type')?.value || '';
@@ -16643,6 +16653,9 @@ function renderEntriesMonthlyWorkspace(){
                 }
             }
 
+            // Índice de ordenação O(1), evitando uma busca em todos os lançamentos
+            // em cada comparação quando vários registros compartilham a mesma data.
+            entriesStableIndexCache = new Map((state.entries || []).map((e, idx) => [String(e.id || ''), idx]));
             filtered.sort(compareEntries);
 
             const sortDateEl = document.getElementById('entries-sort-date');
@@ -16797,7 +16810,10 @@ function renderEntriesMonthlyWorkspace(){
             // A tabela de lancamentos entra na camada planilha so com "copiar":
             // ordenar e filtrar ja tem controle proprio aqui (com paginacao),
             // e duplicar isso brigaria com o filtro da tela.
-            applyReportSheets(document.getElementById('entries'));
+            // A camada de copiar da planilha é inicializada uma vez; no
+            // rerender, evitar varrer todas as tabelas e recriar ícones duas vezes.
+            const entriesSheet = document.getElementById('entries-table');
+            if (entriesSheet?.dataset.sheetReady !== '1') sheetify(entriesSheet);
             refreshLucideIcons();
             requestAnimationFrame(() => flushPendingEntryDestinationFocus());
         }
