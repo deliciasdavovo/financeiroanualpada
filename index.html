@@ -11922,7 +11922,173 @@
                     body.annual-print .print-card,
                     body.annual-print .annual-semester-block{break-inside:avoid-page;page-break-inside:avoid;}
                 }
-            </style></head><body class="${bodyClass}">
+            
+        /* ================================================================
+           LANÇAMENTOS — correção de identidade visual
+           Mantém densidade de planilha sem transformar a tela em Excel cru.
+           ================================================================ */
+        #entries.tab-content.active {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius-lg) !important;
+            overflow: hidden !important;
+        }
+        #entries.tab-content.active > .entries-toolbar {
+            background: var(--bg-card) !important;
+            border-bottom: 1px solid var(--divider) !important;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+        }
+        #entries .entries-panels {
+            background: var(--bg-card) !important;
+            border-radius: 0 0 0 var(--radius-lg) !important;
+        }
+        #entries .entries-panels > .entries-month-nav {
+            background: #FFFFFF !important;
+            border-bottom: 1px solid var(--divider) !important;
+            border-radius: 0 !important;
+        }
+        #entries .entries-month-head button,
+        #entries .entries-month-tabs button {
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0 !important;
+        }
+        #entries .entries-month-tabs {
+            gap: 4px !important;
+        }
+        #entries .entries-month-tabs button {
+            background: #FFFFFF !important;
+            border: 1px solid var(--border) !important;
+            border-bottom-color: transparent !important;
+            color: var(--text-secondary) !important;
+        }
+        #entries .entries-month-tabs button.active {
+            background: #FFFFFF !important;
+            border-color: var(--border) !important;
+            color: var(--primary-green) !important;
+            box-shadow: inset 0 3px var(--primary-green) !important;
+        }
+        #entries .entries-panels > .entries-sheet-card,
+        #entries .entries-sheet-card {
+            background: #FFFFFF !important;
+            border: 0 !important;
+            border-radius: 0 0 0 var(--radius-lg) !important;
+            box-shadow: none !important;
+        }
+        #entries .entries-sheet-card .table-mobile-scroll {
+            border-radius: 0 0 0 var(--radius-lg) !important;
+        }
+        #entries .entries-sheet-card #entries-table {
+            border: 1px solid var(--tbl-head-border) !important;
+            background: #FFFFFF !important;
+        }
+        #entries .entries-sheet-card #entries-table th {
+            background: var(--tbl-head-bg) !important;
+            color: var(--tbl-head-color) !important;
+            border-right: 1px solid var(--tbl-col-line) !important;
+            border-bottom: 1px solid var(--tbl-head-border) !important;
+        }
+        #entries .entries-sheet-card #entries-table td {
+            background: #FFFFFF !important;
+            border-right: 1px solid var(--tbl-col-line) !important;
+            border-bottom: 1px solid var(--tbl-line) !important;
+        }
+        #entries .entries-sheet-card #entries-table tbody tr:nth-child(even) td {
+            background: var(--tbl-zebra) !important;
+        }
+        #entries .entries-sheet-card #entries-table tbody tr:hover td {
+            background: var(--tbl-hover) !important;
+        }
+        #entries .entries-compact-new,
+        #entries .entries-quick-btn,
+        #entries .entries-search-icon,
+        #entries .entries-search-box input {
+            border-radius: var(--radius-sm) !important;
+        }
+
+        /* Status usa exatamente o mesmo checkbox visual já empregado na tabela. */
+        #entries-table .entry-status-check {
+            width: 18px !important;
+            height: 18px !important;
+            margin: 0 !important;
+            border: 1.5px solid #B8C2CF !important;
+            border-radius: var(--radius-pill) !important;
+            background: #FFFFFF !important;
+            display: inline-grid !important;
+            place-content: center !important;
+            box-shadow: none !important;
+        }
+        #entries-table .entry-status-check:hover {
+            border-color: #93A4B8 !important;
+            background: #F8FAFC !important;
+        }
+        #entries-table .entry-status-check:checked {
+            border-color: var(--primary-blue) !important;
+            background: var(--primary-blue) !important;
+            box-shadow: 0 0 0 2px rgba(47,79,157,0.15) !important;
+        }
+        #entries-table .entry-status-check:checked::after {
+            content: "" !important;
+            width: 8px !important;
+            height: 8px !important;
+            border-radius: var(--radius-pill) !important;
+            background: #FFFFFF !important;
+            transform: none !important;
+        }
+
+        /* Previsão financeira: base neutra do app; verde apenas como acento. */
+        #entries .entries-analysis,
+        #entries.tab-content.active > .entries-analysis {
+            background: #FFFFFF !important;
+        }
+        #entries .entries-analysis-modes {
+            background: #FFFFFF !important;
+            border-bottom: 1px solid var(--divider) !important;
+        }
+        #entries .entries-analysis-modes button {
+            background: #FFFFFF !important;
+            border-color: var(--border) !important;
+            color: var(--text-secondary) !important;
+            border-radius: var(--radius-sm) !important;
+        }
+        #entries .entries-analysis-modes button.active {
+            background: var(--primary-green) !important;
+            border-color: var(--primary-green) !important;
+            color: #FFFFFF !important;
+        }
+        #entries .entries-fin-table {
+            background: #FFFFFF !important;
+        }
+        #entries .entries-fin-table thead th {
+            background: var(--tbl-head-bg) !important;
+            color: var(--tbl-head-color) !important;
+            border-color: var(--tbl-head-border) !important;
+        }
+        #entries .entries-fin-table th,
+        #entries .entries-fin-table td {
+            border-right-color: var(--tbl-col-line) !important;
+            border-bottom-color: var(--tbl-line) !important;
+        }
+        #entries .entries-fin-table tbody tr:nth-child(even) td {
+            background: var(--tbl-zebra) !important;
+        }
+        #entries .entries-fin-table tbody tr:hover td {
+            background: var(--tbl-hover) !important;
+        }
+        #entries .daily-totals {
+            background: #FFFFFF !important;
+            gap: 8px !important;
+            padding: 12px !important;
+        }
+        #entries .daily-totals > div {
+            background: #FFFFFF !important;
+            border: 1px solid var(--border) !important;
+            border-radius: var(--radius-md) !important;
+        }
+        #entries .entries-analysis-help {
+            background: #FFFFFF !important;
+            color: var(--text-muted) !important;
+            border-top-color: var(--divider) !important;
+        }
+</style></head><body class="${bodyClass}">
             <div class="report">
                 <div class="report-head">
                     <h1>${escapeHtml(title)}</h1>
@@ -17065,7 +17231,7 @@ function renderEntriesMonthlyWorkspace(){
                     </td>
                     <td class="tbl-center">
                         <input type="checkbox"
-                            class="entry-status-check"
+                            class="entries-check entry-status-check"
                             ${e.status === 'REALIZADO' ? 'checked' : ''}
                             onclick="event.stopPropagation()"
                             onchange="event.stopPropagation(); toggleQuickStatus('${e.id}')"
