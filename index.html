@@ -8876,6 +8876,175 @@
 #entries .entries-analysis .entries-analysis-details{border-radius:0!important}
 #entries .entries-analysis .entries-analysis-entry-value button{border-radius:0!important}
 @media(max-width:900px){#entries .entries-panels{border:1px solid #d9e3db!important}}
+
+/* ================================================================
+   CORREÇÃO FINAL — identidade visual da aba Lançamentos
+   ================================================================ */
+#entries.tab-content.active{
+  background:var(--bg-card)!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius-lg)!important;
+  overflow:hidden!important;
+}
+#entries.tab-content.active>.entries-toolbar{
+  background:#fff!important;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0!important;
+  border-bottom:1px solid var(--divider)!important;
+}
+#entries .entries-panels{
+  background:#fff!important;
+  border-radius:0 0 0 var(--radius-lg)!important;
+}
+#entries .entries-panels>.entries-month-nav{
+  background:#fff!important;
+  border-bottom:1px solid var(--divider)!important;
+  border-radius:0!important;
+}
+#entries .entries-month-head button,
+#entries .entries-month-tabs button{
+  border-radius:var(--radius-sm) var(--radius-sm) 0 0!important;
+}
+#entries .entries-month-tabs{gap:4px!important}
+#entries .entries-month-tabs button{
+  background:#fff!important;
+  border:1px solid var(--border)!important;
+  border-bottom-color:transparent!important;
+  color:var(--text-secondary)!important;
+}
+#entries .entries-month-tabs button.active{
+  background:#fff!important;
+  color:var(--primary-green)!important;
+  border-color:var(--border)!important;
+  box-shadow:inset 0 3px var(--primary-green)!important;
+}
+#entries .entries-sheet-card,
+#entries .entries-panels>.entries-sheet-card{
+  background:#fff!important;
+  border-radius:0 0 0 var(--radius-lg)!important;
+}
+#entries .entries-sheet-card .table-mobile-scroll{
+  border-radius:0 0 0 var(--radius-lg)!important;
+}
+#entries .entries-compact-new,
+#entries .entries-quick-btn,
+#entries .entries-search-icon,
+#entries .entries-search-box input{
+  border-radius:var(--radius-sm)!important;
+}
+
+/* tabela com grade, mas sem aparência dura/quadrada */
+#entries .entries-sheet-card #entries-table{
+  border:1px solid var(--tbl-head-border)!important;
+  background:#fff!important;
+}
+#entries .entries-sheet-card #entries-table th{
+  background:var(--tbl-head-bg)!important;
+  color:var(--tbl-head-color)!important;
+  border-right:1px solid var(--tbl-col-line)!important;
+  border-bottom:1px solid var(--tbl-head-border)!important;
+}
+#entries .entries-sheet-card #entries-table td{
+  background:#fff!important;
+  border-right:1px solid var(--tbl-col-line)!important;
+  border-bottom:1px solid var(--tbl-line)!important;
+}
+#entries .entries-sheet-card #entries-table tbody tr:nth-child(even) td{
+  background:var(--tbl-zebra)!important;
+}
+#entries .entries-sheet-card #entries-table tbody tr:hover td{
+  background:var(--tbl-hover)!important;
+}
+#entries .entries-sheet-card #entries-pagination{
+  background:#fff!important;
+  border-radius:0 0 0 var(--radius-lg)!important;
+}
+
+/* status = mesmo checkbox já usado no app */
+#entries-table .entry-status-check{
+  width:18px!important;
+  height:18px!important;
+  margin:0!important;
+  border:1.5px solid #B8C2CF!important;
+  border-radius:var(--radius-pill)!important;
+  background:#fff!important;
+  display:inline-grid!important;
+  place-content:center!important;
+  box-shadow:none!important;
+}
+#entries-table .entry-status-check:hover{
+  border-color:#93A4B8!important;
+  background:#F8FAFC!important;
+}
+#entries-table .entry-status-check:checked{
+  border-color:var(--primary-blue)!important;
+  background:var(--primary-blue)!important;
+  box-shadow:0 0 0 2px rgba(47,79,157,.15)!important;
+}
+#entries-table .entry-status-check:checked::after{
+  content:""!important;
+  width:8px!important;
+  height:8px!important;
+  border-radius:var(--radius-pill)!important;
+  background:#fff!important;
+  transform:none!important;
+}
+
+/* previsão: neutra, usando verde só como acento da marca */
+#entries .entries-analysis,
+#entries.tab-content.active>.entries-analysis{
+  background:#fff!important;
+}
+#entries .entries-analysis h3{
+  border-radius:0!important;
+}
+#entries .entries-analysis-modes{
+  background:#fff!important;
+  border-bottom:1px solid var(--divider)!important;
+}
+#entries .entries-analysis-modes button{
+  background:#fff!important;
+  border-color:var(--border)!important;
+  color:var(--text-secondary)!important;
+  border-radius:var(--radius-sm)!important;
+}
+#entries .entries-analysis-modes button.active{
+  background:var(--primary-green)!important;
+  border-color:var(--primary-green)!important;
+  color:#fff!important;
+}
+#entries .entries-analysis .daily-totals{
+  background:#fff!important;
+  gap:8px!important;
+  padding:12px!important;
+  border-bottom:1px solid var(--divider)!important;
+}
+#entries .entries-analysis .daily-totals>div{
+  background:#fff!important;
+  border:1px solid var(--border)!important;
+  border-radius:var(--radius-md)!important;
+  padding:11px!important;
+}
+#entries .entries-fin-table{background:#fff!important}
+#entries .entries-fin-table thead th{
+  background:var(--tbl-head-bg)!important;
+  color:var(--tbl-head-color)!important;
+}
+#entries .entries-fin-table th,
+#entries .entries-fin-table td{
+  border-right-color:var(--tbl-col-line)!important;
+  border-bottom-color:var(--tbl-line)!important;
+}
+#entries .entries-fin-table tbody tr:nth-child(even) td{
+  background:var(--tbl-zebra)!important;
+}
+#entries .entries-fin-table tbody tr:hover td{
+  background:var(--tbl-hover)!important;
+}
+#entries .entries-analysis-help{
+  background:#fff!important;
+  color:var(--text-muted)!important;
+  border-top-color:var(--divider)!important;
+}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden">
