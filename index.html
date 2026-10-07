@@ -5823,6 +5823,83 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Tabela de lançamentos: visual de planilha, mais próximo do Excel. */
+        .entries-sheet-card {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: 1px solid #C9D2DC !important;
+            background: #FFFFFF !important;
+        }
+        #entries-table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            table-layout: fixed;
+            background: #FFFFFF;
+        }
+        #entries-table > thead > tr > th {
+            background: #E9EEF3 !important;
+            color: #334155 !important;
+            font-size: 10.5px !important;
+            font-weight: 700 !important;
+            height: 30px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-right: 1px solid #C9D2DC !important;
+            border-bottom: 1px solid #AEB9C5 !important;
+            vertical-align: middle;
+        }
+        #entries-table > tbody > tr > td {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            border-right: 1px solid #D7DEE6 !important;
+            border-bottom: 1px solid #D7DEE6 !important;
+            background: #FFFFFF;
+        }
+        #entries-table > tbody > tr:hover > td {
+            background: #F5F9FC !important;
+        }
+        #entries-table > thead > tr > th:last-child,
+        #entries-table > tbody > tr > td:last-child {
+            border-right: 0 !important;
+        }
+        #entries-table > thead > tr > th:nth-child(6),
+        #entries-table > tbody > tr > td:nth-child(6) {
+            padding-left: 4px;
+            padding-right: 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .entry-status-check {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            border: 1px solid #94A3B8;
+            border-radius: 2px;
+            background: #FFFFFF;
+            display: inline-grid;
+            place-content: center;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        .entry-status-check:checked {
+            background: #2F6F5E;
+            border-color: #2F6F5E;
+        }
+        .entry-status-check:checked::after {
+            content: "✓";
+            color: #FFFFFF;
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 800;
+            transform: translateY(-.5px);
+        }
+        .entry-status-check:focus-visible {
+            outline: 2px solid rgba(47,79,157,.22);
+            outline-offset: 2px;
+        }
+
         /* Alças de arrasto e ações da linha aparecem no hover — menos ruído em repouso */
         .entry-destination-panel .recon-fill-handle {
             opacity: 0;
@@ -5855,7 +5932,7 @@
         #entries-table col.col-date { width: 96px; }
         #entries-table col.col-account { width: 180px; }
         #entries-table col.col-value { width: 132px; }
-        #entries-table col.col-actions { width: 188px; }
+        #entries-table col.col-status { width: 58px; }
         /* Colunas estreitas (marcador e data) respiram menos na horizontal —
            unica excecao ao espacamento padrao, e so na horizontal. */
         #entries-table > thead > tr > th:nth-child(1),
@@ -9050,7 +9127,7 @@
                                 <col>
                                 <col class="col-account">
                                 <col class="col-value">
-                                <col class="col-actions">
+                                <col class="col-status">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -9061,7 +9138,7 @@
                                     <th>Destino / Detalhes</th>
                                     <th>Conta / Banco</th>
                                     <th id="entries-sort-amount" onclick="setSort('amount')" onkeydown="handleSortHeaderKeydown('amount', event)" tabindex="0" role="button" aria-sort="none" aria-label="Ordenar tabela por valor" class="tbl-num w-[140px] cursor-pointer hover:text-[#E09132]">Valor</th>
-                                    <th class="tbl-center w-[210px]">Status / Ação</th>
+                                    <th class="tbl-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="entries-table-body"></tbody>
@@ -16942,6 +17019,7 @@ function renderEntriesMonthlyWorkspace(){
                                 </button>
                             </div>
                             <p id="entry-dst-meta-${e.id}" class="entry-destination-desc entry-cell-sub" tabindex="0" title="Clique para editar a descrição" onclick="editEntryCell('${e.id}','description',this,event)" onkeydown="if(event.key==='Enter')editEntryCell('${e.id}','description',this,event)">${escapeHtml(entryDescriptionLabel)}</p>
+                            ${getTransferReviewMarkup(e.id, isPossibleTransfer)}
                         </div>
                     </td>
                     <td>
@@ -16963,23 +17041,13 @@ function renderEntriesMonthlyWorkspace(){
                         <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span><button type="button" class="entries-amount-fill" aria-label="Arraste para copiar valor" title="Arraste para copiar este valor para outras linhas" onmousedown="startEntriesAmountDrag(${i},event)" onclick="event.stopPropagation()">⋮⋮</button></span>
                     </td>
                     <td class="tbl-center">
-                        <div class="entry-cell-main center">
-                            <div class="entry-actions-wrap">
-                                <button type="button" onclick="event.stopPropagation(); openEntryModal('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Editar lancamento">
-                                    <i data-lucide="pencil" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="event.stopPropagation(); duplicateEntry('${e.id}')" class="entry-action-btn p-2 text-slate-400 hover:text-[#1F7A5C] hover:bg-green-50 rounded-lg transition-all" aria-label="Duplicar lancamento">
-                                    <i data-lucide="copy" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" onclick="event.stopPropagation(); toggleQuickStatus('${e.id}')" class="badge quick-status-btn ${statusBadgeClass}" aria-label="Alterar status do lancamento para ${e.status === 'REALIZADO' ? 'pendente' : 'realizado'}">${e.status}</button>
-                                <button type="button" onclick="event.stopPropagation(); window.deleteEntry('${e.id}')" class="entry-action-btn p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" aria-label="Excluir lancamento">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="entry-cell-sub">
-                            ${getTransferReviewMarkup(e.id, isPossibleTransfer)}
-                        </div>
+                        <input type="checkbox"
+                            class="entry-status-check"
+                            ${e.status === 'REALIZADO' ? 'checked' : ''}
+                            onclick="event.stopPropagation()"
+                            onchange="event.stopPropagation(); toggleQuickStatus('${e.id}')"
+                            aria-label="${e.status === 'REALIZADO' ? 'Realizado. Desmarque para deixar pendente' : 'Pendente. Marque para realizar'}"
+                            title="${e.status === 'REALIZADO' ? 'Realizado' : 'Pendente'}">
                     </td>
                 </tr>`;
             }).join('') || '<tr><td colspan="6" class="p-16 text-center opacity-30 font-black text-xs uppercase tracking-widest">Nenhum registro encontrado</td></tr>';
