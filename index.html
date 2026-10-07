@@ -17227,7 +17227,7 @@ function renderEntriesMonthlyWorkspace(){
                         <div class="entry-cell-main right">
                             <span class="entry-value-main ${valueClass}" tabindex="0" title="Clique para editar o valor" onclick="editEntryCell('${e.id}','amount',this,event)" onkeydown="if(event.key==='Enter')editEntryCell('${e.id}','amount',this,event)">${formatBRL(e.amount)}</span>
                         </div>
-                        <span class="entry-cell-sub"><span class="mov-type-badge mov-type-${getMovimentoType(e)}">${getMovimentoLabel(getMovimentoType(e))}</span><button type="button" class="entries-amount-fill" aria-label="Arraste para copiar valor" title="Arraste para copiar este valor para outras linhas" onmousedown="startEntriesAmountDrag(${i},event)" onclick="event.stopPropagation()">⋮⋮</button></span>
+                        <span class="entry-cell-sub"><button type="button" class="entries-amount-fill" aria-label="Arraste para copiar valor" title="Arraste para copiar este valor para outras linhas" onmousedown="startEntriesAmountDrag(${i},event)" onclick="event.stopPropagation()">⋮⋮</button></span>
                     </td>
                     <td class="tbl-center">
                         <input type="checkbox"
