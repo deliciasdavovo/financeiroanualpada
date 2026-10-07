@@ -8663,6 +8663,27 @@
 #entries .entries-analysis-entry-value{white-space:nowrap;text-align:right;font-weight:800}
 #entries .entries-analysis-entry-value button{color:#1f7a5c;padding:3px 5px;border:1px solid #d5e4d7;border-radius:5px}
 #entries .entries-analysis-none{text-align:center;font-size:11px;color:#829083;padding:17px}
+#entries .entries-fin-table{width:100%;border-collapse:collapse;table-layout:fixed;background:#fff;font-size:11px}
+#entries .entries-fin-table th,#entries .entries-fin-table td{padding:8px 7px;border-right:1px solid #dce5dc;border-bottom:1px solid #dce5dc;white-space:nowrap}
+#entries .entries-fin-table th:last-child,#entries .entries-fin-table td:last-child{border-right:0}
+#entries .entries-fin-table thead th{position:sticky;top:0;z-index:4;background:#edf3ea;color:#46614e;font-size:9.5px;font-weight:800;text-align:right}
+#entries .entries-fin-table thead th:first-child{text-align:left;width:64px}
+#entries .entries-fin-table tbody td{text-align:right;font-variant-numeric:tabular-nums;color:#304c39;font-weight:700}
+#entries .entries-fin-table tbody td:first-child{text-align:left;color:#64748b;font-weight:700}
+#entries .entries-fin-table tbody tr:nth-child(even) td{background:#fbfcf9}
+#entries .entries-fin-table tbody tr:hover td{background:#eef7ed}
+#entries .entries-fin-table .fin-in{color:#0f5f7a}
+#entries .entries-fin-table .fin-out{color:#f05a28}
+#entries .entries-fin-table .fin-balance.negative{color:#b23a3a}
+#entries .entries-fin-table .fin-balance.positive{color:#1f7a5c}
+#entries .entries-fin-table .fin-muted{color:#94a3b8;font-weight:600}
+#entries .entries-analysis-help{padding:10px 12px;margin:0;border-top:1px solid #dce5dc;background:#f8faf6;color:#7a8d7e;font-size:9.5px;line-height:1.35}
+#entries .daily-totals{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:0!important;padding:0!important;background:#fff}
+#entries .daily-totals>div{border:0!important;border-right:1px solid #dce5dc!important;border-bottom:1px solid #dce5dc!important;border-radius:0!important;padding:10px 8px!important;background:#fff!important;min-width:0}
+#entries .daily-totals>div:last-child{border-right:0!important}
+#entries .daily-totals small{display:block;font-size:9px;color:#7a8d7e;font-weight:700}
+#entries .daily-totals b{display:block;margin-top:3px;font-size:12px;color:#2f4d38;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 @media(max-width:1350px){#entries .entries-analysis-columns,#entries .entries-analysis-row{grid-template-columns:minmax(85px,1.3fr) repeat(3,minmax(59px,1fr));font-size:9px}}
 
 /* Previsão permanente: painel lateral tipo aba da mesma planilha. */
@@ -9156,14 +9177,14 @@
 </div>
 <aside class="entries-daily entries-analysis" aria-label="Previsão financeira sempre visível">
 <h3><span class="entries-side-tab-label">Previsão financeira</span><span id="daily-period"></span></h3>
-<nav class="entries-analysis-modes" aria-label="Visão da previsão">
-<button type="button" data-analysis-mode="day" onclick="setEntriesAnalysisMode('day')">Por dia</button>
-<button type="button" data-analysis-mode="category" onclick="setEntriesAnalysisMode('category')">Categorias</button>
-<button type="button" data-analysis-mode="month" onclick="setEntriesAnalysisMode('month')">Resumo mensal</button>
+<nav class="entries-analysis-modes" aria-label="Visão financeira">
+<button type="button" data-analysis-mode="forecast" onclick="setEntriesAnalysisMode('forecast')">Previsão</button>
+<button type="button" data-analysis-mode="actual" onclick="setEntriesAnalysisMode('actual')">Realizado</button>
+<button type="button" data-analysis-mode="compare" onclick="setEntriesAnalysisMode('compare')">Comparativo</button>
 </nav>
 <div id="daily-totals" class="daily-totals"></div>
 <div id="entries-analysis-content" class="daily-scroll"></div>
-<p>Previsto inclui os lançamentos cadastrados. Realizado considera apenas os confirmados. Pendente mostra o que falta realizar.</p>
+<p class="entries-analysis-help">Previsão e realizado ficam separados. Use Comparativo somente quando quiser confrontar os dois.</p>
 </aside>
             </div>
 
@@ -16730,16 +16751,10 @@ function scheduleEntriesMonthlyWorkspace(){
   }
  });
 }
-let entriesAnalysisMode='day';
-let expandedEntriesAnalysisKey='';
+let entriesAnalysisMode='forecast';
 function setEntriesAnalysisMode(mode){
- if(!['day','category','month'].includes(mode))return;
+ if(!['forecast','actual','compare'].includes(mode))return;
  entriesAnalysisMode=mode;
- expandedEntriesAnalysisKey='';
- renderEntriesMonthlyWorkspace();
-}
-function toggleEntriesAnalysisRow(key){
- expandedEntriesAnalysisKey=expandedEntriesAnalysisKey===key?'':key;
  renderEntriesMonthlyWorkspace();
 }
 function entriesAnalysisTotals(list){
@@ -16757,28 +16772,19 @@ function entriesAnalysisTotals(list){
  t.remaining=t.planned-t.real;
  return t;
 }
-function entriesAnalysisDetails(list){
- if(!list.length)return '<div class="entries-analysis-none">Nenhum lançamento neste grupo.</div>';
- return '<div class="entries-analysis-details">'+[...list].sort((a,b)=>String(a.date).localeCompare(String(b.date))).map(e=>{
-  const meta=getExportHierarchyNames(e);
-  const name=String(e.description||'').trim()||meta.destination;
-  const type=normalizeFlowType(e.type)==='ENTRADA'?'+':'−';
-  return '<div class="entries-analysis-entry"><span><strong>'+escapeHtml(name)+'</strong><small>'+escapeHtml(meta.category)+' · '+escapeHtml(meta.destination)+' · '+escapeHtml(e.status==='REALIZADO'?'Realizado':'Pendente')+'</small></span><span class="entries-analysis-entry-value">'+type+formatBRL(Number(e.amount)||0)+' <button type="button" title="Editar lançamento" onclick="openEntryModal('+JSON.stringify(String(e.id)).replace(/"/g,'&quot;')+')">✎</button></span></div>';
- }).join('')+'</div>';
+function entriesFinancialDayValues(list,onlyRealized){
+ const rows=onlyRealized?(list||[]).filter(e=>e.status==='REALIZADO'):(list||[]);
+ let incoming=0,outgoing=0;
+ rows.forEach(e=>{
+  const v=Number(e.amount)||0;
+  if(normalizeFlowType(e.type)==='ENTRADA')incoming+=v;
+  else outgoing+=v;
+ });
+ return {incoming,outgoing,balance:incoming-outgoing};
 }
-function entriesAnalysisGroupedRow(key,title,list,secondary){
- const t=entriesAnalysisTotals(list),active=expandedEntriesAnalysisKey===key;
- const remainingIn=t.plannedIn-t.realIn,remainingOut=t.plannedOut-t.realOut;
- const safeKey=JSON.stringify(key).replace(/"/g,'&quot;');
- return '<div class="entries-analysis-group">'+
- '<button type="button" class="entries-analysis-row'+(active?' is-open':'')+'" aria-expanded="'+active+'" onclick="toggleEntriesAnalysisRow('+safeKey+')">'+
- '<span class="entries-analysis-row-title">'+(active?'▾ ':'▸ ')+escapeHtml(title)+'<small>'+escapeHtml(secondary||String(t.count)+' lançamento(s)')+'</small></span>'+
- '<span class="entries-analysis-progress"><b>'+formatBRL(t.realOut+t.realIn)+'</b><small>de '+formatBRL(t.plannedIn+t.plannedOut)+'</small></span></button>'+
- '<div class="entries-analysis-comparison">'+
- '<div class="entries-compare-block"><span class="entries-compare-heading">Previsto</span><strong>'+formatBRL(t.planned)+'</strong><small>Entradas '+formatBRL(t.plannedIn)+' · Saídas '+formatBRL(t.plannedOut)+'</small></div>'+
- '<div class="entries-compare-block is-real"><span class="entries-compare-heading">Realizado</span><strong>'+formatBRL(t.real)+'</strong><small>Entradas '+formatBRL(t.realIn)+' · Saídas '+formatBRL(t.realOut)+'</small></div>'+
- '</div><div class="entries-analysis-pending"><span>Pendente: entradas '+formatBRL(remainingIn)+' · saídas '+formatBRL(remainingOut)+'</span></div>'+
- (active?entriesAnalysisDetails(list):'')+'</div>';
+function entriesFinancialValue(value,className){
+ const n=Number(value)||0;
+ return '<td class="'+(className||'')+(n===0?' fin-muted':'')+'">'+formatBRL(n)+'</td>';
 }
 function renderEntriesMonthlyWorkspace(){
  const month=getEntriesCurrentMonthIso(),year=Number(month.slice(0,4)),mn=Number(month.slice(5));
@@ -16789,6 +16795,7 @@ function renderEntriesMonthlyWorkspace(){
   const key=year+'-'+String(i+1).padStart(2,'0');
   return '<button type="button" role="tab" aria-selected="'+(key===month)+'" class="'+(key===month?'active':'')+'" onclick="setEntriesMonthFilter(&quot;'+key+'&quot;)">'+name+'</button>';
  }).join('');
+
  const monthEntries=(state.entries||[]).filter(e=>String(e.date||'').slice(0,7)===month);
  const indexedDays=new Map();
  monthEntries.forEach(entry=>{
@@ -16796,37 +16803,53 @@ function renderEntriesMonthlyWorkspace(){
   if(!indexedDays.has(key))indexedDays.set(key,[]);
   indexedDays.get(key).push(entry);
  });
+
  const summary=entriesAnalysisTotals(monthEntries);
  const period=document.getElementById('daily-period');
  if(period)period.textContent=new Date(year,mn-1,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
  document.querySelectorAll('.entries-analysis-modes button').forEach(btn=>{
   const selected=btn.dataset.analysisMode===entriesAnalysisMode;
-  btn.classList.toggle('active',selected);btn.setAttribute('aria-pressed',String(selected));
+  btn.classList.toggle('active',selected);
+  btn.setAttribute('aria-pressed',String(selected));
  });
+
  const totals=document.getElementById('daily-totals');
- if(totals)totals.innerHTML='<div class="entries-total-planned"><small>Saldo previsto</small><b>'+formatBRL(summary.planned)+'</b></div><div class="entries-total-realized"><small>Saldo realizado</small><b>'+formatBRL(summary.real)+'</b></div><div class="entries-total-pending"><small>Saldo pendente</small><b>'+formatBRL(summary.remaining)+'</b></div><div><small>Registros pendentes</small><b>'+summary.pending+'</b></div>';
+ if(totals){
+  if(entriesAnalysisMode==='forecast'){
+   totals.innerHTML='<div><small>Entradas previstas</small><b>'+formatBRL(summary.plannedIn)+'</b></div><div><small>Saídas previstas</small><b>'+formatBRL(summary.plannedOut)+'</b></div><div><small>Saldo previsto</small><b>'+formatBRL(summary.planned)+'</b></div>';
+  }else if(entriesAnalysisMode==='actual'){
+   totals.innerHTML='<div><small>Entradas realizadas</small><b>'+formatBRL(summary.realIn)+'</b></div><div><small>Saídas realizadas</small><b>'+formatBRL(summary.realOut)+'</b></div><div><small>Saldo realizado</small><b>'+formatBRL(summary.real)+'</b></div>';
+  }else{
+   const diff=summary.real-summary.planned;
+   totals.innerHTML='<div><small>Saldo previsto</small><b>'+formatBRL(summary.planned)+'</b></div><div><small>Saldo realizado</small><b>'+formatBRL(summary.real)+'</b></div><div><small>Diferença</small><b>'+formatBRL(diff)+'</b></div>';
+  }
+ }
+
  const target=document.getElementById('entries-analysis-content');
  if(!target)return;
- let groups=[];
- if(entriesAnalysisMode==='day'){
-  const days=new Date(year,mn,0).getDate();
-  groups=Array.from({length:days},(_,i)=>({key:'day-'+String(i+1),title:String(i+1).padStart(2,'0'),entries:indexedDays.get(i+1)||[],subtitle:'Clique para ver os lançamentos'}));
- }else if(entriesAnalysisMode==='category'){
-  const map=new Map();
-  monthEntries.forEach(e=>{
-   const name=getExportHierarchyNames(e).category;
-   if(!map.has(name))map.set(name,[]);
-   map.get(name).push(e);
-  });
-  groups=[...map].sort((a,b)=>a[0].localeCompare(b[0],'pt-BR')).map(([name,entries])=>({key:'category-'+name,title:name,entries}));
+ const days=new Date(year,mn,0).getDate();
+ let head='';
+ let body='';
+ if(entriesAnalysisMode==='compare'){
+  head='<tr><th>Data</th><th>Previsto</th><th>Realizado</th><th>Diferença</th></tr>';
+  for(let day=1;day<=days;day++){
+   const list=indexedDays.get(day)||[];
+   const planned=entriesFinancialDayValues(list,false);
+   const actual=entriesFinancialDayValues(list,true);
+   const diff=actual.balance-planned.balance;
+   const date=String(day).padStart(2,'0')+'/'+String(mn).padStart(2,'0');
+   body+='<tr><td>'+date+'</td>'+entriesFinancialValue(planned.balance,'fin-balance '+(planned.balance<0?'negative':'positive'))+entriesFinancialValue(actual.balance,'fin-balance '+(actual.balance<0?'negative':'positive'))+entriesFinancialValue(diff,'fin-balance '+(diff<0?'negative':'positive'))+'</tr>';
+  }
  }else{
-  groups=[
-   {key:'month-in',title:'Entradas',entries:monthEntries.filter(e=>normalizeFlowType(e.type)==='ENTRADA')},
-   {key:'month-out',title:'Saídas',entries:monthEntries.filter(e=>normalizeFlowType(e.type)==='SAÍDA')}
-  ];
+  const onlyRealized=entriesAnalysisMode==='actual';
+  head='<tr><th>Data</th><th>Entradas</th><th>Saídas</th><th>Saldo</th></tr>';
+  for(let day=1;day<=days;day++){
+   const values=entriesFinancialDayValues(indexedDays.get(day)||[],onlyRealized);
+   const date=String(day).padStart(2,'0')+'/'+String(mn).padStart(2,'0');
+   body+='<tr><td>'+date+'</td>'+entriesFinancialValue(values.incoming,'fin-in')+entriesFinancialValue(values.outgoing,'fin-out')+entriesFinancialValue(values.balance,'fin-balance '+(values.balance<0?'negative':'positive'))+'</tr>';
+  }
  }
- const heading='<div class="entries-analysis-section-label">'+(entriesAnalysisMode==='day'?'Dias do mês':entriesAnalysisMode==='category'?'Por categoria':'Resumo do mês')+' <span>Toque para detalhar</span></div>';
- target.innerHTML=heading+groups.map(g=>entriesAnalysisGroupedRow(g.key,g.title,g.entries,g.subtitle)).join('')+(groups.length?'':'<div class="entries-analysis-none">Nenhum lançamento neste mês.</div>');
+ target.innerHTML='<table class="entries-fin-table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
 }
         function renderEntries() {
             const body = document.getElementById('entries-table-body');
